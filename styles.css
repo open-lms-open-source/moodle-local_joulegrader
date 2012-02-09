@@ -1,0 +1,11 @@
+#local-joulegrader-viewpane .content {
+    padding-right: 2em;
+}
+
+#local-joulegrader-navigation {
+    padding-bottom: 1em;
+}
+
+#local-joulegrader-navigation .content {
+    text-align: center;
+}
