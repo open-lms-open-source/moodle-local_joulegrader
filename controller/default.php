@@ -42,7 +42,7 @@ class local_joulegrader_controller_default extends mr_controller {
      * @return string - the html for the view action
      */
     public function view_action() {
-        global $OUTPUT, $COURSE;
+        global $OUTPUT, $COURSE, $PAGE;
         //get the joule grader header info
         //link nav
         $linknav = $OUTPUT->action_link(new moodle_url('/course/view.php', array('id' => $COURSE->id)), get_string('course'));
@@ -64,13 +64,13 @@ class local_joulegrader_controller_default extends mr_controller {
 
         //activity navigation
         $activitynav = $this->helper->navigation->get_activity_navigation();
-        $activitynav = '<div id="local-joulegrader-activitynav">'. $activitynav . '</div>';
+        $activitynav = $OUTPUT->container($activitynav, null, 'local-joulegrader-activitynav');
 
         //user navigation
         $usernav = $this->helper->navigation->get_users_navigation();
-        $usernav = '<div id="local-joulegrader-usernav">'. $usernav . '</div>';
+        $usernav = $OUTPUT->container($usernav, null, 'local-joulegrader-usernav');
 
-        $menunav = '<div class="content">' . $activitynav . $usernav . '</div>';
+        $menunav = $OUTPUT->container($activitynav . $usernav, 'content');
 
         $usernavcon = $OUTPUT->container($linknav, 'yui3-u-1-3', 'local-joulegrader-linknav');
         $buttonnavcon = $OUTPUT->container($buttonnav, 'yui3-u-1-3', 'local-joulegrader-buttonnav');
@@ -79,11 +79,14 @@ class local_joulegrader_controller_default extends mr_controller {
         $currentareaid = $gareashelper->get_currentarea();
         $currentuserid = $usershelper->get_currentuser();
 
+        $panescontainer = '';
         //if the current user id and the current area id are not empty, load the class and get the pane contents
         if (!empty($currentareaid) && !empty($currentuserid)) {
+            $renderer = $PAGE->get_renderer('local_joulegrader');
+
             //load the current area instance
             $gradeareainstance = $gareashelper::get_gradingarea_instance($currentareaid, $currentuserid);
-            $viewhtml = $gradeareainstance->get_viewpane_html();
+            $viewhtml = $renderer->render($gradeareainstance->get_viewpane());
 
             //get the view pane contents
             $viewpane = '<div class="content">' . $viewhtml . '</div>';
@@ -93,15 +96,17 @@ class local_joulegrader_controller_default extends mr_controller {
 
 Quisque interdum, turpis in volutpat placerat, metus augue fringilla quam, porta adipiscing mi ligula eu turpis. Nunc a interdum ipsum. Curabitur varius, ante quis euismod egestas, dolor nunc vestibulum velit, vel blandit est odio quis ipsum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum faucibus, orci ut euismod adipiscing, diam justo tempus libero, vitae ultrices erat dui a nisi. Aenean pellentesque auctor nibh, eget rhoncus dui pharetra in. Maecenas scelerisque diam vitae ipsum pulvinar vehicula. In hac habitasse platea dictumst. Sed molestie feugiat ipsum, vitae suscipit nisi egestas at. Pellentesque nec augue at nibh vulputate congue.</div>';
 
-            $viewpanecon = $OUTPUT->container($viewpane, 'yui3-u-4-5', 'local-joulegrader-viewpane');
-            $gradepanecon = $OUTPUT->container($gradepane, 'yui3-u-1-5', 'local-joulegrader-gradepane');
+            $panescontainer = $OUTPUT->container($viewpane, 'yui3-u-4-5', 'local-joulegrader-viewpane');
+            $panescontainer .= $OUTPUT->container($gradepane, 'yui3-u-1-5', 'local-joulegrader-gradepane');
+        } else {
+            $panescontainer = $OUTPUT->container(html_writer::tag('h1', get_string('nothingtodisplay', 'local_joulegrader')), 'content');
         }
 
         //navigation container
         $output = $OUTPUT->container($usernavcon . $buttonnavcon . $activitynavcon, 'yui3-u-1', 'local-joulegrader-navigation');
 
         //panes container
-        $output .= $OUTPUT->container($viewpanecon . $gradepanecon, 'yui3-u-1', 'local-joulegrader-panes');
+        $output .= $OUTPUT->container($panescontainer, 'yui3-u-1', 'local-joulegrader-panes');
 
         //wrap it all up
         $output = $OUTPUT->container($output, 'yui3-g', 'local-joulegrader');

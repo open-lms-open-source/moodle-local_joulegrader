@@ -167,12 +167,13 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
      *
      * @return string - the html for the view pane
      */
-    public function get_viewpane_html() {
+    public function get_viewpane() {
         if (!($this->viewpane instanceof local_joulegrade_lib_pane_view_abstract)) {
             $this->load_viewpane();
+            $this->viewpane->init();
         }
 
-        return $this->viewpane->get_html();
+        return $this->viewpane;
     }
 
     /**

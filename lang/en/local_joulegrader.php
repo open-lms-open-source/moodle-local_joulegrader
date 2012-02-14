@@ -14,6 +14,7 @@ $string['joulegrader:view'] = 'View graded work via joule Grader';
 
 //default.php strings
 $string['gradebook'] = 'Gradebook';
+$string['nothingtodisplay'] = 'Nothing to Display';
 
 //helper/navigation.php strings
 $string['nogradeableareas'] = 'No gradeable items';
