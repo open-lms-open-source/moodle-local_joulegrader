@@ -1,14 +1,12 @@
 <?php
+defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
+
 /**
  * Renderer
  *
  * @author Sam Chaffee
  * @package local/mrooms
  */
-
-defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
-
-
 class local_joulegrader_renderer extends plugin_renderer_base {
 
     /**
@@ -129,12 +127,183 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     }
 
     /**
+     * @param local_joulegrader_lib_pane_view_mod_assignment_submission_uploadsingle $viewpane
+     * @return string
+     */
+    public function render_local_joulegrader_lib_pane_view_mod_assignment_submission_uploadsingle(local_joulegrader_lib_pane_view_mod_assignment_submission_uploadsingle $viewpane) {
+        global $USER;
+
+        $html = '';
+
+        $gradingarea = $viewpane->get_gradingarea();
+        $gacontext = $gradingarea->get_gradingmanager()->get_context();
+        $guserid   = $gradingarea->get_guserid();
+
+        //need the assignment
+        $assignment = $gradingarea->get_assignment();
+
+        //need the submission
+        $submission = $gradingarea->get_submission();
+
+        $hasstudentcap = has_capability($gradingarea::get_studentcapability(), $gacontext);
+        $hasteachercap = has_capability($gradingarea::get_teachercapability(), $gacontext);
+
+        //check capabilities
+        if ($hasteachercap || ($hasstudentcap && $USER->id == $guserid)) {
+            //dates html
+            $html .= $this->help_render_assignment_dates($assignment);
+
+            //get the file from a submission
+            $file = $viewpane->get_file();
+            if (!empty($file)) {
+                //render the file
+                $html .= $this->help_render_assignment_uploadsingle_file($file, $submission, $gacontext);
+            } else {
+                //nothing to display
+                $html .= html_writer::tag('h3', $viewpane->get_emptymessage());
+            }
+        }
+
+        return $html;
+    }
+
+    /**
+     * @param stored_file $file
+     * @param stdClass $submission
+     * @param stdClass $context
+     * @return string
+     */
+    protected function help_render_assignment_uploadsingle_file(stored_file $file, $submission, $context) {
+        $download = array('application/zip', 'application/x-tar', 'application/g-zip');    // binary formats
+        $embed    = array('image/gif', 'image/jpeg', 'image/png', 'image/svg+xml',         // images
+            'application/x-shockwave-flash', 'video/x-flv', 'video/x-ms-wm', // video formats
+            'video/quicktime', 'video/mpeg', 'video/mp4',
+            'audio/mp3', 'audio/x-realaudio-plugin', 'x-realaudio-plugin',   // audio formats
+            'application/pdf', 'text/html',
+        );
+
+        //get the filename
+        $filename = $file->get_filename();
+
+        //get the mimetype
+        $mimetype = $file->get_mimetype();
+
+        if (in_array($mimetype, $embed)) {
+            $html = $this->help_render_assignment_file_embedded($file, $submission, $context, $filename, $mimetype);
+        } else {
+            $html = $this->help_render_assignment_file_download($submission, $context, $filename, $mimetype);
+        }
+
+        return $html;
+    }
+
+    /**
+     * @param $submission
+     * @param $context
+     * @param $filename
+     * @param $mimetype
+     * @return string
+     */
+    protected function help_render_assignment_file_download($submission, $context, $filename, $mimetype) {
+        global $OUTPUT;
+        //make the url to the file
+        $fullurl = moodle_url::make_pluginfile_url($context->id, 'mod_assignment', 'submission', $submission->id, '/', $filename, true);
+
+        $html = '<a href="'.$fullurl.'" ><img src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />'.s($filename).'</a>';
+
+        return $html;
+    }
+
+    /**
+     * @param stored_file $file
+     * @param $submission
+     * @param $context
+     * @param $filename
+     * @param $mimetype
+     * @return string
+     */
+    protected function help_render_assignment_file_embedded(stored_file $file, $submission, $context, $filename, $mimetype) {
+        global $CFG, $PAGE;
+        require_once($CFG->libdir . '/resourcelib.php');
+        //Code from modified from mod/resource/locallib.php
+        //make the url to the file
+        $fullurl = moodle_url::make_pluginfile_url($context->id, 'local_joulegrader', 'gradingarea', $submission->id, '/mod_assignment_submission/', $filename);
+
+        //title is not used
+        $title = '';
+
+        //clicktopen
+        $clicktoopen = get_string('clicktoopen2', 'resource', "<a href=\"$fullurl\">$filename</a>");
+
+        //get the extension
+        $extension = resourcelib_get_extension($file->get_filename());
+
+        if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
+            $html = resourcelib_embed_image($fullurl, $title);
+
+        } else if ($mimetype === 'application/pdf') {
+            // PDF document -- had to pull this out from resourcelib b/c of the javascript
+            $html = <<<EOT
+<div class="resourcecontent resourcepdf">
+  <object id="resourceobject" data="$fullurl" type="application/pdf" width="800" height="600">
+    <param name="src" value="$fullurl" />
+    $clicktoopen
+  </object>
+</div>
+EOT;
+            // the size is hardcoded in the boject obove intentionally because it is adjusted by the following function on-the-fly
+            $PAGE->requires->js_init_call('M.local_joulegrader.init_maximised_embed', array('resourceobject'), true
+                    , array('name' => 'local_joulegrader', 'fullpath' => '/local/joulegrader/javascript.js'));
+
+        } else if ($mimetype === 'audio/mp3') {
+            // MP3 audio file
+            $html = resourcelib_embed_mp3($fullurl, $title, $clicktoopen);
+
+        } else if ($mimetype === 'video/x-flv' or $extension === 'f4v') {
+            // Flash video file
+            $html = resourcelib_embed_flashvideo($fullurl, $title, $clicktoopen);
+
+        } else if ($mimetype === 'application/x-shockwave-flash') {
+            // Flash file
+            $html = resourcelib_embed_flash($fullurl, $title, $clicktoopen);
+
+        } else if (substr($mimetype, 0, 10) === 'video/x-ms') {
+            // Windows Media Player file
+            $html = resourcelib_embed_mediaplayer($fullurl, $title, $clicktoopen);
+
+        } else if ($mimetype === 'video/quicktime') {
+            // Quicktime file
+            $html = resourcelib_embed_quicktime($fullurl, $title, $clicktoopen);
+
+        } else if ($mimetype === 'video/mpeg') {
+            // Mpeg file
+            $html = resourcelib_embed_mpeg($fullurl, $title, $clicktoopen);
+
+        } else if ($mimetype === 'audio/x-pn-realaudio') {
+            // RealMedia file
+            $html = resourcelib_embed_real($fullurl, $title, $clicktoopen);
+
+        } else {
+            // anything else - just try object tag enlarged as much as possible
+            $html = resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype);
+        }
+
+        return $html;
+    }
+
+    /**
      * @param $assignment
      * @param null $submission
      * @return string
      */
     protected function help_render_assignment_dates($assignment, $submission = NULL) {
         global $OUTPUT, $CFG;
+
+        //check to make sure there is something to include in the date box
+        if (empty($assignment->assignment->timeavailable) && empty($assignment->assignment->timedue)
+                && empty($submission)) {
+            return '';
+        }
 
         $html = $OUTPUT->box_start('generalbox boxaligncenter', 'dates');
         $html .= html_writer::start_tag('table');

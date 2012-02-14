@@ -1,6 +1,6 @@
 <?php
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
-
+require_once($CFG->dirroot . '/grade/grading/lib.php');
 /**
  * Grading area abstract class
  *
@@ -8,7 +8,6 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
  * @package local/joulegrader
  *
  */
-require_once($CFG->dirroot . '/grade/grading/lib.php');
 abstract class local_joulegrader_lib_gradingarea_abstract {
 
     /**
@@ -134,14 +133,14 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
 
             //check to see that it was loaded
             if (!class_exists($classname)) {
-                throw new coding_exception("View pane class: $classname is not defined");
+                throw new coding_exception("View pane class $classname is not defined");
             }
 
             //try to isntantiate it
             try {
                 $this->viewpane = new $classname($this);
             } catch (Exception $e) {
-                throw new coding_exception("View pane class: $classname could not be instantiated");
+                throw new coding_exception("View pane class $classname could not be instantiated");
             }
         }
 

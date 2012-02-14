@@ -3,6 +3,8 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 require_once($CFG->dirroot . '/local/joulegrader/lib/pane/view/abstract.php');
 
 /**
+ * View Pane class for Offline Assignment type
+ *
  * @author Sam Chaffee
  * @package local/joulegrader
  */

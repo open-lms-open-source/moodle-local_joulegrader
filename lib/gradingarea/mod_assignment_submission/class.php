@@ -1,12 +1,13 @@
 <?php
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
+require_once($CFG->dirroot . '/local/joulegrader/lib/gradingarea/abstract.php');
+
 /**
  * Grading area class for mod_assignment component, submission areaname
  *
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-require_once($CFG->dirroot . '/local/joulegrader/lib/gradingarea/abstract.php');
 class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends local_joulegrader_lib_gradingarea_abstract {
 
     /**
@@ -37,6 +38,46 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
         'offline',
         'uploadsingle',
     );
+
+    /**
+     * @static
+     * @param $course
+     * @param $cm
+     * @param $context
+     * @param $itemid
+     * @param $args
+     * @param $forcedownload
+     * @return bool
+     */
+    public static function pluginfile($course, $cm, $context, $itemid, $args, $forcedownload) {
+        global $USER, $DB;
+
+        //should only be the filename left in the args
+        if (count($args) != 1) {
+            return false;
+        }
+
+        if (!$submission = $DB->get_record('assignment_submissions', array('id' => $itemid))) {
+            return false;
+        }
+
+        if ($USER->id != $submission->userid and !has_capability(self::$teachercapability, $context)) {
+            return false;
+        }
+
+        //get the "real" component and filearea
+        $filename = array_shift($args);
+
+        $fullpath = '/'.$context->id.'/mod_assignment/submission/'.$itemid.'/'.$filename;
+
+        $fs = get_file_storage();
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+        send_stored_file($file); // download MUST be forced - security!
+    }
 
 
     /**

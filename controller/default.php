@@ -48,6 +48,7 @@ class local_joulegrader_controller_default extends mr_controller {
         $linknav = $OUTPUT->action_link(new moodle_url('/course/view.php', array('id' => $COURSE->id)), get_string('course'));
         $linknav .= ' | ' . $OUTPUT->action_link(new moodle_url('/grade/report/index.php', array('id' => $COURSE->id))
                 , get_string('gradebook', 'local_joulegrader'));
+        $linknav = $OUTPUT->container($linknav, null, 'local-joulegrader-linknav');
         $linknav = $OUTPUT->container($linknav, 'content');
 
         //button nav

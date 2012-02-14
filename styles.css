@@ -1,9 +1,25 @@
 #local-joulegrader-viewpane .content {
-    padding-right: 2em;
+    margin-right: 2em;
+    overflow: auto;
 }
 
 #local-joulegrader-navigation {
-    padding-bottom: 1em;
+    padding-bottom: 1.5em;
+    padding-top: 1.5em;
+    margin-bottom: 1em;
+    background-color: lightgrey;
+}
+
+#local-joulegrader-linknav {
+    font-size: 1.3em;
+}
+
+#local-joulegrader-navigation .yui3-u-1-3 {
+    vertical-align: middle;
+}
+
+#local-joulegrader-navigation .singleselect {
+    display: inline-block;
 }
 
 #local-joulegrader .content {
