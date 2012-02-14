@@ -47,13 +47,41 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
     public function direct() {}
 
     /**
+     * @static
+     * @param $currentareaid
+     * @param $currentuserid
+     * @return local_joulegrader_lib_gradingarea_abstract - instance of a gradingarea class
+     */
+    public static function get_gradingarea_instance($currentareaid, $currentuserid) {
+        global $CFG;
+
+        $gradingmanager = get_grading_manager($currentareaid);
+
+        //component and area names of the grading area
+        $component = $gradingmanager->get_component();
+        $area = $gradingmanager->get_area();
+
+        $classname = "local_joulegrader_lib_gradingarea_{$component}_{$area}_class";
+
+        //include the class
+        include_once("$CFG->dirroot/local/joulegrader/lib/gradingarea/{$component}_{$area}/class.php");
+
+        //check to be sure the class was loaded
+        if (!class_exists($classname)) {
+            throw new coding_exception("Class: $classname does not exist or could not be loaded");
+        }
+
+        return new $classname($gradingmanager, $currentareaid, $currentuserid);
+    }
+
+    /**
      * Get the grading areas for the menu
      *
-     * @param bool $limited - whether or not areas should be limited to those the logged-in $USER can access
+     * @param bool $asstudent - is this being viewed as a student
      * @return array - array of grading area activities
      */
-    public function get_gradingareas($limited = false) {
-        global $DB, $COURSE;
+    public function get_gradingareas($asstudent = false) {
+        global $DB, $COURSE, $CFG;
 
         if (is_null($this->gradingareas)) {
             //get course context children
@@ -97,13 +125,45 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
                 //get the grading manager
                 $gradingareamgr = get_grading_manager($gareaid);
 
-                //first check to see if we should limit the list according to logged-in $USER's capabilities
-                if (!empty($limited)) {
-                    $capability = 'mod/assignment:submit'; //@TODO - make this dynamic based on gradearea plugin
-                    if (!has_capability($capability, context::instance_by_id($garea->contextid))) {
-                        //if the menu is limited and the $USER does have capability then continue
-                        continue;
-                    }
+                //determine classname based on the grading area
+                $component = $gradingareamgr->get_component();
+                $area = $gradingareamgr->get_area();
+
+                $classname = "local_joulegrader_lib_gradingarea_{$component}_{$area}_class";
+
+                //include the class
+                include_once("$CFG->dirroot/local/joulegrader/lib/gradingarea/{$component}_{$area}/class.php");
+
+                //check to be sure the class was loaded
+                if (!class_exists($classname)) {
+                    //if not, then skip this grading area
+                    continue;
+                }
+
+                //is this being viewed as a student?
+                if (!empty($asstudent)) {
+                    $method = 'get_studentcapability';
+                } else {
+                    $method = 'get_teachercapability';
+                }
+
+                //make sure the method to get the required capability
+                if (!is_callable("{$classname}::{$method}")) {
+                    //continue
+                    continue;
+                }
+
+                $capability = $classname::$method();
+                if (!has_capability($capability, context::instance_by_id($garea->contextid))) {
+                    //if the menu is limited and the $USER does have capability then continue
+                    continue;
+                }
+
+                //give the grading_area class an opportunity to exclude this particular grading_area
+                $includemethod = 'include_area';
+                if (!is_callable("{$classname}::{$includemethod}") || !($classname::$includemethod($gradingareamgr, $asstudent))) {
+                    //either the method isn't callable or the area shouldn't be included
+                    continue;
                 }
 
                 //@TODO - limit by needs grading param
@@ -130,6 +190,8 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
 
             //if no param passed take the first area in the course (in the menu)
             if (empty($garea) && !empty($this->gradingareas)) {
+                $garea = array_shift(array_keys($this->gradingareas));
+            } else if (!array_key_exists($garea, $this->gradingareas) && !empty($this->gradingareas)) {
                 $garea = array_shift(array_keys($this->gradingareas));
             }
 

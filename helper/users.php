@@ -92,6 +92,13 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
     }
 
     /**
+     * @param $currentuser - user id for the currentuser
+     */
+    public function set_currentuser($currentuser) {
+        $this->currentuser = $currentuser;
+    }
+
+    /**
      * Get the id of the next user
      *
      * @return int - id of the next user

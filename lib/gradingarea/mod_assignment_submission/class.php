@@ -1,0 +1,154 @@
+<?php
+defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
+/**
+ * Grading area class for mod_assignment component, submission areaname
+ *
+ * @author Sam Chaffee
+ * @package local/joulegrader
+ */
+require_once($CFG->dirroot . '/local/joulegrader/lib/gradingarea/abstract.php');
+class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends local_joulegrader_lib_gradingarea_abstract {
+
+    /**
+     * @var string
+     */
+    protected static $studentcapability = 'mod/assignment:submit';
+
+    /**
+     * @var string
+     */
+    protected static $teachercapability = 'mod/assignment:grade';
+
+    /**
+     * @var assignment_base - an instance of the assignment_base class (or most likely one of its subclasses)
+     */
+    protected $assignment;
+
+    /**
+     * @var stdClass - submission record for this assignment & gradeable user
+     */
+    protected $submission;
+
+    /**
+     * @var array - the assignment types supported by joule Grader
+     */
+    public static $supportedtypes = array(
+        'online',
+        'offline',
+        'uploadsingle',
+    );
+
+
+    /**
+     * @static
+     * @param $gradingmanager - instance of the grading_manager
+     * @return array - cm and assignment record
+     */
+    protected static function get_assignment_info(grading_manager $gradingmanager) {
+        global $COURSE, $DB;
+
+        //load the course_module from the context
+        $cm = get_coursemodule_from_id('assignment', $gradingmanager->get_context()->instanceid, $COURSE->id, false, MUST_EXIST);
+
+        //load the assignment record
+        $assignment = $DB->get_record("assignment", array("id"=>$cm->instance), '*', MUST_EXIST);
+
+        return array($cm, $assignment);
+    }
+
+    /**
+     * @static
+     * @param grading_manager $gradingmanager
+     * @param bool $asstudent
+     * @return bool
+     */
+    public static function include_area(grading_manager $gradingmanager, $asstudent) {
+        $include = false;
+
+        try {
+            list($cm, $assignment) = self::get_assignment_info($gradingmanager);
+            if (in_array($assignment->assignmenttype, self::$supportedtypes)) {
+                if (empty($asstudent) || !empty($cm->visible)) {
+                    $include = true;
+                }
+            }
+        } catch (Exception $e) {
+            //don't need to do anything
+        }
+
+        return $include;
+    }
+
+    /**
+     * @return array - the viewpane class and path to the class that this gradingarea class should use
+     */
+    protected function get_viewpane_info() {
+        global $CFG;
+
+        // get the assignment and assignment type
+        $assignment = $this->get_assignment();
+        $assignmenttype = $assignment->type;
+
+        return array(
+            "$CFG->dirroot/local/joulegrader/lib/pane/view/mod_assignment_submission/$assignmenttype.php",
+            "local_joulegrader_lib_pane_view_mod_assignment_submission_$assignmenttype",
+        );
+    }
+
+    /**
+     * @return assignment_base
+     */
+    public function get_assignment() {
+        //check to see that it's loaded
+        if (!isset($this->assignment) || !($this->assignment instanceof assignment_base)) {
+            $this->load_assignment();
+        }
+
+        return $this->assignment;
+    }
+
+    /**
+     * @throws coding_exception
+     */
+    protected function load_assignment() {
+        global $CFG, $COURSE;
+
+        try {
+            //load the assignment record
+            list($cm, $assignment) = self::get_assignment_info($this->get_gradingmanager());
+
+            /// Load up the required assignment code
+            require_once($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
+            $assignmentclass = 'assignment_'.$assignment->assignmenttype;
+
+            //instantiate the assignment class
+            $this->assignment = new $assignmentclass($cm->id, $assignment, $cm, $COURSE);
+        } catch (Exception $e) {
+            throw new coding_exception('Could not load the assignment class: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * @return stdClass - the submission record
+     */
+    public function get_submission() {
+        //if it's not set try to load it
+        if (!isset($this->submission)) {
+            $this->load_submission();
+        }
+        return $this->submission;
+    }
+
+    /**
+     * Load the submission record for the set user / assignment
+     */
+    protected function load_submission() {
+        $assignment = $this->get_assignment();
+
+        try {
+            $this->submission = $assignment->get_submission($this->guserid);
+        } catch (Exception $e) {
+            throw new coding_exception("Could not load the submission for assignment: $assignment->assignment->name, userid: $this->guser");
+        }
+    }
+}

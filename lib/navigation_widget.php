@@ -8,7 +8,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
  * @package local/joulegrader
  */
 
-class local_joulegrader_lib_navigation_widget extends mr_readonly implements renderable {
+class local_joulegrader_lib_navigation_widget implements renderable {
 
     /**
      * @var string - the name of the navigation widget (likely user or activity)
@@ -33,7 +33,7 @@ class local_joulegrader_lib_navigation_widget extends mr_readonly implements ren
     protected $param;
 
     /**
-     * @var id - the currently selected id (used to set the selected menu item)
+     * @var int - the currently selected id (used to set the selected menu item)
      */
     protected $currentid;
 
@@ -64,6 +64,55 @@ class local_joulegrader_lib_navigation_widget extends mr_readonly implements ren
         $this->currentid = $currentid;
         $this->nextid    = $nextid;
         $this->previd    = $previd;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_currentid() {
+        return $this->currentid;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_name() {
+        return $this->name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function get_nextid() {
+        return $this->nextid;
+    }
+
+    /**
+     * @return array
+     */
+    public function get_options() {
+        return $this->options;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_param() {
+        return $this->param;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function get_previd() {
+        return $this->previd;
+    }
+
+    /**
+     * @return \moodle_url
+     */
+    public function get_url() {
+        return $this->url;
     }
 }
 

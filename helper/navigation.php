@@ -87,6 +87,9 @@ class local_joulegrader_helper_navigation extends mr_helper_abstract {
             } else {
                 $this->activitynav = '<h4>' . get_string('nogradeableareas', 'local_joulegrader') . '</h4>';
             }
+
+            //set the userhelper current user id to logged-in $USER
+            $usershelper->set_currentuser($USER->id);
         }
     }
 
