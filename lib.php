@@ -27,21 +27,14 @@ function joulegrader_extend_settings_navigation($settings, $context) {
             //try to see if this is within an activity
             $activityname = $PAGE->activityname;
             if (isset($activityname)) {
-                require_once($CFG->dirroot . '/grade/grading/lib.php');
+                require_once($CFG->dirroot . '/local/joulegrader/helper/gradingareas.php');
 
-                //get a grading manager
-                $gm = get_grading_manager($context, $activityname);
-
-                //check to make sure this supports grading areas
-                if ($areas = $gm->get_available_areas()) {
-                    //there are grading areas supported, since we don't really know which area they may be after,
-                    //pick the first one
-                    if ($area = $DB->get_record('grading_areas', array('contextid' => $context->id, 'component' => $gm->get_component())
-                            , 'id', IGNORE_MULTIPLE)) {
-                        //add it to the url params
-                        $urlparams['garea'] = $area->id;
-                    }
+                //try to get an areaid from the context and activity name
+                if ($areaid = local_joulegrader_helper_gradingareas::get_areaid_from_context_activityname($context, $activityname)) {
+                    //add it to the url
+                    $urlparams['garea'] = $areaid;
                 }
+
             }
 
             $url = new moodle_url('/local/joulegrader/view.php', $urlparams);

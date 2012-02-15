@@ -15,7 +15,7 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
      *
      * @var array - multidimesion array of grading_area compenents and areas
      */
-    protected $supportedareas = array(
+    protected static $supportedareas = array(
         'mod_assignment' => array(
             'submission',
         ),
@@ -75,6 +75,61 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
     }
 
     /**
+     * @static
+     * @param context $context
+     * @param string $activityname
+     * @return int - an areaid from grading_areas table
+     */
+    public static function get_areaid_from_context_activityname(context $context, $activityname) {
+        global $DB, $CFG;
+
+        //initialize
+        $areaid = 0;
+
+        //get a grading manager
+        $gm = get_grading_manager($context, $activityname);
+
+        //check to make sure this supports grading areas
+        $supportedareas = self::$supportedareas;
+
+        //get the component
+        $component = $gm->get_component();
+
+        if (array_key_exists($component, $supportedareas)) {
+            //there are grading areas supported, since we don't really know which area they may be after,
+            //pick the first one
+            if ($arearec = $DB->get_record('grading_areas', array('contextid' => $context->id, 'component' => $gm->get_component())
+                , 'id', IGNORE_MULTIPLE)) {
+
+                //we've got an area id
+                $gm->load($arearec->id);
+                $area = $gm->get_area();
+
+                $classname = "local_joulegrader_lib_gradingarea_{$component}_{$area}_class";
+                //include the class
+                include_once("$CFG->dirroot/local/joulegrader/lib/gradingarea/{$component}_{$area}/class.php");
+
+                //check to be sure the class was loaded
+                if (!class_exists($classname)) {
+                    //if not, then return nothing
+                    return $areaid;
+                }
+
+                //give the grading_area class an opportunity to exclude this particular grading_area
+                $includemethod = 'include_area';
+                if (!is_callable("{$classname}::{$includemethod}") || !($classname::$includemethod($gm, false))) {
+                    //either the method isn't callable or the area shouldn't be included
+                    return $areaid;
+                }
+
+               $areaid = $arearec->id;
+            }
+        }
+
+        return $areaid;
+    }
+
+    /**
      * Get the grading areas for the menu
      *
      * @param bool $asstudent - is this being viewed as a student
@@ -98,7 +153,7 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
             $whereorclauses = array();
             $whereorparams  = array();
 
-            foreach ($this->supportedareas as $component => $areas) {
+            foreach (self::$supportedareas as $component => $areas) {
                 foreach ($areas as $area) {
                     $whereorclauses[] = '(component = ? AND areaname = ?)';
                     $whereorparams[]  = $component;
@@ -260,5 +315,12 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
 
         $this->prevarea = $previd;
         $this->nextarea = $nextid;
+    }
+
+    /**
+     * @return array
+     */
+    public static function get_supportedareas() {
+        return self::$supportedareas;
     }
 }
