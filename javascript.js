@@ -1,5 +1,5 @@
 /**
- * joule Grader Default Controller
+ * joule Grader javascript
  *
  * @author Sam Chaffee
  * @package local/joulegrader

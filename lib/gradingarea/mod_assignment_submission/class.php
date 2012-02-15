@@ -76,7 +76,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
             return false;
         }
 
-        send_stored_file($file); // download MUST be forced - security!
+        send_stored_file($file);
     }
 
 
@@ -159,6 +159,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
             list($cm, $assignment) = self::get_assignment_info($this->get_gradingmanager());
 
             /// Load up the required assignment code
+            require_once($CFG->dirroot.'/mod/assignment/lib.php');
             require_once($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
             $assignmentclass = 'assignment_'.$assignment->assignmenttype;
 

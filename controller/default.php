@@ -43,6 +43,10 @@ class local_joulegrader_controller_default extends mr_controller {
      */
     public function view_action() {
         global $OUTPUT, $COURSE, $PAGE;
+
+        //Not sure if this is supposed to be a popup
+        //$PAGE->set_pagelayout('popup');
+
         //get the joule grader header info
         //link nav
         $linknav = $OUTPUT->action_link(new moodle_url('/course/view.php', array('id' => $COURSE->id)), get_string('course'));
@@ -80,7 +84,6 @@ class local_joulegrader_controller_default extends mr_controller {
         $currentareaid = $gareashelper->get_currentarea();
         $currentuserid = $usershelper->get_currentuser();
 
-        $panescontainer = '';
         //if the current user id and the current area id are not empty, load the class and get the pane contents
         if (!empty($currentareaid) && !empty($currentuserid)) {
             $renderer = $PAGE->get_renderer('local_joulegrader');

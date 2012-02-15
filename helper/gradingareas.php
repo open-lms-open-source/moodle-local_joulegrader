@@ -168,7 +168,7 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
 
                 //@TODO - limit by needs grading param
 
-                $gradingareas[$gareaid] = $gradingareamgr->get_component_title() . ' - ' . $gradingareamgr->get_area_title();
+                $gradingareas[$gareaid] = shorten_text(format_string($gradingareamgr->get_component_title())); //uncomment this to include the area title . ' - ' . $gradingareamgr->get_area_title();
             }
 
             $this->gradingareas = $gradingareas;
