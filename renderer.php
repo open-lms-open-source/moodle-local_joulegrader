@@ -168,6 +168,101 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Renders the viewpane for upload assignment type (Advanced Uploading)
+     *
+     * @param local_joulegrader_lib_pane_view_mod_assignment_submission_upload $viewpane
+     * @return string
+     */
+    public function render_local_joulegrader_lib_pane_view_mod_assignment_submission_upload(local_joulegrader_lib_pane_view_mod_assignment_submission_upload $viewpane) {
+        global $USER, $OUTPUT;
+
+        $html = '';
+
+        $gradingarea = $viewpane->get_gradingarea();
+        $gacontext = $gradingarea->get_gradingmanager()->get_context();
+        $guserid   = $gradingarea->get_guserid();
+
+        //need the assignment
+        $assignment = $gradingarea->get_assignment();
+
+        //need the submission
+        $submission = $gradingarea->get_submission();
+
+        $hasstudentcap = has_capability($gradingarea::get_studentcapability(), $gacontext);
+        $hasteachercap = has_capability($gradingarea::get_teachercapability(), $gacontext);
+
+        //check capabilities
+        if ($hasteachercap || ($hasstudentcap && $USER->id == $guserid)) {
+            //dates html
+            $html .= $this->help_render_assignment_dates($assignment);
+
+            //get the file from a submission
+            $fileareatree = $viewpane->get_fileareatree();
+            if (!empty($fileareatree)) {
+                //render the heading
+                if (!$assignment->drafts_tracked() or !$assignment->isopen() or $assignment->is_finalized($submission)) {
+                    $html .= $OUTPUT->heading(get_string('submission', 'assignment'), 3);
+                } else {
+                    $html .= $OUTPUT->heading(get_string('submissiondraft', 'assignment'), 3);
+                }
+
+                $module = array('name'=>'mod_assignment', 'fullpath'=>'/mod/assignment/assignment.js', 'requires'=>array('yui2-treeview'));
+                $htmlid = 'local-joulegrader-assignment-files-tree';
+                $this->page->requires->js_init_call('M.mod_assignment.init_tree', array(true, $htmlid), false, $module);
+
+                $html .= html_writer::tag('div', $this->help_htmllize_tree($gacontext, $submission, $fileareatree), array('id' => $htmlid));
+
+            } else {
+                //nothing to display
+                $html .= html_writer::tag('h3', $viewpane->get_emptymessage());
+            }
+
+        }
+
+        return $html;
+    }
+
+    /**
+     * Internal function - creates htmls structure suitable for YUI tree.
+     * (Modified from mod/assignment/renderer.php)
+     *
+     * @param context $context
+     * @param stdClass $submission
+     * @param array
+     *
+     * @return string
+     */
+    protected function help_htmllize_tree($context, $submission, $dir) {
+        $yuiconfig = array();
+        $yuiconfig['type'] = 'html';
+
+        if (empty($dir['subdirs']) and empty($dir['files'])) {
+            return '';
+        }
+
+        $result = '<ul>';
+        foreach ($dir['subdirs'] as $subdir) {
+            $image = $this->output->pix_icon("f/folder", $subdir['dirname'], 'moodle', array('class'=>'icon'));
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.s($subdir['dirname']).'</div> '.$this->help_htmllize_tree($context, $submission, $subdir).'</li>';
+        }
+
+        foreach ($dir['files'] as $file) {
+            $filename = $file->get_filename();
+            $icon = mimeinfo("icon", $filename);
+
+            $fileurl = moodle_url::make_pluginfile_url($context->id, 'mod_assignment', 'submission', $submission->id, '/', $filename, true);
+            $filelink = html_writer::link($fileurl, $filename);
+
+            $image = $this->output->pix_icon("f/$icon", $filename, 'moodle', array('class'=>'icon'));
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.$filelink.' </div></li>';
+        }
+
+        $result .= '</ul>';
+
+        return $result;
+    }
+
+    /**
      * @param stored_file $file
      * @param stdClass $submission
      * @param stdClass $context
