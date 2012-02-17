@@ -81,7 +81,7 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
      * @return int - an areaid from grading_areas table
      */
     public static function get_areaid_from_context_activityname(context $context, $activityname) {
-        global $DB, $CFG;
+        global $DB, $CFG, $COURSE;
 
         //initialize
         $areaid = 0;
@@ -101,6 +101,8 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
             if ($arearec = $DB->get_record('grading_areas', array('contextid' => $context->id, 'component' => $gm->get_component())
                 , 'id', IGNORE_MULTIPLE)) {
 
+                $courseinfo = get_fast_modinfo($COURSE);
+
                 //we've got an area id
                 $gm->load($arearec->id);
                 $area = $gm->get_area();
@@ -117,7 +119,7 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
 
                 //give the grading_area class an opportunity to exclude this particular grading_area
                 $includemethod = 'include_area';
-                if (!is_callable("{$classname}::{$includemethod}") || !($classname::$includemethod($gm, false))) {
+                if (!is_callable("{$classname}::{$includemethod}") || !($classname::$includemethod($courseinfo, $gm))) {
                     //either the method isn't callable or the area shouldn't be included
                     return $areaid;
                 }
