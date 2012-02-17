@@ -100,17 +100,18 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
 
     /**
      * @static
+     * @param course_modinfo $courseinfo
      * @param grading_manager $gradingmanager
-     * @param bool $asstudent
      * @return bool
      */
-    public static function include_area(grading_manager $gradingmanager, $asstudent) {
+    public static function include_area(course_modinfo $courseinfo, grading_manager $gradingmanager) {
         $include = false;
 
         try {
             list($cm, $assignment) = self::get_assignment_info($gradingmanager);
             if (in_array($assignment->assignmenttype, self::$supportedtypes)) {
-                if (empty($asstudent) || !empty($cm->visible)) {
+                $cminfo = $courseinfo->get_cm($cm->id);
+                if (has_capability('moodle/course:viewhiddenactivities', $gradingmanager->get_context()) || ($cminfo->available && $cm->visible)) {
                     $include = true;
                 }
             }

@@ -173,6 +173,7 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
             //attempt to get the grading_area records
             $gareas = $DB->get_records_select('grading_areas', $whereclause, $whereorparams);
 
+            $courseinfo = get_fast_modinfo($COURSE);
             //attempt get the visible names for each grading area record from grading area class
             //and add to gradingareas array if not limited by logged-in $USER
             $gradingareas = array();
@@ -216,12 +217,12 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
 
                 //give the grading_area class an opportunity to exclude this particular grading_area
                 $includemethod = 'include_area';
-                if (!is_callable("{$classname}::{$includemethod}") || !($classname::$includemethod($gradingareamgr, $asstudent))) {
+                if (!is_callable("{$classname}::{$includemethod}") || !($classname::$includemethod($courseinfo, $gradingareamgr))) {
                     //either the method isn't callable or the area shouldn't be included
                     continue;
                 }
 
-                //@TODO - limit by needs grading param
+                //@TODO - limit by needs grading param (Milestone 2)
 
                 $gradingareas[$gareaid] = shorten_text(format_string($gradingareamgr->get_component_title())); //uncomment this to include the area title . ' - ' . $gradingareamgr->get_area_title();
             }

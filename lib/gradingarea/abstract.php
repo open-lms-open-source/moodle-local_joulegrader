@@ -52,11 +52,11 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
      * sure that a mod_assignment_submission grading area is of a type that joule Grader will support at this time
      *
      * @abstract
+     * @param course_modinfo $courseinfo
      * @param grading_manager $gradingmanager
-     * @param bool $asstudent
      * @return bool
      */
-    abstract public static function include_area(grading_manager $gradingmanager, $asstudent);
+    abstract public static function include_area(course_modinfo $courseinfo, grading_manager $gradingmanager);
 
     /**
      * @return string

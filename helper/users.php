@@ -42,18 +42,32 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
      * @return array - users that can be graded for the current area
      */
     public function get_users($gareahelper) {
-        global $COURSE;
+        global $COURSE, $CFG;
 
         if (is_null($this->users)) {
             //is there a current grading area set?
             $currentarea = $gareahelper->get_currentarea();
+
+            $requiredcap = 'local/joulegrader:view';
             if (!empty($currentarea)) {
                 //need to load the class for the grading area
+                //determine classname based on the grading area
+                $gradingareamgr = get_grading_manager($currentarea);
 
-                //find the grading area's required capability for students to appear in menu
-                $requiredcap = 'local/joulegrader:view'; //@TODO replace with cap from grading area
-            } else {
-                $requiredcap = 'local/joulegrader:view';
+                $component = $gradingareamgr->get_component();
+                $area = $gradingareamgr->get_area();
+
+                $classname = "local_joulegrader_lib_gradingarea_{$component}_{$area}_class";
+
+                //include the class
+                include_once("$CFG->dirroot/local/joulegrader/lib/gradingarea/{$component}_{$area}/class.php");
+
+                $method = 'get_studentcapability';
+                //check to be sure the class was loaded
+                if (class_exists($classname) && is_callable("{$classname}::{$method}")) {
+                    //find the grading area's required capability for students to appear in menu
+                    $requiredcap = $classname::$method();
+                }
             }
 
             //get the enrolled users with the required capability

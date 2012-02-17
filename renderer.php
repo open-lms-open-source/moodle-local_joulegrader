@@ -248,9 +248,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         foreach ($dir['files'] as $file) {
             $filename = $file->get_filename();
+            $filepath = $file->get_filepath();
             $icon = mimeinfo("icon", $filename);
 
-            $fileurl = moodle_url::make_pluginfile_url($context->id, 'mod_assignment', 'submission', $submission->id, '/', $filename, true);
+            $fileurl = moodle_url::make_pluginfile_url($context->id, 'mod_assignment', 'submission', $submission->id, $filepath, $filename, true);
             $filelink = html_writer::link($fileurl, $filename);
 
             $image = $this->output->pix_icon("f/$icon", $filename, 'moodle', array('class'=>'icon'));
@@ -286,23 +287,24 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         if (in_array($mimetype, $embed)) {
             $html = $this->help_render_assignment_file_embedded($file, $submission, $context, $filename, $mimetype);
         } else {
-            $html = $this->help_render_assignment_file_download($submission, $context, $filename, $mimetype);
+            $html = $this->help_render_assignment_file_download($file, $submission, $context, $filename, $mimetype);
         }
 
         return $html;
     }
 
     /**
+     * @param stored_file $file
      * @param $submission
      * @param $context
      * @param $filename
      * @param $mimetype
      * @return string
      */
-    protected function help_render_assignment_file_download($submission, $context, $filename, $mimetype) {
+    protected function help_render_assignment_file_download(stored_file $file, $submission, $context, $filename, $mimetype) {
         global $OUTPUT;
         //make the url to the file
-        $fullurl = moodle_url::make_pluginfile_url($context->id, 'mod_assignment', 'submission', $submission->id, '/', $filename, true);
+        $fullurl = moodle_url::make_pluginfile_url($context->id, 'mod_assignment', 'submission', $submission->id, $file->get_filepath(), $filename, true);
 
         $html = '<a href="'.$fullurl.'" ><img src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />'.s($filename).'</a>';
 
