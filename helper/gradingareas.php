@@ -175,9 +175,13 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
             //attempt to get the grading_area records
             $gareas = $DB->get_records_select('grading_areas', $whereclause, $whereorparams);
 
+            //get fast modinfo
             $courseinfo = get_fast_modinfo($COURSE);
+
             //attempt get the visible names for each grading area record from grading area class
             //and add to gradingareas array if not limited by logged-in $USER
+
+            $cmsbyareaid = array();
             $gradingareas = array();
             foreach ($gareas as $gareaid => $garea) {
                 //get the grading manager
@@ -224,11 +228,18 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
                     continue;
                 }
 
+                $contextinfo = get_context_info_array($garea->contextid);
+                $cmsbyareaid[$garea->id] = $contextinfo[2]->id;
+
                 //@TODO - limit by needs grading param (Milestone 2)
 
                 $gradingareas[$gareaid] = shorten_text(format_string($gradingareamgr->get_component_title())); //uncomment this to include the area title . ' - ' . $gradingareamgr->get_area_title();
             }
 
+            //order the gradingareas by course order of activities?
+            $gradingareas = $this->order_gradingareas($gradingareas, $courseinfo, $cmsbyareaid);
+
+            //set the gradingareas data member
             $this->gradingareas = $gradingareas;
         }
 
@@ -318,6 +329,69 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
 
         $this->prevarea = $previd;
         $this->nextarea = $nextid;
+    }
+
+    /**
+     * @param array $gradingareas
+     * @param course_modinfo $courseinfo
+     * @param array $cmsbyareaid - array of cm ids arrays keyed by grading area id
+     *
+     * @return array - ordered grading areas
+     */
+    protected function order_gradingareas($gradingareas, course_modinfo $courseinfo, $cmsbyareaid) {
+        //if grading areas is empty, return empty array
+        if (empty($gradingareas)) {
+            //nothing to see here, move along
+            return array();
+        }
+
+        //if $contextinfo is empty then we can't order the grading areas
+        if (empty($cmsbyareaid)) {
+            return $gradingareas;
+        }
+
+        //course modules in order from course_modinfo
+        $cms = $courseinfo->get_cms();
+        if (empty($cms)) {
+            return $gradingareas;
+        }
+
+        //this gives us cm position 0.n keyed by cmid
+        $cmidpositions = array_flip(array_keys($cms));
+
+        $orderedareas = array();
+        $unorderedareas = array();
+        foreach ($cmsbyareaid as $areaid => $cmid) {
+            if (array_key_exists($cmid, $cmidpositions)) {
+                $pos = $cmidpositions[$cmid];
+                if (!isset($orderedareas[$pos])) {
+                    //set the areaids position
+                    $orderedareas[$pos] = $areaid;
+
+                    //continue to the next area
+                    continue;
+                }
+            }
+
+            //if it couldn't be ordered then add to unordered to append later
+            $unorderedareas[] = $areaid;
+        }
+
+        //sort ordered areas array by key (position)
+        ksort($orderedareas);
+
+        $orderareasfinal = array();
+        //now loop through ordered areas and get make the grading areas menu again
+        foreach ($orderedareas as $areaid) {
+            $orderareasfinal[$areaid] = $gradingareas[$areaid];
+        }
+
+        //add any unordered areas to the end
+        foreach ($unorderedareas as $areaid) {
+            $orderareasfinal[$areaid] = $gradingareas[$areaid];
+        }
+
+        return $orderareasfinal;
     }
 
     /**
