@@ -37,14 +37,14 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     protected static $teachercapability = 'local/joulegrader:grade';
 
     /**
-     * @var local_joulegrade_lib_pane - instance
+     * @var local_joulegrade_lib_pane_view_abstract - instance
      */
     protected $viewpane;
 
     /**
-     * @var local_joulegrade_lib_pane - instance
+     * @var local_joulegrade_lib_pane_grade_abstract - instance
      */
-    protected $gradingpane;
+    protected $gradepane;
 
     /**
      * Additional checks called by gradingareas helper to see if the area should be included in the navigation.
@@ -115,6 +115,15 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     }
 
     /**
+     * Returns the active grading method for the grading area
+     *
+     * @return null|string
+     */
+    public function get_active_gradingmethod() {
+        return $this->get_gradingmanager()->get_active_method();
+    }
+
+    /**
      * Load the viewpane instance
      *
      * @return local_joulegrader_lib_gradingarea_abstract
@@ -141,6 +150,39 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
                 $this->viewpane = new $classname($this);
             } catch (Exception $e) {
                 throw new coding_exception("View pane class $classname could not be instantiated");
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Load the gradepane instance
+     *
+     * @return local_joulegrader_lib_gradingarea_abstract
+     * @throws coding_exception
+     */
+    protected function load_gradepane() {
+        global $CFG; //don't remove this: needed for the include_once call
+
+        //first check to see that an instance is not already loaded
+        if (!isset($this->gradepane) || !($this->gradepane instanceof local_joulegrader_lib_pane_grade_abstract)) {
+            //get the viewpane class info from the subclass
+            list($classpath, $classname) = $this->get_gradepane_info();
+
+            //try to include the class
+            include_once($classpath);
+
+            //check to see that it was loaded
+            if (!class_exists($classname)) {
+                throw new coding_exception("Grade pane class $classname is not defined");
+            }
+
+            //try to isntantiate it
+            try {
+                $this->gradepane = new $classname($this);
+            } catch (Exception $e) {
+                throw new coding_exception("Grade pane class $classname could not be instantiated");
             }
         }
 
@@ -176,10 +218,30 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     }
 
     /**
+     * Get the grade pane for the grading area
+     *
+     * @return local_joulegrade_lib_pane_grade_abstract
+     */
+    public function get_gradepane() {
+        if (!($this->gradepane instanceof local_joulegrade_lib_pane_grade_abstract)) {
+            $this->load_gradepane();
+            $this->gradepane->init();
+        }
+
+        return $this->gradepane;
+    }
+
+    /**
      * Return the name of and path to the viewpane class that this grading_area class should use
      *
      * @abstract
      */
     abstract protected function get_viewpane_info();
 
+    /**
+     * Return the name of and path to the gradepane class that this grading_area class should use
+     *
+     * @abstract
+     */
+    abstract protected function get_gradepane_info();
 }

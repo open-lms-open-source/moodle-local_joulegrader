@@ -10,6 +10,18 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 class local_joulegrader_renderer extends plugin_renderer_base {
 
     /**
+     * Renders grade pane
+     *
+     * @param local_joulegrader_lib_pane_grade_mod_assignment_submission_class $gradepane
+     * @return string
+     */
+    public function render_local_joulegrader_lib_pane_grade_mod_assignment_submission_class(local_joulegrader_lib_pane_grade_mod_assignment_submission_class $gradepane) {
+        $html = '';
+
+        return $html;
+    }
+
+    /**
      * Renders a navigation widget containing a previous link, a next link, and a select menu
      *
      * @param local_joulegrader_lib_navigation_widget $navwidget

@@ -139,6 +139,18 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
     }
 
     /**
+     * @return array - the gradepane class and path to the class the this gradingarea class should use
+     */
+    protected function get_gradepane_info() {
+        global $CFG;
+
+        return array(
+            "$CFG->dirroot/local/joulegrader/lib/pane/grade/mod_assignment_submission/class.php",
+            "local_joulegrader_lib_pane_grade_mod_assignment_submission_class",
+        );
+    }
+
+    /**
      * @return assignment_base
      */
     public function get_assignment() {
