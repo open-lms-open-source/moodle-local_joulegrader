@@ -38,8 +38,27 @@ M.local_joulegrader.init_maximised_embed = function(Y, id) {
         }
 
         var headerheight = get_htmlelement_size('page-header', 'height');
-        var footerheight = get_htmlelement_size('page-footer', 'height');
-        var newheight = parseInt(YAHOO.util.Dom.getViewportHeight()) - footerheight - headerheight;
+
+        var headermain = Y.one('#header-main');
+        var headermainheight = 0;
+        if (headermain) {
+            headermainheight = get_htmlelement_size(headermain, 'height');
+        }
+
+        var custommenuwrap = Y.one('#custommenu-wrap');
+        var custommenuwrapheight = 0;
+        if (custommenuwrap) {
+            custommenuwrapheight = get_htmlelement_size(custommenuwrap, 'height');
+        }
+
+        var navbar = Y.one('.navbar');
+        var navbarheight = 0;
+        if (navbar) {
+            navbarheight = get_htmlelement_size(navbar, 'height');
+        }
+
+        var viewportheight = Y.one('body').get('winHeight');
+        var newheight = parseInt(viewportheight) - headerheight - headermainheight - custommenuwrapheight - navbarheight;
         if (newheight < 400) {
             newheight = 400;
         }
