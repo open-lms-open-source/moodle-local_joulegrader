@@ -25,3 +25,10 @@ $string['activitynav'] = 'Gradeable items';
 $string['activitynav_help'] = 'Use this widget to select which gradable item to grade.';
 $string['usernav'] = 'Users';
 $string['usernav_help'] = 'Use this widget to select which user to grade.';
+
+//mod_assignment_submission_grade form strings
+$string['gradeoutof'] = 'Grade (out of {$a})';
+$string['gradeoutofrange'] = 'Grade is out range';
+$string['overridetext'] = 'Previously, an instructor created a grade for this item directly in the gradebook.  Check this box if you want to replace that grade, too.';
+
+$string['gradesaved'] = 'Grade Saved';

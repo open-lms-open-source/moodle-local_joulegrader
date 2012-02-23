@@ -25,3 +25,16 @@
 #local-joulegrader .content {
     text-align: center;
 }
+
+#local-joulegrader-gradepane .content {
+    text-align: left;
+}
+
+#local-joulegrader-gradepane .fitem .felement {
+    width: 100%;
+    margin: 0px;
+}
+
+#local-joulegrader-gradepane .fitem .fitemtitle {
+    width: 0px;
+}

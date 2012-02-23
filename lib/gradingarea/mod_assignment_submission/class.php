@@ -202,7 +202,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
         $assignment = $this->get_assignment();
 
         try {
-            $this->submission = $assignment->get_submission($this->guserid);
+            $this->submission = $assignment->get_submission($this->guserid, true);
         } catch (Exception $e) {
             throw new coding_exception("Could not load the submission for assignment: $assignment->assignment->name, userid: $this->guser");
         }

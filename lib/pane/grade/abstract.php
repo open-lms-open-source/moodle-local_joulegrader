@@ -1,5 +1,6 @@
 <?php
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
+require_once($CFG->dirroot . '/lib/gradelib.php');
 
 /**
  * joule Grader Grade Pane abstract class
@@ -18,6 +19,21 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
      * @var moodleform - instance of moodleform
      */
     protected $mform;
+
+    /**
+     * @var data needed for the moodleform for display/processing
+     */
+    protected $mformdata;
+
+    /**
+     * @var string
+     */
+    protected $advancedgradingerror;
+
+    /**
+     * @var
+     */
+    protected $gradinginfo;
 
     /**
      * @param local_joulegrader_lib_gradingarea_abstract $gradingarea
@@ -41,6 +57,13 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     }
 
     /**
+     * @return mixed
+     */
+    public function get_gradinginfo() {
+        return $this->gradinginfo;
+    }
+
+    /**
      * Do any initialization the panel needs before rendering
      *
      * @abstract
@@ -52,5 +75,5 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
      *
      * @abstract
      */
-    abstract public function process();
+    abstract public function process($notify);
 }
