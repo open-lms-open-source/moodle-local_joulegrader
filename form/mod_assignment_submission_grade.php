@@ -19,7 +19,6 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
         }
 
         $mform->addElement('hidden', 'assignment', $this->_customdata->assignment->assignment->id);
-        $mform->addElement('hidden', 'submission', $this->_customdata->submission->id);
 
         //for the grade range
         $grademenu = make_grades_menu($this->_customdata->assignment->assignment->grade);
@@ -37,7 +36,7 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
         } else {
             //check for an existing grade
             $grade = -1;
-            if (isset($this->_customdata->submission->grade)) {
+            if (isset($this->_customdata->submission) && isset($this->_customdata->submission->grade)) {
                 $grade = $this->_customdata->submission->grade;
             }
             //check to see if this is a scale
@@ -90,6 +89,8 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
      *
      * @param $data
      * @param $files
+     *
+     * @return bool
      */
     public function validation($data, $files) {
         $validated = true;

@@ -17,45 +17,92 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
     public function init() {
         global $USER;
 
-        if (isset($this->mform) && isset($this->mformdata)) {
+        if (isset($this->mform)) {
             return;
         }
 
-        $mformdata = new stdClass();
-        $mformdata->assignment = $assignment = $this->gradingarea->get_assignment();
-        $mformdata->submission = $submission = $this->gradingarea->get_submission();
-
+        $assignment = $this->gradingarea->get_assignment();
         $this->gradinginfo = grade_get_grades($assignment->course->id, 'mod', 'assignment', $assignment->assignment->id, array($this->gradingarea->get_guserid()));
-        $mformdata->gradeoverridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
 
-        $gradingdisabled = $this->gradinginfo->items[0]->locked;
+        $this->teachercap = has_capability($this->gradingarea->get_teachercapability(), $this->gradingarea->get_gradingmanager()->get_context());
+        if ($this->teachercap) {
+            //set up the form
+            $mformdata = new stdClass();
+            $mformdata->assignment = $assignment;
+            $mformdata->submission = $submission = $this->gradingarea->get_submission();
+            $mformdata->gradeoverridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
 
-        if ($gradingmethod = $this->gradingarea->get_active_gradingmethod()) {
-            $controller = $this->gradingarea->get_gradingmanager()->get_controller($gradingmethod);
-            if ($controller->is_form_available()) {
-                $itemid = null;
-                if (!empty($submission->id)) {
-                    $itemid = $submission->id;
+            $gradingdisabled = $this->gradinginfo->items[0]->locked;
+
+            if ($gradingmethod = $this->gradingarea->get_active_gradingmethod()) {
+                $controller = $this->gradingarea->get_gradingmanager()->get_controller($gradingmethod);
+                if ($controller->is_form_available()) {
+                    $itemid = null;
+                    if (!empty($submission->id)) {
+                        $itemid = $submission->id;
+                    }
+                    if ($gradingdisabled && $itemid) {
+                        $mformdata->gradinginstance = $controller->get_current_instance($USER->id, $itemid);
+                    } else if (!$gradingdisabled) {
+                        $instanceid = optional_param('gradinginstanceid', 0, PARAM_INT);
+                        $mformdata->gradinginstance = $controller->get_or_create_instance($instanceid, $USER->id, $itemid);
+                    }
+
+                    $this->gradinginstance = $mformdata->gradinginstance;
+                } else {
+                    $this->advancedgradingwarning = $controller->form_unavailable_notification();
                 }
-                if ($gradingdisabled && $itemid) {
-                    $mformdata->gradinginstance = $controller->get_current_instance($USER->id, $itemid);
-                } else if (!$gradingdisabled) {
-                    $instanceid = optional_param('gradinginstanceid', 0, PARAM_INT);
-                    $mformdata->gradinginstance = $controller->get_or_create_instance($instanceid, $USER->id, $itemid);
+            }
+
+            $posturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->course->id
+                    , 'garea' => $this->gradingarea->get_areaid(), 'guser' => $this->gradingarea->get_guserid(), 'action' => 'process'));
+
+            //set mformdata
+            $this->mformdata = $mformdata;
+
+            //create the mform
+            $this->mform = new local_joulegrader_form_mod_assignment_submission_grade($posturl, $mformdata);
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function get_panehtml() {
+        //is a form defined
+        if (isset($this->mform)) {
+            $mrhelper = new mr_helper();
+            $html = $mrhelper->buffer(array($this->mform, 'display'));
+        } else {
+            //need to get the student stuff
+            $submission = $this->get_gradingarea()->get_submission();
+            $assignment = $this->get_gradingarea()->get_assignment();
+
+            //for the grade range
+            $grademenu = make_grades_menu($assignment->assignment->grade);
+
+            //start the html
+            $grade = $submission->grade;
+            if (!$gradingmethod = $this->gradingarea->get_active_gradingmethod()) {
+                $html = html_writer::start_tag('div');
+                if ($assignment->assignment->grade < 0) {
+                    $grademenu[-1] = get_string('nograde');
+                    $html .= get_string('grade') . ': ';
+                    $html .= $grademenu[$grade];
+                } else {
+                    //if grade isn't set yet then, make is blank, instead of -1
+                    if ($grade == -1) {
+                        $grade = '';
+                    }
+                    $html .= get_string('gradeoutof', 'local_joulegrader', $assignment->assignment->grade) . ': ';
+                    $html .= $grade;
                 }
             } else {
-                $this->advancedgradingwarning = $controller->form_unavailable_notification();
+                $html = 'Student Rubric stuff';
             }
         }
 
-        $posturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->course->id
-                , 'garea' => $this->gradingarea->get_areaid(), 'guser' => $this->gradingarea->get_guserid(), 'action' => 'process'));
-
-        //set mformdata
-        $this->mformdata = $mformdata;
-
-        //create the mform
-        $this->mform = new local_joulegrader_form_mod_assignment_submission_grade($posturl, $mformdata);
+        return $html;
     }
 
     /**
@@ -63,31 +110,35 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
      * @param $notify
      */
     public function process($notify) {
-        $mform = $this->get_mform();
-        $redirecturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $this->mformdata->assignment->course->id
+        //a little setup
+        $assignment = $this->get_gradingarea()->get_assignment();
+        $submission = $this->get_gradingarea()->get_submission(true);
+
+        //get the moodleform
+        $mform = $this->mform;
+
+        //set up a redirect url
+        $redirecturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->course->id
                 , 'garea' => $this->get_gradingarea()->get_areaid(), 'guser' => $this->get_gradingarea()->get_guserid()));
 
+        //get the data from the form
         if ($data = $mform->get_data()) {
 
-            if ($data->assignment != $this->mformdata->assignment->assignment->id) {
+            if ($data->assignment != $assignment->assignment->id) {
                 //throw an exception, could be some funny business going on here
                 throw new moodle_exception('assignmentnotmatched', 'local_joulegrader');
             }
 
-            if ($data->submission != $this->mformdata->submission->id) {
-                //throw an exception, could be some funny business going on here
-                throw new moodle_exception('submissionnotmatched', 'local_joulegrader');
-            }
-
-            if (isset($this->mformdata->gradinginstance)) {
+            if (isset($data->gradinginstance)) {
                 //using advanced grading
-                $gradinginstance = $this->mformdata->gradinginstance;
-                $grade = $gradinginstance->submit_and_get_grade($data->grade, $this->mformdata->submission->id);
-            } else if ($this->mformdata->assignment->assignment->grade < 0) {
+                $gradinginstance = $this->gradinginstance;
+                $grade = $gradinginstance->submit_and_get_grade($data->grade, $submission->id);
+            } else if ($assignment->assignment->grade < 0) {
+                //scale grade
                 $grade = clean_param($data->grade, PARAM_INT);
             } else {
                 //just using regular grading
-                $lettergrades = grade_get_letters(context_course::instance($this->mformdata->assignment->course->id));
+                $lettergrades = grade_get_letters(context_course::instance($assignment->course->id));
                 $grade = $data->grade;
 
                 //determine if user is submitting as a letter grade, percentage or float
@@ -102,7 +153,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                     }
 
                     //transform to an integer within the range of the assignment
-                    $grade = (int) ($this->mformdata->assignment->assignment->grade * ($percentvalue / 100));
+                    $grade = (int) ($assignment->assignment->grade * ($percentvalue / 100));
 
                 } else if (strpos($grade, '%') !== false) {
                     //trying to submit percentage
@@ -110,7 +161,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                     $percentgrade = clean_param($percentgrade, PARAM_FLOAT);
 
                     //transform to an integer within the range of the assignment
-                    $grade = (int) ($this->mformdata->assignment->assignment->grade * ($percentgrade / 100));
+                    $grade = (int) ($assignment->assignment->grade * ($percentgrade / 100));
 
                 } else if ($grade === '') {
                     //setting to "No grade"
@@ -131,6 +182,13 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
     }
 
     /**
+     * @return void
+     */
+    public function require_js() {
+
+    }
+
+    /**
      * @return bool
      */
     public function is_validated() {
@@ -141,6 +199,8 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
     /**
      * @param $grade
      * @param $override
+     *
+     * @return bool
      */
     protected function save_grade($grade, $override) {
         global $USER, $DB;
@@ -152,8 +212,8 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
         //2) update the grade in the gradebook if the grade is NOT overridden or if it IS overridden AND the override check
         //   was checked
 
-        $submission = $this->mformdata->submission;
-        $assignment = $this->mformdata->assignment;
+        $assignment = $this->get_gradingarea()->get_assignment();
+        $submission = $this->get_gradingarea()->get_submission();
 
         $submission->grade      = $grade;
         $submission->teacher    = $USER->id;
@@ -172,7 +232,8 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
         $success = $success && (bool) $DB->update_record('assignment_submissions', $submission);
 
         //now need to update the gradebook
-        if (!$this->mformdata->gradeoverridden) {
+        $gradeoverridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
+        if (!$gradeoverridden) {
             $assignment->update_grade($submission);
         } else if ($override) {
             //try to fetch the gradeitem first

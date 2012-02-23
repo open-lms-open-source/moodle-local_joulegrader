@@ -16,12 +16,9 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      * @return string
      */
     public function render_local_joulegrader_lib_pane_grade_mod_assignment_submission_class(local_joulegrader_lib_pane_grade_mod_assignment_submission_class $gradepane) {
-        $html = '';
+        $html = $gradepane->get_panehtml();
 
-        $mrhelper = new mr_helper();
-        $mform = $gradepane->get_mform();
-
-        $html = $mrhelper->buffer(array($mform, 'display'));
+        $gradepane->require_js();
 
         return $html;
     }

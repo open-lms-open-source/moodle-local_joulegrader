@@ -50,18 +50,16 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     }
 
     /**
-     * @return moodleform
-     */
-    public function get_mform() {
-        return $this->mform;
-    }
-
-    /**
      * @return mixed
      */
     public function get_gradinginfo() {
         return $this->gradinginfo;
     }
+
+    /**
+     * @return mixed
+     */
+    abstract public function get_panehtml();
 
     /**
      * Do any initialization the panel needs before rendering
