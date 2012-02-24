@@ -190,7 +190,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
      */
     public function get_submission($create = false) {
         //if it's not set try to load it
-        if (!isset($this->submission)) {
+        if (empty($this->submission)) {
             $this->load_submission($create);
         }
         return $this->submission;
@@ -205,7 +205,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
         $assignment = $this->get_assignment();
 
         try {
-            $this->submission = $assignment->get_submission($this->guserid, $create);
+            $this->submission = $assignment->get_submission($this->guserid, $create, true);
         } catch (Exception $e) {
             throw new coding_exception("Could not load the submission for assignment: $assignment->assignment->name, userid: $this->guser");
         }

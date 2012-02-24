@@ -82,7 +82,10 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
             $grademenu = make_grades_menu($assignment->assignment->grade);
 
             //start the html
-            $grade = $submission->grade;
+            $grade = -1;
+            if (!empty($submission)) {
+                $grade = $submission->grade;
+            }
             if (!$gradingmethod = $this->gradingarea->get_active_gradingmethod()) {
                 $html = html_writer::start_tag('div');
                 if ($assignment->assignment->grade < 0) {
