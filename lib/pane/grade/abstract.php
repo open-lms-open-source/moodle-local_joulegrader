@@ -21,11 +21,6 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     protected $mform;
 
     /**
-     * @var data needed for the moodleform for display/processing
-     */
-    protected $mformdata;
-
-    /**
      * @var string
      */
     protected $advancedgradingerror;
@@ -72,6 +67,7 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
      * Process data submitted by this grade pane
      *
      * @abstract
+     * @param $notify mr_notify
      */
     abstract public function process($notify);
 }

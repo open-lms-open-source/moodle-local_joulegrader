@@ -32,3 +32,4 @@ $string['gradeoutofrange'] = 'Grade is out range';
 $string['overridetext'] = 'Previously, an instructor created a grade for this item directly in the gradebook.  Check this box if you want to replace that grade, too.';
 
 $string['gradesaved'] = 'Grade Saved';
+$string['notgraded'] = 'Assignment Not Graded';

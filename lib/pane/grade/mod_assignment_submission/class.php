@@ -57,9 +57,6 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
             $posturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->course->id
                     , 'garea' => $this->gradingarea->get_areaid(), 'guser' => $this->gradingarea->get_guserid(), 'action' => 'process'));
 
-            //set mformdata
-            $this->mformdata = $mformdata;
-
             //create the mform
             $this->mform = new local_joulegrader_form_mod_assignment_submission_grade($posturl, $mformdata);
         }
@@ -69,14 +66,17 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
      * @return mixed
      */
     public function get_panehtml() {
-        //is a form defined
-        if (isset($this->mform)) {
+        $assignment = $this->get_gradingarea()->get_assignment();
+        //if this is an ungraded assignment just return a no grading info box
+        if ($assignment->assignment->grade == 0) {
+            $html = html_writer::tag('div', get_string('notgraded', 'local_joulegrader'), array('class' => 'local_joulegrader_notgraded'));
+        } else if (isset($this->mform)) {
+            //is a form defined
             $mrhelper = new mr_helper();
             $html = $mrhelper->buffer(array($this->mform, 'display'));
         } else {
             //need to get the student stuff
             $submission = $this->get_gradingarea()->get_submission();
-            $assignment = $this->get_gradingarea()->get_assignment();
 
             //for the grade range
             $grademenu = make_grades_menu($assignment->assignment->grade);
@@ -106,6 +106,13 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
         }
 
         return $html;
+    }
+
+    /**
+     * @return string - html for a modal
+     */
+    public function get_modal_html() {
+
     }
 
     /**
