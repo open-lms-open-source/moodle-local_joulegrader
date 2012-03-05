@@ -22,36 +22,44 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
         }
 
         $assignment = $this->gradingarea->get_assignment();
+        $submission = $this->gradingarea->get_submission();
+
         $this->gradinginfo = grade_get_grades($assignment->course->id, 'mod', 'assignment', $assignment->assignment->id, array($this->gradingarea->get_guserid()));
+
+        $gradingdisabled = $this->gradinginfo->items[0]->locked;
+
+        if ($gradingmethod = $this->gradingarea->get_active_gradingmethod()) {
+            $controller = $this->gradingarea->get_gradingmanager()->get_controller($gradingmethod);
+            $this->controller = $controller;
+            if ($controller->is_form_available()) {
+                $itemid = null;
+                if (!empty($submission->id)) {
+                    $itemid = $submission->id;
+                }
+                if ($gradingdisabled && $itemid) {
+                    $this->gradinginstance = $controller->get_current_instance($USER->id, $itemid);
+                } else if (!$gradingdisabled) {
+                    $instanceid = optional_param('gradinginstanceid', 0, PARAM_INT);
+                    $this->gradinginstance = $controller->get_or_create_instance($instanceid, $USER->id, $itemid);
+                }
+            } else {
+                $this->advancedgradingwarning = $controller->form_unavailable_notification();
+            }
+        }
+
 
         $this->teachercap = has_capability($this->gradingarea->get_teachercapability(), $this->gradingarea->get_gradingmanager()->get_context());
         if ($this->teachercap) {
             //set up the form
             $mformdata = new stdClass();
             $mformdata->assignment = $assignment;
-            $mformdata->submission = $submission = $this->gradingarea->get_submission();
+            $mformdata->submission = $submission;
             $mformdata->gradeoverridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
+            $mformdata->gradingdisabled = $gradingdisabled;
 
-            $gradingdisabled = $this->gradinginfo->items[0]->locked;
-
-            if ($gradingmethod = $this->gradingarea->get_active_gradingmethod()) {
-                $controller = $this->gradingarea->get_gradingmanager()->get_controller($gradingmethod);
-                if ($controller->is_form_available()) {
-                    $itemid = null;
-                    if (!empty($submission->id)) {
-                        $itemid = $submission->id;
-                    }
-                    if ($gradingdisabled && $itemid) {
-                        $mformdata->gradinginstance = $controller->get_current_instance($USER->id, $itemid);
-                    } else if (!$gradingdisabled) {
-                        $instanceid = optional_param('gradinginstanceid', 0, PARAM_INT);
-                        $mformdata->gradinginstance = $controller->get_or_create_instance($instanceid, $USER->id, $itemid);
-                    }
-
-                    $this->gradinginstance = $mformdata->gradinginstance;
-                } else {
-                    $this->advancedgradingwarning = $controller->form_unavailable_notification();
-                }
+            //For advanced grading methods
+            if (!empty($this->gradinginstance)) {
+                $mformdata->gradinginstance = $this->gradinginstance;
             }
 
             $posturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->course->id
@@ -66,42 +74,91 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
      * @return mixed
      */
     public function get_panehtml() {
+        //initialize
+        $html = '';
+
         $assignment = $this->get_gradingarea()->get_assignment();
         //if this is an ungraded assignment just return a no grading info box
         if ($assignment->assignment->grade == 0) {
+            //no grade for this assignment
             $html = html_writer::tag('div', get_string('notgraded', 'local_joulegrader'), array('class' => 'local_joulegrader_notgraded'));
-        } else if (isset($this->mform)) {
-            //is a form defined
-            $mrhelper = new mr_helper();
-            $html = $mrhelper->buffer(array($this->mform, 'display'));
         } else {
-            //need to get the student stuff
-            $submission = $this->get_gradingarea()->get_submission();
-
-            //for the grade range
-            $grademenu = make_grades_menu($assignment->assignment->grade);
-
-            //start the html
-            $grade = -1;
-            if (!empty($submission)) {
-                $grade = $submission->grade;
-            }
-            if (!$gradingmethod = $this->gradingarea->get_active_gradingmethod()) {
-                $html = html_writer::start_tag('div');
-                if ($assignment->assignment->grade < 0) {
-                    $grademenu[-1] = get_string('nograde');
-                    $html .= get_string('grade') . ': ';
-                    $html .= $grademenu[$grade];
+            //there is a grade for this assignment
+            //check to see if advanced grading is being used
+            if (empty($this->controller)) {
+                //advanced grading not used
+                //check for cap
+                if (!empty($this->teachercap)) {
+                    //get the form html for the teacher
+                    $mrhelper = new mr_helper();
+                    $html = $mrhelper->buffer(array($this->mform, 'display'));
                 } else {
-                    //if grade isn't set yet then, make is blank, instead of -1
-                    if ($grade == -1) {
-                        $grade = '';
+                    //get student grade html
+                    $submission = $this->get_gradingarea()->get_submission();
+
+                    //for the grade range
+                    $grademenu = make_grades_menu($assignment->assignment->grade);
+
+                    //start the html
+                    $grade = -1;
+                    if (!empty($submission)) {
+                        $grade = $submission->grade;
                     }
-                    $html .= get_string('gradeoutof', 'local_joulegrader', $assignment->assignment->grade) . ': ';
-                    $html .= $grade;
+
+                    $html = html_writer::start_tag('div');
+                    if ($assignment->assignment->grade < 0) {
+                        $grademenu[-1] = get_string('nograde');
+                        $html .= get_string('grade') . ': ';
+                        $html .= $grademenu[$grade];
+                    } else {
+                        //if grade isn't set yet then, make is blank, instead of -1
+                        if ($grade == -1) {
+                            $grade = '';
+                        }
+                        $html .= get_string('gradeoutof', 'local_joulegrader', $assignment->assignment->grade) . ': ';
+                        $html .= $grade;
+                    }
                 }
             } else {
-                $html = 'Student Rubric stuff';
+                //need to generate the condensed rubric html
+                //first a "view" button
+                $buttonatts = array('type' => 'button', 'id' => 'local-joulegrader-viewrubric-button');
+                $viewbutton = html_writer::tag('button', get_string('viewrubric', 'local_joulegrader'), $buttonatts);
+
+                $html = html_writer::tag('div', $viewbutton, array('id' => 'local-joulegrader-viewrubric-button-con'));
+
+                //rubric preview
+                $definition = $this->controller->get_definition();
+                $rubricfilling = $this->gradinginstance->get_rubric_filling();
+
+                $previewtable = new html_table();
+                $previewtable->head[] = new html_table_cell(get_string('criteria', 'local_joulegrader'));
+                $previewtable->head[] = new html_table_cell(get_string('score', 'local_joulegrader'));
+                foreach ($definition->rubric_criteria as $criterionid => $criterion) {
+                    $row = new html_table_row();
+                    //criterion name cell
+                    $row->cells[] = new html_table_cell($criterion['description']);
+
+                    //score cell value
+                    if (!empty($rubricfilling['criteria']) && isset($rubricfilling['criteria'][$criterionid]['levelid'])) {
+                        $levelid = $rubricfilling['criteria'][$criterionid]['levelid'];
+                        $criterionscore = $criterion['levels'][$levelid]['score'];
+                    } else {
+                        $criterionscore = ' - ';
+                    }
+
+                    //score cell
+                    $row->cells[] = new html_table_cell($criterionscore);
+
+                    $previewtable->data[] = $row;
+                }
+
+                $previewtable = html_writer::table($previewtable);
+                $html .= html_writer::tag('div', $previewtable, array('id' => 'local-joulegrader-viewrubric-preview-con'));
+
+                //rubric warning message
+                $html .= html_writer::tag('div', html_writer::tag('div', get_string('rubricerror', 'local_joulegrader')
+                        , array('class' => 'yui3-widget-bd')), array('id' => 'local-joulegrader-gradepane-rubricerror'));
             }
         }
 
@@ -112,7 +169,48 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
      * @return string - html for a modal
      */
     public function get_modal_html() {
+        global $PAGE;
 
+        $html = '';
+
+        $assignment = $this->gradingarea->get_assignment();
+        $submission = $this->gradingarea->get_submission();
+
+        if (empty($this->controller) || !$this->controller->is_form_available()) {
+            return $html;
+        }
+
+        //check for capability
+        if (!empty($this->teachercap)) {
+            //get the form and render it via buffer helper
+            $mform = $this->mform;
+            $mrhelper = new mr_helper();
+            $html = $mrhelper->buffer(array($this->mform, 'display'));
+        } else {
+            //this is for a student
+
+            //get grading info
+            $item = $this->gradinginfo->items[0];
+            $grade = $item->grades[$this->gradingarea->get_guserid()];
+
+            if ((!$grade->grade === false) && empty($grade->hidden)) {
+                $gradestr = '<div class="grade">'. get_string("grade").': '.$grade->str_long_grade. '</div>';
+            } else {
+                $gradestr = '';
+            }
+
+            $controller = $this->controller;
+            if (empty($submission) || $submission->grade == -1) {
+                $renderer = $controller->get_renderer($PAGE);
+                $criteria = $controller->get_definition()->rubric_criteria;
+                $html = $renderer->display_rubric($criteria, null, $controller::DISPLAY_VIEW, 'rubric');
+            } else {
+                $controller->set_grade_range(make_grades_menu($assignment->assignment->grade));
+                $html = $controller->render_grade($PAGE, $submission->id, $item, $gradestr, false);
+            }
+        }
+
+        return $html;
     }
 
     /**
@@ -139,7 +237,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                 throw new moodle_exception('assignmentnotmatched', 'local_joulegrader');
             }
 
-            if (isset($data->gradinginstance)) {
+            if (isset($data->gradinginstanceid)) {
                 //using advanced grading
                 $gradinginstance = $this->gradinginstance;
                 $grade = $gradinginstance->submit_and_get_grade($data->grade, $submission->id);

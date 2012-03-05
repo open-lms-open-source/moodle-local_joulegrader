@@ -7,6 +7,90 @@
 
 M.local_joulegrader = M.local_joulegrader || {};
 
+M.local_joulegrader.init_gradepane_panel = function(Y, id) {
+    var panelnode = Y.one('#' + id);
+    if (!panelnode) {
+        return;
+    }
+
+    //create the panel
+    var panel = new Y.Panel({
+        srcNode: '#' + id,
+        headerContent: M.str.local_joulegrader.rubric,
+        centered: true,
+//        width: 500,
+        zIndex: 10,
+//        modal: true,
+        visible: false,
+        render: true,
+        plugins: [Y.Plugin.Drag]
+    });
+
+    //wire up the button
+    var btn = Y.one('#local-joulegrader-viewrubric-button');
+    btn.on('click', function(e) {
+        e.preventDefault();
+
+        //open the panel
+        panel.show();
+    });
+
+    //get the submit and submit next buttons if they exist
+    var submitbuttons = Y.all('#' + id + ' input[type=submit]');
+    if (submitbuttons) {
+        //a little panel for display an error message
+        errorpanel = new Y.Panel({
+            srcNode: '#local-joulegrader-gradepane-rubricerror',
+            centered: true,
+            zindex: 200,
+            width: 200,
+            visible: false,
+            render: '#' + id
+        });
+
+        errorpanel.render();
+
+        //attach the event handlers
+        submitbuttons.on('click', function(e) {
+            //flag for valid rubric
+            var valid = true;
+
+            //get all the criteria
+            var criteria = Y.all('#' + id + ' .gradingform_rubric .criterion');
+
+            //make sure we have some criteria
+            if (criteria) {
+                //iterate over each criterion
+                criteria.each(function(criterion) {
+                    //get the levels (radio buttons) for this criterion
+                    var radiobuttons = criterion.all('input[type=radio]');
+                    if (radiobuttons) {
+                        var validcriterion = false;
+                        //iterate over each level (radio button)
+                        radiobuttons.each(function(radio) {
+                            if (radio.get('checked')) {
+                                //if the criterion is not valid already and
+                                validcriterion = true;
+                            }
+                        });
+
+                        //combine overall validity with this criterion's validity
+                        valid = valid && validcriterion;
+                    }
+                });
+            }
+
+            if (!valid) {
+                e.preventDefault();
+                errorpanel.show();
+                Y.later(2000, errorpanel, errorpanel.hide);
+            }
+
+        });
+    }
+
+}
+
 /** Useful for full embedding of various stuff */
 /** Copied and modified from Moodle core utility js */
 M.local_joulegrader.init_maximised_embed = function(Y, id) {

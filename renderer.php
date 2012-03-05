@@ -16,9 +16,36 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      * @return string
      */
     public function render_local_joulegrader_lib_pane_grade_mod_assignment_submission_class(local_joulegrader_lib_pane_grade_mod_assignment_submission_class $gradepane) {
+        global $PAGE;
+
         $html = $gradepane->get_panehtml();
 
+        $modalhtml = $gradepane->get_modal_html();
+        if (!empty($modalhtml)) {
+            //wrap it in the proper modal html
+            $modalhtml = html_writer::tag('div', $modalhtml, array('class' => 'yui3-widget-bd'));
+            $modalhtml = html_writer::tag('div', $modalhtml, array('id' => 'local-joulegrader-gradepane-panel'));
+
+            $html .= $modalhtml;
+        }
+
         $gradepane->require_js();
+
+        $module = array(
+            'name' => 'local_joulegrader',
+            'fullpath' => '/local/joulegrader/javascript.js',
+            'requires' => array(
+                'base',
+                'node',
+                'event',
+                'panel',
+                'dd-plugin'
+            ),
+            'strings' => array(
+                array('rubric', 'local_joulegrader'),
+            ),
+        );
+        $PAGE->requires->js_init_call('M.local_joulegrader.init_gradepane_panel', array('local-joulegrader-gradepane-panel'), false, $module);
 
         return $html;
     }

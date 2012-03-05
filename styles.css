@@ -1,3 +1,7 @@
+#local-joulegrader-panes {
+    min-height: 600px;
+}
+
 #local-joulegrader-viewpane .content {
     margin-right: 2em;
     overflow: auto;
@@ -37,4 +41,9 @@
 
 #local-joulegrader-gradepane .fitem .fitemtitle {
     width: 0px;
+}
+
+#local-joulegrader-viewrubric-preview-con .generaltable {
+    margin-left: 0px;
+    margin-right: 0px;
 }

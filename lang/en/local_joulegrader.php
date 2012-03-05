@@ -31,5 +31,10 @@ $string['gradeoutof'] = 'Grade (out of {$a})';
 $string['gradeoutofrange'] = 'Grade is out range';
 $string['overridetext'] = 'Previously, an instructor created a grade for this item directly in the gradebook.  Check this box if you want to replace that grade, too.';
 
+$string['criteria'] = 'Criteria';
 $string['gradesaved'] = 'Grade Saved';
 $string['notgraded'] = 'Assignment Not Graded';
+$string['viewrubric'] = 'View Rubric';
+$string['rubric'] = 'Rubric';
+$string['rubricerror'] = 'Please select one level for each criterion';
+$string['score'] = 'Score';
