@@ -110,6 +110,10 @@ class local_joulegrader_controller_default extends mr_controller {
             } else {
                 $gradeareainstance = $this->gradeareainstance;
             }
+
+            //set user id for "save and next" button
+            $gradeareainstance->set_nextuserid($usershelper->get_nextuser());
+
             $viewhtml = $renderer->render($gradeareainstance->get_viewpane());
             $gradehtml = $renderer->render($gradeareainstance->get_gradepane());
 
@@ -175,6 +179,9 @@ class local_joulegrader_controller_default extends mr_controller {
 
         //load the current area instance
         $gradeareainstance = $gareashelper::get_gradingarea_instance($currentareaid, $currentuserid);
+
+        //set next userid
+        $gradeareainstance->set_nextuserid($usershelper->get_nextuser());
 
         if (!$gradeareainstance->get_gradepane()->is_validated()) {
             $this->gradeareainstance = $gradeareainstance;

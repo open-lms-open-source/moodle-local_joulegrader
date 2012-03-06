@@ -69,6 +69,8 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                 $posturl->param('needsgrading', 1);
             }
 
+            $mformdata->nextuser = $this->gradingarea->get_nextuserid();
+
             //create the mform
             $this->mform = new local_joulegrader_form_mod_assignment_submission_grade($posturl, $mformdata);
         }
@@ -282,6 +284,11 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                     //just a numeric value, clean it as int b/c that's what assignment module accepts
                     $grade = clean_param($grade, PARAM_INT);
                 }
+            }
+
+            //redirect to next user if set
+            if (optional_param('saveandnext', 0, PARAM_BOOL) && !empty($data->nextuser)) {
+                $redirecturl->param('guser', $data->nextuser);
             }
 
             if (optional_param('needsgrading', 0, PARAM_BOOL)) {

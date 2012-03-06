@@ -21,6 +21,11 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     protected $guserid;
 
     /**
+     * @var int - id of the next gradeable user
+     */
+    protected $nextuserid;
+
+    /**
      * @var gradingmanager - instance of the grading_manager for the area
      */
     protected $gradingmanager;
@@ -202,6 +207,20 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
      */
     public function get_guserid() {
         return $this->guserid;
+    }
+
+    /**
+     * @return int - next gradeable user's id
+     */
+    public function get_nextuserid() {
+        return $this->nextuserid;
+    }
+
+    /**
+     * @param $nextuserid
+     */
+    public function set_nextuserid($nextuserid) {
+        $this->nextuserid = $nextuserid;
     }
 
     /**

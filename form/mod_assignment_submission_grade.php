@@ -18,6 +18,9 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
             $mform->setType('cmid', PARAM_INT);
         }
 
+        $mform->addElement('hidden', 'nextuser', $this->_customdata->nextuser);
+        $mform->setType('nextuser', PARAM_INT);
+
         $mform->addElement('hidden', 'assignment', $this->_customdata->assignment->assignment->id);
 
         //for the grade range
@@ -76,8 +79,8 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
 
         $buttonarray = array();
         $buttonarray[] = &$mform->createElement('submit', 'submit', get_string('save', 'local_joulegrader'));
-        if (isset($this->_customdata->nextid)) {
-            $buttonarray[] = &$mform->createElement('submit', 'saveandnext', get_string('saveandnext'));
+        if (isset($this->_customdata->nextuser)) {
+            $buttonarray[] = &$mform->createElement('submit', 'saveandnext', get_string('saveandnext', 'local_joulegrader'));
         }
 
         $mform->addGroup($buttonarray, 'grading_buttonar', '', array(' '), false);
