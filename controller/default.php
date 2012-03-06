@@ -57,9 +57,6 @@ class local_joulegrader_controller_default extends mr_controller {
         $linknav = $OUTPUT->container($linknav, null, 'local-joulegrader-linknav');
         $linknav = $OUTPUT->container($linknav, 'content');
 
-        //button nav
-        $buttonnav = '';
-
         //pull out the users helper and gradingareas helper
         $usershelper = $this->helper->users;
 
@@ -77,14 +74,31 @@ class local_joulegrader_controller_default extends mr_controller {
         $usernav = $this->helper->navigation->get_users_navigation();
         $usernav = $OUTPUT->container($usernav, null, 'local-joulegrader-usernav');
 
+        $currentareaid = $gareashelper->get_currentarea();
+        $currentuserid = $usershelper->get_currentuser();
+
+        //needs grading button
+        //button nav
+        $buttonnav = '';
+        if (has_capability('local/joulegrader:grade', $this->get_context())) {
+            $buttonurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid
+                    , 'guser' => $currentuserid));
+
+            $needsgrading = optional_param('needsgrading', 0, PARAM_BOOL);
+            if (empty($needsgrading)) {
+                $buttonstring = get_string('needsgrading', 'local_joulegrader');
+                $buttonurl->param('needsgrading', 1);
+            } else {
+                $buttonstring = get_string('allactivities', 'local_joulegrader');
+            }
+            $buttonnav = html_writer::tag('div', $OUTPUT->single_button($buttonurl, $buttonstring, 'get'), array('class' => 'content'));
+        }
+
         $menunav = $OUTPUT->container($activitynav . $usernav, 'content');
 
         $usernavcon = $OUTPUT->container($linknav, 'yui3-u-1-3', 'local-joulegrader-linknav');
         $buttonnavcon = $OUTPUT->container($buttonnav, 'yui3-u-1-3', 'local-joulegrader-buttonnav');
         $activitynavcon = $OUTPUT->container($menunav, 'yui3-u-1-3', 'local-joulegrader-menunav');
-
-        $currentareaid = $gareashelper->get_currentarea();
-        $currentuserid = $usershelper->get_currentuser();
 
         //if the current user id and the current area id are not empty, load the class and get the pane contents
         if (!empty($currentareaid) && !empty($currentuserid)) {

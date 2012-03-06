@@ -102,9 +102,11 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
      * @static
      * @param course_modinfo $courseinfo
      * @param grading_manager $gradingmanager
+     * @param bool $needsgrading
      * @return bool
      */
-    public static function include_area(course_modinfo $courseinfo, grading_manager $gradingmanager) {
+    public static function include_area(course_modinfo $courseinfo, grading_manager $gradingmanager, $needsgrading) {
+        global $DB;
         $include = false;
 
         try {
@@ -113,6 +115,19 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
                 $cminfo = $courseinfo->get_cm($cm->id);
                 if (has_capability('moodle/course:viewhiddenactivities', $gradingmanager->get_context()) || ($cminfo->available && $cm->visible)) {
                     $include = true;
+                }
+
+                //check to see if it should be included based on whether the needs grading button was selected
+                if (!empty($include) && !empty($needsgrading) && has_capability(self::$teachercapability, context_module::instance($cm->id))) {
+                    //needs to be limited by "needs grading"
+                    //check for submissions for this assignment that have timemarked = 0
+                    $submissions = $DB->get_records('assignment_submissions', array('assignment' => $assignment->id, 'timemarked' => 0)
+                            , '', 'id', 0, 1);
+
+                    if (empty($submissions)) {
+                        //if there isn't at least one submission then don't inlude this
+                        $include = false;
+                    }
                 }
             }
         } catch (Exception $e) {

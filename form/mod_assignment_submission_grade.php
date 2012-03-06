@@ -75,7 +75,7 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
         }
 
         $buttonarray = array();
-        $buttonarray[] = &$mform->createElement('submit', 'submit', get_string('savechanges'));
+        $buttonarray[] = &$mform->createElement('submit', 'submit', get_string('save', 'local_joulegrader'));
         if (isset($this->_customdata->nextid)) {
             $buttonarray[] = &$mform->createElement('submit', 'saveandnext', get_string('saveandnext'));
         }

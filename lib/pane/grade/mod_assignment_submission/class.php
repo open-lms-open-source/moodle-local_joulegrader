@@ -65,6 +65,10 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
             $posturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->course->id
                     , 'garea' => $this->gradingarea->get_areaid(), 'guser' => $this->gradingarea->get_guserid(), 'action' => 'process'));
 
+            if ($needsgrading = optional_param('needsgrading', 0, PARAM_BOOL)) {
+                $posturl->param('needsgrading', 1);
+            }
+
             //create the mform
             $this->mform = new local_joulegrader_form_mod_assignment_submission_grade($posturl, $mformdata);
         }
@@ -113,7 +117,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                     } else {
                         //if grade isn't set yet then, make is blank, instead of -1
                         if ($grade == -1) {
-                            $grade = '';
+                            $grade = ' - ';
                         }
                         $html .= get_string('gradeoutof', 'local_joulegrader', $assignment->assignment->grade) . ': ';
                         $html .= $grade;
@@ -278,6 +282,10 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                     //just a numeric value, clean it as int b/c that's what assignment module accepts
                     $grade = clean_param($grade, PARAM_INT);
                 }
+            }
+
+            if (optional_param('needsgrading', 0, PARAM_BOOL)) {
+                $redirecturl->param('needsgrading', 1);
             }
 
             //save the grade

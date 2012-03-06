@@ -49,10 +49,15 @@ class local_joulegrader_helper_navigation extends mr_helper_abstract {
             $nextuser    = $usershelper->get_nextuser();
             $prevuser    = $usershelper->get_prevuser();
 
+            $needsgrading = optional_param('needsgrading', 0, PARAM_BOOL);
+
             //activity navigation
             if (!empty($gradingareas)) {
-                $activity_navwidget = new local_joulegrader_lib_navigation_widget('activity', new moodle_url('/local/joulegrader/view.php'
-                        , array('courseid' => $COURSE->id, 'guser' => $currentuser)), $gradingareas, 'garea', $currentarea, $nextarea, $prevarea);
+                $gareaurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'guser' => $currentuser));
+                if (!empty($needsgrading)) {
+                    $gareaurl->param('needsgrading', 1);
+                }
+                $activity_navwidget = new local_joulegrader_lib_navigation_widget('activity', $gareaurl, $gradingareas, 'garea', $currentarea, $nextarea, $prevarea);
 
                 $this->activitynav = $renderer->render($activity_navwidget);
             } else {
@@ -61,8 +66,11 @@ class local_joulegrader_helper_navigation extends mr_helper_abstract {
 
             //user navigation
             if (!empty($users)) {
-                $user_navwidget = new local_joulegrader_lib_navigation_widget('user', new moodle_url('/local/joulegrader/view.php'
-                        , array('courseid' => $COURSE->id, 'garea' => $currentarea)), $users, 'guser', $currentuser, $nextuser, $prevuser);
+                $guserurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentarea));
+                if (!empty($needsgrading)) {
+                    $guserurl->param('needsgrading', 1);
+                }
+                $user_navwidget = new local_joulegrader_lib_navigation_widget('user', $guserurl, $users, 'guser', $currentuser, $nextuser, $prevuser);
 
                 $this->usernav = $renderer->render($user_navwidget);
             } else {

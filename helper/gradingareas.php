@@ -222,8 +222,9 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
                 }
 
                 //give the grading_area class an opportunity to exclude this particular grading_area
+                $needsgrading = optional_param('needsgrading', 0, PARAM_BOOL);
                 $includemethod = 'include_area';
-                if (!is_callable("{$classname}::{$includemethod}") || !($classname::$includemethod($courseinfo, $gradingareamgr))) {
+                if (!is_callable("{$classname}::{$includemethod}") || !($classname::$includemethod($courseinfo, $gradingareamgr, $needsgrading))) {
                     //either the method isn't callable or the area shouldn't be included
                     continue;
                 }

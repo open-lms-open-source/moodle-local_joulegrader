@@ -15,6 +15,8 @@ $string['joulegrader:view'] = 'View graded work via joule Grader';
 //default.php strings
 $string['gradebook'] = 'Gradebook';
 $string['nothingtodisplay'] = 'Nothing to Display';
+$string['needsgrading'] = 'Show Activities Requiring Grading';
+$string['allactivities'] = 'Show All Activities';
 
 //helper/navigation.php strings
 $string['nogradeableareas'] = 'No gradeable items';
@@ -30,6 +32,7 @@ $string['usernav_help'] = 'Use this widget to select which user to grade.';
 $string['gradeoutof'] = 'Grade (out of {$a})';
 $string['gradeoutofrange'] = 'Grade is out range';
 $string['overridetext'] = 'Previously, an instructor created a grade for this item directly in the gradebook.  Check this box if you want to replace that grade, too.';
+$string['save'] = 'Save';
 
 $string['criteria'] = 'Criteria';
 $string['gradesaved'] = 'Grade Saved';
