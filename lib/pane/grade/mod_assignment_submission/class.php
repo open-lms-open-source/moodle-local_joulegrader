@@ -28,7 +28,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
 
         $gradingdisabled = $this->gradinginfo->items[0]->locked;
 
-        if ($gradingmethod = $this->gradingarea->get_active_gradingmethod()) {
+        if (($gradingmethod = $this->gradingarea->get_active_gradingmethod()) && $gradingmethod == 'rubric') {
             $controller = $this->gradingarea->get_gradingmanager()->get_controller($gradingmethod);
             $this->controller = $controller;
             if ($controller->is_form_available()) {
@@ -43,7 +43,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                     $this->gradinginstance = $controller->get_or_create_instance($instanceid, $USER->id, $itemid);
                 }
             } else {
-                $this->advancedgradingwarning = $controller->form_unavailable_notification();
+                $this->advancedgradingerror = $controller->form_unavailable_notification();
             }
         }
 
@@ -91,13 +91,18 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
         } else {
             //there is a grade for this assignment
             //check to see if advanced grading is being used
-            if (empty($this->controller)) {
+            if (empty($this->controller) || (!empty($this->controller)) && !$this->controller->is_form_available()) {
                 //advanced grading not used
                 //check for cap
                 if (!empty($this->teachercap)) {
                     //get the form html for the teacher
                     $mrhelper = new mr_helper();
                     $html = $mrhelper->buffer(array($this->mform, 'display'));
+
+                    //advanced grading error warning
+                    if (!$this->controller->is_form_available()) {
+                        $html .= $this->advancedgradingerror;
+                    }
                 } else {
                     //get student grade html
                     $submission = $this->get_gradingarea()->get_submission();
@@ -133,7 +138,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                         $html .= html_writer::end_tag('div');
                     }
                 }
-            } else {
+            } else if ($this->controller->is_form_available()) {
                 //need to generate the condensed rubric html
                 //first a "view" button
                 $buttonatts = array('type' => 'button', 'id' => 'local-joulegrader-viewrubric-button');

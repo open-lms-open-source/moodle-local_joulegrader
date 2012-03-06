@@ -62,7 +62,7 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
      * @param bool $needsgrading
      * @return bool
      */
-    abstract public static function include_area(course_modinfo $courseinfo, grading_manager $gradingmanager, $needsgrading);
+    abstract public static function include_area(course_modinfo $courseinfo, grading_manager $gradingmanager, $needsgrading = false);
 
     /**
      * @return string

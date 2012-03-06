@@ -105,7 +105,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
      * @param bool $needsgrading
      * @return bool
      */
-    public static function include_area(course_modinfo $courseinfo, grading_manager $gradingmanager, $needsgrading) {
+    public static function include_area(course_modinfo $courseinfo, grading_manager $gradingmanager, $needsgrading = false) {
         global $DB;
         $include = false;
 
