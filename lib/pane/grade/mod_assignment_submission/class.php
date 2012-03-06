@@ -111,7 +111,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                         $grade = $submission->grade;
                     }
 
-                    $html = html_writer::start_tag('div');
+                    $html = html_writer::start_tag('div', array('id' => 'local-joulegrader-gradepane-grade'));
                     if ($assignment->assignment->grade < 0) {
                         $grademenu[-1] = get_string('nograde');
                         $html .= get_string('grade') . ': ';
@@ -123,6 +123,14 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                         }
                         $html .= get_string('gradeoutof', 'local_joulegrader', $assignment->assignment->grade) . ': ';
                         $html .= $grade;
+                    }
+                    $html .= html_writer::end_tag('div');
+
+                    $overridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
+                    if (!empty($overridden)) {
+                        $html .= html_writer::start_tag('div');
+                        $html .= get_string('gradeoverriddenstudent', 'local_joulegrader', $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->str_grade);
+                        $html .= html_writer::end_tag('div');
                     }
                 }
             } else {
