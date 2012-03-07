@@ -91,7 +91,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
         } else {
             //there is a grade for this assignment
             //check to see if advanced grading is being used
-            if (empty($this->controller) || (!empty($this->controller)) && !$this->controller->is_form_available()) {
+            if (empty($this->controller) || (!empty($this->controller) && !$this->controller->is_form_available())) {
                 //advanced grading not used
                 //check for cap
                 if (!empty($this->teachercap)) {
@@ -100,7 +100,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                     $html = $mrhelper->buffer(array($this->mform, 'display'));
 
                     //advanced grading error warning
-                    if (!$this->controller->is_form_available()) {
+                    if (!empty($this->controller) && !$this->controller->is_form_available()) {
                         $html .= $this->advancedgradingerror;
                     }
                 } else {
