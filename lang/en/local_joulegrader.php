@@ -27,6 +27,8 @@ $string['activitynav'] = 'Gradeable items';
 $string['activitynav_help'] = 'Use this widget to select which gradable item to grade.';
 $string['usernav'] = 'Users';
 $string['usernav_help'] = 'Use this widget to select which user to grade.';
+$string['commentdeleted'] = 'User {$a->deletedby} deleted post on {$a->deletedon}';
+$string['deletecomment'] = 'Delete comment';
 
 //mod_assignment_submission_grade form strings
 $string['gradeoutof'] = 'Grade (out of {$a})';
@@ -43,3 +45,8 @@ $string['rubric'] = 'Rubric';
 $string['rubricerror'] = 'Please select one level for each criterion';
 $string['score'] = 'Score';
 $string['gradeoverriddenstudent'] = '(Override in Gradebook: {$a})';
+
+//form/comment.php strings
+$string['add'] = 'Add';
+$string['attachments'] = 'Attachments';
+$string['commentrequired'] = 'Comment required';

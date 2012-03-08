@@ -47,3 +47,35 @@
     margin-left: 0px;
     margin-right: 0px;
 }
+
+#local-joulegrader-commentloop-comments {
+    max-height: 300px;
+    overflow-y: auto;
+    word-wrap: break-word;
+}
+
+.local_joulegrader_comment_commenter, .local_joulegrader_comment_body, .local_joulegrader_comment_delete {
+    display: inline-block;
+}
+
+.local_joulegrader_comment_commenter {
+    float: left;
+    width: 15%;
+}
+
+.local_joulegrader_comment_delete {
+    float: right;
+}
+
+.local_joulegrader_comment_body {
+    width: 70%;
+    padding: 0 .5em .5em .5em;
+}
+
+#local-joulegrader-gradepane .mform fieldset div {
+    margin: 0px;
+}
+
+#local-joulegrader-gradepane .mform .fitem fieldset.felement {
+    padding-left: 0px;
+}
