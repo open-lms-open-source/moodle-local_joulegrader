@@ -78,7 +78,7 @@ class local_joulegrader_lib_comment_loop implements renderable {
      * @return local_joulegrader_lib_comment_class
      */
     public function add_comment($commentdata) {
-        global $USER;
+        global $USER, $COURSE;
 
         //create a new record
         $commentrecord = new stdClass;
@@ -92,6 +92,14 @@ class local_joulegrader_lib_comment_loop implements renderable {
         $comment = new local_joulegrader_lib_comment_class($commentrecord);
 
         //save the new comment
+        $comment->save();
+
+        //file area
+        $itemid = $commentdata->comment['itemid'];
+        $context = context_course::instance($COURSE->id);
+        $content = file_save_draft_area_files($itemid, $context->id, 'local_joulegrader', 'comment', $comment->get_id(), null, $comment->get_content());
+
+        $comment->set_content($content);
         $comment->save();
 
         return $comment;

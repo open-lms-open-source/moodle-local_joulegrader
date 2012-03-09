@@ -16,8 +16,8 @@ class local_joulegrader_form_comment extends moodleform {
 
         //tinymce params
         $tineymceparams = array(
-            'plugins' => "safari,layer,emotions,inlinepopups,paste,directionality,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,spellchecker",
-            'theme_advanced_buttons1' => "bold,italic,underline,strikethrough,bullist,numlist,|,undo,redo,",
+            'plugins' => "safari,layer,advlink,emotions,inlinepopups,paste,directionality,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,spellchecker",
+            'theme_advanced_buttons1' => "bold,italic,underline,strikethrough,bullist,numlist,|,undo,redo,|,link,unlink",
             'theme_advanced_buttons1_add' => null,
             'theme_advanced_buttons2' => null,
             'theme_advanced_buttons2_add' => null,

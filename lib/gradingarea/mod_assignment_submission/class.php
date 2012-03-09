@@ -78,7 +78,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
         }
 
         send_stored_file($file);
-    }
+}
 
 
     /**

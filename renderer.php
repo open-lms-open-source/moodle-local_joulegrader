@@ -70,7 +70,9 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $commenttime = html_writer::tag('div', userdate($comment->get_timecreated(), '%d %B %H:%M'), array('class' => 'local_joulegrader_comment_time'));
 
         //comment content
-        $commentcontent = html_writer::tag('div', $comment->get_content(), array('class' => 'local_joulegrader_comment_content'));
+        $content = file_rewrite_pluginfile_urls($comment->get_content(), 'pluginfile.php', context_course::instance($COURSE->id)->id
+                , 'local_joulegrader', 'comment', $comment->get_id());
+        $commentcontent = html_writer::tag('div', $content, array('class' => 'local_joulegrader_comment_content'));
 
         //coment body
         $commentdeleted = $comment->get_deleted();

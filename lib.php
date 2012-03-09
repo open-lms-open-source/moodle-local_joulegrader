@@ -65,30 +65,44 @@ function local_joulegrader_pluginfile($course, $cm, $context, $filearea, $args, 
 
     require_login($course, false, $cm);
 
-    if ($filearea != 'gradingarea') {
+    if ($filearea != 'gradingarea' && $filearea != 'comment') {
         return false;
     }
 
-    //shift the itemid off the front
-    $itemid = (int) array_shift($args);
+    if ($filearea == 'gradingarea') {
+        //shift the itemid off the front
+        $itemid = (int) array_shift($args);
 
-    //next arg should be the gradingarea component_area (e.g. mod_assignment_submission)
-    $gradingarea = array_shift($args);
+        //next arg should be the gradingarea component_area (e.g. mod_assignment_submission)
+        $gradingarea = array_shift($args);
 
-    $classname = 'local_joulegrader_lib_gradingarea_' . $gradingarea . '_class';
-    if (!class_exists($classname)) {
-        try {
-            include_once($CFG->dirroot . '/local/joulegrader/lib/gradingarea/' . $gradingarea . '/class.php');
-        } catch (Exception $e) {
+        $classname = 'local_joulegrader_lib_gradingarea_' . $gradingarea . '_class';
+        if (!class_exists($classname)) {
+            try {
+                include_once($CFG->dirroot . '/local/joulegrader/lib/gradingarea/' . $gradingarea . '/class.php');
+            } catch (Exception $e) {
+                return false;
+            }
+        }
+
+        //pass everything off to the gradingarea class to handle sending the file
+        $method = 'pluginfile';
+        if (!is_callable("$classname::$method")) {
             return false;
         }
-    }
 
-    //pass everything off to the gradingarea class to handle sending the file
-    $method = 'pluginfile';
-    if (!is_callable("$classname::$method")) {
-        return false;
-    }
+        $classname::$method($course, $cm, $context, $itemid, $args, $forcedownload);
 
-    $classname::$method($course, $cm, $context, $itemid, $args, $forcedownload);
+    } else if ($filearea == 'comment') {
+
+        $fullpath = '/'.$context->id.'/local_joulegrader/comment/'.$args[0].'/'.$args[1];
+
+        $fs = get_file_storage();
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+        send_stored_file($file, 86400, 0, true);
+    }
 }
