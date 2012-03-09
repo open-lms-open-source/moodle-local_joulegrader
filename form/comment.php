@@ -10,6 +10,8 @@ class local_joulegrader_form_comment extends moodleform {
      * Form definition
      */
     public function definition() {
+        global $COURSE;
+
         $mform =& $this->_form;
 
         //tinymce params
@@ -30,8 +32,9 @@ class local_joulegrader_form_comment extends moodleform {
         $mform->addElement('editor', 'comment', null, array('cols' => 10), $editoroptions);
         $mform->addRule('comment', get_string('commentrequired', 'local_joulegrader'), 'required', null, 'client');
 
-        //file picker
-        $mform->addElement('filepicker', 'attachments', get_string('attachments', 'local_joulegrader'));
+        //file manager
+//        $mform->addElement('filemanager', 'attachments', null, null
+//                , array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes, 'maxfiles' => 50));
 
         //submit button
         $this->add_action_buttons(false, get_string('add', 'local_joulegrader'));

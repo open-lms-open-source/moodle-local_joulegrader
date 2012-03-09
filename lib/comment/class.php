@@ -221,6 +221,9 @@ class local_joulegrader_lib_comment_class implements renderable {
         $record->id = $this->id;
         $record->deleted = time();
 
+        //set the class deleted
+        $this->deleted = $record->deleted;
+
         //update the record with the deleted flag set
         $DB->update_record('local_joulegrader_comments', $record);
     }

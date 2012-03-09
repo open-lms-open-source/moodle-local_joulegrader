@@ -48,7 +48,7 @@
     margin-right: 0px;
 }
 
-#local-joulegrader-commentloop-comments {
+.local_joulegrader_commentloop_comments {
     max-height: 300px;
     overflow-y: auto;
     word-wrap: break-word;

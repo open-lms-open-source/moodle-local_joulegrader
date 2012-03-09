@@ -91,6 +91,159 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
 
 }
 
+/**
+ *
+ * @param Y
+ * @param id - id of the comment loop container
+ */
+M.local_joulegrader.init_commentloop = function(Y, id) {
+    //get the comment loop container
+    var commentloopcon = Y.one('#' + id);
+    if (!commentloopcon) {
+        return;
+    }
+
+    //get the
+    var comments = commentloopcon.one('.local_joulegrader_commentloop_comments');
+    if (!comments) {
+        return;
+    }
+
+    //scroll the comments to the most recent
+    comments.set('scrollTop', comments.get('scrollHeight'));
+
+    //get the comment form element
+    var commentform = commentloopcon.one('form');
+    if (!commentform) {
+        return;
+    }
+
+    //event handler for deleting comments
+    var deleteaction = function(e) {
+        e.preventDefault();
+
+        var lnkhref = e.currentTarget.get('href');
+        //get the the params
+        var params = lnkhref.split('?')[1];
+        if (!params) {
+            return;
+        }
+
+        //get the comment div
+        var comment = e.currentTarget.ancestor('.local_joulegrader_comment');
+        if (!comment) {
+            return;
+        }
+
+        //Y.io cfg
+        var cfg = {
+            method: 'POST',
+            data: params + '&ajax=1',
+            on: {
+                success: function(id, o, args) {
+                    try {
+                        //get the response
+                        var response = Y.JSON.parse(o.responseText);
+
+                        //if html is there replace the old one
+                        if (response.html) {
+                            var newcomment = Y.Node.create(response.html);
+
+                            //insert the new comment after the old one
+                            comment.insert(newcomment, 'after');
+
+                            //make sure the new comment has the deleted class
+                            if (!newcomment.hasClass('deleted')) {
+                                newcomment.addClass('deleted');
+                            }
+
+                            //delete the old comment
+                            comment.remove(true);
+                        }
+                    } catch (err) {
+                        alert(err);
+                    }
+                }
+            }
+        };
+
+        //send the ajax request
+        Y.io(M.cfg.wwwroot + '/local/joulegrader/view.php', cfg);
+    }
+
+    //attach onclick event listener for delete comment
+    var commentdeletelinks = commentloopcon.all('.local_joulegrader_comment_delete a');
+    if (commentdeletelinks) {
+        commentdeletelinks.on('click', deleteaction);
+    }
+
+    //attach onsubmit event listener for adding new comments
+    commentform.on('submit', function(e) {
+        //try to get the comment textarea element
+        var textarea = commentform.one('textarea');
+        if (!textarea) {
+            return;
+        }
+
+        //try to get the iframe for the tinymce editor
+        var editor = tinyMCE.getInstanceById(textarea.get('id'));
+
+        //try to get the comment text
+        var comment = textarea.get('value');
+        if (comment == '') {
+            //if there is no comment then just return and let the form client-side validation handle it
+            return;
+        }
+
+        e.preventDefault();
+        //looks like this is a good comment, let's submit it all ajax-like
+        var cfg = {
+            method: 'POST',
+            form: {
+                id: commentform
+            },
+            data: 'ajax=1',
+            on: {
+                success: function(id, o, args) {
+                    try {
+                        var response = Y.JSON.parse(o.responseText);
+
+                        if (response.html) {
+                            //append the comment
+                            var newcomment = Y.Node.create(response.html);
+                            comments.append(newcomment);
+                            
+                            //attach the delete event listener
+                            var deletelnk = newcomment.one('.local_joulegrader_comment_delete a');
+                            if (deletelnk) {
+                                deletelnk.on('click', deleteaction);
+                            }
+
+                            //delete the textarea
+                            textarea.set('value', '');
+
+                            //set the tinyMCE content to an empty string also
+                            if (editor) {
+                                editor.setContent('');
+                            }
+
+                            //scroll down
+                            comments.set('scrollTop', comments.get('scrollHeight'));
+
+                        }
+                    } catch (excp) {
+
+                    }
+                }
+            }
+        };
+
+        //fire the ajax request
+        Y.io(M.cfg.wwwroot + '/local/joulegrader/view.php', cfg);
+
+    });
+}
+
 /** Useful for full embedding of various stuff */
 /** Copied and modified from Moodle core utility js */
 M.local_joulegrader.init_maximised_embed = function(Y, id) {

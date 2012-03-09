@@ -205,12 +205,12 @@ class local_joulegrader_controller_default extends mr_controller {
      * @throws Exception
      */
     public function deletecomment_action() {
-        global $CFG, $DB, $COURSE;
+        global $CFG, $DB, $COURSE, $PAGE;
 
         require_once($CFG->dirroot . '/local/joulegrader/lib/comment/class.php');
 
         //ajax request?
-        $isajaxrequest = false;
+        $isajaxrequest = optional_param('ajax', false, PARAM_BOOL);
 
         try {
             //required param for commentid
@@ -231,6 +231,16 @@ class local_joulegrader_controller_default extends mr_controller {
 
             if (!$isajaxrequest) {
                 redirect(new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $comment->get_gareaid(), 'guser' => $comment->get_guserid())));
+            } else {
+                $renderer = $PAGE->get_renderer('local_joulegrader');
+                $commenthtml = $renderer->render($comment);
+
+                $commentinfo = new stdClass();
+                $commentinfo->html = $commenthtml;
+
+                //send response
+                echo json_encode($commentinfo);
+                die;
             }
         } catch (Exception $e) {
             if (!$isajaxrequest) {
@@ -247,10 +257,10 @@ class local_joulegrader_controller_default extends mr_controller {
      * Add a comment
      */
     public function addcomment_action() {
-        global $COURSE;
+        global $COURSE, $PAGE;
 
         //ajax request
-        $isajaxrequest = false;
+        $isajaxrequest = optional_param('ajax', false, PARAM_BOOL);
 
         try {
             //get current area id and current user parameters for the gradingarea instance
@@ -302,6 +312,15 @@ class local_joulegrader_controller_default extends mr_controller {
 
             if (!$isajaxrequest) {
                 redirect(new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid, 'guser' => $currentuserid)));
+            } else {
+                $renderer = $PAGE->get_renderer('local_joulegrader');
+                $commenthtml = $renderer->render($comment);
+
+                $commentinfo = new stdClass();
+                $commentinfo->html = $commenthtml;
+
+                echo json_encode($commentinfo);
+                die;
             }
 
         } catch (Exception $e) {

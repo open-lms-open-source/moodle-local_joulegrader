@@ -14,6 +14,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      * @return string
      */
     public function render_local_joulegrader_lib_comment_loop(local_joulegrader_lib_comment_loop $commentloop) {
+        global $PAGE;
 
         //get the comments
         $comments = $commentloop->get_comments();
@@ -24,7 +25,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             $commentshtml .= $this->render($comment);
         }
 
-        $commentshtml = html_writer::tag('div', $commentshtml, array('id' => 'local-joulegrader-commentloop-comments'));
+        $commentshtml = html_writer::tag('div', $commentshtml, array('class' => 'local_joulegrader_commentloop_comments'));
 
         //get the comment form
         $mform = $commentloop->get_mform();
@@ -33,7 +34,21 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $mrhelper = new mr_helper();
         $mformhtml = $mrhelper->buffer(array($mform, 'display'));
 
-        $html = html_writer::tag('div', $commentshtml . $mformhtml, array('id' => 'local-joulegrader-commentloop-con'));
+        $id = uniqid('local-joulegrader-commentloop-con-');
+        $html = html_writer::tag('div', $commentshtml . $mformhtml, array('id' => $id));
+
+        $module = array(
+            'name' => 'local_joulegrader',
+            'fullpath' => '/local/joulegrader/javascript.js',
+            'requires' => array(
+                'base',
+                'node',
+                'event',
+                'io'
+            ),
+        );
+
+        $PAGE->requires->js_init_call('M.local_joulegrader.init_commentloop', array('id' => $id), false, $module);
 
         return $html;
     }
