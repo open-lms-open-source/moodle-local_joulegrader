@@ -12,8 +12,21 @@ class local_joulegrader_form_comment extends moodleform {
     public function definition() {
         $mform =& $this->_form;
 
+        //tinymce params
+        $tineymceparams = array(
+            'plugins' => "safari,layer,emotions,inlinepopups,paste,directionality,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,spellchecker",
+            'theme_advanced_buttons1' => "bold,italic,underline,strikethrough,bullist,numlist,|,undo,redo,",
+            'theme_advanced_buttons1_add' => null,
+            'theme_advanced_buttons2' => null,
+            'theme_advanced_buttons2_add' => null,
+            'theme_advanced_buttons3' => null,
+            'theme_advanced_buttons3_add' => null,
+        );
+
+        //editoroptions
+        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true, 'tinymceparams' => $tineymceparams);
+
         //comment editor
-        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true);
         $mform->addElement('editor', 'comment', null, array('cols' => 10), $editoroptions);
         $mform->addRule('comment', get_string('commentrequired', 'local_joulegrader'), 'required', null, 'client');
 
