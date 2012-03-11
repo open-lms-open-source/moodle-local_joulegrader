@@ -63,13 +63,23 @@
     width: 15%;
 }
 
+.local_joulegrader_comment_commenter_firstname {
+    font-size: 0.5em;
+    text-align: center;
+}
+
 .local_joulegrader_comment_delete {
     float: right;
 }
 
 .local_joulegrader_comment_body {
-    width: 70%;
+    width: 65%;
     padding: 0 .5em .5em .5em;
+    font-size: 0.8em;
+}
+
+.local_joulegrader_comment.deleted {
+    color: grey;
 }
 
 #local-joulegrader-gradepane .mform fieldset div {

@@ -29,7 +29,7 @@ class local_joulegrader_form_comment extends moodleform {
         $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true, 'tinymceparams' => $tineymceparams);
 
         //comment editor
-        $mform->addElement('editor', 'comment', null, array('cols' => 10), $editoroptions);
+        $mform->addElement('editor', 'comment', null, array('cols' => 10, 'rows' => 8), $editoroptions);
         $mform->addRule('comment', get_string('commentrequired', 'local_joulegrader'), 'required', null, 'client');
 
         //file manager

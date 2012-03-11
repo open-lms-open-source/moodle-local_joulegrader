@@ -64,7 +64,9 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $commenter = $comment->get_commenter();
 
         //commenter picture
-        $commenterpicture = html_writer::tag('div', $OUTPUT->user_picture($commenter), array('class' => 'local_joulegrader_comment_commenter'));
+        $userpic = html_writer::tag('div', $OUTPUT->user_picture($commenter), array('class' => 'local_joulegrader_comment_commenter_pic'));
+        $username = html_writer::tag('div', $commenter->firstname, array('class' => 'local_joulegrader_comment_commenter_firstname'));
+        $commenterpicture = html_writer::tag('div', $userpic . $username, array('class' => 'local_joulegrader_comment_commenter'));
 
         //comment timestamp
         $commenttime = html_writer::tag('div', userdate($comment->get_timecreated(), '%d %B %H:%M'), array('class' => 'local_joulegrader_comment_time'));
