@@ -48,7 +48,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             ),
         );
 
-        $PAGE->requires->js_init_call('M.local_joulegrader.init_commentloop', array('id' => $id), false, $module);
+        $PAGE->requires->js_init_call('M.local_joulegrader.init_commentloop', array('id' => $id), true, $module);
 
         return $html;
     }

@@ -50,3 +50,4 @@ $string['gradeoverriddenstudent'] = '(Override in Gradebook: {$a})';
 $string['add'] = 'Add';
 $string['attachments'] = 'Attachments';
 $string['commentrequired'] = 'Comment required';
+$string['commentloop'] = 'Comment Loop';
