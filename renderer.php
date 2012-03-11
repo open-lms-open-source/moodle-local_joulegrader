@@ -35,7 +35,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $mformhtml = $mrhelper->buffer(array($mform, 'display'));
 
         $id = uniqid('local-joulegrader-commentloop-con-');
-        $html = html_writer::tag('div', $commentshtml . $mformhtml, array('id' => $id));
+        $html = html_writer::tag('div', $commentshtml . $mformhtml, array('id' => $id, 'class' => 'local_joulegrader_commentloop'));
 
         $module = array(
             'name' => 'local_joulegrader',

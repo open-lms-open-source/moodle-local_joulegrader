@@ -341,7 +341,9 @@ class local_joulegrader_controller_default extends mr_controller {
         global $PAGE;
 
         //in a popup
-        $PAGE->set_pagelayout('popup');
+        $PAGE->set_pagelayout('embedded');
+        $PAGE->set_heading('');
+
 
         try {
             //get current area id and current user parameters for the gradingarea instance
