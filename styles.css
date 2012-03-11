@@ -78,6 +78,10 @@
     font-size: 0.8em;
 }
 
+.local_joulegrader_comment {
+    clear: both;
+}
+
 .local_joulegrader_comment.deleted {
     color: grey;
 }

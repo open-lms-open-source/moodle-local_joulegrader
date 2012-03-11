@@ -94,9 +94,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         if ($comment->user_can_delete()) {
             $deleteurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'action' => 'deletecomment'
                     , 'commentid' => $comment->get_id(), 'sesskey' => sesskey()));
-            $deletebutton = html_writer::tag('div', $OUTPUT->action_icon($deleteurl, new pix_icon('t/delete'
-                    , get_string('deletecomment', 'local_joulegrader'))), array('class' => 'local_joulegrader_comment_delete'));
+            $deletebutton = $OUTPUT->action_icon($deleteurl, new pix_icon('t/delete'
+                , get_string('deletecomment', 'local_joulegrader')));
         }
+        $deletebutton = html_writer::tag('div', $deletebutton, array('class' => 'local_joulegrader_comment_delete'));
 
         //attachments - tricky
 
