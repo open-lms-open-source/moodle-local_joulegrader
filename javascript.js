@@ -13,11 +13,14 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
         return;
     }
 
+    //joule grader div
+    var joulegrader = Y.one('#local-joulegrader');
+
     //create the panel
     var panel = new Y.Panel({
         srcNode: '#' + id,
         headerContent: M.str.local_joulegrader.rubric,
-        centered: true,
+        centered: joulegrader,
 //        width: 500,
         zIndex: 10,
 //        modal: true,
@@ -30,6 +33,19 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
     var btn = Y.one('#local-joulegrader-viewrubric-button');
     btn.on('click', function(e) {
         e.preventDefault();
+
+        //get the panel content's height
+        var panelheight = panelnode.get('offsetHeight');
+
+        //joule grader height
+        var jgheight = joulegrader.get('offsetHeight');
+
+        if (jgheight < panelheight) {
+            joulegrader.setStyle('height', panelheight + 100 + 'px');
+        }
+
+        //re-center on the local-joulegrader div
+        panel.centered(joulegrader);
 
         //remove the hidden class from the rubric
         panelnode.removeClass('dontshow');
