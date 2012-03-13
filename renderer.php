@@ -24,7 +24,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         if (!empty($modalhtml)) {
             //wrap it in the proper modal html
             $modalhtml = html_writer::tag('div', $modalhtml, array('class' => 'yui3-widget-bd'));
-            $modalhtml = html_writer::tag('div', $modalhtml, array('id' => 'local-joulegrader-gradepane-panel'));
+            $modalhtml = html_writer::tag('div', $modalhtml, array('id' => 'local-joulegrader-gradepane-panel', 'class' => 'dontshow'));
 
             $html .= $modalhtml;
         }

@@ -31,6 +31,9 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
     btn.on('click', function(e) {
         e.preventDefault();
 
+        //remove the hidden class from the rubric
+        panelnode.removeClass('dontshow');
+
         //open the panel
         panel.show();
     });
@@ -82,6 +85,8 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
 
             if (!valid) {
                 e.preventDefault();
+                Y.one('#local-joulegrader-gradepane-rubricerror').removeClass('dontshow');
+
                 errorpanel.show();
                 Y.later(2000, errorpanel, errorpanel.hide);
             }

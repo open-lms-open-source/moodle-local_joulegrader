@@ -177,7 +177,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
 
                 //rubric warning message
                 $html .= html_writer::tag('div', html_writer::tag('div', get_string('rubricerror', 'local_joulegrader')
-                        , array('class' => 'yui3-widget-bd')), array('id' => 'local-joulegrader-gradepane-rubricerror'));
+                        , array('class' => 'yui3-widget-bd')), array('id' => 'local-joulegrader-gradepane-rubricerror', 'class' => 'dontshow'));
             }
         }
 
