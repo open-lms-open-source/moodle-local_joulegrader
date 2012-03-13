@@ -61,7 +61,7 @@ function joulegrader_extend_settings_navigation($settings, $context) {
  * @return bool
  */
 function local_joulegrader_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
-    global $CFG;
+    global $CFG, $DB, $USER;
 
     require_login($course, false, $cm);
 
@@ -94,6 +94,21 @@ function local_joulegrader_pluginfile($course, $cm, $context, $filearea, $args, 
         $classname::$method($course, $cm, $context, $itemid, $args, $forcedownload);
 
     } else if ($filearea == 'comment') {
+
+        //make sure itemid and filename are set
+        if (!isset($args[0]) || !isset($args[1])) {
+            return false;
+        }
+
+        //make sure the user has capabilities to download this comment attachment
+        if (!has_capability('local/joulegrader:grade', $context)) {
+            //get the graded user for the comment
+            $commentid = clean_param($args[0], PARAM_INT);
+            $guserid = $DB->get_field('local_joulegrader_comments', 'guserid', array('id' => $commentid), MUST_EXIST);
+            if (!has_capability('local/joulegrader:view', $context) || $USER->id != $guserid) {
+                return false;
+            }
+        }
 
         $fullpath = '/'.$context->id.'/local_joulegrader/comment/'.$args[0].'/'.$args[1];
 

@@ -159,6 +159,8 @@ M.local_joulegrader.init_commentloop = function(Y, id) {
 
                             //delete the old comment
                             comment.remove(true);
+                        } else if (response.error) {
+                            alert(response.error);
                         }
                     } catch (err) {
                         alert(err);
@@ -230,9 +232,11 @@ M.local_joulegrader.init_commentloop = function(Y, id) {
                             //scroll down
                             comments.set('scrollTop', comments.get('scrollHeight'));
 
+                        } else if (response.error) {
+                            alert(response.error);
                         }
                     } catch (excp) {
-
+                        alert(excp);
                     }
                 }
             }
