@@ -10,6 +10,109 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 class local_joulegrader_renderer extends plugin_renderer_base {
 
     /**
+     * @param local_joulegrader_lib_comment_loop $commentloop
+     * @return string
+     */
+    public function render_local_joulegrader_lib_comment_loop(local_joulegrader_lib_comment_loop $commentloop) {
+        global $PAGE;
+
+        //get the comments
+        $comments = $commentloop->get_comments();
+
+        //render comment html
+        $commentshtml = '';
+        foreach ($comments as $comment) {
+            $commentshtml .= $this->render($comment);
+        }
+
+        $commentshtml = html_writer::tag('div', $commentshtml, array('class' => 'local_joulegrader_commentloop_comments'));
+
+        //get the comment form
+        $mform = $commentloop->get_mform();
+
+        //render the form
+        $mrhelper = new mr_helper();
+        $mformhtml = $mrhelper->buffer(array($mform, 'display'));
+
+        $id = uniqid('local-joulegrader-commentloop-con-');
+        $html = html_writer::tag('div', $commentshtml . $mformhtml, array('id' => $id, 'class' => 'local_joulegrader_commentloop'));
+
+        $module = array(
+            'name' => 'local_joulegrader',
+            'fullpath' => '/local/joulegrader/javascript.js',
+            'requires' => array(
+                'base',
+                'node',
+                'event',
+                'io'
+            ),
+        );
+
+        $PAGE->requires->js_init_call('M.local_joulegrader.init_commentloop', array('id' => $id), true, $module);
+
+        return $html;
+    }
+
+    /**
+     * @param local_joulegrader_lib_comment_class $comment
+     * @return string
+     */
+    public function render_local_joulegrader_lib_comment_class(local_joulegrader_lib_comment_class $comment) {
+        global $OUTPUT, $COURSE;
+
+        //get the commenter user object - has fields for $OUTPUT->user_picture() and fullname()
+        $commenter = $comment->get_commenter();
+
+        //commenter picture
+        $userpic = html_writer::tag('div', $OUTPUT->user_picture($commenter), array('class' => 'local_joulegrader_comment_commenter_pic'));
+        $username = html_writer::tag('div', $commenter->firstname, array('class' => 'local_joulegrader_comment_commenter_firstname'));
+        $commenterpicture = html_writer::tag('div', $userpic . $username, array('class' => 'local_joulegrader_comment_commenter'));
+
+        //comment timestamp
+        $commenttime = html_writer::tag('div', userdate($comment->get_timecreated(), '%d %B %H:%M'), array('class' => 'local_joulegrader_comment_time'));
+
+        //comment content
+        $content = file_rewrite_pluginfile_urls($comment->get_content(), 'pluginfile.php', context_course::instance($COURSE->id)->id
+                , 'local_joulegrader', 'comment', $comment->get_id());
+        $commentcontent = html_writer::tag('div', $content, array('class' => 'local_joulegrader_comment_content'));
+
+        //coment body
+        $commentdeleted = $comment->get_deleted();
+
+        if ($commentdeleted && !has_capability('moodle/site:config', context_system::instance())) {
+            $commentbody = $commenttime . get_string('commentdeleted', 'local_joulegrader'
+                , array('deletedby' => fullname($commenter), 'deletedon' => userdate($commentdeleted, '%d %B %H:%M')));
+        } else {
+            $commentbody = $commenttime . $commentcontent;
+        }
+
+        //comment body
+        $commentbody = html_writer::tag('div', $commentbody, array('class' => 'local_joulegrader_comment_body'));
+
+        //delete button
+        $deletebutton = '';
+        if ($comment->user_can_delete()) {
+            $deleteurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'action' => 'deletecomment'
+                    , 'commentid' => $comment->get_id(), 'sesskey' => sesskey()));
+            $deletebutton = $OUTPUT->action_icon($deleteurl, new pix_icon('t/delete'
+                , get_string('deletecomment', 'local_joulegrader')));
+        }
+        $deletebutton = html_writer::tag('div', $deletebutton, array('class' => 'local_joulegrader_comment_delete'));
+
+        //attachments - tricky
+
+        //determine classes for comment
+        $commentclasses = array('local_joulegrader_comment');
+        if ($commentdeleted) {
+            $commentclasses[] = 'deleted';
+        }
+        //put it all together
+        $html = html_writer::tag('div', $commenterpicture . $commentbody . $deletebutton, array('class' => implode(' ', $commentclasses)));
+
+        return $html;
+    }
+
+    /**
      * Renders grade pane
      *
      * @param local_joulegrader_lib_pane_grade_mod_assignment_submission_class $gradepane

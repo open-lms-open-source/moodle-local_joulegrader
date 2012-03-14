@@ -1,6 +1,7 @@
 <?php
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 require_once($CFG->dirroot . '/grade/grading/lib.php');
+require_once($CFG->dirroot . '/local/joulegrader/lib/comment/loop.php');
 /**
  * Grading area abstract class
  *
@@ -50,6 +51,11 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
      * @var local_joulegrade_lib_pane_grade_abstract - instance
      */
     protected $gradepane;
+
+    /**
+     * @var local_joulegrader_lib_comment_loop - instance
+     */
+    protected $commentloop;
 
     /**
      * Additional checks called by gradingareas helper to see if the area should be included in the navigation.
@@ -249,6 +255,16 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
         }
 
         return $this->gradepane;
+    }
+
+    /**
+     * @return local_joulegrader_lib_comment_loop
+     */
+    public function get_commentloop() {
+        if (is_null($this->commentloop)) {
+            $this->commentloop = new local_joulegrader_lib_comment_loop($this);
+        }
+        return $this->commentloop;
     }
 
     /**

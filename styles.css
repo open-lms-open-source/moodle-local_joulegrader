@@ -51,3 +51,57 @@
 #local-joulegrader .dontshow {
     visibility: hidden;
 }
+
+.local_joulegrader_commentloop_comments {
+    max-height: 300px;
+    overflow-y: auto;
+    word-wrap: break-word;
+}
+
+.local_joulegrader_comment_commenter, .local_joulegrader_comment_body, .local_joulegrader_comment_delete {
+    display: inline-block;
+}
+
+.local_joulegrader_comment_commenter {
+    float: left;
+    width: 15%;
+}
+
+.local_joulegrader_comment_commenter_firstname {
+    font-size: 0.5em;
+    text-align: center;
+}
+
+.local_joulegrader_comment_delete {
+    float: right;
+}
+
+.local_joulegrader_comment_body {
+    width: 65%;
+    padding: 0 .5em .5em .5em;
+    font-size: 0.8em;
+}
+
+.local_joulegrader_comment {
+    clear: both;
+}
+
+.local_joulegrader_comment.deleted {
+    color: grey;
+}
+
+#local-joulegrader-gradepane .mform fieldset div, .pagelayout-embedded .local_joulegrader_commentloop .mform fieldset div {
+    margin: 0px;
+}
+
+#local-joulegrader-gradepane .mform .fitem fieldset.felement, .pagelayout-embedded .local_joulegrader_commentloop .mform .fitem fieldset.felement {
+    padding-left: 0px;
+}
+
+.pagelayout-embedded .local_joulegrader_commentloop {
+    margin: 0.5em;
+}
+
+.local_joulegrader_commentloop .mform fieldset div.fdescription.required, .local_joulegrader_commentloop .mform fieldset div.fitem.required label {
+    display: none;
+}

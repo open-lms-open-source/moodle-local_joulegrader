@@ -6,4 +6,4 @@
  * @package local/joulegrader
  */
 
-$plugin->version = 2012020900;
+$plugin->version = 2012030700;
