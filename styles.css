@@ -97,3 +97,7 @@
 .pagelayout-embedded .local_joulegrader_commentloop {
     margin: 0.5em;
 }
+
+.local_joulegrader_commentloop .mform fieldset div.fdescription.required, .local_joulegrader_commentloop .mform fieldset div.fitem.required label {
+    display: none;
+}
