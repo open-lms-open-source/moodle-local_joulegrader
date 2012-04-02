@@ -126,7 +126,7 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
                 if ($percentgrade >= 0 && $percentgrade <= 100) {
                     $validated = true;
                 }
-            } else if (in_array($grade, $lettergrades)) {
+            } else if (in_array(strtoupper($grade), $lettergrades)) {
                 //look for a lettergrade
                 $validated = true;
             }
