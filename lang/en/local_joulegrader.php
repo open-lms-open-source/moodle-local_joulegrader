@@ -19,11 +19,11 @@ $string['needsgrading'] = 'Show Activities Requiring Grading';
 $string['allactivities'] = 'Show All Activities';
 
 //helper/navigation.php strings
-$string['nogradeableareas'] = 'No gradeable items';
-$string['nogradeableusers'] = 'No gradeable users';
+$string['nogradeableareas'] = 'No gradable items';
+$string['nogradeableusers'] = 'No gradable users';
 
 //renderer.php strings
-$string['activitynav'] = 'Gradeable items';
+$string['activitynav'] = 'Gradable items';
 $string['activitynav_help'] = 'Use this widget to select which gradable item to grade.';
 $string['usernav'] = 'Users';
 $string['usernav_help'] = 'Use this widget to select which user to grade.';
