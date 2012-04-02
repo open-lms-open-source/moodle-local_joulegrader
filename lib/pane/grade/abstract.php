@@ -70,4 +70,12 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
      * @param $notify mr_notify
      */
     abstract public function process($notify);
+
+    /**
+     * Returns whether or not there is a grade yet for the area/user
+     *
+     * @abstract
+     * @return boolean
+     */
+    abstract public function not_graded();
 }

@@ -34,6 +34,11 @@
     text-align: left;
 }
 
+#local-joulegrader-gradepane div.status.s0 {
+    padding: 2px;
+    background-color: #FFFF99;
+}
+
 #local-joulegrader-gradepane .fitem .felement {
     width: 100%;
     margin: 0px;
@@ -57,6 +62,10 @@
     overflow-y: auto;
     word-wrap: break-word;
 }
+
+.local_joulegrader_commentloop {
+    margin-top: 2px;
+}lo
 
 .local_joulegrader_comment_commenter, .local_joulegrader_comment_body, .local_joulegrader_comment_delete {
     display: inline-block;

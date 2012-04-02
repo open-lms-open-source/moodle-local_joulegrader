@@ -414,4 +414,28 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
 
         return $success;
     }
+
+    /**
+     * Determines whether or not there is a grade for the current grading area/user
+     *
+     * @return boolean
+     */
+    public function not_graded() {
+        $notgraded = false;
+
+        $assignment = $this->get_gradingarea()->get_assignment();
+        $submission = $this->get_gradingarea()->get_submission();
+
+        if ($assignment->assignment->grade != 0) {
+            //check the submission first
+            if (!empty($submission) && $submission->grade == -1) {
+                $notgraded = true;
+            } else if (!empty($this->gradinginfo) && is_null($this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->grade)) {
+                //check the gradebook
+                $notgraded = true;
+            }
+        }
+
+        return $notgraded;
+    }
 }
