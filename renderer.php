@@ -565,7 +565,7 @@ EOT;
             $html .= html_writer::end_tag('tr');
         }
 
-        if (!empty($submission)) {
+        if (!empty($submission) && !empty($submission->timemodified)) {
             $html .= html_writer::start_tag('tr');
             $html .= html_writer::tag('td', get_string('lastedited'), array('class' => 'c0'));
             $html .= html_writer::start_tag('td', array('class' => 'c1'));
