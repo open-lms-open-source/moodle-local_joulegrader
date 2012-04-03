@@ -57,6 +57,9 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
     //get the submit and submit next buttons if they exist
     var submitbuttons = Y.all('#' + id + ' input[type=submit]');
     if (submitbuttons && !submitbuttons.isEmpty()) {
+        //render the panel first so the that the error panel renders correctly
+        panel.render();
+
         //a little panel for display an error message
         errorpanel = new Y.Panel({
             srcNode: '#local-joulegrader-gradepane-rubricerror',
@@ -64,7 +67,16 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
             zindex: 200,
             width: 200,
             visible: false,
-            render: '#' + id
+            render: '#' + id,
+            buttons: [
+                {
+                    value: M.str.local_joulegrader.close,
+                    action: function(e) {
+                        errorpanel.hide();
+                    },
+                    section: 'footer'
+                }
+            ]
         });
 
         errorpanel.render();
@@ -104,7 +116,6 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
                 Y.one('#local-joulegrader-gradepane-rubricerror').removeClass('dontshow');
 
                 errorpanel.show();
-                Y.later(2000, errorpanel, errorpanel.hide);
             }
 
         });
@@ -120,9 +131,10 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
         };
 
         panel.addButton(closebutton);
-    }
 
-    panel.render();
+        //now we can render the panel
+        panel.render();
+    }
 
 }
 
