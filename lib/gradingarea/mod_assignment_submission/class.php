@@ -120,9 +120,9 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
                 //check to see if it should be included based on whether the needs grading button was selected
                 if (!empty($include) && !empty($needsgrading) && has_capability(self::$teachercapability, context_module::instance($cm->id))) {
                     //needs to be limited by "needs grading"
-                    //check for submissions for this assignment that have timemarked = 0
-                    $submissions = $DB->get_records('assignment_submissions', array('assignment' => $assignment->id, 'timemarked' => 0)
-                            , '', 'id', 0, 1);
+                    //check for submissions for this assignment that have timemarked < timemodified
+                    $submissions = $DB->get_records_select('assignment_submissions', 'assignment = ? AND timemarked < timemodified'
+                            , array($assignment->id), '', 'id', 0, 1);
 
                     if (empty($submissions)) {
                         //if there isn't at least one submission then don't inlude this
