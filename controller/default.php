@@ -46,8 +46,11 @@ class local_joulegrader_controller_default extends mr_controller {
     public function view_action() {
         global $OUTPUT, $COURSE, $PAGE;
 
-        //Not sure if this is supposed to be a popup
-        //$PAGE->set_pagelayout('popup');
+        //check for mobile browsers (currently not supported)
+        if (get_device_type() == 'mobile') {
+            //just return a message that mobile devices are not currently supported
+            return $OUTPUT->container(html_writer::tag('h2', get_string('mobilenotsupported', 'local_joulegrader')), null, 'local-joulegrader-mobilenotsupportedmsg');
+        }
 
         //get the joule grader header info
         //link nav

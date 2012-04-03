@@ -17,6 +17,7 @@ $string['gradebook'] = 'Gradebook';
 $string['nothingtodisplay'] = 'Nothing to Display';
 $string['needsgrading'] = 'Show Activities Requiring Grading';
 $string['allactivities'] = 'Show All Activities';
+$string['mobilenotsupported'] = 'joule Grader does not currently support mobile browsers';
 
 //helper/navigation.php strings
 $string['nogradeableareas'] = 'No gradable items';
