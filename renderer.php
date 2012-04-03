@@ -150,6 +150,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             ),
             'strings' => array(
                 array('rubric', 'local_joulegrader'),
+                array('close', 'local_joulegrader')
             ),
         );
         $PAGE->requires->js_init_call('M.local_joulegrader.init_gradepane_panel', array('local-joulegrader-gradepane-panel'), false, $module);

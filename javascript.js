@@ -25,7 +25,7 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
         zIndex: 10,
 //        modal: true,
         visible: false,
-        render: true,
+//        render: true,
         plugins: [Y.Plugin.Drag]
     });
 
@@ -56,7 +56,7 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
 
     //get the submit and submit next buttons if they exist
     var submitbuttons = Y.all('#' + id + ' input[type=submit]');
-    if (submitbuttons) {
+    if (submitbuttons && !submitbuttons.isEmpty()) {
         //a little panel for display an error message
         errorpanel = new Y.Panel({
             srcNode: '#local-joulegrader-gradepane-rubricerror',
@@ -108,7 +108,21 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
             }
 
         });
+    } else {
+        //this is for the student
+        //add a close button
+        var closebutton = {
+            value: M.str.local_joulegrader.close,
+            action: function(e) {
+                panel.hide();
+            },
+            section: 'footer'
+        };
+
+        panel.addButton(closebutton);
     }
+
+    panel.render();
 
 }
 

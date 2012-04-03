@@ -45,6 +45,7 @@ $string['rubric'] = 'Rubric';
 $string['rubricerror'] = 'Please select one level for each criterion';
 $string['score'] = 'Score';
 $string['gradeoverriddenstudent'] = '(Override in Gradebook: {$a})';
+$string['close'] = 'Close';
 
 //form/comment.php strings
 $string['add'] = 'Add';
