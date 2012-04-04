@@ -77,13 +77,21 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $commentcontent = html_writer::tag('div', $content, array('class' => 'local_joulegrader_comment_content'));
 
         //coment body
+        $commentbody = $commenttime;
         $commentdeleted = $comment->get_deleted();
 
-        if ($commentdeleted && !has_capability('moodle/site:config', context_system::instance())) {
-            $commentbody = $commenttime . get_string('commentdeleted', 'local_joulegrader'
-                , array('deletedby' => fullname($commenter), 'deletedon' => userdate($commentdeleted, '%d %B %H:%M')));
+        if ($commentdeleted) {
+            //comment has been deleted, check for admin capability
+            if (has_capability('moodle/site:config', context_system::instance())) {
+                //this is an admin viewing, they can see the content of the comment still
+                $commentbody .= $commentcontent;
+            }
+            //everyone sees who deleted the comment and when
+            $commentbody .= get_string('commentdeleted', 'local_joulegrader'
+                    , array('deletedby' => fullname($commenter), 'deletedon' => userdate($commentdeleted, '%d %B %H:%M')));
         } else {
-            $commentbody = $commenttime . $commentcontent;
+            //comment has not been deleted, add the comment content
+            $commentbody .= $commentcontent;
         }
 
         //comment body
