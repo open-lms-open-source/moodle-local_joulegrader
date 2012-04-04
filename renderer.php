@@ -236,7 +236,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 $html .= format_text($text, $submission->data2, array('overflowdiv'=>true));
 
             } else {
-                $html .= html_writer::tag('h3', $viewpane->get_emptymessage());
+                $html .= html_writer::tag('h3', $viewpane->get_emptymessage(), array('class' => 'main'));
             }
             $html .= $OUTPUT->box_end();
         }

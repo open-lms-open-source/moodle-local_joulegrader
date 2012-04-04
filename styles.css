@@ -7,6 +7,10 @@
     overflow: auto;
 }
 
+#local-joulegrader #local-joulegrader-viewpane .content {
+    text-align: left;
+}
+
 #local-joulegrader-navigation {
     padding-bottom: 0.5em;
     padding-top: 0.5em;
