@@ -26,6 +26,8 @@ $string['nogradeableusers'] = 'No gradable users';
 //renderer.php strings
 $string['activitynav'] = 'Gradable items';
 $string['activitynav_help'] = 'Use this widget to select which gradable item to grade.';
+$string['groupnav'] = 'Groups';
+$string['groupnav_help'] = 'Use this widget to select a group.';
 $string['usernav'] = 'Users';
 $string['usernav_help'] = 'Use this widget to select which user to grade.';
 $string['commentdeleted'] = 'User {$a->deletedby} deleted post on {$a->deletedon}';

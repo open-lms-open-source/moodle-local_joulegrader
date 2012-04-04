@@ -176,7 +176,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         //prev link
         $prevlink = '';
-        if ($previd = $navwidget->get_previd()) {
+        $previd = $navwidget->get_previd();
+        if (!is_null($previd)) {
             $linkurl->param($navwidget->get_param(), $previd);
             $prevlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/left', get_string('previous')));
         }
@@ -194,12 +195,13 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         //next link
         $nextlink = '';
-        if ($nextid = $navwidget->get_nextid()) {
+        $nextid = $navwidget->get_nextid();
+        if (!is_null($nextid)) {
             $linkurl->param($navwidget->get_param(), $nextid);
             $nextlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/right', get_string('next')));
         }
 
-        return $prevlink . $selectform . $nextlink;
+        return html_writer::tag('div', $prevlink . $selectform . $nextlink, array('class' => 'local_joulegrader_navwidget'));
     }
 
     /**

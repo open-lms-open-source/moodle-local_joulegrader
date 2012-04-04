@@ -30,7 +30,7 @@
     vertical-align: middle;
 }
 
-#local-joulegrader-navigation .singleselect {
+#local-joulegrader-navigation .singleselect, .local_joulegrader_navwidget {
     display: inline-block;
 }
 

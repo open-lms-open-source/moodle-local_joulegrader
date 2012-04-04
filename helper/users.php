@@ -39,9 +39,11 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
      * Get the users menu
      *
      * @param $gareahelper- the current
+     * @param $currentgroup = id of currently selected group
+     *
      * @return array - users that can be graded for the current area
      */
-    public function get_users($gareahelper) {
+    public function get_users($gareahelper, $currentgroup = 0) {
         global $COURSE, $CFG;
 
         if (is_null($this->users)) {
@@ -71,7 +73,7 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
             }
 
             //get the enrolled users with the required capability
-            $users = get_enrolled_users(context_course::instance($COURSE->id), $requiredcap, 0, 'u.id, u.firstname, u.lastname');
+            $users = get_enrolled_users(context_course::instance($COURSE->id), $requiredcap, $currentgroup, 'u.id, u.firstname, u.lastname');
 
             //make menu from the users
             $this->users = array();
