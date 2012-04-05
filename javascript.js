@@ -44,8 +44,8 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
             joulegrader.setStyle('height', panelheight + 100 + 'px');
         }
 
-        //re-center on the local-joulegrader div
-        panel.centered(joulegrader);
+        //re-align on the local-joulegrader div (top-center of panel with top-center of local-joulegrader div
+        panel.align(joulegrader, [Y.WidgetPositionAlign.TC, Y.WidgetPositionAlign.TC]);
 
         //remove the hidden class from the rubric
         panelnode.removeClass('dontshow');
