@@ -54,6 +54,7 @@
 
 #local-joulegrader-gradepane .fitem .fitemtitle {
     width: 0px;
+    display: none;
 }
 
 #local-joulegrader-viewrubric-preview-con .generaltable {
