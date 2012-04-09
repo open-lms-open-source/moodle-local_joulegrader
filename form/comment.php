@@ -15,11 +15,17 @@ class local_joulegrader_form_comment extends moodleform {
         $mform =& $this->_form;
 
         //tinymce params
+        if (is_callable('mr_on') && mr_on('webcam', ' _MR_MISC') && has_capability("local/webcam:create", context_course::instance($COURSE->id))){
+            $xwebcam = "webcam,";
+        } else {
+            $xwebcam = "";
+        }
+
         $tineymceparams = array(
-            'plugins' => "safari,layer,advlink,emotions,inlinepopups,paste,directionality,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,spellchecker",
-            'theme_advanced_buttons1' => "bold,italic,underline,strikethrough,bullist,numlist,|,undo,redo,|,link,unlink",
+            'plugins' => "{$xwebcam}safari,layer,advlink,emotions,inlinepopups,paste,directionality,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,spellchecker",
+            'theme_advanced_buttons1' => "bold,italic,underline,strikethrough,bullist,numlist,{$xwebcam}",
             'theme_advanced_buttons1_add' => null,
-            'theme_advanced_buttons2' => null,
+            'theme_advanced_buttons2' => 'undo,redo,|,link,unlink',
             'theme_advanced_buttons2_add' => null,
             'theme_advanced_buttons3' => null,
             'theme_advanced_buttons3_add' => null,
