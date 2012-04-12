@@ -96,11 +96,14 @@ class local_joulegrader_lib_comment_loop implements renderable {
 
         //file area
         $itemid = $commentdata->comment['itemid'];
-        $context = context_course::instance($COURSE->id);
+        $context = $this->gradingarea->get_gradingmanager()->get_context();
         $content = file_save_draft_area_files($itemid, $context->id, 'local_joulegrader', 'comment', $comment->get_id(), null, $comment->get_content());
 
         $comment->set_content($content);
         $comment->save();
+
+        // set the context
+        $comment->set_context($context);
 
         return $comment;
     }
@@ -119,11 +122,15 @@ class local_joulegrader_lib_comment_loop implements renderable {
         $gareaid = $this->gradingarea->get_areaid();
         $guserid = $this->gradingarea->get_guserid();
 
+        $context = $this->gradingarea->get_gradingmanager()->get_context();
+
         //try to get the comments for the area and user
         if ($comments = $DB->get_records('local_joulegrader_comments', array('gareaid' => $gareaid, 'guserid' => $guserid), 'timecreated ASC')) {
             //iterate through comments and instantiate local_joulegrader_lib_comment_class objects
             foreach ($comments as $comment) {
-                $this->comments[] = new local_joulegrader_lib_comment_class($comment);
+                $commentobject = new local_joulegrader_lib_comment_class($comment);
+                $commentobject->set_context($context);
+                $this->comments[] = $commentobject;
             }
         }
     }
