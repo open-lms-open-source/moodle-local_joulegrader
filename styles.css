@@ -38,6 +38,12 @@
     text-align: center;
 }
 
+#local-joulegrader .gradingform_rubric-regrade {
+    max-width: 500px;
+    margin-left: auto;
+    marigin-right: auto;
+}
+
 #local-joulegrader-gradepane .content {
     text-align: left;
 }
