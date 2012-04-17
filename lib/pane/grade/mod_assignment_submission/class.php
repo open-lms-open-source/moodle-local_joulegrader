@@ -270,10 +270,11 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
 
                 //determine if user is submitting as a letter grade, percentage or float
                 $touppergrade = strtoupper($grade);
-                if (in_array(strtoupper($touppergrade), $lettergrades)) {
+                $toupperlettergrades = array_map('strtoupper', $lettergrades);
+                if (in_array($touppergrade, $toupperlettergrades)) {
                     //submitting lettergrade, find percent grade
                     $percentvalue = 0;
-                    foreach ($lettergrades as $value => $letter) {
+                    foreach ($toupperlettergrades as $value => $letter) {
                         if ($touppergrade == $letter) {
                             $percentvalue = $value;
                             break;
