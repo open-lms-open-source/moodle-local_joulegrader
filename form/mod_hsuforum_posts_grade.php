@@ -39,8 +39,8 @@ class local_joulegrader_form_mod_hsuforum_posts_grade extends moodleform {
         } else {
             //check for an existing grade
             $grade = -1;
-            if (isset($this->_customdata->submission) && isset($this->_customdata->submission->grade)) {
-                $grade = $this->_customdata->submission->grade;
+            if (isset($this->_customdata->grade)) {
+                $grade = $this->_customdata->grade;
             }
             //check to see if this is a scale
             $isscale = (bool) ($this->_customdata->forum->scale < 0);

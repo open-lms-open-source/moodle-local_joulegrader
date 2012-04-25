@@ -67,7 +67,9 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
         if ($this->teachercap) {
             //set up the form
             $mformdata = new stdClass();
+            $mformdata->cm = $this->cm;
             $mformdata->forum = $this->forum;
+            $mformdata->grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->str_grade;
             $mformdata->gradeoverridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
             $mformdata->gradingdisabled = $gradingdisabled;
 
@@ -123,7 +125,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                     //start the html
                     $grade = -1;
                     if (!empty($this->gradinginfo->items[0]) and !empty($this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()])) {
-                        $grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->grade;
+                        $grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->str_grade;
                     }
 
                     $html = html_writer::start_tag('div', array('id' => 'local-joulegrader-gradepane-grade'));
@@ -209,7 +211,6 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
         //check for capability
         if (!empty($this->teachercap)) {
             //get the form and render it via buffer helper
-            $mform = $this->mform;
             $mrhelper = new mr_helper();
             $html = $mrhelper->buffer(array($this->mform, 'display'));
         } else {
@@ -224,16 +225,9 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
             } else {
                 $gradestr = '';
             }
-
             $controller = $this->controller;
-            if (empty($submission) || $submission->grade == -1) {
-                $renderer = $controller->get_renderer($PAGE);
-                $criteria = $controller->get_definition()->rubric_criteria;
-                $html = $renderer->display_rubric($criteria, null, $controller::DISPLAY_VIEW, 'rubric');
-            } else {
-                $controller->set_grade_range(make_grades_menu($this->forum->scale));
-                $html = $controller->render_grade($PAGE, $submission->id, $item, $gradestr, false);
-            }
+            $controller->set_grade_range(make_grades_menu($this->forum->scale));
+            $html = $controller->render_grade($PAGE, $this->gradingarea->get_guserid(), $item, $gradestr, false);
         }
 
         return $html;
