@@ -19,6 +19,9 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
         'mod_assignment' => array(
             'submission',
         ),
+        'mod_hsuforum' => array(
+            'posts',
+        ),
     );
 
     /**
