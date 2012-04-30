@@ -42,7 +42,8 @@ class local_joulegrader_helper_navigation extends mr_helper_abstract {
             $prevarea     = $gareahelper->get_prevarea();
 
             //find users with capability provided by the grading area class
-            $users = $usershelper->get_users($gareahelper);
+            list($currentgroup, $groups, $grouplabel, $prevgroup, $nextgroup) = $this->get_groupnav_info();
+            $users = $usershelper->get_users($gareahelper, $currentgroup);
 
             //get the current user
             $currentuser = $usershelper->get_currentuser();
@@ -64,6 +65,33 @@ class local_joulegrader_helper_navigation extends mr_helper_abstract {
                 $this->activitynav = '<h4>' . get_string('nogradeableareas', 'local_joulegrader') . '</h4>';
             }
 
+            //groups navigation
+            $groupnav = '';
+            if (!empty($groups)) {
+                //check number of groups
+                if (count($groups) == 1) {
+                    //just a single group, so just use a label
+                    $groupname = reset($groups);
+                    $groupnav = $grouplabel.': '.$groupname;
+                } else {
+                    //else need a groups navigation widget
+                    //groupnav url
+                    $groupurl = new moodle_url('/local/joulegrader/view.php'
+                            , array('courseid' => $COURSE->id, 'garea' => $currentarea, 'guser' => $currentuser));
+
+                    //if needs grading button selected at that param
+                    if (!empty($needsgrading)) {
+                        $groupurl->param('needsgrading', 1);
+                    }
+
+                    //create the widget and render it
+                    $groupnavwidget = new local_joulegrader_lib_navigation_widget('group', $groupurl, $groups, 'group', $currentgroup, $nextgroup, $prevgroup);
+                    $groupnav = $renderer->render($groupnavwidget);
+                }
+            }
+
+            $this->usernav = $groupnav;
+
             //user navigation
             if (!empty($users)) {
                 $guserurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentarea));
@@ -72,9 +100,9 @@ class local_joulegrader_helper_navigation extends mr_helper_abstract {
                 }
                 $user_navwidget = new local_joulegrader_lib_navigation_widget('user', $guserurl, $users, 'guser', $currentuser, $nextuser, $prevuser);
 
-                $this->usernav = $renderer->render($user_navwidget);
+                $this->usernav .= $renderer->render($user_navwidget);
             } else {
-                $this->usernav = '<h4>' . get_string('nogradeableusers', 'local_joulegrader') . '</h4>';
+                $this->usernav .= '<h4>' . get_string('nogradeableusers', 'local_joulegrader') . '</h4>';
             }
 
         } else {
@@ -113,5 +141,84 @@ class local_joulegrader_helper_navigation extends mr_helper_abstract {
      */
     public function get_users_navigation() {
         return $this->usernav;
+    }
+
+    /**
+     * Get necessary info to create the group selector navigation
+     * This uses code modified from lib/grouplib.php's groups_print_course_menu
+     *
+     * @return array - array containing current group, groups menu array,group label, previous and next ids
+     */
+    protected function get_groupnav_info() {
+        global $COURSE, $USER;
+
+        //first, make sure that the course is using a groupmode
+        if (!$groupmode = $COURSE->groupmode) {
+            //not using a group mode, so return
+            return array(0, array(), '', null, null);
+        }
+
+        $context = context_course::instance($COURSE->id);
+        $aag = has_capability('moodle/site:accessallgroups', $context);
+
+        if ($groupmode == VISIBLEGROUPS or $aag) {
+            $allowedgroups = groups_get_all_groups($COURSE->id, 0, $COURSE->defaultgroupingid);
+        } else {
+            $allowedgroups = groups_get_all_groups($COURSE->id, $USER->id, $COURSE->defaultgroupingid);
+        }
+
+        $activegroup = groups_get_course_group($COURSE, true, $allowedgroups);
+
+        $groupsmenu = array();
+        if (!$allowedgroups or $groupmode == VISIBLEGROUPS or $aag) {
+            $groupsmenu[0] = get_string('allparticipants');
+        }
+
+        if ($allowedgroups) {
+            foreach ($allowedgroups as $group) {
+                $groupsmenu[$group->id] = shorten_text(format_string($group->name), 20, true);
+            }
+        }
+
+        if ($groupmode == VISIBLEGROUPS) {
+            $grouplabel = get_string('groupsvisible');
+        } else {
+            $grouplabel = get_string('groupsseparate');
+        }
+
+        if ($aag and $COURSE->defaultgroupingid) {
+            if ($grouping = groups_get_grouping($COURSE->defaultgroupingid)) {
+                $grouplabel = $grouplabel . ' (' . format_string($grouping->name) . ')';
+            }
+        }
+
+        //find previous and next groups
+        $previd = null;
+        $nextid = null;
+        if (!empty($groupsmenu) && count($groupsmenu) > 1) {
+            $groupids = array_keys($groupsmenu);
+
+            //try to get the group before the current group
+            while (list($unused, $groupid) = each($groupids)) {
+                if ($groupid == $activegroup) {
+                    break;
+                }
+                $previd = $groupid;
+            }
+
+            //if we haven't reached the end of the array, current should give "nextid"
+            $nextid = current($groupids);
+
+            reset($groupids);
+            if ($nextid === false) {
+                //the current group is the last so start at the beginning
+                $nextid = $groupids[0];
+            } else if ($previd === null) {
+                //the current group is the first so get the last
+                $previd = end($groupids);
+            }
+        }
+        //return the current (active) group, groups menu array, and group label
+        return array($activegroup, $groupsmenu, $grouplabel, $previd, $nextid);
     }
 }

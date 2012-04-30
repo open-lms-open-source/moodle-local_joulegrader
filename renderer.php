@@ -72,18 +72,26 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $commenttime = html_writer::tag('div', userdate($comment->get_timecreated(), '%d %B %H:%M'), array('class' => 'local_joulegrader_comment_time'));
 
         //comment content
-        $content = file_rewrite_pluginfile_urls($comment->get_content(), 'pluginfile.php', context_course::instance($COURSE->id)->id
+        $content = file_rewrite_pluginfile_urls($comment->get_content(), 'pluginfile.php', $comment->get_context()->id
                 , 'local_joulegrader', 'comment', $comment->get_id());
         $commentcontent = html_writer::tag('div', $content, array('class' => 'local_joulegrader_comment_content'));
 
         //coment body
+        $commentbody = $commenttime;
         $commentdeleted = $comment->get_deleted();
 
-        if ($commentdeleted && !has_capability('moodle/site:config', context_system::instance())) {
-            $commentbody = $commenttime . get_string('commentdeleted', 'local_joulegrader'
-                , array('deletedby' => fullname($commenter), 'deletedon' => userdate($commentdeleted, '%d %B %H:%M')));
+        if ($commentdeleted) {
+            //comment has been deleted, check for admin capability
+            if (has_capability('moodle/site:config', context_system::instance())) {
+                //this is an admin viewing, they can see the content of the comment still
+                $commentbody .= $commentcontent;
+            }
+            //everyone sees who deleted the comment and when
+            $commentbody .= get_string('commentdeleted', 'local_joulegrader'
+                    , array('deletedby' => fullname($commenter), 'deletedon' => userdate($commentdeleted, '%d %B %H:%M')));
         } else {
-            $commentbody = $commenttime . $commentcontent;
+            //comment has not been deleted, add the comment content
+            $commentbody .= $commentcontent;
         }
 
         //comment body
@@ -123,6 +131,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         $html = $gradepane->get_panehtml();
 
+        if ($gradepane->not_graded()) {
+            $html = html_writer::tag('div', $html, array('class' => 'status s0'));
+        }
+
         $modalhtml = $gradepane->get_modal_html();
         if (!empty($modalhtml)) {
             //wrap it in the proper modal html
@@ -146,6 +158,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             ),
             'strings' => array(
                 array('rubric', 'local_joulegrader'),
+                array('close', 'local_joulegrader')
             ),
         );
         $PAGE->requires->js_init_call('M.local_joulegrader.init_gradepane_panel', array('local-joulegrader-gradepane-panel'), false, $module);
@@ -210,7 +223,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         //prev link
         $prevlink = '';
-        if ($previd = $navwidget->get_previd()) {
+        $previd = $navwidget->get_previd();
+        if (!is_null($previd)) {
             $linkurl->param($navwidget->get_param(), $previd);
             $prevlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/left', get_string('previous')));
         }
@@ -228,12 +242,13 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         //next link
         $nextlink = '';
-        if ($nextid = $navwidget->get_nextid()) {
+        $nextid = $navwidget->get_nextid();
+        if (!is_null($nextid)) {
             $linkurl->param($navwidget->get_param(), $nextid);
             $nextlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/right', get_string('next')));
         }
 
-        return $prevlink . $selectform . $nextlink;
+        return html_writer::tag('div', $prevlink . $selectform . $nextlink, array('class' => 'local_joulegrader_navwidget'));
     }
 
     /**
@@ -270,7 +285,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 $html .= format_text($text, $submission->data2, array('overflowdiv'=>true));
 
             } else {
-                $html .= html_writer::tag('h3', $viewpane->get_emptymessage());
+                $html .= html_writer::tag('h3', $viewpane->get_emptymessage(), array('class' => 'main'));
             }
             $html .= $OUTPUT->box_end();
         }
@@ -621,7 +636,7 @@ EOT;
             $html .= html_writer::end_tag('tr');
         }
 
-        if (!empty($submission)) {
+        if (!empty($submission) && !empty($submission->timemodified)) {
             $html .= html_writer::start_tag('tr');
             $html .= html_writer::tag('td', get_string('lastedited'), array('class' => 'c0'));
             $html .= html_writer::start_tag('td', array('class' => 'c1'));

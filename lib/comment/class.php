@@ -51,6 +51,11 @@ class local_joulegrader_lib_comment_class implements renderable {
     protected $deleted;
 
     /**
+     * @var context
+     */
+    protected $context;
+
+    /**
      * @param mixed $record
      */
     public function __construct($record = null) {
@@ -175,6 +180,20 @@ class local_joulegrader_lib_comment_class implements renderable {
      */
     public function get_deleted() {
         return $this->deleted;
+    }
+
+    /**
+     * @param $context
+     */
+    public function set_context($context) {
+        $this->context = $context;
+    }
+
+    /**
+     * @return mixed - context
+     */
+    public function get_context() {
+        return $this->context;
     }
 
     /**

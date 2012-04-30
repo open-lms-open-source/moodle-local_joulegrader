@@ -7,11 +7,19 @@
     overflow: auto;
 }
 
+#local-joulegrader #local-joulegrader-viewpane .content {
+    text-align: left;
+}
+
 #local-joulegrader-navigation {
     padding-bottom: 0.5em;
     padding-top: 0.5em;
     margin-bottom: 1em;
     background-color: lightgrey;
+}
+
+#local-joulegrader-mobilenotsupportedmsg {
+    text-align: center;
 }
 
 #local-joulegrader-linknav {
@@ -22,7 +30,7 @@
     vertical-align: middle;
 }
 
-#local-joulegrader-navigation .singleselect {
+#local-joulegrader-navigation .singleselect, .local_joulegrader_navwidget {
     display: inline-block;
 }
 
@@ -30,8 +38,19 @@
     text-align: center;
 }
 
+#local-joulegrader .gradingform_rubric-regrade {
+    max-width: 500px;
+    margin-left: auto;
+    marigin-right: auto;
+}
+
 #local-joulegrader-gradepane .content {
     text-align: left;
+}
+
+#local-joulegrader-gradepane div.status.s0 {
+    padding: 2px;
+    background-color: #FFFF99;
 }
 
 #local-joulegrader-gradepane .fitem .felement {
@@ -41,6 +60,7 @@
 
 #local-joulegrader-gradepane .fitem .fitemtitle {
     width: 0px;
+    display: none;
 }
 
 #local-joulegrader-viewrubric-preview-con .generaltable {
@@ -56,6 +76,10 @@
     max-height: 300px;
     overflow-y: auto;
     word-wrap: break-word;
+}
+
+.local_joulegrader_commentloop {
+    margin-top: 2px;
 }
 
 .local_joulegrader_comment_commenter, .local_joulegrader_comment_body, .local_joulegrader_comment_delete {

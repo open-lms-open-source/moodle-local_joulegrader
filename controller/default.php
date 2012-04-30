@@ -46,8 +46,11 @@ class local_joulegrader_controller_default extends mr_controller {
     public function view_action() {
         global $OUTPUT, $COURSE, $PAGE;
 
-        //Not sure if this is supposed to be a popup
-        //$PAGE->set_pagelayout('popup');
+        //check for mobile browsers (currently not supported)
+        if (get_device_type() == 'mobile') {
+            //just return a message that mobile devices are not currently supported
+            return $OUTPUT->container(html_writer::tag('h2', get_string('mobilenotsupported', 'local_joulegrader')), null, 'local-joulegrader-mobilenotsupportedmsg');
+        }
 
         //get the joule grader header info
         //link nav
@@ -208,6 +211,7 @@ class local_joulegrader_controller_default extends mr_controller {
         global $CFG, $DB, $COURSE, $PAGE;
 
         require_once($CFG->dirroot . '/local/joulegrader/lib/comment/class.php');
+        require_once($CFG->dirroot . '/grade/grading/lib.php');
 
         //ajax request?
         $isajaxrequest = optional_param('ajax', false, PARAM_BOOL);
@@ -233,6 +237,11 @@ class local_joulegrader_controller_default extends mr_controller {
                 redirect(new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $comment->get_gareaid(), 'guser' => $comment->get_guserid())));
             } else {
                 $renderer = $PAGE->get_renderer('local_joulegrader');
+
+                // Need to set the context
+                $gradingmgr = get_grading_manager($comment->get_gareaid());
+                $comment->set_context($gradingmgr->get_context());
+
                 $commenthtml = $renderer->render($comment);
 
                 $commentinfo = new stdClass();

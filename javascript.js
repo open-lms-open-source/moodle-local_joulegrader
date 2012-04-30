@@ -25,7 +25,7 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
         zIndex: 10,
 //        modal: true,
         visible: false,
-        render: true,
+//        render: true,
         plugins: [Y.Plugin.Drag]
     });
 
@@ -44,8 +44,8 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
             joulegrader.setStyle('height', panelheight + 100 + 'px');
         }
 
-        //re-center on the local-joulegrader div
-        panel.centered(joulegrader);
+        //re-align on the local-joulegrader div (top-center of panel with top-center of local-joulegrader div
+        panel.align(joulegrader, [Y.WidgetPositionAlign.TC, Y.WidgetPositionAlign.TC]);
 
         //remove the hidden class from the rubric
         panelnode.removeClass('dontshow');
@@ -56,7 +56,10 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
 
     //get the submit and submit next buttons if they exist
     var submitbuttons = Y.all('#' + id + ' input[type=submit]');
-    if (submitbuttons) {
+    if (submitbuttons && !submitbuttons.isEmpty()) {
+        //render the panel first so the that the error panel renders correctly
+        panel.render();
+
         //a little panel for display an error message
         errorpanel = new Y.Panel({
             srcNode: '#local-joulegrader-gradepane-rubricerror',
@@ -64,7 +67,16 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
             zindex: 200,
             width: 200,
             visible: false,
-            render: '#' + id
+            render: '#' + id,
+            buttons: [
+                {
+                    value: M.str.local_joulegrader.close,
+                    action: function(e) {
+                        errorpanel.hide();
+                    },
+                    section: 'footer'
+                }
+            ]
         });
 
         errorpanel.render();
@@ -104,10 +116,24 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
                 Y.one('#local-joulegrader-gradepane-rubricerror').removeClass('dontshow');
 
                 errorpanel.show();
-                Y.later(2000, errorpanel, errorpanel.hide);
             }
 
         });
+    } else {
+        //this is for the student
+        //add a close button
+        var closebutton = {
+            value: M.str.local_joulegrader.close,
+            action: function(e) {
+                panel.hide();
+            },
+            section: 'footer'
+        };
+
+        panel.addButton(closebutton);
+
+        //now we can render the panel
+        panel.render();
     }
 
 }

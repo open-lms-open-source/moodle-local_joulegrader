@@ -268,6 +268,11 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
                 $garea = array_shift(array_keys($this->gradingareas));
             }
 
+            //special case where needs grading has excluded all grading areas
+            if (empty($this->gradingareas) && optional_param('needsgrading', 0, PARAM_BOOL)) {
+                $garea = null;
+            }
+
             $this->currentarea = $garea;
         }
 

@@ -17,14 +17,17 @@ $string['gradebook'] = 'Gradebook';
 $string['nothingtodisplay'] = 'Nothing to Display';
 $string['needsgrading'] = 'Show Activities Requiring Grading';
 $string['allactivities'] = 'Show All Activities';
+$string['mobilenotsupported'] = 'joule Grader does not currently support mobile browsers';
 
 //helper/navigation.php strings
-$string['nogradeableareas'] = 'No gradeable items';
-$string['nogradeableusers'] = 'No gradeable users';
+$string['nogradeableareas'] = 'No gradable items';
+$string['nogradeableusers'] = 'No gradable users';
 
 //renderer.php strings
-$string['activitynav'] = 'Gradeable items';
+$string['activitynav'] = 'Gradable items';
 $string['activitynav_help'] = 'Use this widget to select which gradable item to grade.';
+$string['groupnav'] = 'Groups';
+$string['groupnav_help'] = 'Use this widget to select a group.';
 $string['usernav'] = 'Users';
 $string['usernav_help'] = 'Use this widget to select which user to grade.';
 $string['commentdeleted'] = 'User {$a->deletedby} deleted post on {$a->deletedon}';
@@ -45,6 +48,7 @@ $string['rubric'] = 'Rubric';
 $string['rubricerror'] = 'Please select one level for each criterion';
 $string['score'] = 'Score';
 $string['gradeoverriddenstudent'] = '(Override in Gradebook: {$a})';
+$string['close'] = 'Close';
 
 //form/comment.php strings
 $string['add'] = 'Add';
