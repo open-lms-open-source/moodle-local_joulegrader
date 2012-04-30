@@ -330,6 +330,18 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
     }
 
     /**
+     * Returns whether or not there is a grade yet for the area/user
+     *
+     * @return boolean
+     */
+    public function not_graded() {
+        if (!empty($this->gradinginfo) && is_null($this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->grade)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * @param $grade
      * @param $override
      *

@@ -175,6 +175,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         $html = $gradepane->get_panehtml();
 
+        if ($gradepane->not_graded()) {
+            $html = html_writer::tag('div', $html, array('class' => 'status s0'));
+        }
+
         $modalhtml = $gradepane->get_modal_html();
         if (!empty($modalhtml)) {
             //wrap it in the proper modal html
