@@ -190,7 +190,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             $html .= $modalhtml;
         }
 
-        $gradepane->require_js();
+        $jsparams = array(
+            'id' => 'local-joulegrader-gradepane-panel',
+            'grademethod' => $gradepane->get_gradingarea()->get_active_gradingmethod()
+        );
 
         $module = array(
             'name' => 'local_joulegrader',
@@ -204,9 +207,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             ),
             'strings' => array(
                 array('rubric', 'local_joulegrader'),
+                array('checklist', 'local_joulegrader'),
             ),
         );
-        $PAGE->requires->js_init_call('M.local_joulegrader.init_gradepane_panel', array('local-joulegrader-gradepane-panel'), false, $module);
+        $PAGE->requires->js_init_call('M.local_joulegrader.init_gradepane_panel', array($jsparams), false, $module);
 
         return $html;
     }

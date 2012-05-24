@@ -7,8 +7,8 @@
 
 M.local_joulegrader = M.local_joulegrader || {};
 
-M.local_joulegrader.init_gradepane_panel = function(Y, id) {
-    var panelnode = Y.one('#' + id);
+M.local_joulegrader.init_gradepane_panel = function(Y, options) {
+    var panelnode = Y.one('#' + options.id);
     if (!panelnode) {
         return;
     }
@@ -18,8 +18,8 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
 
     //create the panel
     var panel = new Y.Panel({
-        srcNode: '#' + id,
-        headerContent: M.str.local_joulegrader.rubric,
+        srcNode: '#' + options.id,
+        headerContent: M.str.local_joulegrader[options.grademethod],
         centered: joulegrader,
 //        width: 500,
         zIndex: 10,
@@ -30,7 +30,7 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
     });
 
     //wire up the button
-    var btn = Y.one('#local-joulegrader-viewrubric-button');
+    var btn = Y.one('#local-joulegrader-preview-button');
     btn.on('click', function(e) {
         e.preventDefault();
 
@@ -54,8 +54,30 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
         panel.show();
     });
 
+    if (M.local_joulegrader.hasOwnProperty('init_' + options.grademethod)) {
+        M.local_joulegrader['init_' + options.grademethod](Y, options, panel);
+    }
+}
+
+M.local_joulegrader.init_checklist = function(Y, options, panel) {
+    var panelnode = panel.get('srcNode');
+
+    // check to see if the checklist has item remark with active textarea
+    var remarkfield = panelnode.one('.item .remark textarea');
+
+    if (remarkfield) {
+        // there is a item text field so push the panel out a bit
+        var panelwidth = panelnode.get('offsetWidth');
+        panel.set('width', panelwidth + 250);
+        panel.render();
+    }
+
+}
+
+M.local_joulegrader.init_rubric = function(Y, options, panel) {
+
     //get the submit and submit next buttons if they exist
-    var submitbuttons = Y.all('#' + id + ' input[type=submit]');
+    var submitbuttons = Y.all('#' + options.id + ' input[type=submit]');
     if (submitbuttons && !submitbuttons.isEmpty()) {
         //render the panel first so the that the error panel renders correctly
         panel.render();
@@ -87,7 +109,7 @@ M.local_joulegrader.init_gradepane_panel = function(Y, id) {
             var valid = true;
 
             //get all the criteria
-            var criteria = Y.all('#' + id + ' .gradingform_rubric .criterion');
+            var criteria = Y.all('#' + options.id + ' .gradingform_rubric .criterion');
 
             //make sure we have some criteria
             if (criteria) {

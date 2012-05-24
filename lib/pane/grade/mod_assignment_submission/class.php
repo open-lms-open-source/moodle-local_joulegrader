@@ -28,7 +28,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
 
         $gradingdisabled = $this->gradinginfo->items[0]->locked;
 
-        if (($gradingmethod = $this->gradingarea->get_active_gradingmethod()) && $gradingmethod == 'rubric') {
+        if (($gradingmethod = $this->gradingarea->get_active_gradingmethod()) && in_array($gradingmethod, self::get_supportedplugins())) {
             $controller = $this->gradingarea->get_gradingmanager()->get_controller($gradingmethod);
             $this->controller = $controller;
             if ($controller->is_form_available()) {
@@ -139,47 +139,92 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                     }
                 }
             } else if ($this->controller->is_form_available()) {
-                //need to generate the condensed rubric html
-                //first a "view" button
-                $buttonatts = array('type' => 'button', 'id' => 'local-joulegrader-viewrubric-button');
-                $viewbutton = html_writer::tag('button', get_string('viewrubric', 'local_joulegrader'), $buttonatts);
+                //generate preview based on type of advanced grading plugin (rubric or checklist)
+                $gradingmethod = $this->gradingarea->get_active_gradingmethod();
 
-                $html = html_writer::tag('div', $viewbutton, array('id' => 'local-joulegrader-viewrubric-button-con'));
-
-                //rubric preview
-                $definition = $this->controller->get_definition();
-                $rubricfilling = $this->gradinginstance->get_rubric_filling();
-
-                $previewtable = new html_table();
-                $previewtable->head[] = new html_table_cell(get_string('criteria', 'local_joulegrader'));
-                $previewtable->head[] = new html_table_cell(get_string('score', 'local_joulegrader'));
-                foreach ($definition->rubric_criteria as $criterionid => $criterion) {
-                    $row = new html_table_row();
-                    //criterion name cell
-                    $row->cells[] = new html_table_cell($criterion['description']);
-
-                    //score cell value
-                    if (!empty($rubricfilling['criteria']) && isset($rubricfilling['criteria'][$criterionid]['levelid'])) {
-                        $levelid = $rubricfilling['criteria'][$criterionid]['levelid'];
-                        $criterionscore = $criterion['levels'][$levelid]['score'];
-                    } else {
-                        $criterionscore = ' - ';
-                    }
-
-                    //score cell
-                    $row->cells[] = new html_table_cell($criterionscore);
-
-                    $previewtable->data[] = $row;
+                // shouldn't have this happen, but just in case
+                if (!in_array($gradingmethod, self::get_supportedplugins())) {
+                    return '';
                 }
 
-                $previewtable = html_writer::table($previewtable);
-                $html .= html_writer::tag('div', $previewtable, array('id' => 'local-joulegrader-viewrubric-preview-con'));
+                //need to generate the condensed rubric html
+                //first a "view" button
+                $buttonatts = array('type' => 'button', 'id' => 'local-joulegrader-preview-button');
+                $viewbutton = html_writer::tag('button', get_string('view' . $gradingmethod, 'local_joulegrader'), $buttonatts);
 
-                //rubric warning message
-                $html .= html_writer::tag('div', html_writer::tag('div', get_string('rubricerror', 'local_joulegrader')
-                        , array('class' => 'yui3-widget-bd')), array('id' => 'local-joulegrader-gradepane-rubricerror', 'class' => 'dontshow'));
+                $html = html_writer::tag('div', $viewbutton, array('id' => 'local-joulegrader-viewpreview-button-con'));
+
+                //gradingmethod preview
+                $previewmethod = 'get_' . $gradingmethod . '_preview';
+                $html .= $this->$previewmethod();
             }
         }
+
+        return $html;
+    }
+
+    /**
+     *
+     * @return string - preview for the rubric
+     */
+    protected function get_rubric_preview() {
+        $html = '';
+
+        $definition = $this->controller->get_definition();
+        $rubricfilling = $this->gradinginstance->get_rubric_filling();
+
+        $previewtable = new html_table();
+        $previewtable->head[] = new html_table_cell(get_string('criteria', 'local_joulegrader'));
+        $previewtable->head[] = new html_table_cell(get_string('score', 'local_joulegrader'));
+        foreach ($definition->rubric_criteria as $criterionid => $criterion) {
+            $row = new html_table_row();
+            //criterion name cell
+            $row->cells[] = new html_table_cell($criterion['description']);
+
+            //score cell value
+            if (!empty($rubricfilling['criteria']) && isset($rubricfilling['criteria'][$criterionid]['levelid'])) {
+                $levelid = $rubricfilling['criteria'][$criterionid]['levelid'];
+                $criterionscore = $criterion['levels'][$levelid]['score'];
+            } else {
+                $criterionscore = ' - ';
+            }
+
+            //score cell
+            $row->cells[] = new html_table_cell($criterionscore);
+
+            $previewtable->data[] = $row;
+        }
+
+        $previewtable = html_writer::table($previewtable);
+        $html .= html_writer::tag('div', $previewtable, array('id' => 'local-joulegrader-viewrubric-preview-con'));
+
+        //rubric warning message
+        $html .= html_writer::tag('div', html_writer::tag('div', get_string('rubricerror', 'local_joulegrader')
+            , array('class' => 'yui3-widget-bd')), array('id' => 'local-joulegrader-gradepane-rubricerror', 'class' => 'dontshow'));
+
+        return $html;
+    }
+
+    /**
+     * @return string - preview for the checklist
+     */
+    protected function get_checklist_preview() {
+        global $PAGE;
+
+        $html = '';
+
+        $groups = $this->controller->get_definition()->checklist_groups;
+        $options = $this->controller->get_options();
+
+        $options['showremarksstudent'] = 0;
+        $renderer = $this->controller->get_renderer($PAGE);
+
+        $values = $this->gradinginstance->get_checklist_filling();
+
+        $controller = $this->controller;
+        $checklist = $renderer->display_checklist($groups, $options, $controller::DISPLAY_VIEW, 'checklistpreview', $values);
+
+        $html .= html_writer::tag('div', $checklist, array('id' => 'local-joulegrader-viewchecklist-preview-con'));
 
         return $html;
     }
@@ -202,11 +247,11 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
         //check for capability
         if (!empty($this->teachercap)) {
             //get the form and render it via buffer helper
-            $mform = $this->mform;
             $mrhelper = new mr_helper();
             $html = $mrhelper->buffer(array($this->mform, 'display'));
         } else {
             //this is for a student
+            $gradingmethod = $this->gradingarea->get_active_gradingmethod();
 
             //get grading info
             $item = $this->gradinginfo->items[0];
@@ -221,8 +266,17 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
             $controller = $this->controller;
             if (empty($submission) || $submission->grade == -1) {
                 $renderer = $controller->get_renderer($PAGE);
-                $criteria = $controller->get_definition()->rubric_criteria;
-                $html = $renderer->display_rubric($criteria, null, $controller::DISPLAY_VIEW, 'rubric');
+                $options = $controller->get_options();
+                switch ($gradingmethod) {
+                    case 'rubric':
+                        $criteria = $controller->get_definition()->rubric_criteria;
+                        $html = $renderer->display_rubric($criteria, $options, $controller::DISPLAY_VIEW, 'rubric');
+                        break;
+                    case 'checklist':
+                        $groups = $controller->get_definition()->checklist_groups;
+                        $html = $renderer->display_checklist($groups, $options, $controller::DISPLAY_VIEW, 'checklist');
+                        break;
+                }
             } else {
                 $controller->set_grade_range(make_grades_menu($assignment->assignment->grade));
                 $html = $controller->render_grade($PAGE, $submission->id, $item, $gradestr, false);
@@ -231,6 +285,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
 
         return $html;
     }
+
 
     /**
      * Process the grade data

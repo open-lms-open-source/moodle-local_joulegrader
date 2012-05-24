@@ -41,8 +41,10 @@ $string['save'] = 'Save';
 $string['saveandnext'] = 'Save and Next';
 
 $string['criteria'] = 'Criteria';
+$string['checklist'] = 'Checklist';
 $string['gradesaved'] = 'Grade Saved';
 $string['notgraded'] = 'Assignment Not Graded';
+$string['viewchecklist'] = 'View Checklist';
 $string['viewrubric'] = 'View Rubric';
 $string['rubric'] = 'Rubric';
 $string['rubricerror'] = 'Please select one level for each criterion';
