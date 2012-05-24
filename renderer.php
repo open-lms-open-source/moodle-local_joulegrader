@@ -37,17 +37,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $id = uniqid('local-joulegrader-commentloop-con-');
         $html = html_writer::tag('div', $commentshtml . $mformhtml, array('id' => $id, 'class' => 'local_joulegrader_commentloop'));
 
-        $module = array(
-            'name' => 'local_joulegrader',
-            'fullpath' => '/local/joulegrader/javascript.js',
-            'requires' => array(
-                'base',
-                'node',
-                'event',
-                'io'
-            ),
-        );
-
+        $module = $this->get_js_module();
         $PAGE->requires->js_init_call('M.local_joulegrader.init_commentloop', array('id' => $id), true, $module);
 
         return $html;
@@ -146,24 +136,36 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         $gradepane->require_js();
 
-        $module = array(
+        $module = $this->get_js_module();
+
+        $PAGE->requires->js_init_call('M.local_joulegrader.init_gradepane_panel', array('local-joulegrader-gradepane-panel'), false, $module);
+
+        return $html;
+    }
+
+    /**
+     * Get js module for js_init_calls
+     *
+     * @return array
+     */
+    protected function get_js_module() {
+        return array(
             'name' => 'local_joulegrader',
             'fullpath' => '/local/joulegrader/javascript.js',
             'requires' => array(
                 'base',
                 'node',
                 'event',
+                'io',
                 'panel',
-                'dd-plugin'
+                'dd-plugin',
+                'json-parse'
             ),
             'strings' => array(
                 array('rubric', 'local_joulegrader'),
                 array('close', 'local_joulegrader')
             ),
         );
-        $PAGE->requires->js_init_call('M.local_joulegrader.init_gradepane_panel', array('local-joulegrader-gradepane-panel'), false, $module);
-
-        return $html;
     }
 
     /**

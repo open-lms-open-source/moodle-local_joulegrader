@@ -1,4 +1,7 @@
 <?php
+defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
+global $CFG;
+require_once($CFG->libdir.'/formslib.php');
 /**
  * @author Sam Chaffee
  * @package local/joulegrader
