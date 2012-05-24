@@ -169,6 +169,49 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     }
 
     /**
+     * @param local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class $gradepane
+     * @return string
+     */
+    public function render_local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class(local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class $gradepane) {
+        global $PAGE;
+
+        $html = $gradepane->get_panehtml();
+
+        if ($gradepane->not_graded()) {
+            $html = html_writer::tag('div', $html, array('class' => 'status s0'));
+        }
+
+        $modalhtml = $gradepane->get_modal_html();
+        if (!empty($modalhtml)) {
+            //wrap it in the proper modal html
+            $modalhtml = html_writer::tag('div', $modalhtml, array('class' => 'yui3-widget-bd'));
+            $modalhtml = html_writer::tag('div', $modalhtml, array('id' => 'local-joulegrader-gradepane-panel', 'class' => 'dontshow'));
+
+            $html .= $modalhtml;
+        }
+
+        $gradepane->require_js();
+
+        $module = array(
+            'name' => 'local_joulegrader',
+            'fullpath' => '/local/joulegrader/javascript.js',
+            'requires' => array(
+                'base',
+                'node',
+                'event',
+                'panel',
+                'dd-plugin'
+            ),
+            'strings' => array(
+                array('rubric', 'local_joulegrader'),
+            ),
+        );
+        $PAGE->requires->js_init_call('M.local_joulegrader.init_gradepane_panel', array('local-joulegrader-gradepane-panel'), false, $module);
+
+        return $html;
+    }
+
+    /**
      * Renders a navigation widget containing a previous link, a next link, and a select menu
      *
      * @param local_joulegrader_lib_navigation_widget $navwidget
@@ -380,6 +423,27 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         }
 
+        return $html;
+    }
+
+    /**
+     * @param local_joulegrader_lib_pane_view_mod_hsuforum_posts_class $viewpane
+     * @return string
+     */
+    public function render_local_joulegrader_lib_pane_view_mod_hsuforum_posts_class(local_joulegrader_lib_pane_view_mod_hsuforum_posts_class $viewpane) {
+        global $PAGE;
+
+        $context = $viewpane->get_gradingarea()->get_gradingmanager()->get_context();
+        $cm      = get_coursemodule_from_id('hsuforum', $context->instanceid, 0, false, MUST_EXIST);
+
+        /** @var $renderer mod_hsuforum_renderer */
+        $renderer = $PAGE->get_renderer('mod_hsuforum');
+
+        $html = $renderer->user_posts_overview($viewpane->get_gradingarea()->get_guserid(), $cm);
+
+        if (empty($html)) {
+            return html_writer::tag('h3', $viewpane->get_emptymessage());
+        }
         return $html;
     }
 
