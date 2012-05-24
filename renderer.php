@@ -137,8 +137,12 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $gradepane->require_js();
 
         $module = $this->get_js_module();
+        $jsoptions = array(
+            'id' => 'local-joulegrader-gradepane-panel',
+            'grademethod' => $gradepane->get_gradingarea()->get_active_gradingmethod(),
+        );
 
-        $PAGE->requires->js_init_call('M.local_joulegrader.init_gradepane_panel', array('local-joulegrader-gradepane-panel'), false, $module);
+        $PAGE->requires->js_init_call('M.local_joulegrader.init_gradepane_panel', array($jsoptions), false, $module);
 
         return $html;
     }
@@ -195,21 +199,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             'grademethod' => $gradepane->get_gradingarea()->get_active_gradingmethod()
         );
 
-        $module = array(
-            'name' => 'local_joulegrader',
-            'fullpath' => '/local/joulegrader/javascript.js',
-            'requires' => array(
-                'base',
-                'node',
-                'event',
-                'panel',
-                'dd-plugin'
-            ),
-            'strings' => array(
-                array('rubric', 'local_joulegrader'),
-                array('checklist', 'local_joulegrader'),
-            ),
-        );
+        $module = $this->get_js_module();
+
         $PAGE->requires->js_init_call('M.local_joulegrader.init_gradepane_panel', array($jsparams), false, $module);
 
         return $html;
