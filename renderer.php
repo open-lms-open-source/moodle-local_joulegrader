@@ -167,6 +167,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             ),
             'strings' => array(
                 array('rubric', 'local_joulegrader'),
+                array('checklist', 'local_joulegrader'),
                 array('close', 'local_joulegrader')
             ),
         );

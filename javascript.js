@@ -68,9 +68,27 @@ M.local_joulegrader.init_checklist = function(Y, options, panel) {
     if (remarkfield) {
         // there is a item text field so push the panel out a bit
         var panelwidth = panelnode.get('offsetWidth');
-        panel.set('width', panelwidth + 250);
-        panel.render();
+        panel.set('width', panelwidth + 400);
     }
+
+    //get the submit and submit next buttons if they exist
+    var submitbuttons = Y.all('#' + options.id + ' input[type=submit]');
+    if (submitbuttons.isEmpty()) {
+        //this is for the student
+        //add a close button
+        var closebutton = {
+            value: M.str.local_joulegrader.close,
+            action: function(e) {
+                panel.hide();
+            },
+            section: 'footer'
+        };
+
+        panel.addButton(closebutton);
+    }
+
+    // render the panel
+    panel.render();
 
 }
 
@@ -83,7 +101,7 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
         panel.render();
 
         //a little panel for display an error message
-        errorpanel = new Y.Panel({
+        var errorpanel = new Y.Panel({
             srcNode: '#local-joulegrader-gradepane-rubricerror',
             centered: true,
             zindex: 200,
