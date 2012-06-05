@@ -273,8 +273,24 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                 $gradestr = '';
             }
             $controller = $this->controller;
-            $controller->set_grade_range(make_grades_menu($this->forum->scale));
-            $html = $controller->render_grade($PAGE, $this->gradingarea->get_guserid(), $item, $gradestr, false);
+
+            if (!$controller->get_active_instances($this->gradingarea->get_guserid())) {
+                $renderer = $controller->get_renderer($PAGE);
+                $options = $controller->get_options();
+                switch ($gradingmethod) {
+                    case 'rubric':
+                        $criteria = $controller->get_definition()->rubric_criteria;
+                        $html = $renderer->display_rubric($criteria, $options, $controller::DISPLAY_VIEW, 'rubric');
+                        break;
+                    case 'checklist':
+                        $groups = $controller->get_definition()->checklist_groups;
+                        $html = $renderer->display_checklist($groups, $options, $controller::DISPLAY_VIEW, 'checklist');
+                        break;
+                }
+            } else {
+                $controller->set_grade_range(make_grades_menu($this->forum->scale));
+                $html = $controller->render_grade($PAGE, $this->gradingarea->get_guserid(), $item, $gradestr, false);
+            }
         }
 
         return $html;

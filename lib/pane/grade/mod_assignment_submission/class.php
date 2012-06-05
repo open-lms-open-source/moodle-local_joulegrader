@@ -264,7 +264,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
             }
 
             $controller = $this->controller;
-            if (empty($submission) || $submission->grade == -1) {
+            if (empty($submission) || !$controller->get_active_instances($submission->id)) {
                 $renderer = $controller->get_renderer($PAGE);
                 $options = $controller->get_options();
                 switch ($gradingmethod) {
