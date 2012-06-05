@@ -45,6 +45,7 @@ class local_joulegrader_form_mod_hsuforum_posts_grade extends moodleform {
             //check to see if this is a scale
             $isscale = (bool) ($this->_customdata->forum->scale < 0);
             if ($isscale) {
+                $grade = (int) $grade;
                 $grademenu[-1] = get_string('nograde');
                 //heading
                 $mform->addElement('static', 'gradeheader', null, get_string('grade'));
@@ -65,6 +66,8 @@ class local_joulegrader_form_mod_hsuforum_posts_grade extends moodleform {
                 //if the there is no grade yet make it blank
                 if ($grade == -1) {
                     $grade = '';
+                } else {
+                    $grade = format_float($grade, 2);
                 }
             }
 

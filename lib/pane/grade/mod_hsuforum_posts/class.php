@@ -69,7 +69,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
             $mformdata = new stdClass();
             $mformdata->cm = $this->cm;
             $mformdata->forum = $this->forum;
-            $mformdata->grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->str_grade;
+            $mformdata->grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->grade;
             $mformdata->gradeoverridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
             $mformdata->gradingdisabled = $gradingdisabled;
 
@@ -119,20 +119,21 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                         $html .= $this->advancedgradingerror;
                     }
                 } else {
-                    //for the grade range
-                    $grademenu = make_grades_menu($this->forum->scale);
-
                     //start the html
                     $grade = -1;
-                    if (!empty($this->gradinginfo->items[0]) and !empty($this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()])) {
+                    if (!empty($this->gradinginfo->items[0]) and !empty($this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()])
+                            and !is_null($this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->grade)) {
                         $grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->str_grade;
                     }
 
                     $html = html_writer::start_tag('div', array('id' => 'local-joulegrader-gradepane-grade'));
                     if ($this->forum->scale < 0) {
-                        $grademenu[-1] = get_string('nograde');
                         $html .= get_string('grade') . ': ';
-                        $html .= $grademenu[$grade];
+                        if ($grade != -1) {
+                            $html .= $grade;
+                        } else {
+                            $html .= get_string('nograde');
+                        }
                     } else {
                         //if grade isn't set yet then, make is blank, instead of -1
                         if ($grade == -1) {
