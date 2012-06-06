@@ -138,6 +138,60 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
     }
 
     /**
+     * @static
+     * @param array $users
+     * @param grading_manager $gradingmanager
+     * @param bool $needsgrading
+     *
+     * @return bool
+     */
+    public static function include_users($users, grading_manager $gradingmanager, $needsgrading) {
+        global $DB;
+        $include = array();
+
+        // right now only need to narrow users if $needsgrading is true
+        if (empty($needsgrading) || empty($users)) {
+            // return the users array as it was passed
+            return $users;
+        }
+
+        // narrow the users to those that have submissions that have not been graded since they were modified
+        try {
+            list($cm, $assignment) = self::get_assignment_info($gradingmanager);
+
+            //check for submissions for this assignment that have timemarked < timemodified for all the users passed in
+            list($inorequals, $params) = $DB->get_in_or_equal(array_keys($users));
+            $sql = "SELECT asb.userid
+                      FROM {assignment_submissions} asb
+                     WHERE asb.userid $inorequals
+                       AND asb.assignment = ?
+                       AND asb.timemarked < asb.timemodified
+                  GROUP BY asb.userid";
+
+            $params[] = $assignment->id;
+
+            // execute the query
+            $submissionusers = $DB->get_records_sql($sql, $params);
+
+            if (!empty($submissionusers)) {
+                foreach ($submissionusers as $subuserid => $nada) {
+                    if (!array_key_exists($subuserid, $users)) {
+                        // this should not happen but just in case
+                        continue;
+                    }
+                    $include[$subuserid] = $users[$subuserid];
+                }
+            }
+
+
+        } catch (Exception $e) {
+
+        }
+
+        return $include;
+    }
+
+    /**
      * @return array - the viewpane class and path to the class that this gradingarea class should use
      */
     protected function get_viewpane_info() {
