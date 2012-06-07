@@ -94,14 +94,7 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
 
         $previewtable = html_writer::table($previewtable);
 
-        $grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()];
-        if ((!$grade->grade === false) && empty($grade->hidden)) {
-            $gradeval = $grade->str_long_grade;
-        } else {
-            $gradeval = '-';
-        }
-        $gradestr = '<div class="grade">'. get_string("grade").': '.$gradeval. '</div>';
-        $html .= html_writer::tag('div', $previewtable . $gradestr, array('id' => 'local-joulegrader-viewrubric-preview-con'));
+        $html .= html_writer::tag('div', $previewtable, array('id' => 'local-joulegrader-viewrubric-preview-con'));
 
         //rubric warning message
         $html .= html_writer::tag('div', html_writer::tag('div', get_string('rubricerror', 'local_joulegrader')
@@ -129,15 +122,7 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
         $controller = $this->controller;
         $checklist = $renderer->display_checklist($groups, $options, $controller::DISPLAY_VIEW, 'checklistpreview', $values);
 
-        $grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()];
-        if ((!$grade->grade === false) && empty($grade->hidden)) {
-            $gradeval = $grade->str_long_grade;
-        } else {
-            $gradeval = '-';
-        }
-        $gradestr = '<div class="grade">'. get_string("grade").': '.$gradeval. '</div>';
-
-        $html .= html_writer::tag('div', $checklist . $gradestr, array('id' => 'local-joulegrader-viewchecklist-preview-con'));
+        $html .= html_writer::tag('div', $checklist, array('id' => 'local-joulegrader-viewchecklist-preview-con'));
 
         return $html;
     }
