@@ -62,15 +62,6 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
 M.local_joulegrader.init_checklist = function(Y, options, panel) {
     var panelnode = panel.get('srcNode');
 
-    // check to see if the checklist has item remark with active textarea
-    var remarkfield = panelnode.one('.item .remark textarea');
-
-    if (remarkfield) {
-        // there is a item text field so push the panel out a bit
-        var panelwidth = panelnode.get('offsetWidth');
-        panel.set('width', panelwidth + 400);
-    }
-
     //get the submit and submit next buttons if they exist
     var submitbuttons = Y.all('#' + options.id + ' input[type=submit]');
     if (submitbuttons.isEmpty()) {
@@ -90,6 +81,12 @@ M.local_joulegrader.init_checklist = function(Y, options, panel) {
     // render the panel
     panel.render();
 
+    // resize if necessary
+    panel.set('width', 5000);
+    var widthnode = panel.get('srcNode').one('.gradingform_checklist .groups');
+    var panelwidth = widthnode.get('scrollWidth');
+    panel.set('width', panelwidth);
+
 }
 
 M.local_joulegrader.init_rubric = function(Y, options, panel) {
@@ -107,7 +104,7 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
             zindex: 200,
             width: 200,
             visible: false,
-            render: '#' + id,
+            render: '#' + options.id,
             buttons: [
                 {
                     value: M.str.local_joulegrader.close,
@@ -175,6 +172,12 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
         //now we can render the panel
         panel.render();
     }
+
+    // resize if necessary
+    panel.set('width', 5000);
+    var tablenode = panel.get('srcNode').one('.gradingform_rubric table');
+    var panelwidth = tablenode.get('offsetWidth');
+    panel.set('width', panelwidth + 30);
 
 }
 
