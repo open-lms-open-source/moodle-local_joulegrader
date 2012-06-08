@@ -20,6 +20,7 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
     var panel = new Y.Panel({
         srcNode: '#' + options.id,
         headerContent: M.str.local_joulegrader[options.grademethod],
+        footerContent: '',
         centered: joulegrader,
 //        width: 500,
         zIndex: 10,
@@ -28,6 +29,10 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
 //        render: true,
         plugins: [Y.Plugin.Drag]
     });
+
+    // only allow dragging from the header and footer bars
+    panel.dd.addHandle('.yui3-widget-hd');
+    panel.dd.addHandle('.yui3-widget-ft');
 
     //wire up the button
     var btn = Y.one('#local-joulegrader-preview-button');
