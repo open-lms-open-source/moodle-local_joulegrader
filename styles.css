@@ -114,15 +114,15 @@
     color: grey;
 }
 
-#local-joulegrader-gradepane .mform fieldset div, .pagelayout-embedded .local_joulegrader_commentloop .mform fieldset div {
+#local-joulegrader-gradepane .local_joulegrader_simplegrading .mform fieldset div, .local_joulegrader_commentloop .mform fieldset div {
     margin: 0px;
 }
 
-#local-joulegrader-gradepane .mform .fitem fieldset.felement, .pagelayout-embedded .local_joulegrader_commentloop .mform .fitem fieldset.felement {
+#local-joulegrader-gradepane .local_joulegrader_simplegrading .mform .fitem fieldset.felement, .local_joulegrader_commentloop .mform .fitem fieldset.felement {
     padding-left: 0px;
 }
 
-.pagelayout-embedded .local_joulegrader_commentloop {
+.pagelayout-embedded .local_joulegrader_commentloop, .pagelayout-embedded .local_joulegrader_commentloop .mform .fitem .felement {
     margin: 0.5em;
 }
 

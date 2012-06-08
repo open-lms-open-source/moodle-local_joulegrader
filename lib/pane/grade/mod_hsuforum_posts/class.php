@@ -119,6 +119,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                     //get the form html for the teacher
                     $mrhelper = new mr_helper();
                     $html = $mrhelper->buffer(array($this->mform, 'display'));
+                    $html = html_writer::tag('div', $html, array('class' => 'local_joulegrader_simplegrading'));
 
                     //advanced grading error warning
                     if (!empty($this->controller) && !$this->controller->is_form_available()) {
