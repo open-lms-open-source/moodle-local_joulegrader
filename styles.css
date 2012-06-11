@@ -3,7 +3,7 @@
 }
 
 #local-joulegrader-viewpane .content {
-    margin-right: 2em;
+    margin-right: 0.75em;
     overflow: auto;
 }
 
@@ -12,9 +12,9 @@
 }
 
 #local-joulegrader-navigation {
-    padding-bottom: 0.5em;
-    padding-top: 0.5em;
-    margin-bottom: 1em;
+    padding-bottom: 0.25em;
+    padding-top: 0.25em;
+    margin-bottom: .5em;
     background-color: lightgrey;
 }
 
@@ -34,6 +34,10 @@
     display: inline-block;
 }
 
+.local_joulegrader_navwidget img{
+    vertical-align: middle;
+}
+
 #local-joulegrader .content {
     text-align: center;
 }
@@ -49,8 +53,8 @@
 }
 
 #local-joulegrader-gradepane div.status.s0 {
-    padding: 2px;
-    background-color: #FFFF99;
+    padding: 0px;
+    background-color: #FFFACD;
 }
 
 #local-joulegrader-gradepane .fitem .felement {
@@ -114,7 +118,7 @@
     color: grey;
 }
 
-#local-joulegrader-gradepane .mform fieldset div, .pagelayout-embedded .local_joulegrader_commentloop .mform fieldset div {
+#fitem_id_comment, .local_joulegrader_commentloop .mform fieldset div {
     margin: 0px;
 }
 

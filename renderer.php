@@ -281,7 +281,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             $html .= $this->help_render_assignment_dates($assignment, $submission);
 
             //submission html
-            $html .= $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter', 'online');
+            $html .= $OUTPUT->box_start('generalbox boxaligncenter', 'online');
             if (!empty($submission)) {
                 $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $gacontext->id, 'mod_assignment', $assignment->filearea, $submission->id);
                 $html .= format_text($text, $submission->data2, array('overflowdiv'=>true));
