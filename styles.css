@@ -118,7 +118,7 @@
     color: grey;
 }
 
-#fitem_id_comment, .local_joulegrader_commentloop .mform fieldset div {
+.local_joulegrader_commentloop #fitem_id_comment, .local_joulegrader_commentloop .mform fieldset div {
     margin: 0px;
 }
 
