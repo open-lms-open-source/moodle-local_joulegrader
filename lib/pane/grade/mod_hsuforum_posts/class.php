@@ -57,6 +57,12 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                     $instanceid = optional_param('gradinginstanceid', 0, PARAM_INT);
                     $this->gradinginstance = $this->controller->get_or_create_instance($instanceid, $USER->id, $this->gradingarea->get_guserid());
                 }
+
+                $currentinstance = $this->gradinginstance->get_current_instance();
+                $this->needsupdate = false;
+                if ($currentinstance && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
+                    $this->needsupdate = true;
+                }
             } else {
                 $this->advancedgradingerror = $this->controller->form_unavailable_notification();
             }
@@ -69,7 +75,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
             $mformdata = new stdClass();
             $mformdata->cm = $this->cm;
             $mformdata->forum = $this->forum;
-            $mformdata->grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->str_grade;
+            $mformdata->grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->grade;
             $mformdata->gradeoverridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
             $mformdata->gradingdisabled = $gradingdisabled;
 
@@ -113,26 +119,28 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                     //get the form html for the teacher
                     $mrhelper = new mr_helper();
                     $html = $mrhelper->buffer(array($this->mform, 'display'));
+                    $html = html_writer::tag('div', $html, array('class' => 'local_joulegrader_simplegrading'));
 
                     //advanced grading error warning
                     if (!empty($this->controller) && !$this->controller->is_form_available()) {
                         $html .= $this->advancedgradingerror;
                     }
                 } else {
-                    //for the grade range
-                    $grademenu = make_grades_menu($this->forum->scale);
-
                     //start the html
                     $grade = -1;
-                    if (!empty($this->gradinginfo->items[0]) and !empty($this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()])) {
+                    if (!empty($this->gradinginfo->items[0]) and !empty($this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()])
+                            and !is_null($this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->grade)) {
                         $grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->str_grade;
                     }
 
                     $html = html_writer::start_tag('div', array('id' => 'local-joulegrader-gradepane-grade'));
                     if ($this->forum->scale < 0) {
-                        $grademenu[-1] = get_string('nograde');
                         $html .= get_string('grade') . ': ';
-                        $html .= $grademenu[$grade];
+                        if ($grade != -1) {
+                            $html .= $grade;
+                        } else {
+                            $html .= get_string('nograde');
+                        }
                     } else {
                         //if grade isn't set yet then, make is blank, instead of -1
                         if ($grade == -1) {
@@ -159,84 +167,34 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                     return '';
                 }
 
-                //need to generate the condensed rubric html
-                //first a "view" button
-                $buttonatts = array('type' => 'button', 'id' => 'local-joulegrader-preview-button');
-                $viewbutton = html_writer::tag('button', get_string('view' . $gradingmethod, 'local_joulegrader'), $buttonatts);
+                $html = '';
+                if (!empty($this->teachercap) || !$this->needsupdate) {
+                    //need to generate the condensed rubric html
+                    //first a "view" button
+                    $buttonatts = array('type' => 'button', 'id' => 'local-joulegrader-preview-button');
+                    $viewbutton = html_writer::tag('button', get_string('view' . $gradingmethod, 'local_joulegrader'), $buttonatts);
 
-                $html = html_writer::tag('div', $viewbutton, array('id' => 'local-joulegrader-viewpreview-button-con'));
+                    $html .= html_writer::tag('div', $viewbutton, array('id' => 'local-joulegrader-viewpreview-button-con'));
 
-                //gradingmethod preview
-                $previewmethod = 'get_' . $gradingmethod . '_preview';
-                $html .= $this->$previewmethod();
+                    // needsupdate?
+                    if ($this->needsupdate) {
+                        $html .= html_writer::tag('div', get_string('needregrademessage', 'gradingform_' . $gradingmethod), array('class' => "gradingform_$gradingmethod-regrade"));
+                    }
+
+                    //gradingmethod preview
+                    $previewmethod = 'get_' . $gradingmethod . '_preview';
+                    $html .= $this->$previewmethod();
+                }
+
+                $grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()];
+                if ((!$grade->grade === false) && empty($grade->hidden)) {
+                    $gradeval = $grade->str_long_grade;
+                } else {
+                    $gradeval = '-';
+                }
+                $html .= '<div class="grade">'. get_string("grade").': '.$gradeval. '</div>';
             }
         }
-
-        return $html;
-    }
-
-    /**
-     *
-     * @return string - preview for the rubric
-     */
-    protected function get_rubric_preview() {
-        $html = '';
-
-        $definition = $this->controller->get_definition();
-        $rubricfilling = $this->gradinginstance->get_rubric_filling();
-
-        $previewtable = new html_table();
-        $previewtable->head[] = new html_table_cell(get_string('criteria', 'local_joulegrader'));
-        $previewtable->head[] = new html_table_cell(get_string('score', 'local_joulegrader'));
-        foreach ($definition->rubric_criteria as $criterionid => $criterion) {
-            $row = new html_table_row();
-            //criterion name cell
-            $row->cells[] = new html_table_cell($criterion['description']);
-
-            //score cell value
-            if (!empty($rubricfilling['criteria']) && isset($rubricfilling['criteria'][$criterionid]['levelid'])) {
-                $levelid = $rubricfilling['criteria'][$criterionid]['levelid'];
-                $criterionscore = $criterion['levels'][$levelid]['score'];
-            } else {
-                $criterionscore = ' - ';
-            }
-
-            //score cell
-            $row->cells[] = new html_table_cell($criterionscore);
-
-            $previewtable->data[] = $row;
-        }
-
-        $previewtable = html_writer::table($previewtable);
-        $html .= html_writer::tag('div', $previewtable, array('id' => 'local-joulegrader-viewrubric-preview-con'));
-
-        //rubric warning message
-        $html .= html_writer::tag('div', html_writer::tag('div', get_string('rubricerror', 'local_joulegrader')
-            , array('class' => 'yui3-widget-bd')), array('id' => 'local-joulegrader-gradepane-rubricerror', 'class' => 'dontshow'));
-
-        return $html;
-    }
-
-    /**
-     * @return string - preview for the checklist
-     */
-    protected function get_checklist_preview() {
-        global $PAGE;
-
-        $html = '';
-
-        $groups = $this->controller->get_definition()->checklist_groups;
-        $options = $this->controller->get_options();
-
-        $options['showremarksstudent'] = 0;
-        $renderer = $this->controller->get_renderer($PAGE);
-
-        $values = $this->gradinginstance->get_checklist_filling();
-
-        $controller = $this->controller;
-        $checklist = $renderer->display_checklist($groups, $options, $controller::DISPLAY_VIEW, 'checklistpreview', $values);
-
-        $html .= html_writer::tag('div', $checklist, array('id' => 'local-joulegrader-viewchecklist-preview-con'));
 
         return $html;
     }
@@ -250,6 +208,10 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
         $html = '';
 
         if (empty($this->controller) || !$this->controller->is_form_available()) {
+            return $html;
+        }
+
+        if (empty($this->teachercap) && $this->needsupdate) {
             return $html;
         }
 
@@ -272,8 +234,24 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                 $gradestr = '';
             }
             $controller = $this->controller;
-            $controller->set_grade_range(make_grades_menu($this->forum->scale));
-            $html = $controller->render_grade($PAGE, $this->gradingarea->get_guserid(), $item, $gradestr, false);
+
+            if (!$controller->get_active_instances($this->gradingarea->get_guserid())) {
+                $renderer = $controller->get_renderer($PAGE);
+                $options = $controller->get_options();
+                switch ($gradingmethod) {
+                    case 'rubric':
+                        $criteria = $controller->get_definition()->rubric_criteria;
+                        $html = $renderer->display_rubric($criteria, $options, $controller::DISPLAY_VIEW, 'rubric');
+                        break;
+                    case 'checklist':
+                        $groups = $controller->get_definition()->checklist_groups;
+                        $html = $renderer->display_checklist($groups, $options, $controller::DISPLAY_VIEW, 'checklist');
+                        break;
+                }
+            } else {
+                $controller->set_grade_range(make_grades_menu($this->forum->scale));
+                $html = $controller->render_grade($PAGE, $this->gradingarea->get_guserid(), $item, $gradestr, false);
+            }
         }
 
         return $html;

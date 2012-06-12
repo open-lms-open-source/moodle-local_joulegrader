@@ -70,6 +70,56 @@ class local_joulegrader_lib_gradingarea_mod_hsuforum_posts_class extends local_j
     }
 
     /**
+     * @static
+     * @param $users
+     * @param grading_manager $gradingmanager
+     * @param bool $needsgrading
+     *
+     * @return array
+     */
+    public static function include_users($users, grading_manager $gradingmanager, $needsgrading) {
+        global $DB, $CFG, $COURSE;
+        $include = array();
+
+        // return $users if needsgrading is false or there are no users to include
+        if (empty($needsgrading) || empty($users)) {
+            return $users;
+        }
+
+        try {
+            require_once($CFG->libdir.'/gradelib.php');
+            require_once($CFG->dirroot.'/mod/hsuforum/lib.php');
+
+            // load the course_module from the context
+            $cm = get_coursemodule_from_id('hsuforum', $gradingmanager->get_context()->instanceid, $COURSE->id, false, MUST_EXIST);
+
+            // load the hsuforum record
+            $hsuforum = $DB->get_record("hsuforum", array("id" => $cm->instance), '*', MUST_EXIST);
+
+            // get existing grades
+            $grades = grade_get_grades($COURSE->id, 'mod', 'hsuforum', $hsuforum->id, array_keys($users));
+            $include = false;
+            foreach ($grades->items as $item) {
+                foreach ($item->grades as $userid => $grade) {
+                    if (is_null($grade->grade)) {
+                        $posts = hsuforum_get_user_posts($hsuforum->id, $userid);
+
+                        // if they have posts
+                        if (!empty($posts)) {
+                            $include[$userid] = $users[$userid];
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception $e) {
+
+        }
+
+        return $include;
+    }
+
+    /**
      * @return array - the viewpane class and path to the class that this gradingarea class should use
      */
     protected function get_viewpane_info() {

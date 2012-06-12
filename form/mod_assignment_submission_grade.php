@@ -120,11 +120,15 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
                     $validated = true;
                 }
             } else if (strpos($grade, '%') !== false) {
-                //trying to submit percentage
+                // trying to submit percentage
                 $percentgrade = trim(strstr($grade, '%', true));
-                $percentgrade = clean_param($percentgrade, PARAM_INT);
-                if ($percentgrade >= 0 && $percentgrade <= 100) {
-                    $validated = true;
+
+                // make sure what is left is numeric
+                if (is_numeric($percentgrade)) {
+                    $percentgrade = clean_param($percentgrade, PARAM_INT);
+                    if ($percentgrade >= 0 && $percentgrade <= 100) {
+                        $validated = true;
+                    }
                 }
             } else if (in_array(textlib::strtoupper($grade), array_map('textlib::strtoupper', $lettergrades))) {
                 //look for a lettergrade

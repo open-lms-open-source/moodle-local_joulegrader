@@ -77,6 +77,19 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
 
             //make menu from the users
             $this->users = array();
+
+            // allow the plugin to narrow down the users
+            $needsgrading = optional_param('needsgrading', 0, PARAM_BOOL);
+            $includemethod = 'include_users';
+            if (!empty($currentarea) && is_callable("{$classname}::{$includemethod}")) {
+                // check with the grading area class to make sure to include the current user
+                $users = $classname::$includemethod($users, $gradingareamgr, $needsgrading);
+            }
+
+            // make sure that the plugin gave us an array back
+            if (!is_array($users)) {
+                return array();
+            }
             foreach ($users as $userid => $user) {
                 $this->users[$userid] = fullname($user);
             }
@@ -101,6 +114,11 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
                 $guser = array_shift(array_keys($this->users));
             } else if (!array_key_exists($guser, $this->users) && !empty($this->users)) {
                 $guser = array_shift(array_keys($this->users));
+            }
+
+            //special case where needs grading has excluded all grading areas
+            if (empty($this->users) && optional_param('needsgrading', 0, PARAM_BOOL)) {
+                $guser = null;
             }
 
             $this->currentuser = $guser;
