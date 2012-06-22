@@ -154,6 +154,11 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
                 return array();
             }
 
+            // *********************
+            // *********************
+            // Check to make sure that there are no legacy activities that don't have grading areas
+            $this->ensure_grading_areas();
+
             //determine where clause based on supported grading_areas
             $whereorclauses = array();
             $whereorparams  = array();
@@ -401,6 +406,60 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
         }
 
         return $orderareasfinal;
+    }
+
+    /**
+     * Checks for assignments and advanced forums that don't have grading area records
+     *
+     * @ Todo: caching; make dynamic for other components (activities) and areanames
+     */
+    protected function ensure_grading_areas() {
+        global $COURSE, $DB;
+
+        // activity context level
+        $modcontext = CONTEXT_MODULE;
+
+        // build sql query
+        $sql = <<<EOL
+    SELECT c.id AS contextid, 'mod_assignment' AS component, 'submission' AS areaname
+      FROM {assignment} a
+INNER JOIN {course_modules} cm ON (cm.instance = a.id AND cm.course = ?)
+INNER JOIN {modules} m ON (m.name = 'assignment' AND m.id = cm.module)
+INNER JOIN {context} c ON (c.instanceid = cm.id AND c.contextlevel = ?)
+ LEFT JOIN {grading_areas} ga ON (ga.contextid = c.id)
+     WHERE ga.id IS NULL
+ UNION ALL
+    SELECT c.id AS contextid, 'mod_hsuforum' AS component, 'posts' AS areaname
+      FROM {hsuforum} af
+INNER JOIN {course_modules} cm ON (cm.instance = af.id AND cm.course = ?)
+INNER JOIN {modules} m ON (m.name = 'hsuforum' AND m.id = cm.module)
+INNER JOIN {context} c ON (c.instanceid = cm.id AND c.contextlevel = ?)
+ LEFT JOIN {grading_areas} ga ON (ga.contextid = c.id)
+     WHERE ga.id IS NULL
+EOL;
+
+        // query params
+        $params = array($COURSE->id, $modcontext, $COURSE->id, $modcontext);
+
+        try {
+            // get the recordset
+            $rs = $DB->get_recordset_sql($sql, $params);
+
+            // iterate the recordset and add new grading_areas records
+            foreach ($rs as $record) {
+                try {
+                    // insert the record
+                    $DB->insert_record('grading_areas', $record);
+                } catch (Exception $e) {
+                    // catch exceptions from insert attempt and ignore it
+                }
+            }
+
+            $rs->close();
+        } catch (Exception $e) {
+            // forget about it
+        }
+
     }
 
     /**
