@@ -156,9 +156,6 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
 
                 $html = '';
                 if (!empty($this->teachercap) || !$this->needsupdate) {
-                    //need to generate the condensed rubric html
-                    //first a "view" button
-                    //If the user has the ability to see the rubric!
                     $controller = $this->controller;
                     $options = $controller->get_options();
                     $grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()];
@@ -166,6 +163,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                     if (!empty($options['alwaysshowdefinition']) || !empty($this->teachercap) || (!empty($grade->grade) && empty($grade->hidden))) {
                         //need to generate the condensed rubric html
                         //first a "view" button
+                        //If the user has the ability to see the rubric!
                         $buttonatts = array('type' => 'button', 'id' => 'local-joulegrader-preview-button');
                         $viewbutton = html_writer::tag('button', get_string('view' . $gradingmethod, 'local_joulegrader'), $buttonatts);
 
