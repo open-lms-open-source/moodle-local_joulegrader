@@ -569,9 +569,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
   </object>
 </div>
 EOT;
-            // the size is hardcoded in the boject obove intentionally because it is adjusted by the following function on-the-fly
-            $PAGE->requires->js_init_call('M.local_joulegrader.init_maximised_embed', array('resourceobject'), true
-                    , array('name' => 'local_joulegrader', 'fullpath' => '/local/joulegrader/javascript.js'));
+            // the size is hardcoded in the object above intentionally because it is adjusted by the following function on-the-fly
+            $PAGE->requires->js_init_call('M.local_joulegrader.init_maximised_embed', array('resourceobject'), true, $this->get_js_module());
 
         } else if ($mimetype === 'audio/mp3') {
             // MP3 audio file
