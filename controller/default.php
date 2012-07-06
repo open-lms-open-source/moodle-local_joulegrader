@@ -36,6 +36,17 @@ class local_joulegrader_controller_default extends mr_controller {
 
         //add 'joule Grader' to bread crumb
         $PAGE->navbar->add(get_string('pluginname', 'local_joulegrader'));
+
+        // set layout to include blocks
+        switch ($this->action) {
+            case 'view':
+            case 'process':
+                $PAGE->set_pagelayout('standard');
+                break;
+            case 'viewcommentloop':
+                $PAGE->set_pagelayout('embedded');
+                break;
+        }
     }
 
     /**
@@ -356,9 +367,7 @@ class local_joulegrader_controller_default extends mr_controller {
      */
     public function viewcommentloop_action() {
         global $PAGE;
-
-        //in a popup
-        $PAGE->set_pagelayout('embedded');
+        
         $PAGE->set_heading('');
 
         //get current area id and current user parameters for the gradingarea instance
