@@ -228,7 +228,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $previd = $navwidget->get_previd();
         if (!is_null($previd)) {
             $linkurl->param($navwidget->get_param(), $previd);
-            $prevlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/left', get_string('previous')));
+            $prevlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/left', get_string('previous', 'local_joulegrader', strtolower($navwidget->get_label()))));
         }
 
         //select menu
@@ -247,7 +247,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $nextid = $navwidget->get_nextid();
         if (!is_null($nextid)) {
             $linkurl->param($navwidget->get_param(), $nextid);
-            $nextlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/right', get_string('next')));
+            $nextlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/right', get_string('next', 'local_joulegrader', strtolower($navwidget->get_label()))));
         }
 
         return html_writer::tag('div', $prevlink . $selectform . $nextlink, array('class' => 'local_joulegrader_navwidget'));

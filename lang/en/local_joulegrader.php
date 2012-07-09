@@ -24,14 +24,19 @@ $string['nogradeableareas'] = 'No gradable items';
 $string['nogradeableusers'] = 'No gradable users';
 
 //renderer.php strings
+$string['activity'] = 'Gradable activity';
 $string['activitynav'] = 'Gradable items';
 $string['activitynav_help'] = 'Use this widget to select which gradable item to grade.';
+$string['group'] = 'Group';
 $string['groupnav'] = 'Groups';
 $string['groupnav_help'] = 'Use this widget to select a group.';
+$string['user'] = 'User';
 $string['usernav'] = 'Users';
 $string['usernav_help'] = 'Use this widget to select which user to grade.';
 $string['commentdeleted'] = 'User {$a->deletedby} deleted post on {$a->deletedon}';
 $string['deletecomment'] = 'Delete comment';
+$string['previous'] = 'Previous {$a}';
+$string['next'] = 'Next {$a}';
 
 //mod_assignment_submission_grade form strings
 $string['gradeoutof'] = 'Grade (out of {$a})';

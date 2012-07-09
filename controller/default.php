@@ -367,7 +367,7 @@ class local_joulegrader_controller_default extends mr_controller {
      */
     public function viewcommentloop_action() {
         global $PAGE;
-        
+
         $PAGE->set_heading('');
 
         //get current area id and current user parameters for the gradingarea instance

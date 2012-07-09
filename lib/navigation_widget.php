@@ -48,9 +48,14 @@ class local_joulegrader_lib_navigation_widget implements renderable {
     protected $previd;
 
     /**
+     * @var string visible label for use in previous and next labels/tool tips, etc
+     */
+    protected $label = '';
+
+    /**
      * @param string $name -the name of the navigation widget (likely user or activity)
      * @param moodle_url $url - the url for the form action/links
-     * @param array $options - opptions for the select menu
+     * @param array $options - options for the select menu
      * @param string $param - the parameter that changes on select/used in link
      * @param int $currentid - the currently selected id (used to set the selected menu item)
      * @param mixed $nextid - the id for the next link
@@ -113,6 +118,20 @@ class local_joulegrader_lib_navigation_widget implements renderable {
      */
     public function get_url() {
         return $this->url;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_label() {
+        return $this->label;
+    }
+
+    /**
+     * @param $label
+     */
+    public function set_label($label) {
+        $this->label = $label;
     }
 }
 
