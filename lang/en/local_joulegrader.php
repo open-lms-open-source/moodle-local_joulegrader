@@ -20,13 +20,13 @@ $string['allactivities'] = 'Show All Activities';
 $string['mobilenotsupported'] = 'joule Grader does not currently support mobile browsers';
 
 //helper/navigation.php strings
-$string['nogradeableareas'] = 'No gradable items';
+$string['nogradeableareas'] = 'No gradable activities';
 $string['nogradeableusers'] = 'No gradable users';
 
 //renderer.php strings
 $string['activity'] = 'Gradable activity';
-$string['activitynav'] = 'Gradable items';
-$string['activitynav_help'] = 'Use this widget to select which gradable item to grade.';
+$string['activitynav'] = 'Gradable activities';
+$string['activitynav_help'] = 'Use this widget to select which gradable activity to grade.';
 $string['group'] = 'Group';
 $string['groupnav'] = 'Groups';
 $string['groupnav_help'] = 'Use this widget to select a group.';
@@ -41,7 +41,7 @@ $string['next'] = 'Next {$a}';
 //mod_assignment_submission_grade form strings
 $string['gradeoutof'] = 'Grade (out of {$a})';
 $string['gradeoutofrange'] = 'Grade is out range';
-$string['overridetext'] = 'Previously, an instructor created a grade for this item directly in the gradebook.  Check this box if you want to replace that grade, too.';
+$string['overridetext'] = 'Previously, an instructor created a grade for this activity directly in the gradebook.  Check this box if you want to replace that grade, too.';
 $string['save'] = 'Save';
 $string['saveandnext'] = 'Save and Next';
 
