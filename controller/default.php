@@ -63,14 +63,6 @@ class local_joulegrader_controller_default extends mr_controller {
             return $OUTPUT->container(html_writer::tag('h2', get_string('mobilenotsupported', 'local_joulegrader')), null, 'local-joulegrader-mobilenotsupportedmsg');
         }
 
-        //get the joule grader header info
-        //link nav
-        $linknav = $OUTPUT->action_link(new moodle_url('/course/view.php', array('id' => $COURSE->id)), get_string('course'));
-        $linknav .= ' | ' . $OUTPUT->action_link(new moodle_url('/grade/report/index.php', array('id' => $COURSE->id))
-                , get_string('gradebook', 'local_joulegrader'));
-        $linknav = $OUTPUT->container($linknav, null, 'local-joulegrader-linknav');
-        $linknav = $OUTPUT->container($linknav, 'content');
-
         //pull out the users helper and gradingareas helper
         $usershelper = $this->helper->users;
 
@@ -105,14 +97,12 @@ class local_joulegrader_controller_default extends mr_controller {
             } else {
                 $buttonstring = get_string('allactivities', 'local_joulegrader');
             }
-            $buttonnav = html_writer::tag('div', $OUTPUT->single_button($buttonurl, $buttonstring, 'get'), array('class' => 'content'));
+            $buttonnav = $OUTPUT->single_button($buttonurl, $buttonstring, 'get');
         }
 
         $menunav = $OUTPUT->container($activitynav . $usernav, 'content');
-
-        $usernavcon = $OUTPUT->container($linknav, 'yui3-u-1-3', 'local-joulegrader-linknav');
         $buttonnavcon = $OUTPUT->container($buttonnav, 'yui3-u-1-3', 'local-joulegrader-buttonnav');
-        $activitynavcon = $OUTPUT->container($menunav, 'yui3-u-1-3', 'local-joulegrader-menunav');
+        $activitynavcon = $OUTPUT->container($menunav, 'yui3-u-2-3', 'local-joulegrader-menunav');
 
         //if the current user id and the current area id are not empty, load the class and get the pane contents
         if (!empty($currentareaid) && !empty($currentuserid)) {
@@ -149,7 +139,7 @@ class local_joulegrader_controller_default extends mr_controller {
         }
 
         //navigation container
-        $output = $OUTPUT->container($usernavcon . $buttonnavcon . $activitynavcon, 'yui3-u-1', 'local-joulegrader-navigation');
+        $output = $OUTPUT->container($buttonnavcon . $activitynavcon, 'yui3-u-1', 'local-joulegrader-navigation');
 
         //panes container
         $output .= $OUTPUT->container($panescontainer, 'yui3-u-1', 'local-joulegrader-panes');
