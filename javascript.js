@@ -9,9 +9,11 @@ M.local_joulegrader = M.local_joulegrader || {};
 
 M.local_joulegrader.init_gradepane_panel = function(Y, options) {
     var panelnode = Y.one('#' + options.id);
-    if (!panelnode) {
+    var btn = Y.one('#local-joulegrader-preview-button');
+    if (!panelnode || !btn) {
         return;
     }
+
 
     //joule grader div
     var joulegrader = Y.one('#local-joulegrader');
@@ -35,7 +37,6 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
     panel.dd.addHandle('.yui3-widget-ft');
 
     //wire up the button
-    var btn = Y.one('#local-joulegrader-preview-button');
     btn.on('click', function(e) {
         e.preventDefault();
 

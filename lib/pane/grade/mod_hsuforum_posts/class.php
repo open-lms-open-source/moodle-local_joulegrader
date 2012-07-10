@@ -221,11 +221,19 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
             $html = $mrhelper->buffer(array($this->mform, 'display'));
         } else {
             //this is for a student
+            $options = $this->controller->get_options();
+
+            // which grading method
             $gradingmethod = $this->gradingarea->get_active_gradingmethod();
 
             //get grading info
             $item = $this->gradinginfo->items[0];
             $grade = $item->grades[$this->gradingarea->get_guserid()];
+
+            // check to see if this we should generate based on settings and grade
+            if (empty($options['alwaysshowdefinition']) && (empty($grade->grade) || !empty($grade->hidden))) {
+                return $html;
+            }
 
             if ((!$grade->grade === false) && empty($grade->hidden)) {
                 $gradestr = '<div class="grade">'. get_string("grade").': '.$grade->str_long_grade. '</div>';
