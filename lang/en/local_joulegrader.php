@@ -37,6 +37,10 @@ $string['commentdeleted'] = 'User {$a->deletedby} deleted post on {$a->deletedon
 $string['deletecomment'] = 'Delete comment';
 $string['previous'] = 'Previous {$a}';
 $string['next'] = 'Next {$a}';
+$string['assignmentavailable'] = 'Available';
+$string['on'] = 'on {$a}';
+$string['until'] = 'until {$a}';
+$string['lastedited'] = 'Last edited on {$a}';
 
 //mod_assignment_submission_grade form strings
 $string['gradeoutof'] = 'Grade (out of {$a})';

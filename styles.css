@@ -22,6 +22,10 @@
     background-color: lightgrey;
 }
 
+#page-local-joulegrader-view #dates.generalbox {
+    font-size: .75em;
+}
+
 #local-joulegrader-mobilenotsupportedmsg {
     text-align: center;
 }
