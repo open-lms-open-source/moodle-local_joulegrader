@@ -150,13 +150,6 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                         $html .= $grade;
                     }
                     $html .= html_writer::end_tag('div');
-
-                    $overridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
-                    if (!empty($overridden)) {
-                        $html .= html_writer::start_tag('div');
-                        $html .= get_string('gradeoverriddenstudent', 'local_joulegrader', $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->str_grade);
-                        $html .= html_writer::end_tag('div');
-                    }
                 }
             } else if ($this->controller->is_form_available()) {
                 //generate preview based on type of advanced grading plugin (rubric or checklist)
