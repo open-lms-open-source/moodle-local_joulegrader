@@ -106,7 +106,7 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
         //a little panel for display an error message
         var errorpanel = new Y.Panel({
             srcNode: '#local-joulegrader-gradepane-rubricerror',
-            centered: true,
+            centered: '#' + options.id,
             zindex: 200,
             width: 200,
             visible: false,
@@ -121,8 +121,6 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
                 }
             ]
         });
-
-        errorpanel.render();
 
         //attach the event handlers
         submitbuttons.on('click', function(e) {
@@ -159,6 +157,8 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
                 Y.one('#local-joulegrader-gradepane-rubricerror').removeClass('dontshow');
 
                 errorpanel.show();
+                errorpanel.get('srcNode').scrollIntoView();
+                errorpanel.centered();
             }
 
         });
