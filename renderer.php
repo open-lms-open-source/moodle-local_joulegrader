@@ -411,8 +411,14 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 $this->page->requires->js_init_call('M.mod_assignment.init_tree', array(true, $htmlid), false, $module);
 
                 $html .= html_writer::tag('div', $this->help_htmllize_tree($gacontext, $submission, $fileareatree), array('id' => $htmlid));
+            }
 
-            } else {
+            if ($assignment->notes_allowed() && !empty($submission) && !empty($submission->data1)) {
+                $html .= $OUTPUT->heading(get_string('notes', 'assignment'));
+                $html .= $OUTPUT->box(format_text($submission->data1, FORMAT_HTML, array('overflowdiv'=>true)), 'generalbox boxaligncenter boxwidthwide');
+            }
+
+            if (empty($fileareatree) && (!$assignment->notes_allowed() || empty($submission) || empty($submission->data1))) {
                 //nothing to display
                 $html .= html_writer::tag('h3', $viewpane->get_emptymessage());
             }
