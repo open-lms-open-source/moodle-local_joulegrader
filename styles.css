@@ -143,4 +143,5 @@
 #local-joulegrader-gradepane-panel .gradingform_rubric {
     max-width: 100%;
     overflow: auto;
+    min-height: 0%;
 }
