@@ -182,9 +182,13 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
     // resize if necessary
     panel.set('width', 5000);
     var tablenode = panel.get('srcNode').one('.gradingform_rubric table');
-    var panelwidth = tablenode.get('offsetWidth');
-    panel.set('width', panelwidth + 30);
-
+    var panelwidth = parseInt(tablenode.get('offsetWidth')) + 30;
+    var maxwidth = parseInt(Y.one('#local-joulegrader').get('offsetWidth'));
+    if (panelwidth > maxwidth) {
+        panelwidth = maxwidth;
+    }
+    panel.set('width', panelwidth);
+    Y.one('#local-joulegrader-gradepane-panel .gradingform_rubric').setStyle('width', panel.get('width') - 30);
 }
 
 /**

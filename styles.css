@@ -135,3 +135,12 @@
 .local_joulegrader_commentloop .mform fieldset div.fdescription.required, .local_joulegrader_commentloop .mform fieldset div.fitem.required label {
     display: none;
 }
+
+#local-joulegrader-gradepane-panel .gradingform_rubric .criterion .remark textarea {
+    min-width: 100px;
+}
+
+#local-joulegrader-gradepane-panel .gradingform_rubric {
+    max-width: 100%;
+    overflow: auto;
+}
