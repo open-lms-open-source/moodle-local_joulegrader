@@ -239,11 +239,16 @@ class local_joulegrader_controller_default extends mr_controller {
             } else {
                 $renderer = $PAGE->get_renderer('local_joulegrader');
 
-                // Need to set the context
-                $gradingmgr = get_grading_manager($comment->get_gareaid());
-                $comment->set_context($gradingmgr->get_context());
+                // @var local_joulegrader_helper_gradingareas $gareashelper
+                $gareashelper = $this->helper->gradingareas;
+                $gareainstance = $gareashelper::get_gradingarea_instance($comment->get_gareaid(), $comment->get_guserid());
 
-                $commenthtml = $renderer->render($comment);
+                // get the comment loop comments and render comments
+                $comments = $gareainstance->get_commentloop()->get_comments();
+                $commenthtml = '';
+                foreach ($comments as $comment) {
+                    $commenthtml .= $renderer->render($comment);
+                }
 
                 $commentinfo = new stdClass();
                 $commentinfo->html = $commenthtml;
@@ -321,14 +326,20 @@ class local_joulegrader_controller_default extends mr_controller {
             //check to see that form was submitted
             if ($data = $mform->get_data()) {
                 //add the comment to the comment loop
-                $comment = $commentloop->add_comment($data);
+                $newcomment = $commentloop->add_comment($data);
             }
 
             if (!$isajaxrequest) {
                 redirect(new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid, 'guser' => $currentuserid)));
             } else {
                 $renderer = $PAGE->get_renderer('local_joulegrader');
-                $commenthtml = $renderer->render($comment);
+
+                // render just the comments again
+                $commenthtml = '';
+                $comments = $commentloop->get_comments();
+                foreach ($comments as $comment) {
+                    $commenthtml .= $renderer->render($comment);
+                }
 
                 $commentinfo = new stdClass();
                 $commentinfo->html = $commenthtml;

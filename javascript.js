@@ -241,20 +241,11 @@ M.local_joulegrader.init_commentloop = function(Y, id) {
                         //get the response
                         var response = Y.JSON.parse(o.responseText);
 
-                        //if html is there replace the old one
+                        //if html is there replace comments
                         if (response.html) {
-                            var newcomment = Y.Node.create(response.html);
-
                             //insert the new comment after the old one
-                            comment.insert(newcomment, 'after');
+                            comments.insert(response.html, 'replace');
 
-                            //make sure the new comment has the deleted class
-                            if (!newcomment.hasClass('deleted')) {
-                                newcomment.addClass('deleted');
-                            }
-
-                            //delete the old comment
-                            comment.remove(true);
                         } else if (response.error) {
                             alert(response.error);
                         }
@@ -270,10 +261,7 @@ M.local_joulegrader.init_commentloop = function(Y, id) {
     }
 
     //attach onclick event listener for delete comment
-    var commentdeletelinks = commentloopcon.all('.local_joulegrader_comment_delete a');
-    if (commentdeletelinks) {
-        commentdeletelinks.on('click', deleteaction);
-    }
+    commentloopcon.delegate('click', deleteaction, '.local_joulegrader_comment_delete a');
 
     //attach onsubmit event listener for adding new comments
     commentform.on('submit', function(e) {
@@ -307,15 +295,8 @@ M.local_joulegrader.init_commentloop = function(Y, id) {
                         var response = Y.JSON.parse(o.responseText);
 
                         if (response.html) {
-                            //append the comment
-                            var newcomment = Y.Node.create(response.html);
-                            comments.append(newcomment);
-                            
-                            //attach the delete event listener
-                            var deletelnk = newcomment.one('.local_joulegrader_comment_delete a');
-                            if (deletelnk) {
-                                deletelnk.on('click', deleteaction);
-                            }
+                            // replace the comments
+                            comments.insert(response.html, 'replace');
 
                             //delete the textarea
                             textarea.set('value', '');
