@@ -59,7 +59,7 @@ class local_joulegrader_helper_navigation extends mr_helper_abstract {
                     $gareaurl->param('needsgrading', 1);
                 }
                 $activity_navwidget = new local_joulegrader_lib_navigation_widget('activity', $gareaurl, $gradingareas, 'garea', $currentarea, $nextarea, $prevarea);
-
+                $activity_navwidget->set_label(get_string('activity', 'local_joulegrader'));
                 $this->activitynav = $renderer->render($activity_navwidget);
             } else {
                 $this->activitynav = '<h4>' . get_string('nogradeableareas', 'local_joulegrader') . '</h4>';
@@ -86,6 +86,7 @@ class local_joulegrader_helper_navigation extends mr_helper_abstract {
 
                     //create the widget and render it
                     $groupnavwidget = new local_joulegrader_lib_navigation_widget('group', $groupurl, $groups, 'group', $currentgroup, $nextgroup, $prevgroup);
+                    $groupnavwidget->set_label(get_string('group', 'local_joulegrader'));
                     $groupnav = $renderer->render($groupnavwidget);
                 }
             }
@@ -99,7 +100,7 @@ class local_joulegrader_helper_navigation extends mr_helper_abstract {
                     $guserurl->param('needsgrading', 1);
                 }
                 $user_navwidget = new local_joulegrader_lib_navigation_widget('user', $guserurl, $users, 'guser', $currentuser, $nextuser, $prevuser);
-
+                $user_navwidget->set_label(get_string('user', 'local_joulegrader'));
                 $this->usernav .= $renderer->render($user_navwidget);
             } else {
                 $this->usernav .= '<h4>' . get_string('nogradeableusers', 'local_joulegrader') . '</h4>';
@@ -118,7 +119,7 @@ class local_joulegrader_helper_navigation extends mr_helper_abstract {
             if (!empty($gradingareas)) {
                 $activity_navwidget = new local_joulegrader_lib_navigation_widget('activity', new moodle_url('/local/joulegrader/view.php'
                     , array('courseid' => $COURSE->id, 'guser' => $USER->id)), $gradingareas, 'garea', $currentarea, $nextarea, $prevarea);
-
+                $activity_navwidget->set_label(get_string('activity', 'local_joulegrader'));
                 $this->activitynav = $renderer->render($activity_navwidget);
             } else {
                 $this->activitynav = '<h4>' . get_string('nogradeableareas', 'local_joulegrader') . '</h4>';

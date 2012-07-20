@@ -9,9 +9,11 @@ M.local_joulegrader = M.local_joulegrader || {};
 
 M.local_joulegrader.init_gradepane_panel = function(Y, options) {
     var panelnode = Y.one('#' + options.id);
-    if (!panelnode) {
+    var btn = Y.one('#local-joulegrader-preview-button');
+    if (!panelnode || !btn) {
         return;
     }
+
 
     //joule grader div
     var joulegrader = Y.one('#local-joulegrader');
@@ -35,7 +37,6 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
     panel.dd.addHandle('.yui3-widget-ft');
 
     //wire up the button
-    var btn = Y.one('#local-joulegrader-preview-button');
     btn.on('click', function(e) {
         e.preventDefault();
 
@@ -105,7 +106,7 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
         //a little panel for display an error message
         var errorpanel = new Y.Panel({
             srcNode: '#local-joulegrader-gradepane-rubricerror',
-            centered: true,
+            centered: '#' + options.id,
             zindex: 200,
             width: 200,
             visible: false,
@@ -120,8 +121,6 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
                 }
             ]
         });
-
-        errorpanel.render();
 
         //attach the event handlers
         submitbuttons.on('click', function(e) {
@@ -158,6 +157,8 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
                 Y.one('#local-joulegrader-gradepane-rubricerror').removeClass('dontshow');
 
                 errorpanel.show();
+                errorpanel.get('srcNode').scrollIntoView();
+                errorpanel.centered();
             }
 
         });
@@ -181,9 +182,13 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
     // resize if necessary
     panel.set('width', 5000);
     var tablenode = panel.get('srcNode').one('.gradingform_rubric table');
-    var panelwidth = tablenode.get('offsetWidth');
-    panel.set('width', panelwidth + 30);
-
+    var panelwidth = parseInt(tablenode.get('offsetWidth')) + 30;
+    var maxwidth = parseInt(Y.one('#local-joulegrader').get('offsetWidth'));
+    if (panelwidth > maxwidth) {
+        panelwidth = maxwidth;
+    }
+    panel.set('width', panelwidth);
+    Y.one('#local-joulegrader-gradepane-panel .gradingform_rubric').setStyle('width', panel.get('width') - 30);
 }
 
 /**
@@ -240,20 +245,11 @@ M.local_joulegrader.init_commentloop = function(Y, id) {
                         //get the response
                         var response = Y.JSON.parse(o.responseText);
 
-                        //if html is there replace the old one
+                        //if html is there replace comments
                         if (response.html) {
-                            var newcomment = Y.Node.create(response.html);
-
                             //insert the new comment after the old one
-                            comment.insert(newcomment, 'after');
+                            comments.insert(response.html, 'replace');
 
-                            //make sure the new comment has the deleted class
-                            if (!newcomment.hasClass('deleted')) {
-                                newcomment.addClass('deleted');
-                            }
-
-                            //delete the old comment
-                            comment.remove(true);
                         } else if (response.error) {
                             alert(response.error);
                         }
@@ -269,10 +265,7 @@ M.local_joulegrader.init_commentloop = function(Y, id) {
     }
 
     //attach onclick event listener for delete comment
-    var commentdeletelinks = commentloopcon.all('.local_joulegrader_comment_delete a');
-    if (commentdeletelinks) {
-        commentdeletelinks.on('click', deleteaction);
-    }
+    commentloopcon.delegate('click', deleteaction, '.local_joulegrader_comment_delete a');
 
     //attach onsubmit event listener for adding new comments
     commentform.on('submit', function(e) {
@@ -306,15 +299,8 @@ M.local_joulegrader.init_commentloop = function(Y, id) {
                         var response = Y.JSON.parse(o.responseText);
 
                         if (response.html) {
-                            //append the comment
-                            var newcomment = Y.Node.create(response.html);
-                            comments.append(newcomment);
-                            
-                            //attach the delete event listener
-                            var deletelnk = newcomment.one('.local_joulegrader_comment_delete a');
-                            if (deletelnk) {
-                                deletelnk.on('click', deleteaction);
-                            }
+                            // replace the comments
+                            comments.insert(response.html, 'replace');
 
                             //delete the textarea
                             textarea.set('value', '');
