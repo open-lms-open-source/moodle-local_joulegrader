@@ -50,7 +50,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
      * @param $forcedownload
      * @return bool
      */
-    public static function pluginfile($course, $cm, $context, $itemid, $args, $forcedownload) {
+    public static function pluginfile($course, $cm, $context, $itemid, $args, $forcedownload, $options) {
         global $USER, $DB;
 
         //should only be the filename left in the args
@@ -77,7 +77,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
             return false;
         }
 
-        send_stored_file($file);
+        send_stored_file($file, 86400, 0, true, $options);
 }
 
 

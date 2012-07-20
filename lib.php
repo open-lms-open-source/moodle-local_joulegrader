@@ -60,7 +60,7 @@ function joulegrader_extend_settings_navigation($settings, $context) {
  * @param $forcedownload
  * @return bool
  */
-function local_joulegrader_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function local_joulegrader_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     global $CFG, $DB, $USER;
 
     require_login($course, false, $cm);
@@ -91,7 +91,7 @@ function local_joulegrader_pluginfile($course, $cm, $context, $filearea, $args, 
             return false;
         }
 
-        $classname::$method($course, $cm, $context, $itemid, $args, $forcedownload);
+        $classname::$method($course, $cm, $context, $itemid, $args, $forcedownload, $options);
 
     } else if ($filearea == 'comment') {
 
@@ -118,6 +118,6 @@ function local_joulegrader_pluginfile($course, $cm, $context, $filearea, $args, 
             return false;
         }
 
-        send_stored_file($file, 86400, 0, true);
+        send_stored_file($file, 86400, 0, true, $options);
     }
 }
