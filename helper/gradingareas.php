@@ -172,7 +172,7 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
             }
 
             //create the where clause
-            $whereclause = implode(' OR ', $whereorclauses);
+            $whereclause = '('.implode(' OR ', $whereorclauses).')';
 
             //in or equal clause for contexts
             list($inoreqwhere, $inoreqparams) = $DB->get_in_or_equal($childcontexts);
