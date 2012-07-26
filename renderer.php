@@ -64,6 +64,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         //comment content
         $content = file_rewrite_pluginfile_urls($comment->get_content(), 'pluginfile.php', $comment->get_context()->id
                 , 'local_joulegrader', 'comment', $comment->get_id());
+        $content = $this->filter_kaltura_video(format_text($content, FORMAT_HTML));
         $commentcontent = html_writer::tag('div', $content, array('class' => 'local_joulegrader_comment_content'));
 
         //coment body
@@ -108,6 +109,45 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $html = html_writer::tag('div', $commenterpicture . $commentbody . $deletebutton, array('class' => implode(' ', $commentclasses)));
 
         return $html;
+    }
+
+    /**
+     * Helper method to make kaltura video smaller
+     *
+     * @param string $content
+     * @return string - filtered comment content
+     */
+    protected function filter_kaltura_video($content) {
+        // See if there is a kaltura_player, if not return the content
+        if (strpos($content, 'kaltura_player') === false) {
+            return $content;
+        }
+        $errors = libxml_use_internal_errors(true);
+
+        $doc = new DOMDocument('1.0', 'UTF-8');
+        $doc->loadHTML($content);
+
+        libxml_clear_errors();
+        libxml_use_internal_errors($errors);
+
+        $changes = false;
+        foreach ($doc->getElementsByTagName('object') as $objecttag) {
+            $objid = $objecttag->getAttribute('id');
+            if (strpos($objid, 'kaltura_player') !== false) {
+                // set the width and height
+                $objecttag->setAttribute('width', '200px');
+                $objecttag->setAttribute('height', '166px');
+
+                $changes = true;
+                break;
+            }
+        }
+
+        if ($changes) {
+            // only change $content if the attributes were changed above
+            $content = preg_replace('/^<!DOCTYPE.+?>/', '', str_replace(array('<html>', '</html>', '<body>', '</body>'), array('', '', '', ''), $doc->saveHTML()));
+        }
+        return $content;
     }
 
     /**
