@@ -50,14 +50,14 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
                 $mform->addElement('static', 'gradeheader', null, get_string('grade'));
 
                 //scale grade element
-                $mform->addElement('select', 'grade', null, $grademenu);
+                $gradingelement = $mform->addElement('select', 'grade', null, $grademenu);
                 $mform->setType('grade', PARAM_INT);
             } else {
                 //add heading
                 $mform->addElement('static', 'gradeheader', null, get_string('gradeoutof', 'local_joulegrader', $this->_customdata->assignment->assignment->grade));
 
                 //add the grade text element
-                $mform->addElement('text', 'grade', null, array('size' => 5));
+                $gradingelement = $mform->addElement('text', 'grade', null, array('size' => 5));
 
                 //want to accept numbers, letters, percentage here
                 $mform->setType('grade', PARAM_RAW_TRIMMED);
@@ -66,6 +66,9 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
                 if ($grade == -1) {
                     $grade = '';
                 }
+            }
+            if ($this->_customdata->gradingdisabled) {
+                $gradingelement->freeze();
             }
 
             $mform->setDefault('grade', $grade);
