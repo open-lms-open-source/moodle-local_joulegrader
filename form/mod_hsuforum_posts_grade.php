@@ -23,6 +23,12 @@ class local_joulegrader_form_mod_hsuforum_posts_grade extends moodleform {
 
         $mform->addElement('hidden', 'forum', $this->_customdata->forum->id);
 
+        if ($this->_customdata->gradingdisabled) {
+            // Add a message notifying user that grading is disabled.
+            $mform->addElement('html', html_writer::tag('div', get_string('gradingdisabled', 'local_joulegrader'),
+                    array('class' => 'warning')));
+        }
+
         //for the grade range
         $grademenu = make_grades_menu($this->_customdata->forum->scale);
         if (!empty($this->_customdata->gradinginstance)) {
@@ -89,8 +95,12 @@ class local_joulegrader_form_mod_hsuforum_posts_grade extends moodleform {
             $buttonarray[] = &$mform->createElement('submit', 'saveandnext', get_string('saveandnext', 'local_joulegrader'));
         }
 
-        $mform->addGroup($buttonarray, 'grading_buttonar', '', array(' '), false);
+        $buttongrp = $mform->addGroup($buttonarray, 'grading_buttonar', '', array(' '), false);
         $mform->setType('grading_buttonar', PARAM_RAW);
+
+        if ($this->_customdata->gradingdisabled) {
+            $buttongrp->freeze();
+        }
     }
 
     /**
