@@ -26,7 +26,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
 
         $this->gradinginfo = grade_get_grades($assignment->course->id, 'mod', 'assignment', $assignment->assignment->id, array($this->gradingarea->get_guserid()));
 
-        $gradingdisabled = $this->gradinginfo->items[0]->locked;
+        $gradingdisabled = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->locked;
 
         if (($gradingmethod = $this->gradingarea->get_active_gradingmethod()) && in_array($gradingmethod, self::get_supportedplugins())) {
             $controller = $this->gradingarea->get_gradingmanager()->get_controller($gradingmethod);
@@ -43,9 +43,12 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                     $this->gradinginstance = $controller->get_or_create_instance($instanceid, $USER->id, $itemid);
                 }
 
-                $currentinstance = $this->gradinginstance->get_current_instance();
+                $currentinstance = null;
+                if (!empty($this->gradinginstance)) {
+                    $currentinstance = $this->gradinginstance->get_current_instance();
+                }
                 $this->needsupdate = false;
-                if ($currentinstance && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
+                if (!empty($currentinstance) && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
                     $this->needsupdate = true;
                 }
             } else {
@@ -97,7 +100,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
         } else {
             //there is a grade for this assignment
             //check to see if advanced grading is being used
-            if (empty($this->controller) || (!empty($this->controller) && !$this->controller->is_form_available())) {
+            if (empty($this->controller) || empty($this->gradinginstance) || (!empty($this->controller) && !$this->controller->is_form_available())) {
                 //advanced grading not used
                 //check for cap
                 if (!empty($this->teachercap)) {
@@ -203,7 +206,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
         $assignment = $this->gradingarea->get_assignment();
         $submission = $this->gradingarea->get_submission();
 
-        if (empty($this->controller) || !$this->controller->is_form_available()) {
+        if (empty($this->controller) || empty($this->gradinginstance) || !$this->controller->is_form_available()) {
             return $html;
         }
 
