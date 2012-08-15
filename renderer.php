@@ -268,7 +268,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $previd = $navwidget->get_previd();
         if (!is_null($previd)) {
             $linkurl->param($navwidget->get_param(), $previd);
-            $prevlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/left', get_string('previous')));
+            $prevlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/left', get_string('previous', 'local_joulegrader', strtolower($navwidget->get_label()))));
         }
 
         //select menu
@@ -278,6 +278,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         //set some select attributes
         $select->set_help_icon($widgetname.'nav', 'local_joulegrader');
+        $select->tooltip = get_string($widgetname.'nav', 'local_joulegrader');
 
         //render the select form
         $selectform = $OUTPUT->render($select);
@@ -287,7 +288,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $nextid = $navwidget->get_nextid();
         if (!is_null($nextid)) {
             $linkurl->param($navwidget->get_param(), $nextid);
-            $nextlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/right', get_string('next')));
+            $nextlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/right', get_string('next', 'local_joulegrader', strtolower($navwidget->get_label()))));
         }
 
         return html_writer::tag('div', $prevlink . $selectform . $nextlink, array('class' => 'local_joulegrader_navwidget'));
@@ -451,8 +452,14 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 $this->page->requires->js_init_call('M.mod_assignment.init_tree', array(true, $htmlid), false, $module);
 
                 $html .= html_writer::tag('div', $this->help_htmllize_tree($gacontext, $submission, $fileareatree), array('id' => $htmlid));
+            }
 
-            } else {
+            if ($assignment->notes_allowed() && !empty($submission) && !empty($submission->data1)) {
+                $html .= $OUTPUT->heading(get_string('notes', 'assignment'));
+                $html .= $OUTPUT->box(format_text($submission->data1, FORMAT_HTML, array('overflowdiv'=>true)), 'generalbox boxaligncenter boxwidthwide');
+            }
+
+            if (empty($fileareatree) && (!$assignment->notes_allowed() || empty($submission) || empty($submission->data1))) {
                 //nothing to display
                 $html .= html_writer::tag('h3', $viewpane->get_emptymessage());
             }
@@ -658,42 +665,49 @@ EOT;
 
         //check to make sure there is something to include in the date box
         if (empty($assignment->assignment->timeavailable) && empty($assignment->assignment->timedue)
-                && empty($submission)) {
+                && (empty($submission) || empty($submission->timemodified))) {
             return '';
         }
 
         $html = $OUTPUT->box_start('generalbox boxaligncenter', 'dates');
-        $html .= html_writer::start_tag('table');
+
+        $availableon = '';
         if ($assignment->assignment->timeavailable) {
-            $html .= html_writer::start_tag('tr');
-            $html .= html_writer::tag('td', get_string('availabledate', 'assignment'), array('class' => 'c0'));
-            $html .= html_writer::tag('td', userdate($assignment->assignment->timeavailable), array('class' => 'c1'));
-            $html .= html_writer::end_tag('tr');
+            $availableon = ' '.get_string('on', 'local_joulegrader', userdate($assignment->assignment->timeavailable));
         }
+
+        $availableuntil = '';
         if ($assignment->assignment->timedue) {
-            $html .= html_writer::start_tag('tr');
-            $html .= html_writer::tag('td', get_string('duedate', 'assignment'), array('class' => 'c0'));
-            $html .= html_writer::tag('td', userdate($assignment->assignment->timedue), array('class' => 'c1'));
-            $html .= html_writer::end_tag('tr');
+            $availableuntil = ' '.get_string('until', 'local_joulegrader', userdate($assignment->assignment->timedue));
         }
 
-        if (!empty($submission) && !empty($submission->timemodified)) {
-            $html .= html_writer::start_tag('tr');
-            $html .= html_writer::tag('td', get_string('lastedited'), array('class' => 'c0'));
-            $html .= html_writer::start_tag('td', array('class' => 'c1'));
-            $html .= userdate($submission->timemodified);
+        $availablestring = '';
+        if (!empty($availableon) || !empty($availableuntil)) {
+            $availablestring = get_string('assignmentavailable', 'local_joulegrader') . $availableon . $availableuntil.'. ';
+        }
 
-            /// Decide what to count
-            if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_WORDS) {
-                $html .= ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')';
-            } else if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_LETTERS) {
-                $html .= ' ('.get_string('numletters', '', count_letters(format_text($submission->data1, $submission->data2))).')';
+        $lastedited = '';
+        if (!empty($submission) && !empty($submission->timemodified)) {
+            // last edited string
+            $lastedited = get_string('lastedited', 'local_joulegrader', userdate($submission->timemodified));
+
+            // determine if there is a reason to do a word count
+            $wordcount = '';
+            if ($assignment->type == 'online') {
+                /// Decide what to count
+                if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_WORDS) {
+                    $wordcount = ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')';
+                } else if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_LETTERS) {
+                    $wordcount = ' ('.get_string('numletters', '', count_letters(format_text($submission->data1, $submission->data2))).')';
+                }
             }
 
-            $html .= html_writer::end_tag('td');
-            $html .= html_writer::end_tag('tr');
+            // add the word count
+            $lastedited .= $wordcount;
+            $lastedited .= '.';
         }
-        $html .= html_writer::end_tag('table');
+
+        $html .= $availablestring.$lastedited;
         $html .= $OUTPUT->box_end();
 
         return $html;
