@@ -36,6 +36,17 @@ class local_joulegrader_controller_default extends mr_controller {
 
         //add 'joule Grader' to bread crumb
         $PAGE->navbar->add(get_string('pluginname', 'local_joulegrader'));
+
+        // set layout to include blocks
+        switch ($this->action) {
+            case 'view':
+            case 'process':
+                $PAGE->set_pagelayout('standard');
+                break;
+            case 'viewcommentloop':
+                $PAGE->set_pagelayout('embedded');
+                break;
+        }
     }
 
     /**
@@ -51,14 +62,6 @@ class local_joulegrader_controller_default extends mr_controller {
             //just return a message that mobile devices are not currently supported
             return $OUTPUT->container(html_writer::tag('h2', get_string('mobilenotsupported', 'local_joulegrader')), null, 'local-joulegrader-mobilenotsupportedmsg');
         }
-
-        //get the joule grader header info
-        //link nav
-        $linknav = $OUTPUT->action_link(new moodle_url('/course/view.php', array('id' => $COURSE->id)), get_string('course'));
-        $linknav .= ' | ' . $OUTPUT->action_link(new moodle_url('/grade/report/index.php', array('id' => $COURSE->id))
-                , get_string('gradebook', 'local_joulegrader'));
-        $linknav = $OUTPUT->container($linknav, null, 'local-joulegrader-linknav');
-        $linknav = $OUTPUT->container($linknav, 'content');
 
         //pull out the users helper and gradingareas helper
         $usershelper = $this->helper->users;
@@ -94,14 +97,12 @@ class local_joulegrader_controller_default extends mr_controller {
             } else {
                 $buttonstring = get_string('allactivities', 'local_joulegrader');
             }
-            $buttonnav = html_writer::tag('div', $OUTPUT->single_button($buttonurl, $buttonstring, 'get'), array('class' => 'content'));
+            $buttonnav = $OUTPUT->single_button($buttonurl, $buttonstring, 'get');
         }
 
         $menunav = $OUTPUT->container($activitynav . $usernav, 'content');
-
-        $usernavcon = $OUTPUT->container($linknav, 'yui3-u-1-3', 'local-joulegrader-linknav');
         $buttonnavcon = $OUTPUT->container($buttonnav, 'yui3-u-1-3', 'local-joulegrader-buttonnav');
-        $activitynavcon = $OUTPUT->container($menunav, 'yui3-u-1-3', 'local-joulegrader-menunav');
+        $activitynavcon = $OUTPUT->container($menunav, 'yui3-u-2-3', 'local-joulegrader-menunav');
 
         //if the current user id and the current area id are not empty, load the class and get the pane contents
         if (!empty($currentareaid) && !empty($currentuserid)) {
@@ -138,7 +139,7 @@ class local_joulegrader_controller_default extends mr_controller {
         }
 
         //navigation container
-        $output = $OUTPUT->container($usernavcon . $buttonnavcon . $activitynavcon, 'yui3-u-1', 'local-joulegrader-navigation');
+        $output = $OUTPUT->container($buttonnavcon . $activitynavcon, 'yui3-u-1', 'local-joulegrader-navigation');
 
         //panes container
         $output .= $OUTPUT->container($panescontainer, 'yui3-u-1', 'local-joulegrader-panes');
@@ -238,11 +239,16 @@ class local_joulegrader_controller_default extends mr_controller {
             } else {
                 $renderer = $PAGE->get_renderer('local_joulegrader');
 
-                // Need to set the context
-                $gradingmgr = get_grading_manager($comment->get_gareaid());
-                $comment->set_context($gradingmgr->get_context());
+                // @var local_joulegrader_helper_gradingareas $gareashelper
+                $gareashelper = $this->helper->gradingareas;
+                $gareainstance = $gareashelper::get_gradingarea_instance($comment->get_gareaid(), $comment->get_guserid());
 
-                $commenthtml = $renderer->render($comment);
+                // get the comment loop comments and render comments
+                $comments = $gareainstance->get_commentloop()->get_comments();
+                $commenthtml = '';
+                foreach ($comments as $comment) {
+                    $commenthtml .= $renderer->render($comment);
+                }
 
                 $commentinfo = new stdClass();
                 $commentinfo->html = $commenthtml;
@@ -320,14 +326,20 @@ class local_joulegrader_controller_default extends mr_controller {
             //check to see that form was submitted
             if ($data = $mform->get_data()) {
                 //add the comment to the comment loop
-                $comment = $commentloop->add_comment($data);
+                $newcomment = $commentloop->add_comment($data);
             }
 
             if (!$isajaxrequest) {
                 redirect(new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid, 'guser' => $currentuserid)));
             } else {
                 $renderer = $PAGE->get_renderer('local_joulegrader');
-                $commenthtml = $renderer->render($comment);
+
+                // render just the comments again
+                $commenthtml = '';
+                $comments = $commentloop->get_comments();
+                foreach ($comments as $comment) {
+                    $commenthtml .= $renderer->render($comment);
+                }
 
                 $commentinfo = new stdClass();
                 $commentinfo->html = $commenthtml;
@@ -357,8 +369,6 @@ class local_joulegrader_controller_default extends mr_controller {
     public function viewcommentloop_action() {
         global $PAGE;
 
-        //in a popup
-        $PAGE->set_pagelayout('embedded');
         $PAGE->set_heading('');
 
         //get current area id and current user parameters for the gradingarea instance

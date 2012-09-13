@@ -23,6 +23,12 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
 
         $mform->addElement('hidden', 'assignment', $this->_customdata->assignment->assignment->id);
 
+        if ($this->_customdata->gradingdisabled) {
+            // Add a message notifying user that grading is disabled.
+            $mform->addElement('html', html_writer::tag('div', get_string('gradingdisabled', 'local_joulegrader'),
+                        array('class' => 'warning')));
+        }
+
         //for the grade range
         $grademenu = make_grades_menu($this->_customdata->assignment->assignment->grade);
         if (!empty($this->_customdata->gradinginstance)) {
@@ -50,14 +56,14 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
                 $mform->addElement('static', 'gradeheader', null, get_string('grade'));
 
                 //scale grade element
-                $mform->addElement('select', 'grade', null, $grademenu);
+                $gradingelement = $mform->addElement('select', 'grade', null, $grademenu);
                 $mform->setType('grade', PARAM_INT);
             } else {
                 //add heading
                 $mform->addElement('static', 'gradeheader', null, get_string('gradeoutof', 'local_joulegrader', $this->_customdata->assignment->assignment->grade));
 
                 //add the grade text element
-                $mform->addElement('text', 'grade', null, array('size' => 5));
+                $gradingelement = $mform->addElement('text', 'grade', null, array('size' => 5));
 
                 //want to accept numbers, letters, percentage here
                 $mform->setType('grade', PARAM_RAW_TRIMMED);
@@ -67,12 +73,15 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
                     $grade = '';
                 }
             }
+            if ($this->_customdata->gradingdisabled) {
+                $gradingelement->freeze();
+            }
 
             $mform->setDefault('grade', $grade);
         }
 
         //check for override
-        if ($this->_customdata->gradeoverridden) {
+        if (!$this->_customdata->gradingdisabled && $this->_customdata->gradeoverridden) {
             //if overridden in gradebook, add a checkbox
             $mform->addElement('checkbox', 'override', null, get_string('overridetext', 'local_joulegrader'));
         }
@@ -83,8 +92,12 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
             $buttonarray[] = &$mform->createElement('submit', 'saveandnext', get_string('saveandnext', 'local_joulegrader'));
         }
 
-        $mform->addGroup($buttonarray, 'grading_buttonar', '', array(' '), false);
+        $buttongrp = $mform->addGroup($buttonarray, 'grading_buttonar', '', array(' '), false);
         $mform->setType('grading_buttonar', PARAM_RAW);
+
+        if ($this->_customdata->gradingdisabled) {
+            $buttongrp->freeze();
+        }
     }
 
     /**

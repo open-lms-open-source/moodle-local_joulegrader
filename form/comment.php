@@ -18,7 +18,7 @@ class local_joulegrader_form_comment extends moodleform {
         $mform =& $this->_form;
 
         //tinymce params
-        if (is_callable('mr_on') && mr_on('webcam', '_MR_LOCAL') && has_capability("local/webcam:create", context_course::instance($COURSE->id))){
+        if (is_callable('mr_on') && mr_on('webcam', '_MR_LOCAL') && mr_on('kaltura', '_MR_LOCAL') && has_capability('local/webcam:create', context_course::instance($COURSE->id))) {
             $xwebcam = "webcam,";
         } else {
             $xwebcam = "";

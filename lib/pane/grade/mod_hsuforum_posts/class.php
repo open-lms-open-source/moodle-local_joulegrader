@@ -46,7 +46,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
 
         $this->gradinginfo = grade_get_grades($this->cm->course, 'mod', 'hsuforum', $this->forum->id, array($this->gradingarea->get_guserid()));
 
-        $gradingdisabled = $this->gradinginfo->items[0]->locked;
+        $gradingdisabled = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->locked;
 
         if (($gradingmethod = $this->gradingarea->get_active_gradingmethod()) && in_array($gradingmethod, self::get_supportedplugins())) {
             $this->controller = $this->gradingarea->get_gradingmanager()->get_controller($gradingmethod);
@@ -58,9 +58,12 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                     $this->gradinginstance = $this->controller->get_or_create_instance($instanceid, $USER->id, $this->gradingarea->get_guserid());
                 }
 
-                $currentinstance = $this->gradinginstance->get_current_instance();
+                $currentinstance = null;
+                if (!empty($this->gradinginstance)) {
+                    $currentinstance = $this->gradinginstance->get_current_instance();
+                }
                 $this->needsupdate = false;
-                if ($currentinstance && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
+                if (!empty($currentinstance) && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
                     $this->needsupdate = true;
                 }
             } else {
@@ -112,7 +115,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
         } else {
             //there is a grade for this assignment
             //check to see if advanced grading is being used
-            if (empty($this->controller) || (!empty($this->controller) && !$this->controller->is_form_available())) {
+            if (empty($this->controller) || empty($this->gradinginstance) || (!empty($this->controller) && !$this->controller->is_form_available())) {
                 //advanced grading not used
                 //check for cap
                 if (!empty($this->teachercap)) {
@@ -150,13 +153,6 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                         $html .= $grade;
                     }
                     $html .= html_writer::end_tag('div');
-
-                    $overridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
-                    if (!empty($overridden)) {
-                        $html .= html_writer::start_tag('div');
-                        $html .= get_string('gradeoverriddenstudent', 'local_joulegrader', $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->str_grade);
-                        $html .= html_writer::end_tag('div');
-                    }
                 }
             } else if ($this->controller->is_form_available()) {
                 //generate preview based on type of advanced grading plugin (rubric or checklist)
@@ -213,7 +209,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
 
         $html = '';
 
-        if (empty($this->controller) || !$this->controller->is_form_available()) {
+        if (empty($this->controller) || empty($this->gradinginstance) || !$this->controller->is_form_available()) {
             return $html;
         }
 
@@ -228,11 +224,19 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
             $html = $mrhelper->buffer(array($this->mform, 'display'));
         } else {
             //this is for a student
+            $options = $this->controller->get_options();
+
+            // which grading method
             $gradingmethod = $this->gradingarea->get_active_gradingmethod();
 
             //get grading info
             $item = $this->gradinginfo->items[0];
             $grade = $item->grades[$this->gradingarea->get_guserid()];
+
+            // check to see if this we should generate based on settings and grade
+            if (empty($options['alwaysshowdefinition']) && (empty($grade->grade) || !empty($grade->hidden))) {
+                return $html;
+            }
 
             if ((!$grade->grade === false) && empty($grade->hidden)) {
                 $gradestr = '<div class="grade">'. get_string("grade").': '.$grade->str_long_grade. '</div>';
