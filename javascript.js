@@ -32,6 +32,13 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
         plugins: [Y.Plugin.Drag]
     });
 
+    // Restore the "normal" height on the joule grader div after hiding the panel
+    panel.after('visibleChange', function(e) {
+        if (!e.newVal && e.prevVal) {
+            joulegrader.setStyle('height', null);
+        }
+    });
+
     // only allow dragging from the header and footer bars
     panel.dd.addHandle('.yui3-widget-hd');
     panel.dd.addHandle('.yui3-widget-ft');
