@@ -198,6 +198,14 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
         panel.render();
     }
 
+    //IE is special; add a invisible div to the 1st comment remark td so that IE will not squish that column
+    if (Y.UA.ie) {
+        var commenttextarea = Y.one('#local-joulegrader-gradepane-panel .criterion .remark');
+        if (commenttextarea) {
+            commenttextarea.append('<div style="visibility: hidden; width: 100px;"></div>');
+        }
+    }
+
     // resize if necessary
     panel.set('width', 5000);
     var tablenode = panel.get('srcNode').one('.gradingform_rubric table');
