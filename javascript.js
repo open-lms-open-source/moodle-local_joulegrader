@@ -43,9 +43,10 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
     panel.dd.addHandle('.yui3-widget-hd');
     panel.dd.addHandle('.yui3-widget-ft');
 
-    //wire up the button
-    btn.on('click', function(e) {
-        e.preventDefault();
+    var adjustjoulegraderheight = function() {
+        if (!panelnode || !joulegrader) {
+            return;
+        }
 
         //get the panel content's height
         var panelheight = panelnode.get('offsetHeight');
@@ -56,6 +57,17 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
         if (jgheight < panelheight) {
             joulegrader.setStyle('height', panelheight + 100 + 'px');
         }
+    };
+
+    //adjust the height of joule grader div if textareas cause resizing of of the modal (on mouseup)
+    joulegrader.delegate('mouseup', adjustjoulegraderheight, '#local-joulegrader-gradepane-panel textarea');
+
+    //wire up the button
+    btn.on('click', function(e) {
+        e.preventDefault();
+
+        //adjust the height of the joulegrader div if necessary
+        adjustjoulegraderheight();
 
         //re-align on the local-joulegrader div (top-center of panel with top-center of local-joulegrader div
         panel.align(joulegrader, [Y.WidgetPositionAlign.TC, Y.WidgetPositionAlign.TC]);
