@@ -175,8 +175,16 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
                 e.preventDefault();
                 Y.one('#local-joulegrader-gradepane-rubricerror').removeClass('dontshow');
 
+                // Show the panel.
                 errorpanel.show();
-                errorpanel.get('srcNode').scrollIntoView();
+
+                // Scroll it into view and center it.
+                if (Y.UA.ie > 0 && window.scrollTo) {
+                    var epy = errorpanel.get('y');
+                    window.scrollTo(epy, 0);
+                } else {
+                    errorpanel.get('srcNode').scrollIntoView();
+                }
                 errorpanel.centered();
             }
 
