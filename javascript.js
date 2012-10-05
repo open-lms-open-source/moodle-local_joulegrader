@@ -32,13 +32,21 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
         plugins: [Y.Plugin.Drag]
     });
 
+    // Restore the "normal" height on the joule grader div after hiding the panel
+    panel.after('visibleChange', function(e) {
+        if (!e.newVal && e.prevVal) {
+            joulegrader.setStyle('height', null);
+        }
+    });
+
     // only allow dragging from the header and footer bars
     panel.dd.addHandle('.yui3-widget-hd');
     panel.dd.addHandle('.yui3-widget-ft');
 
-    //wire up the button
-    btn.on('click', function(e) {
-        e.preventDefault();
+    var adjustjoulegraderheight = function() {
+        if (!panelnode || !joulegrader) {
+            return;
+        }
 
         //get the panel content's height
         var panelheight = panelnode.get('offsetHeight');
@@ -49,6 +57,17 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
         if (jgheight < panelheight) {
             joulegrader.setStyle('height', panelheight + 100 + 'px');
         }
+    };
+
+    //adjust the height of joule grader div if textareas cause resizing of of the modal (on mouseup)
+    joulegrader.delegate('mouseup', adjustjoulegraderheight, '#local-joulegrader-gradepane-panel textarea');
+
+    //wire up the button
+    btn.on('click', function(e) {
+        e.preventDefault();
+
+        //adjust the height of the joulegrader div if necessary
+        adjustjoulegraderheight();
 
         //re-align on the local-joulegrader div (top-center of panel with top-center of local-joulegrader div
         panel.align(joulegrader, [Y.WidgetPositionAlign.TC, Y.WidgetPositionAlign.TC]);
@@ -156,8 +175,16 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
                 e.preventDefault();
                 Y.one('#local-joulegrader-gradepane-rubricerror').removeClass('dontshow');
 
+                // Show the panel.
                 errorpanel.show();
-                errorpanel.get('srcNode').scrollIntoView();
+
+                // Scroll it into view and center it.
+                if (Y.UA.ie > 0 && window.scrollTo) {
+                    var epy = errorpanel.get('y');
+                    window.scrollTo(epy, 0);
+                } else {
+                    errorpanel.get('srcNode').scrollIntoView();
+                }
                 errorpanel.centered();
             }
 
@@ -177,6 +204,14 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
 
         //now we can render the panel
         panel.render();
+    }
+
+    //IE is special; add a invisible div to the 1st comment remark td so that IE will not squish that column
+    if (Y.UA.ie) {
+        var commenttextarea = Y.one('#local-joulegrader-gradepane-panel .criterion .remark');
+        if (commenttextarea) {
+            commenttextarea.append('<div style="visibility: hidden; width: 100px;"></div>');
+        }
     }
 
     // resize if necessary
