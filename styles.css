@@ -69,11 +69,6 @@
     display: none;
 }
 
-#local-joulegrader-viewrubric-preview-con .generaltable {
-    margin-left: 0px;
-    margin-right: 0px;
-}
-
 #local-joulegrader .dontshow {
     visibility: hidden;
 }

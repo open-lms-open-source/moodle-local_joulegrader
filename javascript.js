@@ -124,7 +124,7 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
 
         //a little panel for display an error message
         var errorpanel = new Y.Panel({
-            srcNode: '#local-joulegrader-gradepane-rubricerror',
+            bodyContent: M.str.local_joulegrader.rubricerror,
             centered: '#' + options.id,
             zindex: 200,
             width: 200,
@@ -173,7 +173,6 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
 
             if (!valid) {
                 e.preventDefault();
-                Y.one('#local-joulegrader-gradepane-rubricerror').removeClass('dontshow');
 
                 // Show the panel.
                 errorpanel.show();

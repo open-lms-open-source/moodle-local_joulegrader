@@ -163,11 +163,20 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                     return '';
                 }
 
+                $grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()];
+
                 $html = '';
+
+                if ((!$grade->grade === false) && empty($grade->hidden)) {
+                    $gradeval = $grade->str_long_grade;
+                } else {
+                    $gradeval = '-';
+                }
+                $html .= '<div class="grade">'. get_string("grade").': '.$gradeval. '</div>';
+
                 if (!empty($this->teachercap) || !$this->needsupdate) {
                     $controller = $this->controller;
                     $options = $controller->get_options();
-                    $grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()];
                     
                     if (!empty($options['alwaysshowdefinition']) || !empty($this->teachercap) || (!empty($grade->grade) && empty($grade->hidden))) {
                         //need to generate the condensed rubric html
@@ -182,19 +191,8 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                         if ($this->needsupdate) {
                             $html .= html_writer::tag('div', get_string('needregrademessage', 'gradingform_' . $gradingmethod), array('class' => "gradingform_$gradingmethod-regrade"));
                         }
-
-                        //gradingmethod preview
-                        $previewmethod = 'get_' . $gradingmethod . '_preview';
-                        $html .= $this->$previewmethod();
                     }
                 }
-
-                if ((!$grade->grade === false) && empty($grade->hidden)) {
-                    $gradeval = $grade->str_long_grade;
-                } else {
-                    $gradeval = '-';
-                }
-                $html .= '<div class="grade">'. get_string("grade").': '.$gradeval. '</div>';
             }
         }
 
