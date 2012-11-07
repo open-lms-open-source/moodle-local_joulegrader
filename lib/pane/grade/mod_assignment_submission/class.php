@@ -174,7 +174,8 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                         //first a "view" button
                         //If the user has the ability to see the rubric!
                         $buttonatts = array('type' => 'button', 'id' => 'local-joulegrader-preview-button');
-                        $viewbutton = html_writer::tag('button', get_string('view' . $gradingmethod, 'local_joulegrader'), $buttonatts);
+                        $role = !empty($this->teachercap) ? 'teacher' : 'student';
+                        $viewbutton = html_writer::tag('button', get_string('view' . $gradingmethod . $role, 'local_joulegrader'), $buttonatts);
 
                         $html .= html_writer::tag('div', $viewbutton, array('id' => 'local-joulegrader-viewpreview-button-con'));
 
