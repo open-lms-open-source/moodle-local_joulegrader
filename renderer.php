@@ -157,15 +157,146 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      * @return string
      */
     public function render_local_joulegrader_lib_pane_grade_mod_assignment_submission_class(local_joulegrader_lib_pane_grade_mod_assignment_submission_class $gradepane) {
-        global $PAGE;
+        return $this->help_render_gradepane($gradepane);
+    }
 
-        $html = $gradepane->get_panehtml();
+    /**
+     * @param local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class $gradepane
+     * @return string
+     */
+    public function render_local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class(local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class $gradepane) {
+        return $this->help_render_gradepane($gradepane);
+    }
 
-        if ($gradepane->not_graded()) {
-            $html = html_writer::tag('div', $html, array('class' => 'status s0'));
+    /**
+     * @param local_joulegrader_lib_pane_grade_abstract $gradepane
+     * @return string
+     */
+    protected function help_render_gradepane($gradepane) {
+        global $PAGE, $CFG;
+
+        $html = '';
+        $modalhtml = '';
+
+        if (!$gradepane->has_grading()) {
+            //no grade for this assignment
+            $html .= html_writer::tag('div', get_string('notgraded', 'local_joulegrader'), array('class' => 'local_joulegrader_notgraded'));
+        } else if ($gradepane->has_teachercap()) {
+            $posturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $gradepane->get_courseid()
+            , 'garea' => $gradepane->get_gradingarea()->get_areaid(), 'guser' => $gradepane->get_gradingarea()->get_guserid(), 'action' => 'process'));
+
+            if ($needsgrading = optional_param('needsgrading', 0, PARAM_BOOL)) {
+                $posturl->param('needsgrading', 1);
+            }
+
+            $mrhelper = new mr_helper();
+
+            require_once($CFG->dirroot . '/local/joulegrader/form/gradepaneform.php');
+            // Teacher view of the grading pane
+            if ($gradepane->has_modal()) {
+                require_once($CFG->dirroot . '/local/joulegrader/form/grademodalform.php');
+
+                // Render current grade and modal button.
+                $html .= $this->help_render_currentgrade($gradepane);
+                $html .= $this->help_render_modalbutton($gradepane);
+
+                // Load up the modal form
+                $modalform = new local_joulegrader_form_grademodalform($posturl, $gradepane);
+
+                // Render the form
+                $modalhtml .= $mrhelper->buffer(array($modalform, 'display'));
+            }
+
+            if ($gradepane->has_paneform()) {
+                // Render the pane form for simple grading / overall feedback / file feedback.
+                $paneform = new local_joulegrader_form_gradepaneform($posturl, $gradepane);
+
+                $panehtml = $mrhelper->buffer(array($paneform, 'display'));
+                $html .= html_writer::tag('div', $panehtml, array('class' => 'local_joulegrader_simplegrading'));
+            }
+
+            //advanced grading error warning
+            if ($advancedgradingerror = $gradepane->get_advancedgradingerror()) {
+                $html .= $advancedgradingerror;
+            }
+
+        } else {
+            // Student view of the grading pane
+            if ($gradepane->has_modal()) {
+                //this is for a student
+                $options = $gradepane->get_controller()->get_options();
+
+                // which grading method
+                $gradingmethod = $gradepane->get_gradingarea()->get_active_gradingmethod();
+
+                //get grading info
+                $item = $gradepane->get_gradinginfo()->items[0];
+                $grade = $item->grades[$gradepane->get_gradingarea()->get_guserid()];
+
+                // check to see if this we should generate based on settings and grade
+                if (empty($options['alwaysshowdefinition']) && (empty($grade->grade) || !empty($grade->hidden))) {
+                    return $html;
+                }
+
+                // Render current grade and modal button.
+                $html .= $this->help_render_currentgrade($gradepane);
+                $html .= $this->help_render_modalbutton($gradepane);
+
+//                if ((!$grade->grade === false) && empty($grade->hidden)) {
+//                    $gradestr = '<div class="grade">'. get_string("grade").': '.$grade->str_long_grade. '</div>';
+//                } else {
+//                    $gradestr = '';
+//                }
+                $gradestr = $this->help_render_currentgrade($gradepane);
+                $controller = $gradepane->get_controller();
+
+                if (!$gradepane->has_active_gradinginstances()) {
+                    $renderer = $controller->get_renderer($PAGE);
+                    $options = $controller->get_options();
+                    switch ($gradingmethod) {
+                        case 'rubric':
+                            $criteria = $controller->get_definition()->rubric_criteria;
+                            $modalhtml = $renderer->display_rubric($criteria, $options, $controller::DISPLAY_VIEW, 'rubric');
+                            break;
+                        case 'checklist':
+                            $groups = $controller->get_definition()->checklist_groups;
+                            $modalhtml = $renderer->display_checklist($groups, $options, $controller::DISPLAY_VIEW, 'checklist');
+                            break;
+                    }
+                } else {
+                    $controller->set_grade_range(make_grades_menu($gradepane->get_grade()));
+                    $modalhtml = $controller->render_grade($PAGE, $gradepane->get_agitemid(), $item, $gradestr, false);
+                }
+            } else {
+                $grade = -1;
+
+                $gradinginfo = $gradepane->get_gradinginfo();
+                if (!empty($gradinginfo->items[0]) and !empty($gradinginfo->items[0]->grades[$gradepane->get_gradingarea()->get_guserid()])
+                    and !is_null($gradinginfo->items[0]->grades[$gradepane->get_gradingarea()->get_guserid()]->grade)) {
+                    $grade = $gradinginfo->items[0]->grades[$gradepane->get_gradingarea()->get_guserid()]->str_grade;
+                }
+
+                //start the html
+                $html = html_writer::start_tag('div', array('id' => 'local-joulegrader-gradepane-grade'));
+                if ($gradepane->get_grade() < 0) {
+                    $html .= get_string('grade') . ': ';
+                    if ($grade != -1) {
+                        $html .= $grade;
+                    } else {
+                        $html .= get_string('nograde');
+                    }
+                } else {
+                    //if grade isn't set yet then, make is blank, instead of -1
+                    if ($grade == -1) {
+                        $grade = ' - ';
+                    }
+                    $html .= get_string('gradeoutof', 'local_joulegrader', $gradepane->get_grade()) . ': ';
+                    $html .= $grade;
+                }
+                $html .= html_writer::end_tag('div');
+            }
         }
 
-        $modalhtml = $gradepane->get_modal_html();
         if (!empty($modalhtml)) {
             //wrap it in the proper modal html
             $modalhtml = html_writer::tag('div', $modalhtml, array('class' => 'yui3-widget-bd'));
@@ -174,8 +305,6 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             $html .= $modalhtml;
         }
 
-        $gradepane->require_js();
-
         $module = $this->get_js_module();
         $jsoptions = array(
             'id' => 'local-joulegrader-gradepane-panel',
@@ -183,6 +312,36 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         );
 
         $PAGE->requires->js_init_call('M.local_joulegrader.init_gradepane_panel', array($jsoptions), false, $module);
+
+        return $html;
+    }
+
+    protected function help_render_currentgrade($gradepane) {
+        // Current grade.
+        $grade = $gradepane->get_gradinginfo()->items[0]->grades[$gradepane->get_gradingarea()->get_guserid()];
+        if ((!$grade->grade === false) && empty($grade->hidden)) {
+            $gradeval = $grade->str_long_grade;
+        } else {
+            $gradeval = '-';
+        }
+
+        return '<div class="grade">'. get_string('grade').': '.$gradeval. '</div>';
+    }
+
+    protected function help_render_modalbutton($gradepane) {
+        $gradingmethod = $gradepane->get_gradingarea()->get_active_gradingmethod();
+        $teachercap = $gradepane->has_teachercap();
+
+        $buttonatts = array('type' => 'button', 'id' => 'local-joulegrader-preview-button');
+        $role = !empty($teachercap) ? 'teacher' : 'student';
+        $viewbutton = html_writer::tag('button', get_string('view' . $gradingmethod . $role, 'local_joulegrader'), $buttonatts);
+
+        $html = html_writer::tag('div', $viewbutton, array('id' => 'local-joulegrader-viewpreview-button-con'));
+
+        // needsupdate?
+        if ($gradepane->get_needsupdate()) {
+            $html .= html_writer::tag('div', get_string('needregrademessage', 'gradingform_' . $gradingmethod), array('class' => "gradingform_$gradingmethod-regrade"));
+        }
 
         return $html;
     }
@@ -212,40 +371,6 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 array('rubricerror', 'local_joulegrader')
             ),
         );
-    }
-
-    /**
-     * @param local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class $gradepane
-     * @return string
-     */
-    public function render_local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class(local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class $gradepane) {
-        global $PAGE;
-
-        $html = $gradepane->get_panehtml();
-
-        if ($gradepane->not_graded()) {
-            $html = html_writer::tag('div', $html, array('class' => 'status s0'));
-        }
-
-        $modalhtml = $gradepane->get_modal_html();
-        if (!empty($modalhtml)) {
-            //wrap it in the proper modal html
-            $modalhtml = html_writer::tag('div', $modalhtml, array('class' => 'yui3-widget-bd'));
-            $modalhtml = html_writer::tag('div', $modalhtml, array('id' => 'local-joulegrader-gradepane-panel', 'class' => 'dontshow'));
-
-            $html .= $modalhtml;
-        }
-
-        $jsparams = array(
-            'id' => 'local-joulegrader-gradepane-panel',
-            'grademethod' => $gradepane->get_gradingarea()->get_active_gradingmethod()
-        );
-
-        $module = $this->get_js_module();
-
-        $PAGE->requires->js_init_call('M.local_joulegrader.init_gradepane_panel', array($jsparams), false, $module);
-
-        return $html;
     }
 
     /**

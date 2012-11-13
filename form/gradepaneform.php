@@ -2,54 +2,38 @@
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 require_once($CFG->libdir.'/formslib.php');
 /**
- * Grade form for mod_assignment_submission grading area
+ * Grade form for grade pane
  *
  * @author Sam Chaffee
  * @package local/joulegrader
  * @see moodleform
  */
-class local_joulegrader_form_mod_assignment_submission_grade extends moodleform {
+class local_joulegrader_form_gradepaneform extends moodleform {
 
     public function definition() {
         $mform =& $this->_form;
+        $nextuserid = $this->_customdata->get_gradingarea()->get_nextuserid();
 
-        if (!empty($this->_customdata->cm->id)) {
-            $mform->addElement('hidden', 'cmid', $this->_customdata->cm->id);
-            $mform->setType('cmid', PARAM_INT);
-        }
-
-        $mform->addElement('hidden', 'nextuser', $this->_customdata->nextuser);
+        $mform->addElement('hidden', 'nextuser', $nextuserid);
         $mform->setType('nextuser', PARAM_INT);
 
-        $mform->addElement('hidden', 'assignment', $this->_customdata->assignment->assignment->id);
+//        $mform->addElement('hidden', 'assignment', $this->_customdata->assignment->assignment->id);
 
-        if ($this->_customdata->gradingdisabled) {
-            // Add a message notifying user that grading is disabled.
-            $mform->addElement('html', html_writer::tag('div', get_string('gradingdisabled', 'local_joulegrader'),
-                        array('class' => 'warning')));
-        }
-
-        //for the grade range
-        $grademenu = make_grades_menu($this->_customdata->assignment->assignment->grade);
-        if (!empty($this->_customdata->gradinginstance)) {
-
-            //set up the grading instance
-            $gradinginstance = $this->_customdata->gradinginstance;
-            $gradinginstance->get_controller()->set_grade_range($grademenu);
-            $gradingelement = $mform->addElement('grading', 'grade', get_string('grade').':', array('gradinginstance' => $gradinginstance));
-            if ($this->_customdata->gradingdisabled) {
-                $gradingelement->freeze();
-            } else {
-                $mform->addElement('hidden', 'gradinginstanceid', $gradinginstance->get_id());
+        if (!$this->_customdata->has_modal()) {
+            if ($this->_customdata->get_gradingdisabled()) {
+                // Add a message notifying user that grading is disabled.
+                $mform->addElement('html', html_writer::tag('div', get_string('gradingdisabled', 'local_joulegrader'),
+                    array('class' => 'warning')));
             }
-        } else {
+
+            //for the grade range
+            $grademenu = make_grades_menu($this->_customdata->get_grade());
+
             //check for an existing grade
-            $grade = -1;
-            if (isset($this->_customdata->submission) && isset($this->_customdata->submission->grade)) {
-                $grade = $this->_customdata->submission->grade;
-            }
+            $grade = $this->_customdata->get_currentgrade();
+
             //check to see if this is a scale
-            $isscale = (bool) ($this->_customdata->assignment->assignment->grade < 0);
+            $isscale = (bool) ($this->_customdata->get_grade() < 0);
             if ($isscale) {
                 $grademenu[-1] = get_string('nograde');
                 //heading
@@ -60,7 +44,7 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
                 $mform->setType('grade', PARAM_INT);
             } else {
                 //add heading
-                $mform->addElement('static', 'gradeheader', null, get_string('gradeoutof', 'local_joulegrader', $this->_customdata->assignment->assignment->grade));
+                $mform->addElement('static', 'gradeheader', null, get_string('gradeoutof', 'local_joulegrader', $this->_customdata->get_grade()));
 
                 //add the grade text element
                 $gradingelement = $mform->addElement('text', 'grade', null, array('size' => 5));
@@ -73,31 +57,26 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
                     $grade = '';
                 }
             }
-            if ($this->_customdata->gradingdisabled) {
+            if ($this->_customdata->get_gradingdisabled()) {
                 $gradingelement->freeze();
             }
 
             $mform->setDefault('grade', $grade);
         }
 
-        //check for override
-        if (!$this->_customdata->gradingdisabled && $this->_customdata->gradeoverridden) {
-            //if overridden in gradebook, add a checkbox
-            $mform->addElement('checkbox', 'override', null, get_string('overridetext', 'local_joulegrader'));
-        }
-
         $buttonarray = array();
         $buttonarray[] = &$mform->createElement('submit', 'submit', get_string('save', 'local_joulegrader'));
-        if (isset($this->_customdata->nextuser)) {
+        if (!empty($nextuserid)) {
             $buttonarray[] = &$mform->createElement('submit', 'saveandnext', get_string('saveandnext', 'local_joulegrader'));
         }
 
         $buttongrp = $mform->addGroup($buttonarray, 'grading_buttonar', '', array(' '), false);
         $mform->setType('grading_buttonar', PARAM_RAW);
 
-        if ($this->_customdata->gradingdisabled) {
+        if ($this->_customdata->get_gradingdisabled()) {
             $buttongrp->freeze();
         }
+
     }
 
     /**
@@ -111,14 +90,14 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
     public function validation($data, $files) {
         $validated = true;
 
-        $assignmentgrade = $this->_customdata->assignment->assignment->grade;
+        $outofgrade = $this->_customdata->get_grade();
 
         //only need to do extra validation if they submitted via text box (not an advanced grading and not scale)
-        if (!isset($this->_customdata->gradinginstance) && $assignmentgrade  >= 0) {
+        if (!$this->_customdata->has_modal() && $outofgrade  >= 0) {
             $validated = array('grade' => get_string('gradeoutofrange', 'local_joulegrader'));
 
             //just using regular grading
-            $lettergrades = grade_get_letters(context_course::instance($this->_customdata->assignment->course->id));
+            $lettergrades = grade_get_letters(context_course::instance($this->_customdata->get_courseid()));
             $grade = trim($data['grade']);
 
             //determine if user is submitting as a letter grade, percentage or float
@@ -129,7 +108,7 @@ class local_joulegrader_form_mod_assignment_submission_grade extends moodleform 
                 $grade = clean_param($grade, PARAM_INT);
 
                 //needs to be in range 0 - $assignmentgrade
-                if ($grade >= 0 && $grade <= $assignmentgrade) {
+                if ($grade >= 0 && $grade <= $outofgrade) {
                     $validated = true;
                 }
             } else if (strpos($grade, '%') !== false) {

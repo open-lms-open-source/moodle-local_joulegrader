@@ -1,7 +1,6 @@
 <?php
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 require_once($CFG->dirroot . '/local/joulegrader/lib/pane/grade/abstract.php');
-require_once($CFG->dirroot . '/local/joulegrader/form/mod_hsuforum_posts_grade.php');
 
 /**
  * joule Grader mod_hsuforum_posts grade pane class
@@ -28,6 +27,9 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
      */
     protected $gradinginstance;
 
+    /**
+     * @var boolean
+     */
     protected $teachercap;
 
     /**
@@ -36,22 +38,19 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
     public function init() {
         global $DB, $USER;
 
-        if (isset($this->mform)) {
-            return;
-        }
-
         $this->context = $this->gradingarea->get_gradingmanager()->get_context();
         $this->cm      = get_coursemodule_from_id('hsuforum', $this->context->instanceid, 0, false, MUST_EXIST);
         $this->forum   = $DB->get_record('hsuforum', array('id' => $this->cm->instance), '*', MUST_EXIST);
+        $this->courseid = $this->cm->course;
 
         $this->gradinginfo = grade_get_grades($this->cm->course, 'mod', 'hsuforum', $this->forum->id, array($this->gradingarea->get_guserid()));
 
-        $gradingdisabled = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->locked;
+        $this->gradingdisabled = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->locked;
 
         if (($gradingmethod = $this->gradingarea->get_active_gradingmethod()) && in_array($gradingmethod, self::get_supportedplugins())) {
             $this->controller = $this->gradingarea->get_gradingmanager()->get_controller($gradingmethod);
             if ($this->controller->is_form_available()) {
-                if ($gradingdisabled) {
+                if ($this->gradingdisabled) {
                     $this->gradinginstance = $this->controller->get_current_instance($USER->id, $this->gradingarea->get_guserid());
                 } else {
                     $instanceid = optional_param('gradinginstanceid', 0, PARAM_INT);
@@ -73,222 +72,81 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
 
 
         $this->teachercap = has_capability($this->gradingarea->get_teachercapability(), $this->context);
-        if ($this->teachercap) {
-            //set up the form
-            $mformdata = new stdClass();
-            $mformdata->cm = $this->cm;
-            $mformdata->forum = $this->forum;
-            $mformdata->grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->grade;
-            $mformdata->gradeoverridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
-            $mformdata->gradingdisabled = $gradingdisabled;
-
-            //For advanced grading methods
-            if (!empty($this->gradinginstance)) {
-                $mformdata->gradinginstance = $this->gradinginstance;
-            }
-
-            $posturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $this->cm->course
-                    , 'garea' => $this->gradingarea->get_areaid(), 'guser' => $this->gradingarea->get_guserid(), 'action' => 'process'));
-
-            if ($needsgrading = optional_param('needsgrading', 0, PARAM_BOOL)) {
-                $posturl->param('needsgrading', 1);
-            }
-
-            $mformdata->nextuser = $this->gradingarea->get_nextuserid();
-
-            //create the mform
-            $this->mform = new local_joulegrader_form_mod_hsuforum_posts_grade($posturl, $mformdata);
-        }
     }
 
-    /**
-     * @return mixed
-     */
-    public function get_panehtml() {
-        //initialize
-        $html = '';
+    public function has_grading() {
+        $hasgrading = true;
 
-        //if this is an ungraded assignment just return a no grading info box
         if ($this->forum->scale == 0) {
-            //no grade for this assignment
-            $html = html_writer::tag('div', get_string('notgraded', 'local_joulegrader'), array('class' => 'local_joulegrader_notgraded'));
-        } else {
-            //there is a grade for this assignment
-            //check to see if advanced grading is being used
-            if (empty($this->controller) || empty($this->gradinginstance) || (!empty($this->controller) && !$this->controller->is_form_available())) {
-                //advanced grading not used
-                //check for cap
-                if (!empty($this->teachercap)) {
-                    //get the form html for the teacher
-                    $mrhelper = new mr_helper();
-                    $html = $mrhelper->buffer(array($this->mform, 'display'));
-                    $html = html_writer::tag('div', $html, array('class' => 'local_joulegrader_simplegrading'));
-
-                    //advanced grading error warning
-                    if (!empty($this->controller) && !$this->controller->is_form_available()) {
-                        $html .= $this->advancedgradingerror;
-                    }
-                } else {
-                    //start the html
-                    $grade = -1;
-                    if (!empty($this->gradinginfo->items[0]) and !empty($this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()])
-                            and !is_null($this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->grade)) {
-                        $grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->str_grade;
-                    }
-
-                    $html = html_writer::start_tag('div', array('id' => 'local-joulegrader-gradepane-grade'));
-                    if ($this->forum->scale < 0) {
-                        $html .= get_string('grade') . ': ';
-                        if ($grade != -1) {
-                            $html .= $grade;
-                        } else {
-                            $html .= get_string('nograde');
-                        }
-                    } else {
-                        //if grade isn't set yet then, make is blank, instead of -1
-                        if ($grade == -1) {
-                            $grade = ' - ';
-                        }
-                        $html .= get_string('gradeoutof', 'local_joulegrader', $this->forum->scale) . ': ';
-                        $html .= $grade;
-                    }
-                    $html .= html_writer::end_tag('div');
-                }
-            } else if ($this->controller->is_form_available()) {
-                //generate preview based on type of advanced grading plugin (rubric or checklist)
-                $gradingmethod = $this->gradingarea->get_active_gradingmethod();
-
-                // shouldn't have this happen, but just in case
-                if (!in_array($gradingmethod, self::get_supportedplugins())) {
-                    return '';
-                }
-
-                $grade = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()];
-
-                $html = '';
-
-                if ((!$grade->grade === false) && empty($grade->hidden)) {
-                    $gradeval = $grade->str_long_grade;
-                } else {
-                    $gradeval = '-';
-                }
-                $html .= '<div class="grade">'. get_string("grade").': '.$gradeval. '</div>';
-
-                if (!empty($this->teachercap) || !$this->needsupdate) {
-                    $controller = $this->controller;
-                    $options = $controller->get_options();
-                    
-                    if (!empty($options['alwaysshowdefinition']) || !empty($this->teachercap) || (!empty($grade->grade) && empty($grade->hidden))) {
-                        //need to generate the condensed rubric html
-                        //first a "view" button
-                        //If the user has the ability to see the rubric!
-                        $buttonatts = array('type' => 'button', 'id' => 'local-joulegrader-preview-button');
-                        $role = !empty($this->teachercap) ? 'teacher' : 'student';
-                        $viewbutton = html_writer::tag('button', get_string('view' . $gradingmethod . $role, 'local_joulegrader'), $buttonatts);
-
-                        $html .= html_writer::tag('div', $viewbutton, array('id' => 'local-joulegrader-viewpreview-button-con'));
-
-                        // needsupdate?
-                        if ($this->needsupdate) {
-                            $html .= html_writer::tag('div', get_string('needregrademessage', 'gradingform_' . $gradingmethod), array('class' => "gradingform_$gradingmethod-regrade"));
-                        }
-                    }
-                }
-            }
+            $hasgrading = false;
         }
 
-        return $html;
+        return $hasgrading;
     }
 
-    /**
-     * @return string - html for a modal
-     */
-    public function get_modal_html() {
-        global $PAGE;
+    public function get_currentgrade() {
+        return $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->grade;
+    }
 
-        $html = '';
+    public function has_active_gradinginstances() {
+        return $this->controller->get_active_instances($this->gradingarea->get_guserid());
+    }
 
-        if (empty($this->controller) || empty($this->gradinginstance) || !$this->controller->is_form_available()) {
-            return $html;
-        }
+    public function has_modal() {
+        return !(empty($this->controller) || empty($this->gradinginstance) || (!empty($this->controller) && !$this->controller->is_form_available()));
+    }
 
-        if (empty($this->teachercap) && $this->needsupdate) {
-            return $html;
-        }
+    public function get_needsupdate() {
+        return $this->needsupdate;
+    }
 
-        //check for capability
-        if (!empty($this->teachercap)) {
-            //get the form and render it via buffer helper
-            $mrhelper = new mr_helper();
-            $html = $mrhelper->buffer(array($this->mform, 'display'));
-        } else {
-            //this is for a student
-            $options = $this->controller->get_options();
+    public function get_grade() {
+        return $this->forum->scale;
+    }
 
-            // which grading method
-            $gradingmethod = $this->gradingarea->get_active_gradingmethod();
+    public function has_teachercap() {
+        return $this->teachercap;
+    }
 
-            //get grading info
-            $item = $this->gradinginfo->items[0];
-            $grade = $item->grades[$this->gradingarea->get_guserid()];
+    public function get_courseid() {
+        return $this->courseid;
+    }
 
-            // check to see if this we should generate based on settings and grade
-            if (empty($options['alwaysshowdefinition']) && (empty($grade->grade) || !empty($grade->hidden))) {
-                return $html;
-            }
+    public function has_override() {
+        return false;
+    }
 
-            if ((!$grade->grade === false) && empty($grade->hidden)) {
-                $gradestr = '<div class="grade">'. get_string("grade").': '.$grade->str_long_grade. '</div>';
-            } else {
-                $gradestr = '';
-            }
-            $controller = $this->controller;
+    public function has_paneform() {
+        return (empty($this->controller) || empty($this->gradinginstance) || (!empty($this->controller) && !$this->controller->is_form_available()));
+    }
 
-            if (!$controller->get_active_instances($this->gradingarea->get_guserid())) {
-                $renderer = $controller->get_renderer($PAGE);
-                $options = $controller->get_options();
-                switch ($gradingmethod) {
-                    case 'rubric':
-                        $criteria = $controller->get_definition()->rubric_criteria;
-                        $html = $renderer->display_rubric($criteria, $options, $controller::DISPLAY_VIEW, 'rubric');
-                        break;
-                    case 'checklist':
-                        $groups = $controller->get_definition()->checklist_groups;
-                        $html = $renderer->display_checklist($groups, $options, $controller::DISPLAY_VIEW, 'checklist');
-                        break;
-                }
-            } else {
-                $controller->set_grade_range(make_grades_menu($this->forum->scale));
-                $html = $controller->render_grade($PAGE, $this->gradingarea->get_guserid(), $item, $gradestr, false);
-            }
-        }
-
-        return $html;
+    public function get_agitemid() {
+        return $this->gradingarea->get_guserid();
     }
 
     /**
      * Process the grade data
+     * @param $data
      * @param mr_html_notify $notify
+     * @throws moodle_exception
      */
-    public function process($notify) {
-        //get the moodleform
-        $mform = $this->mform;
-
+    public function process($data, $notify) {
         //set up a redirect url
         $redirecturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $this->cm->course
                 , 'garea' => $this->get_gradingarea()->get_areaid(), 'guser' => $this->get_gradingarea()->get_guserid()));
 
         //get the data from the form
-        if ($data = $mform->get_data()) {
+        if ($data) {
 
-            if ($data->forum != $this->forum->id) {
-                //throw an exception, could be some funny business going on here
-                throw new moodle_exception('assignmentnotmatched', 'local_joulegrader');
-            }
+//            if ($data->instance != $this->forum->id) {
+//                //throw an exception, could be some funny business going on here
+//                throw new moodle_exception('assignmentnotmatched', 'local_joulegrader');
+//            }
 
             if (isset($data->gradinginstanceid)) {
                 //using advanced grading
                 $gradinginstance = $this->gradinginstance;
+                $this->controller->set_grade_range(make_grades_menu($this->forum->scale));
                 $grade = $gradinginstance->submit_and_get_grade($data->grade, $this->gradingarea->get_guserid());
             } else if ($this->forum->scale < 0) {
                 //scale grade
@@ -346,13 +204,6 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
         }
 
         redirect($redirecturl);
-    }
-
-    /**
-     * @return void
-     */
-    public function require_js() {
-
     }
 
     /**

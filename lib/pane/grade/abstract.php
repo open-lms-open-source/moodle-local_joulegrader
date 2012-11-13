@@ -52,6 +52,25 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     }
 
     /**
+     * @return mixed
+     */
+    public function get_gradingdisabled() {
+        return $this->gradingdisabled;
+    }
+
+    public function get_gradinginstance() {
+        return $this->gradinginstance;
+    }
+
+    public function get_advancedgradingerror() {
+        return $this->advancedgradingerror;
+    }
+
+    public function get_controller() {
+        return $this->controller;
+    }
+
+    /**
      * Return the supported advanced grading plugins
      *
      * @return array
@@ -59,11 +78,6 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     public static function get_supportedplugins() {
         return array('rubric', 'checklist');
     }
-
-    /**
-     * @return mixed
-     */
-    abstract public function get_panehtml();
 
     /**
      * Do any initialization the panel needs before rendering
@@ -76,9 +90,10 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
      * Process data submitted by this grade pane
      *
      * @abstract
+     * @param $data
      * @param $notify mr_notify
      */
-    abstract public function process($notify);
+    abstract public function process($data, $notify);
 
     /**
      * Returns whether or not there is a grade yet for the area/user
@@ -87,4 +102,12 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
      * @return boolean
      */
     abstract public function not_graded();
+
+    /**
+     * Returns wehter or not the area can be graded
+     *
+     * @abstract
+     * @return boolean
+     */
+    abstract public function has_grading();
 }

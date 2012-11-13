@@ -157,6 +157,10 @@ class local_joulegrader_controller_default extends mr_controller {
      * @return void
      */
     public function process_action() {
+        global $CFG;
+        require_once($CFG->dirroot . '/local/joulegrader/form/grademodalform.php');
+        require_once($CFG->dirroot . '/local/joulegrader/form/gradepaneform.php');
+
         //get current area id and current user parameters for the gradingarea instance
         $currentareaid = required_param('garea', PARAM_INT);
         $currentuserid = required_param('guser', PARAM_INT);
@@ -191,15 +195,33 @@ class local_joulegrader_controller_default extends mr_controller {
         //set next userid
         $gradeareainstance->set_nextuserid($usershelper->get_nextuser());
 
-        if (!$gradeareainstance->get_gradepane()->is_validated()) {
+        $gradepane = $gradeareainstance->get_gradepane();
+        $modalform = null;
+        if ($gradepane->has_modal()) {
+            $modalform = new local_joulegrader_form_grademodalform(null, $gradepane);
+        }
+
+        $paneform = null;
+        if ($gradepane->has_paneform()) {
+            $paneform = new local_joulegrader_form_gradepaneform(null, $gradepane);
+        }
+
+        if ((!empty($modalform) && $modalform->is_submitted() && !$modalform->is_validated())
+                || (!empty($paneform) && $paneform->is_submitted() && !$paneform->is_validated())) {
             $this->gradeareainstance = $gradeareainstance;
             echo $this->print_header();
             echo $this->view_action();
             echo $this->print_footer();
             die;
         }
+
+        if (!empty($modalform) && $modalform->is_submitted()) {
+            $formdata = $modalform->get_data();
+        } else if (!empty($paneform) && $paneform->is_submitted()) {
+            $formdata = $paneform->get_data();
+        }
         //fire off the process method of the grade pane, it should redirect or throw error
-        $gradeareainstance->get_gradepane()->process($this->notify);
+        $gradeareainstance->get_gradepane()->process($formdata, $this->notify);
 
     }
 
