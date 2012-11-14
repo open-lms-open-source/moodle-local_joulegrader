@@ -262,6 +262,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                             $groups = $controller->get_definition()->checklist_groups;
                             $modalhtml = $renderer->display_checklist($groups, $options, $controller::DISPLAY_VIEW, 'checklist');
                             break;
+                        case 'guide':
+                            $criteria = $controller->get_definition()->guide_criteria;
+                            $modalhtml = $renderer->display_guide($criteria, '', $options, $controller::DISPLAY_VIEW, 'guide');
+                            break;
                     }
                 } else {
                     $controller->set_grade_range(make_grades_menu($gradepane->get_grade()));
@@ -352,6 +356,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      * @return array
      */
     protected function get_js_module() {
+        $a = new stdClass();
+        $a->criterianame = '##SHORTNAME##';
+        $a->maxscore = '##MAXSCORE##';
+
         return array(
             'name' => 'local_joulegrader',
             'fullpath' => '/local/joulegrader/javascript.js',
@@ -368,7 +376,9 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 array('rubric', 'local_joulegrader'),
                 array('checklist', 'local_joulegrader'),
                 array('close', 'local_joulegrader'),
-                array('rubricerror', 'local_joulegrader')
+                array('rubricerror', 'local_joulegrader'),
+                array('guideerror', 'local_joulegrader'),
+                array('err_scoreinvalid', 'gradingform_guide', $a),
             ),
         );
     }

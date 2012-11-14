@@ -76,7 +76,7 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
      * @return array
      */
     public static function get_supportedplugins() {
-        return array('rubric', 'checklist');
+        return array('rubric', 'checklist', 'guide');
     }
 
     /**

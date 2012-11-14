@@ -84,6 +84,28 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
     }
 }
 
+M.local_joulegrader.generate_errorpanel = function (Y, options, errormsg) {
+    var errorpanel = new Y.Panel({
+        bodyContent: errormsg,
+        centered: '#' + options.id,
+        zindex: 200,
+        width: 200,
+        visible: false,
+        render: '#' + options.id,
+        buttons: [
+            {
+                value: M.str.local_joulegrader.close,
+                action: function(e) {
+                    errorpanel.hide();
+                },
+                section: 'footer'
+            }
+        ]
+    });
+
+    return errorpanel;
+}
+
 M.local_joulegrader.init_checklist = function(Y, options, panel) {
     var panelnode = panel.get('srcNode');
 
@@ -114,6 +136,88 @@ M.local_joulegrader.init_checklist = function(Y, options, panel) {
 
 }
 
+M.local_joulegrader.init_guide = function(Y, options, panel) {
+    var panelnode = panel.get('srcNode');
+
+    //get the submit and submit next buttons if they exist
+    var submitbuttons = Y.all('#' + options.id + ' input[type=submit]');
+
+    if (submitbuttons && !submitbuttons.isEmpty()) {
+        //render the panel first so the that the error panel renders correctly
+        panel.render();
+
+        //a little panel for display an error message
+        var errorpanel = M.local_joulegrader.generate_errorpanel(Y, options, '');
+
+        //attach the event handlers
+        submitbuttons.on('click', function(e) {
+            //flag for valid guide
+            var valid = true;
+
+            errorpanel.set('bodyContent', '');
+            var errorpanelcontent = '<div class="gradingform_guide-error">' + M.str.local_joulegrader.guideerror + '</div>';
+
+            //get all the criteria
+            var criteriascore = Y.all('#' + options.id + ' .gradingform_guide .criterion .score input[type="text"]');
+            criteriascore.each(function(score) {
+                var maxscore = score.next('.criteriondescriptionscore');
+                var maxscorevalue;
+                if (maxscore) {
+                    maxscorevalue = parseInt(maxscore.get('textContent'));
+                }
+                var scorevalue = score.get('value');
+                if (scorevalue === '' || isNaN(scorevalue) || (maxscorevalue && (parseInt(scorevalue) > maxscorevalue || parseInt(scorevalue) < 0))) {
+                    valid = false;
+                    var criterionshortnameel = score.ancestor('.criterion').one('.criterionshortname');
+                    var criterionshortname = criterionshortnameel ? criterionshortnameel.get('textContent') : '';
+
+                    if (maxscorevalue && criterionshortname !== '') {
+                        var errstr = M.str.gradingform_guide.err_scoreinvalid.replace('##SHORTNAME##', criterionshortname).replace('##MAXSCORE##', maxscorevalue);
+                        errorpanelcontent += '<div class="gradingform_guide-error">' + errstr + '</div>';
+                    }
+                }
+            });
+
+
+            if (!valid) {
+                e.preventDefault();
+
+                errorpanel.set('width', 500);
+                errorpanel.set('bodyContent', errorpanelcontent);
+
+                // Show the panel.
+                errorpanel.show();
+
+                // Scroll it into view and center it.
+                if (Y.UA.ie > 0 && window.scrollTo) {
+                    var epy = errorpanel.get('y');
+                    window.scrollTo(epy, 0);
+                } else {
+                    errorpanel.get('srcNode').scrollIntoView();
+                }
+                errorpanel.centered();
+            }
+
+        });
+    } else {
+        //this is for the student
+        //add a close button
+        var closebutton = {
+            value: M.str.local_joulegrader.close,
+            action: function(e) {
+                panel.hide();
+            },
+            section: 'footer'
+        };
+
+        panel.addButton(closebutton);
+
+        // render the panel
+        panel.render();
+    }
+}
+
+
 M.local_joulegrader.init_rubric = function(Y, options, panel) {
 
     //get the submit and submit next buttons if they exist
@@ -123,23 +227,7 @@ M.local_joulegrader.init_rubric = function(Y, options, panel) {
         panel.render();
 
         //a little panel for display an error message
-        var errorpanel = new Y.Panel({
-            bodyContent: M.str.local_joulegrader.rubricerror,
-            centered: '#' + options.id,
-            zindex: 200,
-            width: 200,
-            visible: false,
-            render: '#' + options.id,
-            buttons: [
-                {
-                    value: M.str.local_joulegrader.close,
-                    action: function(e) {
-                        errorpanel.hide();
-                    },
-                    section: 'footer'
-                }
-            ]
-        });
+        var errorpanel = M.local_joulegrader.generate_errorpanel(Y, options, M.str.local_joulegrader.rubricerror);
 
         //attach the event handlers
         submitbuttons.on('click', function(e) {
