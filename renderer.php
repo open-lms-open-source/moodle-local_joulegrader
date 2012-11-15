@@ -169,6 +169,14 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     }
 
     /**
+     * @param local_joulegrader_lib_pane_grade_mod_assign_submissions_class $gradepane
+     * @return string
+     */
+    public function render_local_joulegrader_lib_pane_grade_mod_assign_submissions_class(local_joulegrader_lib_pane_grade_mod_assign_submissions_class $gradepane) {
+        return $this->help_render_gradepane($gradepane);
+    }
+
+    /**
      * @param local_joulegrader_lib_pane_grade_abstract $gradepane
      * @return string
      */
@@ -623,6 +631,20 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         if (empty($html)) {
             return html_writer::tag('h3', $viewpane->get_emptymessage());
         }
+        return $html;
+    }
+
+    /**
+     * @param local_joulegrader_lib_pane_view_mod_assign_submissions_class $viewpane
+     * @return string
+     */
+    public function render_local_joulegrader_lib_pane_view_mod_assign_submissions_class(local_joulegrader_lib_pane_view_mod_assign_submissions_class $viewpane) {
+        $html = '';
+
+        if (empty($html)) {
+            return html_writer::tag('h3', $viewpane->get_emptymessage());
+        }
+
         return $html;
     }
 
