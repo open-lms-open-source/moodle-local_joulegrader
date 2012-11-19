@@ -41,6 +41,7 @@ $string['assignmentavailable'] = 'Available';
 $string['on'] = 'on {$a}';
 $string['until'] = 'until {$a}';
 $string['lastedited'] = 'Last edited on {$a}';
+$string['assign23-latesubmission'] = 'This submission was late by {$a}.';
 
 //mod_assignment_submission_grade form strings
 $string['gradeoutof'] = 'Grade (out of {$a})';

@@ -639,13 +639,77 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      * @return string
      */
     public function render_local_joulegrader_lib_pane_view_mod_assign_submissions_class(local_joulegrader_lib_pane_view_mod_assign_submissions_class $viewpane) {
+        global $USER;
         $html = '';
+
+        $gradingarea = $viewpane->get_gradingarea();
+        $gacontext = $gradingarea->get_gradingmanager()->get_context();
+        $guserid   = $gradingarea->get_guserid();
+
+        //need the assignment
+        $assignment = $gradingarea->get_assign();
+
+        //need the submission
+        $submission = $gradingarea->get_submission();
+
+        $hasstudentcap = has_capability($gradingarea::get_studentcapability(), $gacontext);
+        $hasteachercap = has_capability($gradingarea::get_teachercapability(), $gacontext);
+
+        //check capabilities
+        if ($hasteachercap || ($hasstudentcap && $USER->id == $guserid)) {
+            // Determine if we need to display a late submission message.
+            if (!empty($submission) && (!empty($submission->timemodified)) && !empty($assignment->get_instance()->duedate)
+                    && ($assignment->get_instance()->duedate < $submission->timemodified)) {
+                // Format the lateness time and get the message.
+                $lateby = format_time($submission->timemodified - $assignment->get_instance()->duedate);
+                $html .= html_writer::tag('div', get_string('assign23-latesubmission', 'local_joulegrader', $lateby));
+            }
+
+            if (!empty($submission)) {
+                $submissionplugins = $assignment->get_submission_plugins();
+                foreach ($submissionplugins as $plugin) {
+                    $pluginclass = get_class($plugin);
+                    // First make sure that the submission plugin is supported by joule Grader.
+                    if (!in_array($pluginclass, $gradingarea->get_supported_plugins())) {
+                        // Submission plugin not currently supported by joule Grader, just continue to next plugin.
+                        continue;
+                    }
+                    if ($plugin->is_enabled() && $plugin->is_visible() && !$plugin->is_empty($submission)) {
+                        $rendermethod = 'help_render_' . $pluginclass;
+
+                        $pluginhtml = html_writer::tag('div', $plugin->get_name(), array('class' => 'local_joulegrader_assign23_submission_name'));
+                        $pluginhtml .= $this->$rendermethod($plugin, $submission);
+
+                        $attributes = array('class' => 'local_joulegrader_assign23_submission');
+                        $html .= html_writer::tag('div', $pluginhtml, $attributes);
+                    }
+                }
+            }
+        }
 
         if (empty($html)) {
             return html_writer::tag('h3', $viewpane->get_emptymessage());
         }
 
         return $html;
+    }
+
+    /**
+     * @param $plugin
+     * @param $submission
+     * @return string
+     */
+    public function help_render_assign_submission_file($plugin, $submission) {
+        return $plugin->view($submission);
+    }
+
+    /**
+     * @param $plugin
+     * @param $submission
+     * @return string
+     */
+    public function help_render_assign_submission_onlinetext($plugin, $submission) {
+        return $plugin->view($submission);
     }
 
     /**

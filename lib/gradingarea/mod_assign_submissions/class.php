@@ -30,6 +30,18 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
     protected $submission;
 
     /**
+     * @var array
+     */
+    protected static $supportedsubmissionplugins = array(
+        'assign_submission_onlinetext',
+        'assign_submission_file',
+    );
+
+    public function get_supported_plugins() {
+        return self::$supportedsubmissionplugins;
+    }
+
+    /**
      * @return array - the viewpane class and path to the class that this gradingarea class should use
      */
     protected function get_viewpane_info() {
@@ -206,5 +218,42 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         } catch (Exception $e) {
             throw new coding_exception('Could not load the assign class: ' . $e->getMessage());
         }
+    }
+
+    public function get_submission($create = false) {
+        if (empty($this->submission)) {
+            $this->submission = $this->load_submission($create);
+        }
+
+        return $this->submission;
+    }
+
+    protected function load_submission($create) {
+        global $DB;
+
+        $assign = $this->get_assign();
+
+        $submission = $DB->get_record('assign_submission', array('assignment' => $assign->get_instance()->id, 'userid' => $this->guserid));
+
+        if ($submission) {
+            return $submission;
+        }
+        if ($create) {
+            $submission = new stdClass();
+            $submission->assignment   = $assign->get_instance()->id;
+            $submission->userid       = $this->guserid;
+            $submission->timecreated = time();
+            $submission->timemodified = $submission->timecreated;
+
+            if ($assign->get_instance()->submissiondrafts) {
+                $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+            } else {
+                $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+            }
+            $sid = $DB->insert_record('assign_submission', $submission);
+            $submission->id = $sid;
+            return $submission;
+        }
+        return false;
     }
 }
