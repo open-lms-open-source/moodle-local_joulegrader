@@ -77,7 +77,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
             return false;
         }
 
-        send_stored_file($file, 86400, 0, true, $options);
+        send_stored_file($file, 86400, 0, $forcedownload, $options);
 }
 
 

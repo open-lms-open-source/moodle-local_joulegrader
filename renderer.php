@@ -825,7 +825,13 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         //get the extension
         $extension = resourcelib_get_extension($file->get_filename());
 
-        if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
+        $mediarenderer = $PAGE->get_renderer('core', 'media');
+        $embedoptions = array(
+            core_media::OPTION_TRUSTED => true,
+            core_media::OPTION_BLOCK => true,
+        );
+
+        if (file_mimetype_in_typegroup($mimetype, 'web_image')) {  // It's an image
             $html = resourcelib_embed_image($fullurl, $title);
 
         } else if ($mimetype === 'application/pdf') {
@@ -841,33 +847,9 @@ EOT;
             // the size is hardcoded in the object above intentionally because it is adjusted by the following function on-the-fly
             $PAGE->requires->js_init_call('M.local_joulegrader.init_maximised_embed', array('resourceobject'), true, $this->get_js_module());
 
-        } else if ($mimetype === 'audio/mp3') {
-            // MP3 audio file
-            $html = resourcelib_embed_mp3($fullurl, $title, $clicktoopen);
-
-        } else if ($mimetype === 'video/x-flv' or $extension === 'f4v') {
-            // Flash video file
-            $html = resourcelib_embed_flashvideo($fullurl, $title, $clicktoopen);
-
-        } else if ($mimetype === 'application/x-shockwave-flash') {
-            // Flash file
-            $html = resourcelib_embed_flash($fullurl, $title, $clicktoopen);
-
-        } else if (substr($mimetype, 0, 10) === 'video/x-ms') {
-            // Windows Media Player file
-            $html = resourcelib_embed_mediaplayer($fullurl, $title, $clicktoopen);
-
-        } else if ($mimetype === 'video/quicktime') {
-            // Quicktime file
-            $html = resourcelib_embed_quicktime($fullurl, $title, $clicktoopen);
-
-        } else if ($mimetype === 'video/mpeg') {
-            // Mpeg file
-            $html = resourcelib_embed_mpeg($fullurl, $title, $clicktoopen);
-
-        } else if ($mimetype === 'audio/x-pn-realaudio') {
-            // RealMedia file
-            $html = resourcelib_embed_real($fullurl, $title, $clicktoopen);
+        } else if ($mediarenderer->can_embed_url($fullurl, $embedoptions)) {
+            // Media (audio/video) file.
+            $html = $mediarenderer->embed_url($fullurl, $title, 0, 0, $embedoptions);
 
         } else {
             // anything else - just try object tag enlarged as much as possible
