@@ -434,4 +434,57 @@ class local_joulegrader_controller_default extends mr_controller {
         return $commentloophtml;
 
     }
+
+    /**
+     * Downloads all the files for file submission plugin in assignment 2.3
+     *
+     * @return void
+     */
+    public function downloadall_action() {
+        global $CFG, $USER, $DB;
+
+        require_once($CFG->libdir . '/filelib.php');
+
+        $submissionid = required_param('s', PARAM_INT);
+
+        $submission = $DB->get_record('assign_submission', array('id' => $submissionid), '*', MUST_EXIST);
+        $assign = $DB->get_record('assign', array('id' => $submission->assignment), '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('assign', $assign->id, 0, false, MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+
+        $context = context_module::instance($cm->id);
+
+        // Check permissions
+        if ($USER->id === $submission->userid) {
+            require_capability('mod/assign:submit', $context);
+            $user = $USER;
+        } else {
+            require_capability('mod/assign:grade', $context);
+            $user = $DB->get_record('user', array('id' => $submission->userid), 'id, firstname, lastname', MUST_EXIST);
+        }
+
+        // Get the files
+        $filestozip = array();
+
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($context->id, 'assignsubmission_file', 'submission_files', $submission->id, "timemodified", false);
+
+        foreach ($files as $file) {
+            $filestozip[$file->get_filename()] = $file;
+        }
+
+        $zipsuccess = false;
+        $filename = str_replace(' ', '_', clean_filename($course->shortname.'-'.$assign->name.'-'.$cm->id.'-' . fullname($user) .'-'.$user->id .".zip"));
+        if (!empty($filestozip)) {
+            //create path for new zip file.
+            $tempzip = tempnam($CFG->tempdir.'/', 'local_joulegrader_');
+            //zip files
+            $zipper = new zip_packer();
+            $zipsuccess = $zipper->archive_to_pathname($filestozip, $tempzip);
+        }
+
+        if ($zipsuccess) {
+            send_temp_file($tempzip, $filename);
+        }
+    }
 }

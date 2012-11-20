@@ -678,7 +678,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                         $rendermethod = 'help_render_' . $pluginclass;
 
                         $pluginhtml = html_writer::tag('div', $plugin->get_name(), array('class' => 'local_joulegrader_assign23_submission_name'));
-                        $pluginhtml .= $this->$rendermethod($plugin, $submission);
+                        $pluginhtml .= $this->$rendermethod($plugin, $assignment, $submission);
 
                         $attributes = array('class' => 'local_joulegrader_assign23_submission');
                         $html .= html_writer::tag('div', $pluginhtml, $attributes);
@@ -696,19 +696,115 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
     /**
      * @param $plugin
+     * @param assign $assignment
      * @param $submission
      * @return string
      */
-    public function help_render_assign_submission_file($plugin, $submission) {
-        return $plugin->view($submission);
+    public function help_render_assign_submission_file($plugin, $assignment, $submission) {
+        $context = $assignment->get_context();
+        $fs = get_file_storage();
+        $filetree = $fs->get_area_tree($context->id, 'assignsubmission_file', 'submission_files', $submission->id);
+        $this->preprocess_filetree($assignment, $submission, $filetree);
+
+        $htmlid = 'local_joulegrader_assign_files_tree_'.uniqid();
+        $this->page->requires->js_init_call('M.mod_assign.init_tree', array(true, $htmlid));
+        $treehtml = html_writer::start_tag('div', array('id' => $htmlid));
+        $treehtml .= $this->help_htmllize_assign_submission_file_tree($context, $submission, $filetree);
+        $treehtml .= html_writer::end_tag('div');
+
+        $moodleurl = new moodle_url('/local/joulegrader/view.php', array('action' => 'downloadall', 's' => $submission->id
+            , 'courseid' => $assignment->get_instance()->course));
+        $html = $treehtml . html_writer::link($moodleurl, get_string('downloadall', 'local_joulegrader'));
+        return $html;
+    }
+
+    /**
+     * Preprocesses the file tree for assignsubmission_file plugin to add necessary links.
+     *
+     * Modified from mod/assign/renderable.php's assign_files::preprocess() method
+     * @param $assignment
+     * @param $submission
+     * @param $filetree
+     */
+    protected function preprocess_filetree($assignment, $submission, $filetree) {
+        static $downloadstr = null;
+        if (is_null($downloadstr)) {
+            $downloadstr = '('.get_string('download', 'local_joulegrader').')';
+        }
+        static $viewinlinestr = null;
+        if (is_null($viewinlinestr)) {
+            $viewinlinestr = '('.get_string('viewinline', 'local_joulegrader').')';
+        }
+
+        foreach ($filetree['subdirs'] as $subdir) {
+            $this->preprocess_filetree($assignment, $submission, $subdir);
+        }
+
+        foreach ($filetree['files'] as $file) {
+            $filename = $file->get_filename();
+            $filepath = $file->get_filepath();
+
+            $fileurl = moodle_url::make_pluginfile_url($assignment->get_context()->id, 'assignsubmission_file', 'submission_files', $submission->id, $filepath, $filename, true);
+            $file->viewinlinelink = $this->get_viewinline_link($assignment, $submission, $viewinlinestr);
+            $file->downloadlink = html_writer::link($fileurl, $downloadstr);
+        }
+    }
+
+    /**
+     * @param $assignment
+     * @param $submission
+     * @param $viewinlinestr
+     * @return string
+     */
+    protected function get_viewinline_link($assignment, $submission, $viewinlinestr) {
+        $viewinlineurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->get_course()->id, 's' => $submission->id, ));
+        $viewinlinelink = html_writer::link($viewinlineurl, $viewinlinestr);
+        return '';
+    }
+
+    /**
+     * Creates html necessary for YUI treeview for the assignsubmission_file plugin's file tree
+     * Modified from mod/assign/render.php's htmllize() method
+     *
+     * @param $context
+     * @param $submission
+     * @param $dir
+     * @return string
+     */
+    protected function help_htmllize_assign_submission_file_tree($context, $submission, $dir) {
+        $yuiconfig = array();
+        $yuiconfig['type'] = 'html';
+
+        if (empty($dir['subdirs']) and empty($dir['files'])) {
+            return '';
+        }
+
+        $result = '<ul>';
+        foreach ($dir['subdirs'] as $subdir) {
+            $image = $this->output->pix_icon(file_folder_icon(), $subdir['dirname'], 'moodle', array('class'=>'icon'));
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.s($subdir['dirname']).'</div> '
+                    .$this->help_htmllize_assign_submission_file_tree($context, $submission, $subdir).'</li>';
+        }
+
+        foreach ($dir['files'] as $file) {
+            $filename = $file->get_filename();
+
+            $image = $this->output->pix_icon(file_file_icon($file), $filename, 'moodle', array('class'=>'icon'));
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.$filename. ' ' . $file->viewinlinelink . ' ' . $file->downloadlink.'</div></li>';
+        }
+
+        $result .= '</ul>';
+
+        return $result;
     }
 
     /**
      * @param $plugin
+     * @param $assignment
      * @param $submission
      * @return string
      */
-    public function help_render_assign_submission_onlinetext($plugin, $submission) {
+    public function help_render_assign_submission_onlinetext($plugin, $assignment, $submission) {
         return $plugin->view($submission);
     }
 
