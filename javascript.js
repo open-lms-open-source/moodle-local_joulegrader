@@ -515,3 +515,116 @@ M.local_joulegrader.init_maximised_embed = function(Y, id) {
         resize_object();
     };
 };
+
+M.local_joulegrader.init_viewinlinefile = function(Y) {
+    var loadedfiles = {};
+    var currentfile;
+
+    var filetreecon = Y.one('#local-joulegrader-assign23-treecon');
+    if (!filetreecon) {
+        return;
+    }
+    var fileinline = Y.one('#local-joulegrader-assign23-files-inline');
+    if (!fileinline) {
+        return;
+    }
+
+    var closeinline = fileinline.one('#local-joulegrader-assign23-ctrl-close');
+
+    var onlinesubmission = Y.one('#local-joulegrader-assign23-assign_submission_onlinetext');
+
+    var show_node = function(node) {
+        if (node.hasClass('local_joulegrader_hidden')) {
+            node.removeClass('local_joulegrader_hidden');
+        }
+    };
+
+    var hide_node = function(node) {
+        if (!node.hasClass('local_joulegrader_hidden')) {
+            node.addClass('local_joulegrader_hidden');
+        }
+    };
+
+    var show_inlinefile = function(filenode) {
+        if (onlinesubmission) {
+            hide_node(onlinesubmission);
+        }
+        hide_node(filetreecon);
+        show_node(filenode);
+        show_node(fileinline);
+
+        currentfile = filenode;
+    }
+
+    var hide_inlinefile = function() {
+        if (currentfile) {
+            hide_node(currentfile);
+        }
+        hide_node(fileinline);
+        if (onlinesubmission) {
+            show_node(onlinesubmission);
+        }
+        show_node(filetreecon);
+    }
+
+    var iocfg = {
+        method: 'GET',
+        timeout: 4000,
+        on: {
+            success: function(id, o, args) {
+                try {
+                    var response = Y.JSON.parse(o.responseText);
+
+                    console.log(response);
+
+                    if (response.html) {
+                        var inlineid = 'local-joulegrader-inlinefile-' + args.hashid;
+
+                        // Append the html to fileinline div
+                        fileinline.append('<div id="' + inlineid + '">' + response.html + '</div>');
+
+                        // Store the node for later
+                        loadedfiles[args.hashid] = fileinline.one('#' + inlineid);
+
+                        // Show the inline file
+                        show_inlinefile(loadedfiles[args.hashid]);
+
+                    } else if (response.error) {
+                        alert(response.error);
+                    }
+
+                } catch (excp) {
+                    alert(excp);
+                }
+            },
+            failure: function(id, o, args) {
+
+            }
+        }
+    }
+
+    closeinline.on('click', function(e) {
+        e.preventDefault();
+        hide_inlinefile();
+    });
+
+    // Delegate click on all '.local_joulegrader_assign23_inlinefile' links under the filetree container
+    filetreecon.delegate('click', function(e) {
+        // Prevent the default action
+        e.preventDefault();
+
+        var link = e.currentTarget;
+        var filehash = link.get('id');
+
+        // Check to see if it has already been loaded
+        if (!loadedfiles.hasOwnProperty(filehash)) {
+            // Fire the request.
+            iocfg.data = 'action=inlinefile&f=' + filehash;
+            iocfg.arguments = {hashid: filehash};
+            Y.io(M.cfg.wwwroot + '/local/joulegrader/view.php', iocfg);
+        } else {
+            show_inlinefile(loadedfiles[filehash]);
+        }
+
+    }, '.local_joulegrader_assign23_inlinefile')
+};

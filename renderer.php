@@ -680,7 +680,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                         $pluginhtml = html_writer::tag('div', $plugin->get_name(), array('class' => 'local_joulegrader_assign23_submission_name'));
                         $pluginhtml .= $this->$rendermethod($plugin, $assignment, $submission);
 
-                        $attributes = array('class' => 'local_joulegrader_assign23_submission');
+                        $attributes = array('class' => 'local_joulegrader_assign23_submission', 'id' => 'local-joulegrader-assign23-' . $pluginclass);
                         $html .= html_writer::tag('div', $pluginhtml, $attributes);
                     }
                 }
@@ -703,10 +703,12 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     public function help_render_assign_submission_file($plugin, $assignment, $submission) {
         $context = $assignment->get_context();
         $fs = get_file_storage();
+        $files = $plugin->get_files($submission);
+        $filecount = count($files);
         $filetree = $fs->get_area_tree($context->id, 'assignsubmission_file', 'submission_files', $submission->id);
         $this->preprocess_filetree($assignment, $submission, $filetree);
 
-        $htmlid = 'local_joulegrader_assign_files_tree_'.uniqid();
+        $htmlid = 'local_joulegrader_assign23_files_tree_'.uniqid();
         $this->page->requires->js_init_call('M.mod_assign.init_tree', array(true, $htmlid));
         $treehtml = html_writer::start_tag('div', array('id' => $htmlid));
         $treehtml .= $this->help_htmllize_assign_submission_file_tree($context, $submission, $filetree);
@@ -715,6 +717,29 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $moodleurl = new moodle_url('/local/joulegrader/view.php', array('action' => 'downloadall', 's' => $submission->id
             , 'courseid' => $assignment->get_instance()->course));
         $html = $treehtml . html_writer::link($moodleurl, get_string('downloadall', 'local_joulegrader'));
+        $html = html_writer::tag('div', $html, array('id' => 'local-joulegrader-assign23-treecon'));
+
+        $ctrlfilename = html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-filename', 'class' => 'control'));
+        $ctrldownload = html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-download', 'class' => 'control'));
+
+        $ctrlprevious = '';
+        $ctrlnext = '';
+        $ctrlselect = '';
+
+        if ($filecount > 1) {
+            // Mark, I will be uncommenting this and finishing it later.
+//            $ctrlprevious = html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-previous', 'class' => 'control'));
+//            $ctrlselect = html_writer::select(array(0 => get_string('allfiles', 'local_joulegrader')), 'fileselect', 0, false);
+//            $ctrlselect = html_writer::tag('div', $ctrlselect, array('id' => 'local-joulegrader-assign23-ctrl-select', 'class' => 'control'));
+//            $ctrlnext = html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-next', 'class' => 'control'));
+        }
+        $ctrlclose = html_writer::link(new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->get_course()->id)), $this->output->pix_icon('i/cross_red_big', get_string('close')));
+        $ctrlclose = html_writer::tag('div', $ctrlclose, array('id' => 'local-joulegrader-assign23-ctrl-close', 'class' => 'control'));
+        $controlshtml = $ctrlfilename.$ctrldownload.$ctrlprevious.$ctrlselect.$ctrlnext.$ctrlclose;
+        $controlshtml = html_writer::tag('div', $controlshtml, array('id' => 'local-joulegrader-assign23-ctrl-con'));
+        $html .= html_writer::tag('div', $controlshtml, array('id' => 'local-joulegrader-assign23-files-inline', 'class' => 'local_joulegrader_hidden'));
+
+        $this->page->requires->js_init_call('M.local_joulegrader.init_viewinlinefile', null, true, $this->get_js_module());
         return $html;
     }
 
@@ -745,21 +770,101 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             $filepath = $file->get_filepath();
 
             $fileurl = moodle_url::make_pluginfile_url($assignment->get_context()->id, 'assignsubmission_file', 'submission_files', $submission->id, $filepath, $filename, true);
-            $file->viewinlinelink = $this->get_viewinline_link($assignment, $submission, $viewinlinestr);
+            $file->viewinlinelink = $this->get_viewinline_link($file, $assignment, $submission, $viewinlinestr);
             $file->downloadlink = html_writer::link($fileurl, $downloadstr);
         }
     }
 
     /**
-     * @param $assignment
-     * @param $submission
-     * @param $viewinlinestr
+     * @param stored_file $file
+     * @param assign $assignment
+     * @param stdClass $submission
+     * @param string $viewinlinestr
      * @return string
      */
-    protected function get_viewinline_link($assignment, $submission, $viewinlinestr) {
-        $viewinlineurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->get_course()->id, 's' => $submission->id, ));
-        $viewinlinelink = html_writer::link($viewinlineurl, $viewinlinestr);
-        return '';
+    protected function get_viewinline_link($file, $assignment, $submission, $viewinlinestr) {
+        $viewinlinelink = '';
+        if ($this->can_embed_file($file)) {
+            $fileurl = moodle_url::make_pluginfile_url($assignment->get_context()->id, 'assignsubmission_file'
+                    , 'submission_files', $submission->id, $file->get_filepath(), $file->get_filename(), true);
+            $viewinlinelink = html_writer::link($fileurl, $viewinlinestr, array('id' => $file->get_pathnamehash(), 'class' => 'local_joulegrader_assign23_inlinefile'));
+        }
+        return $viewinlinelink;
+    }
+
+    /**
+     * @param stored_file $file
+     * @return bool
+     */
+    protected function can_embed_file($file) {
+        $canembed = false;
+        $embed    = array('image/gif', 'image/jpeg', 'image/png', 'image/svg+xml',         // images
+            'application/x-shockwave-flash', 'video/x-flv', 'video/x-ms-wm', // video formats
+            'video/quicktime', 'video/mpeg', 'video/mp4',
+            'audio/mp3', 'audio/x-realaudio-plugin', 'x-realaudio-plugin',   // audio formats
+            'application/pdf', 'text/html', 'text/plain',
+        );
+
+        if (in_array($file->get_mimetype(), $embed)) {
+            $canembed = true;
+        }
+        return $canembed;
+    }
+
+    /**
+     * @param stored_file $file
+     * @return string
+     */
+    public function help_render_assign23_file_inline(stored_file $file) {
+        global $PAGE, $CFG;
+        require_once($CFG->libdir . '/resourcelib.php');
+
+        $html = '';
+
+        $filename = $file->get_filename();
+        $contextid = $file->get_contextid();
+        $mimetype = $file->get_mimetype();
+
+        //Code from modified from mod/resource/locallib.php
+        //make the url to the file
+        $fullurl = moodle_url::make_pluginfile_url($contextid, 'local_joulegrader', 'gradingarea', $file->get_itemid()
+                , '/mod_assign_submissions' . $file->get_filepath(), $filename);
+
+        //title is not used
+        $title = '';
+
+        //clicktopen
+        $clicktoopen = get_string('clicktoopen2', 'resource', "<a href=\"$fullurl\">$filename</a>");
+
+        $mediarenderer = $PAGE->get_renderer('core', 'media');
+        $embedoptions = array(
+            core_media::OPTION_TRUSTED => true,
+            core_media::OPTION_BLOCK => true,
+        );
+
+        if (file_mimetype_in_typegroup($mimetype, 'web_image')) {  // It's an image
+            $html = resourcelib_embed_image($fullurl, $title);
+
+        } else if ($mimetype === 'application/pdf') {
+            // PDF document -- had to pull this out from resourcelib b/c of the javascript
+            $html = <<<EOT
+<div class="resourcecontent resourcepdf">
+  <object id="resourceobject" data="$fullurl" type="application/pdf" width="800" height="600">
+    <param name="src" value="$fullurl" />
+    $clicktoopen
+  </object>
+</div>
+EOT;
+        } else if ($mediarenderer->can_embed_url($fullurl, $embedoptions)) {
+            // Media (audio/video) file.
+            $html = $mediarenderer->embed_url($fullurl, $title, 0, 0, $embedoptions);
+
+        } else {
+            // anything else - just try object tag enlarged as much as possible
+            $html = resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype);
+        }
+
+        return $html;
     }
 
     /**

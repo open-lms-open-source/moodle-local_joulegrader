@@ -141,6 +141,14 @@
     display: none;
 }
 
+.local_joulegrader_hidden {
+    display: none;
+}
+
+#local-joulegrader-assign23-ctrl-con .control {
+    display: inline;
+}
+
 #local-joulegrader-gradepane-panel .gradingform_rubric .criterion .remark textarea {
     min-width: 100px;
 }

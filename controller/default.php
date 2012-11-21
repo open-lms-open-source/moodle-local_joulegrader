@@ -487,4 +487,51 @@ class local_joulegrader_controller_default extends mr_controller {
             send_temp_file($tempzip, $filename);
         }
     }
+
+    public function inlinefile_action() {
+        global $CFG, $USER, $DB, $PAGE;
+        require_once($CFG->libdir . '/filelib.php');
+
+        $result = array();
+        $filepathhash = required_param('f', PARAM_BASE64);
+
+        try {
+            // Try to get the file.
+            $fs = get_file_storage();
+            if (!$file = $fs->get_file_by_hash($filepathhash)) {
+                throw new Exception();
+            }
+
+            // Get the item id - this should be the assign_submission id
+            $itemid = $file->get_itemid();
+
+            if (empty($itemid) || (!$submission = $DB->get_record('assign_submission', array('id' => $itemid)))) {
+                throw new Exception();
+            }
+
+            // Get the assign record and course_module record
+            $assign = $DB->get_record('assign', array('id' => $submission->assignment), '*', MUST_EXIST);
+            $cm = get_coursemodule_from_instance('assign', $assign->id, 0, false, MUST_EXIST);
+
+            $context = context_module::instance($cm->id);
+
+            // Check permissions
+            if ($USER->id === $submission->userid) {
+                require_capability('mod/assign:submit', $context);
+            } else {
+                require_capability('mod/assign:grade', $context);
+            }
+
+            $renderer = $PAGE->get_renderer('local_joulegrader');
+            $result['html'] = $renderer->help_render_assign23_file_inline($file);
+        } catch (Exception $e) {
+            $msg = $e->getMessage();
+            if (empty($msg)) {
+                $msg = get_string('couldnotviewinline', 'local_joulegrader');
+            }
+            $result['error'] = $msg;
+        }
+
+        echo json_encode($result);
+    }
 }

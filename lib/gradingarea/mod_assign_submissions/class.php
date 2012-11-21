@@ -67,6 +67,47 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
 
     /**
      * @static
+     * @param $course
+     * @param $cm
+     * @param $context
+     * @param $itemid
+     * @param $args
+     * @param $forcedownload
+     * @return bool
+     */
+    public static function pluginfile($course, $cm, $context, $itemid, $args, $forcedownload, $options) {
+        global $USER, $DB;
+
+        if (!$submission = $DB->get_record('assign_submission', array('id' => $itemid))) {
+            return false;
+        }
+
+        if ($USER->id != $submission->userid and !has_capability(self::$teachercapability, $context)) {
+            return false;
+        }
+
+        // Get the filename from args.
+        $filename = array_pop($args);
+
+        // May still have the path to determine.
+        $filepath = '';
+        while (!empty($args)) {
+            $filepath .= array_shift($args) . '/';
+        }
+
+        $fullpath = '/'.$context->id.'/assignsubmission_file/submission_files/'.$itemid.'/'. $filepath . $filename;
+
+        $fs = get_file_storage();
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+        send_stored_file($file, 86400, 0, $forcedownload, $options);
+    }
+
+            /**
+     * @static
      * @param course_modinfo $courseinfo
      * @param grading_manager $gradingmanager
      * @param bool $needsgrading

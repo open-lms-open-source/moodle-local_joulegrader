@@ -71,6 +71,7 @@ $string['guideerror'] = 'Please provide a valid grade for each criterion';
 $string['score'] = 'Score';
 $string['gradeoverriddenstudent'] = '(Override in Gradebook: {$a})';
 $string['close'] = 'Close';
+$string['allfiles'] = 'All files';
 
 //form/comment.php strings
 $string['add'] = 'Add';
