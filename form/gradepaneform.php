@@ -17,8 +17,6 @@ class local_joulegrader_form_gradepaneform extends moodleform {
         $mform->addElement('hidden', 'nextuser', $nextuserid);
         $mform->setType('nextuser', PARAM_INT);
 
-//        $mform->addElement('hidden', 'assignment', $this->_customdata->assignment->assignment->id);
-
         if (!$this->_customdata->has_modal()) {
             if ($this->_customdata->get_gradingdisabled()) {
                 // Add a message notifying user that grading is disabled.

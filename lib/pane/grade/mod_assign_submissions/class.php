@@ -18,7 +18,6 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         global $USER;
 
         $assignment = $this->gradingarea->get_assign();
-//        $submission = $this->gradingarea->get_submission();
         $usergrade = $this->get_usergrade();
 
         $this->courseid = $assignment->get_instance()->course;

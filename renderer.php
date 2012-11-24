@@ -364,9 +364,6 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      * @return array
      */
     protected function get_js_module() {
-        $a = new stdClass();
-        $a->criterianame = '##SHORTNAME##';
-        $a->maxscore = '##MAXSCORE##';
 
         return array(
             'name' => 'local_joulegrader',
@@ -386,7 +383,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 array('close', 'local_joulegrader'),
                 array('rubricerror', 'local_joulegrader'),
                 array('guideerror', 'local_joulegrader'),
-                array('err_scoreinvalid', 'gradingform_guide', $a),
+                array('err_scoreinvalid', 'gradingform_guide'),
             ),
         );
     }

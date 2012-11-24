@@ -172,7 +172,11 @@ M.local_joulegrader.init_guide = function(Y, options, panel) {
                     var criterionshortname = criterionshortnameel ? criterionshortnameel.get('textContent') : '';
 
                     if (maxscorevalue && criterionshortname !== '') {
-                        var errstr = M.str.gradingform_guide.err_scoreinvalid.replace('##SHORTNAME##', criterionshortname).replace('##MAXSCORE##', maxscorevalue);
+                        var a = {
+                            criterianame: criterionshortname,
+                            maxscore: maxscorevalue
+                        };
+                        var errstr = M.util.get_string('err_scoreinvalid', 'gradingform_guide', a);
                         errorpanelcontent += '<div class="gradingform_guide-error">' + errstr + '</div>';
                     }
                 }
@@ -574,8 +578,6 @@ M.local_joulegrader.init_viewinlinefile = function(Y) {
             success: function(id, o, args) {
                 try {
                     var response = Y.JSON.parse(o.responseText);
-
-                    console.log(response);
 
                     if (response.html) {
                         var inlineid = 'local-joulegrader-inlinefile-' + args.hashid;
