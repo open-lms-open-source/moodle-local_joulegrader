@@ -383,6 +383,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 array('close', 'local_joulegrader'),
                 array('rubricerror', 'local_joulegrader'),
                 array('guideerror', 'local_joulegrader'),
+                array('download', 'local_joulegrader'),
                 array('err_scoreinvalid', 'gradingform_guide'),
             ),
         );
@@ -700,8 +701,6 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     public function help_render_assign_submission_file($plugin, $assignment, $submission) {
         $context = $assignment->get_context();
         $fs = get_file_storage();
-        $files = $plugin->get_files($submission);
-        $filecount = count($files);
         $filetree = $fs->get_area_tree($context->id, 'assignsubmission_file', 'submission_files', $submission->id);
         $this->preprocess_filetree($assignment, $submission, $filetree);
 
@@ -719,18 +718,18 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $ctrlfilename = html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-filename', 'class' => 'control'));
         $ctrldownload = html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-download', 'class' => 'control'));
 
-        $ctrlprevious = '';
-        $ctrlnext = '';
-        $ctrlselect = '';
+        $jgurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->get_course()->id));
 
-        if ($filecount > 1) {
-            // Mark, I will be uncommenting this and finishing it later.
-//            $ctrlprevious = html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-previous', 'class' => 'control'));
-//            $ctrlselect = html_writer::select(array(0 => get_string('allfiles', 'local_joulegrader')), 'fileselect', 0, false);
-//            $ctrlselect = html_writer::tag('div', $ctrlselect, array('id' => 'local-joulegrader-assign23-ctrl-select', 'class' => 'control'));
-//            $ctrlnext = html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-next', 'class' => 'control'));
-        }
-        $ctrlclose = html_writer::link(new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->get_course()->id)), $this->output->pix_icon('i/cross_red_big', get_string('close')));
+        $ctrlprevious = html_writer::link($jgurl, $this->output->pix_icon('t/left', get_string('previous')));
+        $ctrlprevious = html_writer::tag('div', $ctrlprevious, array('id' => 'local-joulegrader-assign23-ctrl-previous', 'class' => 'control'));
+
+        $ctrlselect = html_writer::select(array(0 => get_string('allfiles', 'local_joulegrader')), 'fileselect', 0, false);
+        $ctrlselect = html_writer::tag('div', $ctrlselect, array('id' => 'local-joulegrader-assign23-ctrl-select', 'class' => 'control'));
+
+        $ctrlnext = html_writer::link($jgurl, $this->output->pix_icon('t/right', get_string('next')));
+        $ctrlnext = html_writer::tag('div', $ctrlnext, array('id' => 'local-joulegrader-assign23-ctrl-next', 'class' => 'control'));
+
+        $ctrlclose = html_writer::link($jgurl, $this->output->pix_icon('i/cross_red_big', get_string('allfiles', 'local_joulegrader')));
         $ctrlclose = html_writer::tag('div', $ctrlclose, array('id' => 'local-joulegrader-assign23-ctrl-close', 'class' => 'control'));
         $controlshtml = $ctrlfilename.$ctrldownload.$ctrlprevious.$ctrlselect.$ctrlnext.$ctrlclose;
         $controlshtml = html_writer::tag('div', $controlshtml, array('id' => 'local-joulegrader-assign23-ctrl-con'));
@@ -751,11 +750,11 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     protected function preprocess_filetree($assignment, $submission, $filetree) {
         static $downloadstr = null;
         if (is_null($downloadstr)) {
-            $downloadstr = '('.get_string('download', 'local_joulegrader').')';
+            $downloadstr = get_string('download', 'local_joulegrader');
         }
         static $viewinlinestr = null;
         if (is_null($viewinlinestr)) {
-            $viewinlinestr = '('.get_string('viewinline', 'local_joulegrader').')';
+            $viewinlinestr = get_string('viewinline', 'local_joulegrader');
         }
 
         foreach ($filetree['subdirs'] as $subdir) {
@@ -827,11 +826,14 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $fullurl = moodle_url::make_pluginfile_url($contextid, 'local_joulegrader', 'gradingarea', $file->get_itemid()
                 , '/mod_assign_submissions' . $file->get_filepath(), $filename);
 
+        $downloadurl = clone($fullurl);
+        $downloadurl->param('forcedownload', 1);
+
         //title is not used
         $title = '';
 
         //clicktopen
-        $clicktoopen = get_string('clicktoopen2', 'resource', "<a href=\"$fullurl\">$filename</a>");
+        $clicktoopen = get_string('clicktoopen2', 'resource', "<a href=\"$downloadurl\">$filename</a>");
 
         $mediarenderer = $PAGE->get_renderer('core', 'media');
         $embedoptions = array(
@@ -890,9 +892,9 @@ EOT;
 
         foreach ($dir['files'] as $file) {
             $filename = $file->get_filename();
-
+            $viewinlinelink = empty($file->viewinlinelink) ? '' : '('.$file->viewinlinelink.')';
             $image = $this->output->pix_icon(file_file_icon($file), $filename, 'moodle', array('class'=>'icon'));
-            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.$filename. ' ' . $file->viewinlinelink . ' ' . $file->downloadlink.'</div></li>';
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.$filename. ' ' . $viewinlinelink . ' (' . $file->downloadlink.')</div></li>';
         }
 
         $result .= '</ul>';

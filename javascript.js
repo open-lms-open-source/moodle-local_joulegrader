@@ -522,7 +522,10 @@ M.local_joulegrader.init_maximised_embed = function(Y, id) {
 
 M.local_joulegrader.init_viewinlinefile = function(Y) {
     var loadedfiles = {};
-    var currentfile;
+    var filenamesbyids = {};
+    var fileids = [];
+    var filelinksbyids = {};
+    var currentfile, currentfilehash;
 
     var filetreecon = Y.one('#local-joulegrader-assign23-treecon');
     if (!filetreecon) {
@@ -533,9 +536,23 @@ M.local_joulegrader.init_viewinlinefile = function(Y) {
         return;
     }
 
-    var closeinline = fileinline.one('#local-joulegrader-assign23-ctrl-close');
-
+    // Online submission content.
     var onlinesubmission = Y.one('#local-joulegrader-assign23-assign_submission_onlinetext');
+
+    // View inline links
+    var inlinefilelinks = Y.all('.local_joulegrader_assign23_inlinefile');
+    if (!inlinefilelinks || inlinefilelinks.isEmpty()) {
+        return;
+    }
+
+    var nextinlinefilelink = Y.one('#local-joulegrader-assign23-ctrl-next');
+    var previnlinefilelink = Y.one('#local-joulegrader-assign23-ctrl-previous');
+
+    var downloadlinkctrl = Y.one('#local-joulegrader-assign23-ctrl-download');
+    var filenamectrl = Y.one('#local-joulegrader-assign23-ctrl-filename');
+
+    // Close inline file button.
+    var closeinline = fileinline.one('#local-joulegrader-assign23-ctrl-close');
 
     var show_node = function(node) {
         if (node.hasClass('local_joulegrader_hidden')) {
@@ -570,6 +587,28 @@ M.local_joulegrader.init_viewinlinefile = function(Y) {
         }
         show_node(filetreecon);
     }
+
+    // Number of inline file links.
+    var inlinefilecount = inlinefilelinks.size();
+
+    var inlinefileselect = Y.one('#local-joulegrader-assign23-ctrl-select select');
+
+    // Add view inline file links to the select menu.
+    inlinefilelinks.each(function(filelink) {
+        var selectkey = filelink.get('id');
+        fileids.push(selectkey);
+        var filename = filelink.previous('img').get('alt');
+
+        // Add the option.
+        inlinefileselect.append('<option value="' + selectkey + '">' + filename + '</option>')
+
+        // Save the id and name for later.
+        filenamesbyids[selectkey] = filename;
+
+        var href = filelink.get('href');
+
+        filelinksbyids[selectkey] = href;
+    });
 
     var iocfg = {
         method: 'GET',
@@ -610,14 +649,7 @@ M.local_joulegrader.init_viewinlinefile = function(Y) {
         hide_inlinefile();
     });
 
-    // Delegate click on all '.local_joulegrader_assign23_inlinefile' links under the filetree container
-    filetreecon.delegate('click', function(e) {
-        // Prevent the default action
-        e.preventDefault();
-
-        var link = e.currentTarget;
-        var filehash = link.get('id');
-
+    var loadorshowfile = function(filehash) {
         // Check to see if it has already been loaded
         if (!loadedfiles.hasOwnProperty(filehash)) {
             // Fire the request.
@@ -627,6 +659,82 @@ M.local_joulegrader.init_viewinlinefile = function(Y) {
         } else {
             show_inlinefile(loadedfiles[filehash]);
         }
+
+        filenamectrl.setContent(filenamesbyids[filehash]);
+        downloadlinkctrl.setContent('(<a href="' + filelinksbyids[filehash] + '">' + M.str.local_joulegrader.download + '</a>)');
+        inlinefileselect.set('value', filehash);
+    }
+
+    if (inlinefilecount < 2) {
+        nextinlinefilelink.remove(true);
+        previnlinefilelink.remove(true);
+    } else {
+        nextinlinefilelink.on('click', function(e) {
+            e.preventDefault();
+
+            if (currentfilehash) {
+                var currentfilepos = fileids.indexOf(currentfilehash);
+                if (currentfilepos !== -1) {
+                    var nextpos;
+                    if (currentfilepos === (fileids.length - 1)) {
+                        // Current file is last in the list, the next is the first.
+                        nextpos = 0;
+                    } else {
+                        nextpos = currentfilepos + 1;
+                    }
+                    var nextfilehash = fileids[nextpos];
+
+                    hide_node(currentfile);
+                    loadorshowfile(nextfilehash);
+                    currentfilehash = nextfilehash;
+                }
+            }
+        });
+
+        previnlinefilelink.on('click', function(e) {
+            e.preventDefault();
+
+            if (currentfilehash) {
+                var currentfilepos = fileids.indexOf(currentfilehash);
+                if (currentfilepos !== -1) {
+                    var prevpos;
+                    if (currentfilepos === 0) {
+                        // Current file is first in the list, the previous is the last.
+                        prevpos = fileids.length - 1;
+                    } else {
+                        prevpos = currentfilepos - 1;
+                    }
+                    var nextfilehash = fileids[prevpos];
+
+                    hide_node(currentfile);
+                    loadorshowfile(nextfilehash);
+                    currentfilehash = nextfilehash;
+                }
+            }
+        });
+    }
+
+    inlinefileselect.on('change', function(e) {
+        var selectedvalue = this.get('options').item(this.get('selectedIndex')).get('value');
+        if (selectedvalue == 0) {
+            hide_inlinefile();
+        } else {
+            hide_node(currentfile);
+            loadorshowfile(selectedvalue);
+            currentfilehash = selectedvalue;
+        }
+    });
+
+    // Delegate click on all '.local_joulegrader_assign23_inlinefile' links under the filetree container
+    filetreecon.delegate('click', function(e) {
+        // Prevent the default action
+        e.preventDefault();
+
+        var link = e.currentTarget;
+        var filehash = link.get('id');
+
+        loadorshowfile(filehash);
+        currentfilehash = filehash;
 
     }, '.local_joulegrader_assign23_inlinefile')
 };

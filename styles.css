@@ -142,11 +142,15 @@
 }
 
 .local_joulegrader_hidden {
-    display: none;
+    display: none !important;
 }
 
 #local-joulegrader-assign23-ctrl-con .control {
     display: inline;
+}
+
+#local-joulegrader-assign23-ctrl-filename {
+    padding-right: .2em;
 }
 
 #local-joulegrader-gradepane-panel .gradingform_rubric .criterion .remark textarea {
