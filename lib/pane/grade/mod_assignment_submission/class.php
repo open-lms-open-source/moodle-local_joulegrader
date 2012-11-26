@@ -164,11 +164,13 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                 if (in_array($touppergrade, $toupperlettergrades)) {
                     //submitting lettergrade, find percent grade
                     $percentvalue = 0;
+                    $max = 100;
                     foreach ($toupperlettergrades as $value => $letter) {
                         if ($touppergrade == $letter) {
-                            $percentvalue = $value;
+                            $percentvalue = ($max + $value) / 2;
                             break;
                         }
+                        $max = $value - 1;
                     }
 
                     //transform to an integer within the range of the assignment
