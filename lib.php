@@ -41,7 +41,7 @@ function joulegrader_extend_settings_navigation($settings, $context) {
             //not sure if it should be a popup
             //$actionlink = new action_link($url, '', new popup_action('click', $url, 'popup', array('height' => 768, 'width' => 1024)));
 
-            $coursenode->add(get_string('pluginname', 'local_joulegrader'), $url, 'grade', null, null, new pix_icon('joulegrader', get_string('pluginname', 'local_joulegrader'), 'local_joulegrader'));
+            $coursenode->add(get_string('pluginname', 'local_joulegrader'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('joulegrader', get_string('pluginname', 'local_joulegrader'), 'local_joulegrader'));
         }
     }
 }
