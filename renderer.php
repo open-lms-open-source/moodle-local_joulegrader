@@ -723,8 +723,9 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $ctrlprevious = html_writer::link($jgurl, $this->output->pix_icon('t/left', get_string('previous')));
         $ctrlprevious = html_writer::tag('div', $ctrlprevious, array('id' => 'local-joulegrader-assign23-ctrl-previous', 'class' => 'control'));
 
+        $labelctrlselect = html_writer::label(get_string('files'), 'menufileselect', true, array('class' => 'local_joulegrader_hidden'));
         $ctrlselect = html_writer::select(array(0 => get_string('allfiles', 'local_joulegrader')), 'fileselect', 0, false);
-        $ctrlselect = html_writer::tag('div', $ctrlselect, array('id' => 'local-joulegrader-assign23-ctrl-select', 'class' => 'control'));
+        $ctrlselect = html_writer::tag('div', $labelctrlselect.$ctrlselect, array('id' => 'local-joulegrader-assign23-ctrl-select', 'class' => 'control'));
 
         $ctrlnext = html_writer::link($jgurl, $this->output->pix_icon('t/right', get_string('next')));
         $ctrlnext = html_writer::tag('div', $ctrlnext, array('id' => 'local-joulegrader-assign23-ctrl-next', 'class' => 'control'));
