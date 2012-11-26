@@ -520,7 +520,7 @@ M.local_joulegrader.init_maximised_embed = function(Y, id) {
     };
 };
 
-M.local_joulegrader.init_viewinlinefile = function(Y) {
+M.local_joulegrader.init_viewinlinefile = function(Y, courseid) {
     var loadedfiles = {};
     var filenamesbyids = {};
     var fileids = [];
@@ -653,7 +653,7 @@ M.local_joulegrader.init_viewinlinefile = function(Y) {
         // Check to see if it has already been loaded
         if (!loadedfiles.hasOwnProperty(filehash)) {
             // Fire the request.
-            iocfg.data = 'action=inlinefile&f=' + filehash;
+            iocfg.data = 'action=inlinefile&f=' + filehash + '&courseid=' + courseid;
             iocfg.arguments = {hashid: filehash};
             Y.io(M.cfg.wwwroot + '/local/joulegrader/view.php', iocfg);
         } else {

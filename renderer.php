@@ -736,7 +736,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $controlshtml = html_writer::tag('div', $controlshtml, array('id' => 'local-joulegrader-assign23-ctrl-con'));
         $html .= html_writer::tag('div', $controlshtml, array('id' => 'local-joulegrader-assign23-files-inline', 'class' => 'local_joulegrader_hidden'));
 
-        $this->page->requires->js_init_call('M.local_joulegrader.init_viewinlinefile', null, true, $this->get_js_module());
+        $this->page->requires->js_init_call('M.local_joulegrader.init_viewinlinefile',
+                array('courseid' => $assignment->get_instance()->course), true, $this->get_js_module());
         return $html;
     }
 
