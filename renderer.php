@@ -730,7 +730,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $ctrlnext = html_writer::link($jgurl, $this->output->pix_icon('t/right', get_string('next')));
         $ctrlnext = html_writer::tag('div', $ctrlnext, array('id' => 'local-joulegrader-assign23-ctrl-next', 'class' => 'control'));
 
-        $ctrlclose = html_writer::link($jgurl, $this->output->pix_icon('i/cross_red_big', get_string('allfiles', 'local_joulegrader')));
+        $ctrlclose = html_writer::link($jgurl, $this->output->pix_icon('all', get_string('allfiles', 'local_joulegrader'), 'local_joulegrader'));
         $ctrlclose = html_writer::tag('div', $ctrlclose, array('id' => 'local-joulegrader-assign23-ctrl-close', 'class' => 'control'));
         $controlshtml = $ctrlfilename.$ctrldownload.$ctrlprevious.$ctrlselect.$ctrlnext.$ctrlclose;
         $controlshtml = html_writer::tag('div', $controlshtml, array('id' => 'local-joulegrader-assign23-ctrl-con'));
