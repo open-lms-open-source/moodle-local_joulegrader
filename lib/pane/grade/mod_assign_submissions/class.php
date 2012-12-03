@@ -265,7 +265,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
             $assign = clone $assignment->get_instance();
             $assign->cmidnumber = $assignment->get_course_module()->id;
 
-            $success = $success && assign_grade_item_update($assign, $gradebookgrade);
+            $success = $success && (GRADE_UPDATE_OK == assign_grade_item_update($assign, $gradebookgrade));
         } else if ($success && $override) {
             //try to fetch the gradeitem first
             $params = array('courseid' => $this->courseid, 'itemtype' => 'mod'
