@@ -787,11 +787,11 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      */
     protected function can_embed_file($file) {
         $canembed = false;
-        $embed    = array('image/gif', 'image/jpeg', 'image/png', 'image/svg+xml',         // images
+        $embed    = array('image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/bmp',       // images
             'application/x-shockwave-flash', 'video/x-flv', 'video/x-ms-wm', // video formats
             'video/quicktime', 'video/mpeg', 'video/mp4',
             'audio/mp3', 'audio/x-realaudio-plugin', 'x-realaudio-plugin',   // audio formats
-            'application/pdf', 'text/html', 'text/plain',
+            'application/pdf', 'text/html', 'text/plain', 'application/xml',
         );
 
         if (in_array($file->get_mimetype(), $embed)) {
@@ -805,7 +805,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      * @return string
      */
     public function help_render_assign23_file_inline(stored_file $file) {
-        global $PAGE, $CFG;
+        global $PAGE, $CFG, $COURSE;
         require_once($CFG->libdir . '/resourcelib.php');
 
         $html = '';
@@ -834,7 +834,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             core_media::OPTION_BLOCK => true,
         );
 
-        if (file_mimetype_in_typegroup($mimetype, 'web_image')) {  // It's an image
+        if (file_mimetype_in_typegroup($mimetype, 'web_image') || $mimetype == 'image/bmp') {  // It's an image
             $html = resourcelib_embed_image($fullurl, $title);
 
         } else if ($mimetype === 'application/pdf') {
@@ -850,6 +850,29 @@ EOT;
         } else if ($mediarenderer->can_embed_url($fullurl, $embedoptions)) {
             // Media (audio/video) file.
             $html = $mediarenderer->embed_url($fullurl, $title, 0, 0, $embedoptions);
+
+        } else if (in_array($mimetype, array('application/xml', 'text/html', 'text/plain'))) {
+            $html = html_writer::start_tag('div', array('class' => 'resourcecontent'));
+            $text = $file->get_content();
+
+            if ($mimetype == 'text/html') {
+                $options = new stdClass();
+                $options->noclean = false;
+                $options->filter = false;
+                $options->nocache = true; // temporary workaround for MDL-5136
+                $html .= format_text($text, FORMAT_HTML, $options, $COURSE->id);
+            } else if ($mimetype == 'text/plain') {
+                // only filter text if filter all files is selected
+                $options = new stdClass();
+                $options->newlines = false;
+                $options->noclean = false;
+                $options->filter = false;
+                $html .= '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
+            } else if ($mimetype == 'application/xml') {
+                $html .= '<pre>' . htmlspecialchars($text) . '</pre>';
+            }
+
+            $html .= html_writer::end_tag('div');
 
         } else {
             // anything else - just try object tag enlarged as much as possible
@@ -1003,7 +1026,7 @@ EOT;
      * @return string
      */
     protected function help_render_assignment_file_embedded(stored_file $file, $submission, $context, $filename, $mimetype) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $COURSE;
         require_once($CFG->libdir . '/resourcelib.php');
         //Code from modified from mod/resource/locallib.php
         //make the url to the file
@@ -1043,6 +1066,18 @@ EOT;
         } else if ($mediarenderer->can_embed_url($fullurl, $embedoptions)) {
             // Media (audio/video) file.
             $html = $mediarenderer->embed_url($fullurl, $title, 0, 0, $embedoptions);
+
+        } else if ($mimetype == 'text/html' ) {
+            $html = html_writer::start_tag('div', array('class' => 'resourcecontent'));
+            $text = $file->get_content();
+
+            $options = new stdClass();
+            $options->noclean = false;
+            $options->filter = false;
+            $options->nocache = true; // temporary workaround for MDL-5136
+            $html .= format_text($text, FORMAT_HTML, $options, $COURSE->id);
+
+            $html .= html_writer::end_tag('div');
 
         } else {
             // anything else - just try object tag enlarged as much as possible
