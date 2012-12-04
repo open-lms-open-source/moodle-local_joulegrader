@@ -574,6 +574,14 @@ M.local_joulegrader.init_viewinlinefile = function(Y, courseid) {
         show_node(filenode);
         show_node(fileinline);
 
+        // Scroll it into view and center it.
+        if (Y.UA.ie > 0 && window.scrollTo) {
+            var fileinliney = fileinline.get('y');
+            window.scrollTo(fileinliney, 0);
+        } else {
+            fileinline.scrollIntoView();
+        }
+
         currentfile = filenode;
     }
 
