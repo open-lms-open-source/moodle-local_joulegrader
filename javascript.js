@@ -554,6 +554,47 @@ M.local_joulegrader.init_viewinlinefile = function(Y, courseid) {
     // Close inline file button.
     var closeinline = fileinline.one('#local-joulegrader-assign23-ctrl-close');
 
+    var handleresize = function() {
+        if (currentfile !== undefined && Y.Lang.isFunction(currentfile.hasClass) && !currentfile.hasClass('local_joulegrader_hidden')) {
+            // Element that contains the object or iframe
+            var resourcecon = currentfile.one('.resourcecontent');
+            if (!resourcecon) {
+                return;
+            }
+
+            // First see if there is an object tag.
+            var embedel = resourcecon.one('object');
+            var isiframe = false;
+            if (!embedel) {
+                // If no object element check for an iframe.
+                embedel = resourcecon.one('iframe');
+                isiframe = true;
+            }
+
+            if (!embedel) {
+                return;
+            }
+
+            // Width of the file inline container
+            var fileinlinewidth = fileinline.getComputedStyle('width');
+
+            embedel.set('width', fileinlinewidth);
+
+            if (isiframe) {
+                var joulegraderpanesheight = Y.one('#local-joulegrader-panes').getComputedStyle('height');
+                embedel.setStyle('height', joulegraderpanesheight);
+            }
+        }
+    }
+
+    var oldonresize = window.onresize;
+    window.onresize = function() {
+        if (Y.Lang.isFunction(oldonresize)) {
+            oldonresize();
+        }
+        handleresize();
+    }
+
     var show_node = function(node) {
         if (node.hasClass('local_joulegrader_hidden')) {
             node.removeClass('local_joulegrader_hidden');
@@ -583,6 +624,9 @@ M.local_joulegrader.init_viewinlinefile = function(Y, courseid) {
         }
 
         currentfile = filenode;
+
+        // Resize
+        handleresize();
     }
 
     var hide_inlinefile = function() {
