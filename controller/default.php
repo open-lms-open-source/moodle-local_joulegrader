@@ -198,12 +198,12 @@ class local_joulegrader_controller_default extends mr_controller {
         $gradepane = $gradeareainstance->get_gradepane();
         $modalform = null;
         if ($gradepane->has_modal()) {
-            $modalform = new local_joulegrader_form_grademodalform(null, $gradepane);
+            $modalform = $gradepane->get_modalform();
         }
 
         $paneform = null;
         if ($gradepane->has_paneform()) {
-            $paneform = new local_joulegrader_form_gradepaneform(null, $gradepane);
+            $paneform = $gradepane->get_paneform();
         }
 
         if ((!empty($modalform) && $modalform->is_submitted() && !$modalform->is_validated())

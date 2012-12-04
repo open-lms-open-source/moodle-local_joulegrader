@@ -190,26 +190,17 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             //no grade for this assignment
             $html .= html_writer::tag('div', get_string('notgraded', 'local_joulegrader'), array('class' => 'local_joulegrader_notgraded'));
         } else if ($gradepane->has_teachercap()) {
-            $posturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $gradepane->get_courseid()
-            , 'garea' => $gradepane->get_gradingarea()->get_areaid(), 'guser' => $gradepane->get_gradingarea()->get_guserid(), 'action' => 'process'));
-
-            if ($needsgrading = optional_param('needsgrading', 0, PARAM_BOOL)) {
-                $posturl->param('needsgrading', 1);
-            }
-
             $mrhelper = new mr_helper();
 
-            require_once($CFG->dirroot . '/local/joulegrader/form/gradepaneform.php');
             // Teacher view of the grading pane
             if ($gradepane->has_modal()) {
-                require_once($CFG->dirroot . '/local/joulegrader/form/grademodalform.php');
 
                 // Render current grade and modal button.
                 $html .= $this->help_render_currentgrade($gradepane);
                 $html .= $this->help_render_modalbutton($gradepane);
 
                 // Load up the modal form
-                $modalform = new local_joulegrader_form_grademodalform($posturl, $gradepane);
+                $modalform = $gradepane->get_modalform();
 
                 // Render the form
                 $modalhtml .= $mrhelper->buffer(array($modalform, 'display'));
@@ -217,7 +208,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
             if ($gradepane->has_paneform()) {
                 // Render the pane form for simple grading / overall feedback / file feedback.
-                $paneform = new local_joulegrader_form_gradepaneform($posturl, $gradepane);
+                $paneform = $gradepane->get_paneform();
 
                 $panehtml = $mrhelper->buffer(array($paneform, 'display'));
                 $html .= html_writer::tag('div', $panehtml, array('class' => 'local_joulegrader_simplegrading'));

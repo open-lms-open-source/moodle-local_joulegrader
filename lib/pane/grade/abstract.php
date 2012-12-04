@@ -1,6 +1,8 @@
 <?php
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 require_once($CFG->dirroot . '/lib/gradelib.php');
+require_once($CFG->dirroot . '/local/joulegrader/form/gradepaneform.php');
+require_once($CFG->dirroot . '/local/joulegrader/form/grademodalform.php');
 
 /**
  * joule Grader Grade Pane abstract class
@@ -18,7 +20,12 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     /**
      * @var moodleform - instance of moodleform
      */
-    protected $mform;
+    protected $paneform;
+
+    /**
+     * @var moodleform
+     */
+    protected $modalform;
 
     /**
      * @var string
@@ -68,6 +75,35 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
 
     public function get_controller() {
         return $this->controller;
+    }
+
+    public function get_paneform() {
+        if ($this->has_paneform()) {
+            if (is_null($this->paneform)) {
+                $this->paneform = new local_joulegrader_form_gradepaneform($this->get_posturl(), $this);
+            }
+        }
+        return $this->paneform;
+    }
+
+    public function get_modalform() {
+        if ($this->has_modal()) {
+            if (is_null($this->modalform)) {
+                $this->modalform = new local_joulegrader_form_grademodalform($this->get_posturl(), $this);
+            }
+        }
+        return $this->modalform;
+    }
+
+    private function get_posturl() {
+        $posturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $this->get_courseid()
+        , 'garea' => $this->get_gradingarea()->get_areaid(), 'guser' => $this->get_gradingarea()->get_guserid(), 'action' => 'process'));
+
+        if ($needsgrading = optional_param('needsgrading', 0, PARAM_BOOL)) {
+            $posturl->param('needsgrading', 1);
+        }
+
+        return $posturl;
     }
 
     /**
