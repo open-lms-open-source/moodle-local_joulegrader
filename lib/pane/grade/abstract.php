@@ -20,12 +20,12 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     /**
      * @var moodleform - instance of moodleform
      */
-    protected $paneform;
+    protected $paneform = null;
 
     /**
      * @var moodleform
      */
-    protected $modalform;
+    protected $modalform = null;
 
     /**
      * @var string

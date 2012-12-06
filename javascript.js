@@ -595,13 +595,7 @@ M.local_joulegrader.init_viewinlinefile = function(Y, courseid) {
         }
     }
 
-    var oldonresize = window.onresize;
-    window.onresize = function() {
-        if (Y.Lang.isFunction(oldonresize)) {
-            oldonresize();
-        }
-        handleresize();
-    }
+    Y.on('windowresize', handleresize);
 
     var show_node = function(node) {
         if (node.hasClass('local_joulegrader_hidden')) {
