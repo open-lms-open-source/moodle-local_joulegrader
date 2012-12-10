@@ -216,17 +216,17 @@ M.local_joulegrader.init_guide = function(Y, options, panel) {
 
         panel.addButton(closebutton);
 
-        //make sure the content isn't wider than the joule grader div
-        var joulegraderwidth = Y.one('#local-joulegrader').getComputedStyle('width');
-        var markingguidewidth = panel.get('srcNode').getComputedStyle('width');
-
-        if (markingguidewidth > joulegraderwidth) {
-            panel.get('srcNode').setStyle('width', joulegraderwidth);
-        }
-
         // render the panel
         panel.render();
     }
+
+    // resize if necessary
+    var panelwidth = panelnode.get('scrollWidth');
+    var maxwidth = parseInt(Y.one('#local-joulegrader').get('offsetWidth'));
+    if (panelwidth > maxwidth) {
+        panelwidth = maxwidth;
+    }
+    panel.set('width', panelwidth);
 }
 
 
