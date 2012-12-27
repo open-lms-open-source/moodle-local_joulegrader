@@ -12,7 +12,7 @@
  * @param $settings
  * @param $context
  */
-function joulegrader_extend_settings_navigation($settings, $context) {
+function local_joulegrader_extends_settings_navigation($settings, $context) {
     global $COURSE, $PAGE, $DB, $CFG;
 
     if ($COURSE->id != SITEID && (has_capability('local/joulegrader:view', $context) || has_capability('local/joulegrader:grade', $context))) {
