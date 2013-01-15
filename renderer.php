@@ -94,7 +94,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             $deleteurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'action' => 'deletecomment'
                     , 'commentid' => $comment->get_id(), 'sesskey' => sesskey()));
             $deletebutton = $OUTPUT->action_icon($deleteurl, new pix_icon('t/delete'
-                , get_string('deletecomment', 'local_joulegrader')));
+                , get_string('deletecomment', 'local_joulegrader', userdate($comment->get_timecreated(), '%d %B %H:%M:%S'))));
         }
         $deletebutton = html_writer::tag('div', $deletebutton, array('class' => 'local_joulegrader_comment_delete'));
 
