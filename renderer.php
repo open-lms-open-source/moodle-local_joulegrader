@@ -413,6 +413,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         //set some select attributes
         $select->set_help_icon($widgetname.'nav', 'local_joulegrader');
         $select->tooltip = get_string($widgetname.'nav', 'local_joulegrader');
+        $select->set_label(get_string('navviewlabel', 'local_joulegrader', $navwidget->get_label()), array('class' => 'accesshide'));
 
         //render the select form
         $selectform = $OUTPUT->render($select);
