@@ -366,7 +366,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 'io',
                 'panel',
                 'dd-plugin',
-                'json-parse'
+                'json-parse',
+                'moodle-local_mr-accessiblepanel'
             ),
             'strings' => array(
                 array('rubric', 'local_joulegrader'),
