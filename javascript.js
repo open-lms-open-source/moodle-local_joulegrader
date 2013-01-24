@@ -105,7 +105,7 @@ M.local_joulegrader.generate_errorpanel = function (Y, options, errormsg) {
         ]
     });
 
-    errorpanel.plug(M.local_mr.accessiblepanel, {ariarole: "dialog-alert"});
+    errorpanel.plug(M.local_mr.accessiblepanel, {ariaRole: "dialog-alert"});
 
     return errorpanel;
 }
