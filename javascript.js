@@ -32,6 +32,8 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
         plugins: [Y.Plugin.Drag]
     });
 
+    panel.plug(M.local_mr.accessiblepanel);
+
     // Restore the "normal" height on the joule grader div after hiding the panel
     panel.after('visibleChange', function(e) {
         if (!e.newVal && e.prevVal) {
@@ -102,6 +104,8 @@ M.local_joulegrader.generate_errorpanel = function (Y, options, errormsg) {
             }
         ]
     });
+
+    errorpanel.plug(M.local_mr.accessiblepanel, {ariaRole: "dialog-alert"});
 
     return errorpanel;
 }
