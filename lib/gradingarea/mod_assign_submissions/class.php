@@ -133,9 +133,10 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
                      LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid
                          WHERE s.assignment = ?
                            AND s.timemodified IS NOT NULL
+                           AND s.status = ?
                            AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)';
 
-                $params = array($assignment->id);
+                $params = array($assignment->id, 'submitted');
 
                 // Just need to check that there is at least one ungraded
                 $submissions = $DB->get_records_sql($sql, $params, 0, 1);
