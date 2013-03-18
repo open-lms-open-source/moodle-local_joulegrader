@@ -286,7 +286,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
     }
 
     /**
-     * @return assignment_base
+     * @return assign
      */
     public function get_assign() {
         //check to see that it's loaded
@@ -337,40 +337,33 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         }
     }
 
-    public function get_submission($create = false) {
+    public function get_submission() {
         if (empty($this->submission)) {
-            $this->submission = $this->load_submission($create);
+            $this->submission = $this->load_submission();
         }
 
         return $this->submission;
     }
 
-    protected function load_submission($create) {
+    /**
+     * Loads the submission
+     *
+     * @return mixed
+     */
+    protected function load_submission() {
         global $DB;
 
         $assign = $this->get_assign();
+        $teamsubmission = $assign->get_instance()->teamsubmission;
 
-        $submission = $DB->get_record('assign_submission', array('assignment' => $assign->get_instance()->id, 'userid' => $this->guserid));
-
-        if ($submission) {
-            return $submission;
+        if (!empty($teamsubmission)) {
+            // Team submissions enabled, get the group submission.
+            $submission = $assign->get_group_submission($this->guserid, 0, false);
+        } else {
+            // Team submissions not enabled, get the user's submission.
+            $submission = $assign->get_user_submission($this->guserid, false);
         }
-        if ($create) {
-            $submission = new stdClass();
-            $submission->assignment   = $assign->get_instance()->id;
-            $submission->userid       = $this->guserid;
-            $submission->timecreated = time();
-            $submission->timemodified = $submission->timecreated;
 
-            if ($assign->get_instance()->submissiondrafts) {
-                $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
-            } else {
-                $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
-            }
-            $sid = $DB->insert_record('assign_submission', $submission);
-            $submission->id = $sid;
-            return $submission;
-        }
-        return false;
+        return $submission;
     }
 }
