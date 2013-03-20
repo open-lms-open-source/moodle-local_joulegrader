@@ -95,6 +95,18 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
         return $this->modalform;
     }
 
+    /**
+     * @param MoodleQuickForm $mform
+     */
+    public function paneform_hook($mform) {
+    }
+
+    /**
+     * @param MoodleQuickForm $mform
+     */
+    public function modalform_hook($mform) {
+    }
+
     private function get_posturl() {
         $posturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $this->get_courseid()
         , 'garea' => $this->get_gradingarea()->get_areaid(), 'guser' => $this->get_gradingarea()->get_guserid(), 'action' => 'process'));

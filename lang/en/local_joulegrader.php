@@ -47,13 +47,14 @@ $string['downloadall'] = 'Download all files';
 $string['download'] = 'download';
 $string['viewinline'] = 'view inline';
 
-//mod_assignment_submission_grade form strings
+// Form strings.
 $string['gradeoutof'] = 'Grade (out of {$a})';
 $string['gradeoutofrange'] = 'Grade is out range';
 $string['overridetext'] = 'Previously, an instructor created a grade for this activity directly in the gradebook.  Check this box if you want to replace that grade, too.';
 $string['save'] = 'Save';
 $string['saveandnext'] = 'Save and Next';
 $string['gradingdisabled'] = 'This activity\'s grading is locked. To enable grading please unlock the grade via the Gradebook.';
+$string['applytoall'] = 'Apply grades and feedback to entire group';
 
 $string['criteria'] = 'Criteria';
 $string['checklist'] = 'Checklist';

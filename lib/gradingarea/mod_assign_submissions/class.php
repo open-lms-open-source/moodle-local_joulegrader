@@ -351,8 +351,6 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
      * @return mixed
      */
     protected function load_submission() {
-        global $DB;
-
         $assign = $this->get_assign();
         $teamsubmission = $assign->get_instance()->teamsubmission;
 

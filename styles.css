@@ -74,11 +74,6 @@
     margin: 0px;
 }
 
-#local-joulegrader-gradepane .fitem .fitemtitle {
-    width: 0px;
-    display: none;
-}
-
 #local-joulegrader .dontshow {
     visibility: hidden;
 }

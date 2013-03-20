@@ -9,7 +9,7 @@ require_once($CFG->dirroot . '/local/joulegrader/lib/pane/grade/abstract.php');
  */
 class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  local_joulegrader_lib_pane_grade_abstract {
 
-    protected $usergrade;
+    protected $usergrades;
 
     /**
      * Do some initialization
@@ -18,7 +18,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         global $USER;
 
         $assignment = $this->gradingarea->get_assign();
-        $usergrade = $this->get_usergrade();
+        $usergrade = $this->get_usergrade($this->gradingarea->get_guserid());
 
         $this->courseid = $assignment->get_instance()->course;
 
@@ -98,7 +98,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     public function get_currentgrade() {
-        $usergrade = $this->get_usergrade();
+        $usergrade = $this->get_usergrade($this->gradingarea->get_guserid());
 
         $grade = -1;
         if (!empty($usergrade) && isset($usergrade->grade)) {
@@ -113,13 +113,13 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     public function has_active_gradinginstances() {
-        $usergrade = $this->get_usergrade();
+        $usergrade = $this->get_usergrade($this->gradingarea->get_guserid());
         return !(empty($usergrade) || !$this->controller->get_active_instances($usergrade->id));
     }
 
     public function get_agitemid() {
         $agitem = null;
-        $usergrade = $this->get_usergrade();
+        $usergrade = $this->get_usergrade($this->gradingarea->get_guserid());
 
         if (!empty($usergrade) && isset($usergrade->id)) {
             $agitem = $usergrade->id;
@@ -134,7 +134,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         $notgraded = false;
 
         $assignment = $this->gradingarea->get_assign();
-        $usergrade  = $this->get_usergrade();
+        $usergrade  = $this->get_usergrade($this->gradingarea->get_guserid());
 
         if ($assignment->get_instance()->grade != 0) {
             //check the submission first
@@ -150,13 +150,39 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     /**
+     * @param MoodleQuickForm $mform
+     */
+    public function paneform_hook($mform) {
+        $this->add_applyall_element($mform);
+    }
+
+    /**
+     * @param MoodleQuickForm $mform
+     */
+    public function modalform_hook($mform) {
+        $this->add_applyall_element($mform);
+    }
+
+    /**
+     * @param MoodleQuickForm $mform
+     */
+    private function add_applyall_element($mform) {
+        $assignment = $this->gradingarea->get_assign();
+        $teamsubmission = $assignment->get_instance()->teamsubmission;
+        if (!empty($teamsubmission)) {
+            $mform->addElement('select', 'applytoall', get_string('applytoall', 'local_joulegrader'), array(get_string('no'), get_string('yes')));
+            $mform->setDefault('applytoall', 1);
+            $mform->setType('applytoall', PARAM_BOOL);
+        }
+    }
+
+    /**
      * @param $data
      * @param mr_notify $notify
      */
     public function process($data, $notify) {
         //a little setup
         $assignment = $this->gradingarea->get_assign();
-        $usergrade  = $this->get_usergrade(true);
 
         //set up a redirect url
         $redirecturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $this->courseid
@@ -165,24 +191,19 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         //get the data from the form
         if ($data) {
 
-            if (isset($data->gradinginstanceid)) {
-                //using advanced grading
-                $gradinginstance = $this->gradinginstance;
-                $this->controller->set_grade_range(make_grades_menu($assignment->get_instance()->grade));
-                $grade = $gradinginstance->submit_and_get_grade($data->grade, $usergrade->id);
-            } else if ($assignment->get_instance()->grade < 0) {
-                //scale grade
-                $grade = clean_param($data->grade, PARAM_INT);
-            } else {
+            if ($assignment->get_instance()->grade < 0) {
+                // Scale grade.
+                $data->grade = clean_param($data->grade, PARAM_INT);
+            } else if (!isset($data->gradinginstanceid)) {
                 //just using regular grading
                 $lettergrades = grade_get_letters(context_course::instance($this->courseid));
                 $grade = $data->grade;
 
-                //determine if user is submitting as a letter grade, percentage or float
+                // Determine if user is submitting as a letter grade, percentage or float.
                 $touppergrade = textlib::strtoupper($grade);
                 $toupperlettergrades = array_map('textlib::strtoupper', $lettergrades);
                 if (in_array($touppergrade, $toupperlettergrades)) {
-                    //submitting lettergrade, find percent grade
+                    // Submitting lettergrade, find percent grade.
                     $percentvalue = 0;
                     $max = 100;
                     foreach ($toupperlettergrades as $value => $letter) {
@@ -193,25 +214,45 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                         $max = $value - 1;
                     }
 
-                    //transform to an integer within the range of the assignment
-                    $grade = (int) ($assignment->get_instance()->grade * ($percentvalue / 100));
+                    // Transform to an integer within the range of the assignment.
+                    $data->grade = (int) ($assignment->get_instance()->grade * ($percentvalue / 100));
 
                 } else if (strpos($grade, '%') !== false) {
-                    //trying to submit percentage
+                    // Trying to submit percentage.
                     $percentgrade = trim(strstr($grade, '%', true));
                     $percentgrade = clean_param($percentgrade, PARAM_FLOAT);
 
-                    //transform to an integer within the range of the assignment
-                    $grade = (int) ($assignment->get_instance()->grade * ($percentgrade / 100));
+                    // Transform to an integer within the range of the assignment.
+                    $data->grade = (int) ($assignment->get_instance()->grade * ($percentgrade / 100));
 
                 } else if ($grade === '') {
-                    //setting to "No grade"
-                    $grade = -1;
+                    // Setting to "No grade".
+                    $data->grade = -1;
                 } else {
-                    //just a numeric value, clean it as int b/c that's what assignment module accepts
-                    $grade = clean_param($grade, PARAM_INT);
+                    // Just a numeric value, clean it as int b/c that's what assignment module accepts.
+                    $data->grade = clean_param($grade, PARAM_INT);
                 }
             }
+
+            $userid = $this->get_gradingarea()->get_guserid();
+            $teamsubmission = $assignment->get_instance()->teamsubmission;
+            if (!empty($teamsubmission) && !empty($data->applytoall)) {
+                $groupid = 0;
+                if ($assignment->get_submission_group($userid)) {
+                    $group = $assignment->get_submission_group($userid);
+                    if ($group) {
+                        $groupid = $group->id;
+                    }
+                }
+                $members = $assignment->get_submission_group_members($groupid, true);
+                foreach ($members as $member) {
+                    // User may exist in multiple groups (which should put them in the default group).
+                    $this->apply_grade_to_user($data, $member->id);
+                }
+            } else {
+                $this->apply_grade_to_user($data, $userid);
+            }
+
 
             //redirect to next user if set
             if (optional_param('saveandnext', 0, PARAM_BOOL) && !empty($data->nextuser)) {
@@ -222,43 +263,82 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                 $redirecturl->param('needsgrading', 1);
             }
 
-            //save the grade
-            if ($this->save_grade($grade, isset($data->override))) {
-                $notify->good('gradesaved');
-            }
+//            //save the grade
+//            if ($this->save_grade($grade, isset($data->override))) {
+//                $notify->good('gradesaved');
+//            }
         }
 
         redirect($redirecturl);
     }
 
+    protected function apply_grade_to_user($data, $userid) {
+        global $USER;
+
+        $assignment = $this->gradingarea->get_assign();
+        $usergrade = $this->get_usergrade($userid, true);
+
+        $teamsubmission = $assignment->get_instance()->teamsubmission;
+
+        if (isset($data->gradinginstanceid)) {
+            $gradesmenu = make_grades_menu($assignment->get_instance()->grade);
+            // Using advanced grading.
+            if ($userid == $this->gradingarea->get_guserid()) {
+                // Can use the grading instance already set up by this object.
+                $gradinginstance = $this->gradinginstance;
+            } else {
+                $gradingdisabled = $assignment->grading_disabled($userid);
+                $itemid = null;
+                if ($usergrade) {
+                    $itemid = $usergrade->id;
+                }
+                if ($gradingdisabled && $itemid) {
+                    $gradinginstance = ($this->controller->get_current_instance($USER->id, $itemid));
+                } else if (!$gradingdisabled) {
+                    $instanceid = optional_param('gradinginstanceid', 0, PARAM_INT);
+                    $gradinginstance = ($this->controller->get_or_create_instance($instanceid, $USER->id, $itemid));
+                }
+            }
+
+            $this->controller->set_grade_range($gradesmenu);
+            $usergrade->grade = $gradinginstance->submit_and_get_grade($data->grade, $usergrade->id);
+        } else {
+            // The grade has already been processed in the process method.
+            $usergrade->grade = $data->grade;
+        }
+
+        $override = isset($data->override) || (!empty($teamsubmission) && !empty($data->applytoall));
+        $this->save_grade($usergrade, $override);
+    }
+
     /**
-     * @param $grade
+     * @param $usergrade
      * @param $override
      *
      * @return bool
      */
-    protected function save_grade($grade, $override) {
+    protected function save_grade($usergrade, $override) {
         global $USER, $DB;
 
-        $success = true;
-
-        //need to do two things here
-        //1) update the grade in assign_grades table
-        //2) update the grade in the gradebook if the grade is NOT overridden or if it IS overridden AND the override check
-        //   was checked
-
+        // Need to do two things here.
+        // 1) update the grade in assign_grades table.
+        // 2) update the grade in the gradebook if the grade is NOT overridden
+        //    or if it IS overridden AND the override check was checked.
         $assignment = $this->gradingarea->get_assign();
-        $usergrade = $this->get_usergrade(true);
 
-        $usergrade->grade      = $grade;
-        $usergrade->grader     = $USER->id;
+        $usergrade->grader = $USER->id;
         $usergrade->timemodified = time();
 
-        //update the submission
+        // Update the submission.
         $success = $DB->update_record('assign_grades', $usergrade);
 
-        //now need to update the gradebook
-        $gradeoverridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
+        // Now need to update the gradebook.
+        if ($usergrade->userid == $this->gradingarea->get_guserid()) {
+            $gradinginfo = $this->gradinginfo;
+        } else {
+            $gradinginfo = grade_get_grades($this->get_courseid(), 'mod', 'assign', $assignment->get_instance()->id, array($usergrade->userid));
+        }
+        $gradeoverridden = $gradinginfo->items[0]->grades[$usergrade->userid]->overridden;
         if ($success && !$gradeoverridden) {
             $gradebookgrade = $this->convert_grade_for_gradebook($usergrade);
 
@@ -267,19 +347,19 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
 
             $success = $success && (GRADE_UPDATE_OK == assign_grade_item_update($assign, $gradebookgrade));
         } else if ($success && $override) {
-            //try to fetch the gradeitem first
+            // Try to fetch the gradeitem first.
             $params = array('courseid' => $this->courseid, 'itemtype' => 'mod'
             , 'itemmodule' => 'assign', 'iteminstance' => $assignment->get_instance()->id);
 
             $gradeitem = grade_item::fetch($params);
 
-            //if no grade item, create a new one
+            // If no grade item, create a new one.
             if (empty($gradeitem)) {
 
                 $params['itemname'] = $assignment->get_instance()->name;
                 $params['idnumber'] = $assignment->get_course_module()->id;
 
-                //set up additional params for the grade item
+                // Set up additional params for the grade item.
                 if ($assignment->get_instance()->grade > 0) {
                     $params['gradetype'] = GRADE_TYPE_VALUE;
                     $params['grademax']  = $assignment->get_instance()->grade;
@@ -293,12 +373,12 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                     $params['gradetype'] = GRADE_TYPE_TEXT; // allow text comments only
                 }
 
-                //create and insert the new grade item
+                // Create and insert the new grade item.
                 $gradeitem = new grade_item($params);
                 $gradeitem->insert();
             }
 
-            //if grade is -1 in assignment_submissions table, it should be passed as null
+            // If grade is -1 in assign_grades table, it should be passed as null.
             $grade = $usergrade->grade;
             if ($grade == -1) {
                 $grade = null;
@@ -312,47 +392,16 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     /**
+     * @param int $userid
      * @param bool $create
      * @return bool|stdClass
      */
-    private function get_usergrade($create = false) {
-        if (empty($this->usergrade)) {
-            $this->usergrade = $this->load_usergrade($create);
+    private function get_usergrade($userid, $create = false) {
+        if (empty($this->usergrades[$userid])) {
+            $this->usergrades[$userid] = $this->gradingarea->get_assign()->get_user_grade($userid, $create);
         }
 
-        return $this->usergrade;
-    }
-
-    /**
-     * @param bool $create
-     * @return bool|stdClass - grade object or false if no grade
-     *
-     * Modified from assign::get_user_grade which is a private method
-     */
-    private function load_usergrade($create = false) {
-        global $DB, $USER;
-
-        $assign = $this->gradingarea->get_assign();
-        $grade  = $DB->get_record('assign_grades', array('assignment' => $assign->get_instance()->id
-                , 'userid' => $this->gradingarea->get_guserid()));
-
-        if ($grade) {
-            return $grade;
-        }
-        if ($create) {
-            $grade = new stdClass();
-            $grade->assignment   = $assign->get_instance()->id;
-            $grade->userid       = $this->gradingarea->get_guserid();
-            $grade->timecreated = time();
-            $grade->timemodified = $grade->timecreated;
-            $grade->locked = 0;
-            $grade->grade = -1;
-            $grade->grader = $USER->id;
-            $gid = $DB->insert_record('assign_grades', $grade);
-            $grade->id = $gid;
-            return $grade;
-        }
-        return false;
+        return $this->usergrades[$userid];
     }
 
     /**
