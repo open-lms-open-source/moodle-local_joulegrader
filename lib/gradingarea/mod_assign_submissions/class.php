@@ -77,14 +77,40 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
      * @return bool
      */
     public static function pluginfile($course, $cm, $context, $itemid, $args, $forcedownload, $options) {
-        global $USER, $DB;
+        global $USER, $DB, $CFG;
 
         if (!$submission = $DB->get_record('assign_submission', array('id' => $itemid))) {
             return false;
         }
 
-        if ($USER->id != $submission->userid and !has_capability(self::$teachercapability, $context)) {
+        if (!$assign = $DB->get_record('assign', array('id' => $submission->assignment))) {
             return false;
+        }
+
+        if (!empty($assign->teamsubmission) && $submission->userid == 0) {
+            // Check permissions.
+            $hasgradecap = has_capability('mod/assign:grade', $context);
+
+            if (!$hasgradecap) {
+                require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
+                // Need to see if the $USER is a member of the group.
+                $assignobj = new assign($context, $cm, $course);
+                $assignobj->set_instance($assign);
+
+                $groupmembers = $assignobj->get_submission_group_members($submission->groupid, true);
+                $ismember = false;
+                foreach ($groupmembers as $member) {
+                    if ($member->id == $USER->id) {
+                        $ismember = true;
+                        break;
+                    }
+                }
+
+                if (!$ismember || ($ismember && !has_capability('mod/assign:submit', $context))) {
+                    return false;
+                }
+            }
         }
 
         // Get the filename from args.
