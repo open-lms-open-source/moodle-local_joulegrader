@@ -234,51 +234,52 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         $include = array();
 
         // right now only need to narrow users if $needsgrading is true
-        if (empty($needsgrading) || empty($users)) {
+        if (empty($users)) {
             // return the users array as it was passed
             return $users;
         }
 
-        // narrow the users to those that have submissions that have not been graded since they were modified
         try {
             list($cm, $assignment) = self::get_assign_info($gradingmanager);
 
-            if (!empty($assignment->teamsubmission)) {
-                // Team submissions is being used.
-                require_once($CFG->dirroot . '/mod/assign/locallib.php');
-                $assign = new assign(context_module::instance($cm->id), $cm, null);
+            if (!empty($needsgrading)) {
+                // Narrow the users to those that have submissions that have not been graded since they were modified.
+                if (!empty($assignment->teamsubmission)) {
+                    // Team submissions is being used.
+                    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+                    $assign = new assign(context_module::instance($cm->id), $cm, null);
 
-                $groupswithnosubmission = array();
-                foreach ($users as $user) {
-                    $groupid = 0;
-                    $submissiongroup = $assign->get_submission_group($user->id);
-                    if (!empty($submissiongroup)) {
-                        $groupid = $submissiongroup->id;
-                    }
-                    if (in_array($groupid, $groupswithnosubmission)) {
-                        // Already determined not to have a submission, skip the user.
-                        continue;
-                    }
-                    $submission = $assign->get_group_submission($user->id, $groupid, false);
-                    if (empty($submission) OR is_null($submission->timemodified)) {
-                        // No submission yet for this group. Keep the group so we can skip other group members.
-                        $groupswithnosubmission[] = $groupid;
-                        continue;
+                    $groupswithnosubmission = array();
+                    foreach ($users as $user) {
+                        $groupid = 0;
+                        $submissiongroup = $assign->get_submission_group($user->id);
+                        if (!empty($submissiongroup)) {
+                            $groupid = $submissiongroup->id;
+                        }
+                        if (in_array($groupid, $groupswithnosubmission)) {
+                            // Already determined not to have a submission, skip the user.
+                            continue;
+                        }
+                        $submission = $assign->get_group_submission($user->id, $groupid, false);
+                        if (empty($submission) OR is_null($submission->timemodified)) {
+                            // No submission yet for this group. Keep the group so we can skip other group members.
+                            $groupswithnosubmission[] = $groupid;
+                            continue;
+                        }
+
+                        $grade = $assign->get_user_grade($user->id, false);
+                        if (empty($grade) OR is_null($grade->timemodified) OR $submission->timemodified > $grade->timemodified) {
+                            $include[$user->id] = $user;
+                        }
                     }
 
-                    $grade = $assign->get_user_grade($user->id, false);
-                    if (empty($grade) OR is_null($grade->timemodified) OR $submission->timemodified > $grade->timemodified) {
-                        $include[$user->id] = $user;
-                    }
-                }
+                } else {
+                    // Team submissions are not being used.
+                    // Check for submissions for this assignment that have timemarked < timemodified for all the users passed.
+                    list($inorequals, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
 
-            } else {
-                // Team submissions are not being used.
-                // Check for submissions for this assignment that have timemarked < timemodified for all the users passed.
-                list($inorequals, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
-
-                //check for submissions that do not have a grade yet
-                $sql = "SELECT s.userid
+                    //check for submissions that do not have a grade yet
+                    $sql = "SELECT s.userid
                           FROM {assign_submission} s
                      LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid
                          WHERE s.assignment = :assignid
@@ -286,21 +287,35 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
                            AND s.timemodified IS NOT NULL
                            AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)";
 
-                $params['assignid'] = $assignment->id;
+                    $params['assignid'] = $assignment->id;
 
-                // execute the query
-                $submissionusers = $DB->get_records_sql($sql, $params);
+                    // execute the query
+                    $submissionusers = $DB->get_records_sql($sql, $params);
 
-                if (!empty($submissionusers)) {
-                    foreach ($submissionusers as $subuserid => $nada) {
-                        if (!array_key_exists($subuserid, $users)) {
-                            // this should not happen but just in case
-                            continue;
+                    if (!empty($submissionusers)) {
+                        foreach ($submissionusers as $subuserid => $nada) {
+                            if (!array_key_exists($subuserid, $users)) {
+                                // this should not happen but just in case
+                                continue;
+                            }
+                            $include[$subuserid] = $users[$subuserid];
                         }
-                        $include[$subuserid] = $users[$subuserid];
                     }
-                }
 
+                }
+            } else {
+                $include = $users;
+            }
+
+            // Check to see if it is necessary to anonymize users for blind marking.
+            if (!empty($assignment->blindmarking) && empty($assignment->revealidentities) && !empty($include)) {
+                require_once($CFG->dirroot . '/mod/assign/locallib.php');
+                $hiddenuserstr = get_string('hiddenuser', 'assign');
+                foreach ($include as $userid => $user) {
+                    $uniqueid = assign::get_uniqueid_for_user_static($assignment->id, $userid);
+                    $include[$userid]->firstname = trim($hiddenuserstr);
+                    $include[$userid]->lastname = $uniqueid;
+                }
             }
 
 

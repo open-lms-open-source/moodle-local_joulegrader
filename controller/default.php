@@ -506,8 +506,18 @@ class local_joulegrader_controller_default extends mr_controller {
                 $user = $DB->get_record('user', array('id' => $submission->userid), 'id, firstname, lastname', MUST_EXIST);
             }
 
+            if (!empty($assign->blindmarking) && empty($assign->revealidentities)) {
+                require_once($CFG->dirroot . '/mod/assign/locallib.php');
+                $userid = assign::get_uniqueid_for_user_static($assign->id, $user->id);
+                $username = get_string('hiddenuser', 'assign') . $userid;
+
+            } else {
+                $userid = $user->id;
+                $username = fullname($user);
+            }
+
             // Make the filename based on the user.
-            $filename = str_replace(' ', '_', clean_filename($course->shortname.'-'.$assign->name.'-'.$cm->id.'-' . fullname($user) .'-'.$user->id .".zip"));
+            $filename = str_replace(' ', '_', clean_filename($course->shortname.'-'.$assign->name.'-'.$cm->id.'-' . $username .'-'.$userid .".zip"));
         }
 
         // Get the files
