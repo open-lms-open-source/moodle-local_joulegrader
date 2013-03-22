@@ -154,6 +154,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
      */
     public function paneform_hook($mform) {
         $this->add_applyall_element($mform);
+        $this->blindmarking_modification($mform);
     }
 
     /**
@@ -161,6 +162,20 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
      */
     public function modalform_hook($mform) {
         $this->add_applyall_element($mform);
+        $this->blindmarking_modification($mform);
+    }
+
+    /**
+     * @param MoodleQuickForm $mform
+     */
+    private function blindmarking_modification($mform) {
+        // Check to see if the assignment uses blind marking.
+        if ($this->gradingarea->get_assign()->is_blind_marking()) {
+            // Check to see if the override element has been added to the form.
+            if ($mform->elementExists('override')) {
+                $mform->removeElement('override');
+            }
+        }
     }
 
     /**
@@ -307,17 +322,23 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
             $usergrade->grade = $data->grade;
         }
 
-        $override = isset($data->override) || (!empty($teamsubmission) && !empty($data->applytoall));
-        $this->save_grade($usergrade, $override);
+        $override = false;
+        $blindmarking = $assignment->is_blind_marking();
+        if (!$blindmarking) {
+            $override = isset($data->override) || (!empty($teamsubmission) && !empty($data->applytoall));
+        }
+
+        $this->save_grade($usergrade, $override, $blindmarking);
     }
 
     /**
      * @param $usergrade
-     * @param $override
+     * @param bool $override
+     * @param bool $blindmarking
      *
      * @return bool
      */
-    protected function save_grade($usergrade, $override) {
+    protected function save_grade($usergrade, $override, $blindmarking = false) {
         global $USER, $DB;
 
         // Need to do two things here.
@@ -331,6 +352,12 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
 
         // Update the submission.
         $success = $DB->update_record('assign_grades', $usergrade);
+
+        // If blind marking is used don't upgrade the gradebook.
+        if ($blindmarking)  {
+            // Blind marking is being used and identities have not been revealed. Return here.
+            return $success;
+        }
 
         // Now need to update the gradebook.
         if ($usergrade->userid == $this->gradingarea->get_guserid()) {
