@@ -326,6 +326,24 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         return $include;
     }
 
+    public function get_commentloop() {
+        parent::get_commentloop();
+        $assign = $this->get_assign();
+        if ($assign->get_instance()->teamsubmission) {
+            // Need to get the id of the group members to include all.
+            $submission = $this->get_submission();
+            $groupmembers = $assign->get_submission_group_members($submission->groupid, true);
+            $commentusers = array();
+            foreach ($groupmembers as $member) {
+                $commentusers[] = $member->id;
+            }
+
+            $this->commentloop->set_commentusers($commentusers);
+        }
+
+        return $this->commentloop;
+    }
+
     /**
      * @return assign
      */

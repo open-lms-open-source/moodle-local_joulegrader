@@ -20,6 +20,11 @@ class local_joulegrader_lib_comment_loop implements renderable {
     protected $comments;
 
     /**
+     * @var array - user ids of users that should be included in this comment loop.
+     */
+    protected $commentusers;
+
+    /**
      * @var moodleform - comment form
      */
     protected $mform;
@@ -49,6 +54,13 @@ class local_joulegrader_lib_comment_loop implements renderable {
             $this->load_mform();
         }
         return $this->mform;
+    }
+
+    /**
+     * @param array $userids
+     */
+    public function set_commentusers(array $userids) {
+        $this->commentusers = $userids;
     }
 
     /**
@@ -124,8 +136,22 @@ class local_joulegrader_lib_comment_loop implements renderable {
 
         $context = $this->gradingarea->get_gradingmanager()->get_context();
 
+        $commentusers = $guserid;
+        if (!empty($this->commentusers)) {
+            // Ensure that the graded user is still in the list of commentusers.
+            if (!in_array($guserid, $this->commentusers)) {
+                $this->commentusers[] = $guserid;
+            }
+
+            $commentusers = $this->commentusers;
+        }
+
+        list($inorequalsusers, $params) = $DB->get_in_or_equal($commentusers, SQL_PARAMS_NAMED);
+        $whereclause = "gareaid = :gareaid AND guserid $inorequalsusers";
+        $params['gareaid'] = $gareaid;
+
         //try to get the comments for the area and user
-        if ($comments = $DB->get_records('local_joulegrader_comments', array('gareaid' => $gareaid, 'guserid' => $guserid), 'timecreated ASC')) {
+        if ($comments = $DB->get_records_select('local_joulegrader_comments', $whereclause, $params, 'timecreated ASC')) {
             //iterate through comments and instantiate local_joulegrader_lib_comment_class objects
             foreach ($comments as $comment) {
                 $commentobject = new local_joulegrader_lib_comment_class($comment);
