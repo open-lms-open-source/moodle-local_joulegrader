@@ -331,8 +331,11 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         $assign = $this->get_assign();
         if ($assign->get_instance()->teamsubmission) {
             // Need to get the id of the group members to include all.
-            $submission = $this->get_submission();
-            $groupmembers = $assign->get_submission_group_members($submission->groupid, true);
+            $groupid = 0;
+            if ($group = $assign->get_submission_group($this->guserid)) {
+                $groupid = $group->id;
+            }
+            $groupmembers = $assign->get_submission_group_members($groupid, true);
             $commentusers = array();
             foreach ($groupmembers as $member) {
                 $commentusers[] = $member->id;
@@ -342,6 +345,46 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         }
 
         return $this->commentloop;
+    }
+
+    /**
+     * @param local_joulegrader_lib_comment[] $comments
+     * @return local_joulegrader_lib_comment[]
+     */
+    public function comments_hook(array $comments) {
+        global $USER;
+
+        if (!$this->get_assign()->is_blind_marking()) {
+            // Not blind marking or identities have already been revealed. Return the comments as-is.
+            return $comments;
+        }
+
+        $returncomments = array();
+
+        $hiddenuserstr = trim(get_string('hiddenuser', 'assign'));
+        $guestuser = guest_user();
+
+        // Blind marking is being used.
+        foreach ($comments as $comment) {
+            $commentuserid = $comment->get_commenterid();
+            if ($USER->id != $commentuserid && !has_capability('mod/assign:grade', $this->gradingmanager->get_context(), $commentuserid)) {
+                // Commenter is not the $USER and is not a teacher/admin. Need get the anonymous information.
+                $anonid = $this->get_assign()->get_uniqueid_for_user($commentuserid);
+                $commenter = new stdClass();
+                $commenter->firstname = $hiddenuserstr;
+                $commenter->lastname = $anonid;
+                $commenter->picture = 0;
+                $commenter->id = $guestuser->id;
+                $commenter->email = $guestuser->email;
+                $commenter->imagealt = $guestuser->imagealt;
+
+                $comment->set_commenter($commenter);
+            }
+
+            $returncomments[] = $comment;
+        }
+
+        return $returncomments;
     }
 
     /**

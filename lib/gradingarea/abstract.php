@@ -269,6 +269,14 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     }
 
     /**
+     * @param local_joulegrader_lib_comment[] $comments
+     * @return local_joulegrader_lib_comment[]
+     */
+    public function comments_hook($comments) {
+        return $comments;
+    }
+
+    /**
      * Return the name of and path to the viewpane class that this grading_area class should use
      *
      * @abstract

@@ -151,13 +151,19 @@ class local_joulegrader_lib_comment_loop implements renderable {
         $params['gareaid'] = $gareaid;
 
         //try to get the comments for the area and user
+        $commentobjects = array();
         if ($comments = $DB->get_records_select('local_joulegrader_comments', $whereclause, $params, 'timecreated ASC')) {
             //iterate through comments and instantiate local_joulegrader_lib_comment_class objects
             foreach ($comments as $comment) {
                 $commentobject = new local_joulegrader_lib_comment_class($comment);
                 $commentobject->set_context($context);
-                $this->comments[] = $commentobject;
+                $commentobjects[] = $commentobject;
             }
+        }
+
+        if (!empty($commentobjects)) {
+            // Give the grading area a chance to update the comments.
+            $this->comments = $this->gradingarea->comments_hook($commentobjects);
         }
     }
 

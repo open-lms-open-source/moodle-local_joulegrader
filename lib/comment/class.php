@@ -56,6 +56,11 @@ class local_joulegrader_lib_comment_class implements renderable {
     protected $context;
 
     /**
+     * @var stdClass|null
+     */
+    protected $commenter;
+
+    /**
      * @param mixed $record
      */
     public function __construct($record = null) {
@@ -260,6 +265,13 @@ class local_joulegrader_lib_comment_class implements renderable {
     }
 
     /**
+     * @param stdClass $commenter
+     */
+    public function set_commenter($commenter) {
+        $this->commenter = $commenter;
+    }
+
+    /**
      * @return stdClass - user object for the commenter
      */
     public function get_commenter() {
@@ -268,8 +280,10 @@ class local_joulegrader_lib_comment_class implements renderable {
         //local non-persistant cache
         static $usercache = array();
 
+        if (isset($this->commenter)) {
+            $commenter = $this->commenter;
         //check the logged in $USER
-        if ($USER->id == $this->commenterid) {
+        } else if ($USER->id == $this->commenterid) {
             $commenter = $USER;
         //else check the local cache
         } else if (array_key_exists($this->commenterid, $usercache)) {
