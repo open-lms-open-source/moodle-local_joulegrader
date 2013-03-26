@@ -453,46 +453,41 @@ class local_joulegrader_controller_default extends mr_controller {
 
         $context = context_module::instance($cm->id);
 
-        if (!empty($assign->teamsubmission) && $submission->userid == 0) {
-            // Enforce team submission permissions.
-            $this->enforce_teamsubmission_access($assign, $submission, $context, $cm);
+        // Enforce permissions.
+        $this->enforce_submission_access($assign, $submission, $context, $cm);
 
+        if (!empty($assign->teamsubmission) && $submission->userid == 0) {
             // Team submissions is being used, find out what the group is called.
             if ($submission->groupid == 0) {
                 // This is the "Default" group.
-                $groupname = get_string('defaultteam', 'assign');
+                $uniquename = get_string('defaultteam', 'assign');
             } else {
                 $group = groups_get_group($submission->groupid, 'name');
-                $groupname = $group->name;
+                $uniquename = $group->name;
             }
-
-            // Make the filename based on the group name rather than the user name.
-            $filename = str_replace(' ', '_', clean_filename($COURSE->shortname.'-'.$assign->name.'-'.$cm->id.'-' . $groupname .'-'.$submission->groupid .".zip"));
+            $uniqueid = $submission->groupid;
         } else {
-            // No team submissions being used.
 
-            // Check permissions.
+            // No team submissions being used.
             if ($USER->id === $submission->userid) {
-                require_capability('mod/assign:submit', $context);
                 $user = $USER;
             } else {
-                require_capability('mod/assign:grade', $context);
                 $user = $DB->get_record('user', array('id' => $submission->userid), 'id, firstname, lastname', MUST_EXIST);
             }
 
             if (!empty($assign->blindmarking) && empty($assign->revealidentities)) {
                 require_once($CFG->dirroot . '/mod/assign/locallib.php');
-                $userid = assign::get_uniqueid_for_user_static($assign->id, $user->id);
-                $username = get_string('hiddenuser', 'assign') . $userid;
+                $uniqueid = assign::get_uniqueid_for_user_static($assign->id, $user->id);
+                $uniquename = get_string('hiddenuser', 'assign') . $uniqueid;
 
             } else {
-                $userid = $user->id;
-                $username = fullname($user);
+                $uniqueid = $user->id;
+                $uniquename = fullname($user);
             }
-
-            // Make the filename based on the user.
-            $filename = str_replace(' ', '_', clean_filename($COURSE->shortname.'-'.$assign->name.'-'.$cm->id.'-' . $username .'-'.$userid .".zip"));
         }
+
+        // Make the filename.
+        $filename = str_replace(' ', '_', clean_filename($COURSE->shortname.'-'.$assign->name.'-'.$cm->id.'-' . $uniquename .'-'.$uniqueid .".zip"));
 
         // Get the files
         $filestozip = array();
@@ -519,7 +514,7 @@ class local_joulegrader_controller_default extends mr_controller {
     }
 
     public function inlinefile_action() {
-        global $CFG, $USER, $DB, $PAGE;
+        global $CFG, $DB, $PAGE;
         require_once($CFG->libdir . '/filelib.php');
 
         $result = array();
@@ -545,20 +540,8 @@ class local_joulegrader_controller_default extends mr_controller {
 
             $context = context_module::instance($cm->id);
 
-            // Check permissions
-            if (!empty($assign->teamsubmission) && $submission->userid == 0) {
-                // Enforce team submission permissions.
-                $this->enforce_teamsubmission_access($assign, $submission, $context, $cm);
-            } else {
-                // No team submissions being used.
-
-                // Check permissions.
-                if ($USER->id === $submission->userid) {
-                    require_capability('mod/assign:submit', $context);
-                } else {
-                    require_capability('mod/assign:grade', $context);
-                }
-            }
+            // Enforce permissions.
+            $this->enforce_submission_access($assign, $submission, $context, $cm);
 
             $renderer = $PAGE->get_renderer('local_joulegrader');
             $result['html'] = $renderer->help_render_assign23_file_inline($file);
@@ -580,33 +563,46 @@ class local_joulegrader_controller_default extends mr_controller {
      * @param $cm
      * @throws moodle_exception
      */
-    protected function enforce_teamsubmission_access($assign, $submission, $context, $cm) {
+    protected function enforce_submission_access($assign, $submission, $context, $cm) {
         global $CFG, $COURSE, $USER;
-        require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
-        if (has_capability('mod/assign:grade', $context)) {
-            return;
-        }
-
-        // Need to see if the $USER is a member of the group.
-        $assignobj = new assign($context, $cm, $COURSE);
-        $assignobj->set_instance($assign);
-
-        $groupmembers = $assignobj->get_submission_group_members($submission->groupid, true);
-        $ismember = false;
-        foreach ($groupmembers as $member) {
-            if ($member->id == $USER->id) {
-                $ismember = true;
-                break;
+        if (!empty($assign->teamsubmission) && $submission->userid == 0) {
+            if (has_capability('mod/assign:grade', $context)) {
+                // No further checks necessary, return.
+                return;
             }
-        }
 
-        if ($ismember) {
-            // Make sure they do have the proper capability.
-            require_capability('mod/assign:submit', $context);
+            require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
+            // Enforce team submission permissions.
+            // Need to see if the $USER is a member of the group.
+            $assignobj = new assign($context, $cm, $COURSE);
+            $assignobj->set_instance($assign);
+
+            $groupmembers = $assignobj->get_submission_group_members($submission->groupid, true);
+            $ismember = false;
+            foreach ($groupmembers as $member) {
+                if ($member->id == $USER->id) {
+                    $ismember = true;
+                    break;
+                }
+            }
+
+            if ($ismember) {
+                // Make sure they do have the proper capability.
+                require_capability('mod/assign:submit', $context);
+            } else {
+                // Should not have access.
+                throw new moodle_exception('nopermissions');
+            }
         } else {
-            // Should not have access.
-            throw new moodle_exception('nopermissions');
+            // No team submissions being used.
+            // Check permissions.
+            if ($USER->id === $submission->userid) {
+                require_capability('mod/assign:submit', $context);
+            } else {
+                require_capability('mod/assign:grade', $context);
+            }
         }
     }
 }
