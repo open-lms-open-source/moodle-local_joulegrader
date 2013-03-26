@@ -455,7 +455,7 @@ class local_joulegrader_controller_default extends mr_controller {
 
         if (!empty($assign->teamsubmission) && $submission->userid == 0) {
             // Enforce team submission permissions.
-            $this->enforce_teamsumbission_access($assign, $submission, $context, $cm);
+            $this->enforce_teamsubmission_access($assign, $submission, $context, $cm);
 
             // Team submissions is being used, find out what the group is called.
             if ($submission->groupid == 0) {
@@ -548,7 +548,7 @@ class local_joulegrader_controller_default extends mr_controller {
             // Check permissions
             if (!empty($assign->teamsubmission) && $submission->userid == 0) {
                 // Enforce team submission permissions.
-                $this->enforce_teamsumbission_access($assign, $submission, $context, $cm);
+                $this->enforce_teamsubmission_access($assign, $submission, $context, $cm);
             } else {
                 // No team submissions being used.
 
@@ -580,7 +580,7 @@ class local_joulegrader_controller_default extends mr_controller {
      * @param $cm
      * @throws moodle_exception
      */
-    protected function enforce_teamsumbission_access($assign, $submission, $context, $cm) {
+    protected function enforce_teamsubmission_access($assign, $submission, $context, $cm) {
         global $CFG, $COURSE, $USER;
         require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
