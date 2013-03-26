@@ -262,10 +262,14 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                 $members = $assignment->get_submission_group_members($groupid, true);
                 foreach ($members as $member) {
                     // User may exist in multiple groups (which should put them in the default group).
-                    $this->apply_grade_to_user($data, $member->id);
+                    if ($this->apply_grade_to_user($data, $member->id)) {
+                        $notify->good('gradesaved');
+                    }
                 }
             } else {
-                $this->apply_grade_to_user($data, $userid);
+                if ($this->apply_grade_to_user($data, $userid)) {
+                    $notify->good('gradesaved');
+                }
             }
 
 
@@ -277,11 +281,6 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
             if (optional_param('needsgrading', 0, PARAM_BOOL)) {
                 $redirecturl->param('needsgrading', 1);
             }
-
-//            //save the grade
-//            if ($this->save_grade($grade, isset($data->override))) {
-//                $notify->good('gradesaved');
-//            }
         }
 
         redirect($redirecturl);
@@ -328,7 +327,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
             $override = isset($data->override) || (!empty($teamsubmission) && !empty($data->applytoall));
         }
 
-        $this->save_grade($usergrade, $override, $blindmarking);
+        return $this->save_grade($usergrade, $override, $blindmarking);
     }
 
     /**
