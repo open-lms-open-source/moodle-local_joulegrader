@@ -72,6 +72,10 @@
     margin-top: 0.25em;
 }
 
+#local-joulegrader-gradepane .local_joulegrader_commentloop.fieldset {
+    margin-top: 0.5em;
+}
+
 #local-joulegrader-gradepane .fieldset > h3 {
     font: 1em normal;
     margin: -1em -0.5em 0;
