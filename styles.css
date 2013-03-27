@@ -13,6 +13,7 @@
 
 #local-joulegrader-buttonnav .singlebutton {
     padding-left: 3px;
+    display: inline-block;
 }
 
 #local-joulegrader-navigation {

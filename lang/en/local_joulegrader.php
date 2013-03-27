@@ -18,6 +18,9 @@ $string['nothingtodisplay'] = 'Nothing to Display';
 $string['needsgrading'] = 'Show Activities Requiring Grading';
 $string['allactivities'] = 'Show All Activities';
 $string['mobilenotsupported'] = 'joule Grader does not currently support mobile browsers';
+$string['exitfullscreen'] = 'Exit full screen mode';
+$string['fullscreen'] = 'Full screen mode';
+$string['returncourse'] = 'Return to course';
 
 //helper/navigation.php strings
 $string['nogradeableareas'] = 'No gradable activities';

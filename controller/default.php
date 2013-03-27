@@ -16,6 +16,7 @@ class local_joulegrader_controller_default extends mr_controller {
         switch ($this->action) {
             case 'process':
                 require_capability('local/joulegrader:grade', $this->get_context());
+                break;
             case 'view':
             default:
                 if (!has_capability('local/joulegrader:grade', $this->get_context())) {
@@ -37,11 +38,23 @@ class local_joulegrader_controller_default extends mr_controller {
         //add 'joule Grader' to bread crumb
         $PAGE->navbar->add(get_string('pluginname', 'local_joulegrader'));
 
+        $fullscreen = get_user_preferences('local_joulegrader_fullscreen', 1);
+        $fullscreenchg = optional_param('fullscreen', -1, PARAM_INT);
+        if ($fullscreenchg != -1) {
+            set_user_preference('local_joulegrader_fullscreen', $fullscreenchg);
+            $fullscreen = $fullscreenchg;
+        }
+
+        $layout = 'standard';
+        if (!empty($fullscreen)) {
+            $layout = 'embedded';
+        }
+
         // set layout to include blocks
         switch ($this->action) {
             case 'view':
             case 'process':
-                $PAGE->set_pagelayout('standard');
+                $PAGE->set_pagelayout($layout);
                 break;
             case 'viewcommentloop':
                 $PAGE->set_pagelayout('embedded');
@@ -55,7 +68,7 @@ class local_joulegrader_controller_default extends mr_controller {
      * @return string - the html for the view action
      */
     public function view_action() {
-        global $OUTPUT, $COURSE, $PAGE;
+        global $OUTPUT, $PAGE;
 
         //check for mobile browsers (currently not supported)
         if (get_device_type() == 'mobile') {
@@ -83,25 +96,10 @@ class local_joulegrader_controller_default extends mr_controller {
         $currentareaid = $gareashelper->get_currentarea();
         $currentuserid = $usershelper->get_currentuser();
 
-        //needs grading button
-        //button nav
-        $buttonnav = '';
-        if (has_capability('local/joulegrader:grade', $this->get_context())) {
-            $buttonurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid
-                    , 'guser' => $currentuserid));
-
-            $needsgrading = optional_param('needsgrading', 0, PARAM_BOOL);
-            if (empty($needsgrading)) {
-                $buttonstring = get_string('needsgrading', 'local_joulegrader');
-                $buttonurl->param('needsgrading', 1);
-            } else {
-                $buttonstring = get_string('allactivities', 'local_joulegrader');
-            }
-            $buttonnav = $OUTPUT->single_button($buttonurl, $buttonstring, 'get');
-        }
+        $buttons = $this->helper->navigation->get_navigation_buttons($this->url, $this->get_context());
 
         $menunav = $OUTPUT->container($activitynav . $usernav, 'content');
-        $buttonnavcon = $OUTPUT->container($buttonnav, 'yui3-u-1-3', 'local-joulegrader-buttonnav');
+        $buttonnavcon = $OUTPUT->container($buttons, 'yui3-u-1-3', 'local-joulegrader-buttonnav');
         $activitynavcon = $OUTPUT->container($menunav, 'yui3-u-2-3', 'local-joulegrader-menunav');
 
         //if the current user id and the current area id are not empty, load the class and get the pane contents
@@ -209,9 +207,9 @@ class local_joulegrader_controller_default extends mr_controller {
         if ((!empty($modalform) && $modalform->is_submitted() && !$modalform->is_validated())
                 || (!empty($paneform) && $paneform->is_submitted() && !$paneform->is_validated())) {
             $this->gradeareainstance = $gradeareainstance;
-            echo $this->print_header();
+            $this->print_header();
             echo $this->view_action();
-            echo $this->print_footer();
+            $this->print_footer();
             die;
         }
 

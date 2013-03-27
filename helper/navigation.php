@@ -146,6 +146,51 @@ class local_joulegrader_helper_navigation extends mr_helper_abstract {
     }
 
     /**
+     * @param moodle_url $controllerurl
+     * @param stdClass $context
+     * @return string
+     */
+    public function get_navigation_buttons($controllerurl, $context) {
+        global $COURSE, $OUTPUT;
+
+        $fullscreenurl = clone $controllerurl;
+        $fullscreenparam = get_user_preferences('local_joulegrader_fullscreen', 1);
+        $fullscreenurl->param('fullscreen', !$fullscreenparam);
+
+        if (!empty($fullscreenparam)) {
+            $fullscreenstring = get_string('exitfullscreen', 'local_joulegrader');
+        } else {
+            $fullscreenstring = get_string('fullscreen', 'local_joulegrader');
+        }
+
+        $fullscreenbutton = $OUTPUT->single_button($fullscreenurl, $fullscreenstring, 'get');
+
+        $returncoursebutton = '';
+        if (!empty($fullscreenparam)) {
+            $returncourseurl = new moodle_url('/course/view.php', array('id' => $COURSE->id));
+            $returncoursebutton = $OUTPUT->single_button($returncourseurl, get_string('returncourse', 'local_joulegrader'), 'get');
+        }
+
+        //needs grading button
+        //button nav
+        $buttonnav = '';
+        if (has_capability('local/joulegrader:grade', $context)) {
+            $buttonurl = clone $controllerurl;
+
+            $needsgrading = optional_param('needsgrading', 0, PARAM_BOOL);
+            if (empty($needsgrading)) {
+                $buttonstring = get_string('needsgrading', 'local_joulegrader');
+                $buttonurl->param('needsgrading', 1);
+            } else {
+                $buttonstring = get_string('allactivities', 'local_joulegrader');
+            }
+            $buttonnav = $OUTPUT->single_button($buttonurl, $buttonstring, 'get');
+        }
+
+        return $returncoursebutton . $fullscreenbutton . $buttonnav;
+    }
+
+    /**
      * Get necessary info to create the group selector navigation
      * This uses code modified from lib/grouplib.php's groups_print_course_menu
      *
