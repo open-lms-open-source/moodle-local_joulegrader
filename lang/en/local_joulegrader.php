@@ -21,6 +21,7 @@ $string['mobilenotsupported'] = 'joule Grader does not currently support mobile 
 $string['exitfullscreen'] = 'Exit full screen mode';
 $string['fullscreen'] = 'Full screen mode';
 $string['returncourse'] = 'Return to course';
+$string['grading']  = 'Grading';
 
 //helper/navigation.php strings
 $string['nogradeableareas'] = 'No gradable activities';
@@ -49,6 +50,7 @@ $string['assign23-latesubmission'] = 'This submission was late by {$a}.';
 $string['downloadall'] = 'Download all files';
 $string['download'] = 'download';
 $string['viewinline'] = 'view inline';
+$string['activitycomments'] = 'Activity comments';
 
 // Form strings.
 $string['gradeoutof'] = 'Grade (out of {$a})';

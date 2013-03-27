@@ -118,6 +118,9 @@ class local_joulegrader_controller_default extends mr_controller {
 
             $viewhtml = $renderer->render($gradeareainstance->get_viewpane());
             $gradehtml = $renderer->render($gradeareainstance->get_gradepane());
+            $gradinglegend = html_writer::tag('span', get_string('grading', 'local_joulegrader'));
+            $gradinglegend = html_writer::tag('h3', $gradinglegend);
+            $gradehtml = $OUTPUT->container($gradinglegend . $gradehtml, array('fieldset'));
 
 
             //get the comment loop for the gradingarea

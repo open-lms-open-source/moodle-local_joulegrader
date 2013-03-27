@@ -34,8 +34,11 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $mrhelper = new mr_helper();
         $mformhtml = $mrhelper->buffer(array($mform, 'display'));
 
+        $commentlegend = html_writer::tag('span', get_string('activitycomments', 'local_joulegrader'));
+        $commentlegend = html_writer::tag('h3', $commentlegend);
+
         $id = uniqid('local-joulegrader-commentloop-con-');
-        $html = html_writer::tag('div', $commentshtml . $mformhtml, array('id' => $id, 'class' => 'local_joulegrader_commentloop'));
+        $html = html_writer::tag('div', $commentlegend . $commentshtml . $mformhtml, array('id' => $id, 'class' => 'local_joulegrader_commentloop fieldset'));
 
         $module = $this->get_js_module();
         $PAGE->requires->js_init_call('M.local_joulegrader.init_commentloop', array('id' => $id), true, $module);
@@ -181,7 +184,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function help_render_gradepane($gradepane) {
-        global $PAGE, $CFG;
+        global $PAGE;
 
         $html = '';
         $modalhtml = '';
@@ -241,11 +244,6 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 $html .= $this->help_render_currentgrade($gradepane);
                 $html .= $this->help_render_modalbutton($gradepane);
 
-//                if ((!$grade->grade === false) && empty($grade->hidden)) {
-//                    $gradestr = '<div class="grade">'. get_string("grade").': '.$grade->str_long_grade. '</div>';
-//                } else {
-//                    $gradestr = '';
-//                }
                 $gradestr = $this->help_render_currentgrade($gradepane);
                 $controller = $gradepane->get_controller();
 

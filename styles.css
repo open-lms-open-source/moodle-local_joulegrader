@@ -65,6 +65,41 @@
     text-align: left;
 }
 
+#local-joulegrader-gradepane .fieldset {
+    border: 2px groove threedface;
+    border-top: none;
+    padding: 0.5em;
+    margin-top: 0.25em;
+}
+
+#local-joulegrader-gradepane .fieldset > h3 {
+    font: 1em normal;
+    margin: -1em -0.5em 0;
+}
+
+#local-joulegrader-gradepane .fieldset > h3 > span {
+    float: left;
+}
+
+#local-joulegrader-gradepane .fieldset > h3:before {
+    border-top: 2px groove threedface;
+    content: ' ';
+    float: left;
+    margin: 0.5em 2px 0 -1px;
+    width: 0.75em;
+}
+#local-joulegrader-gradepane .fieldset > h3:after {
+    border-top: 2px groove threedface;
+    content: ' ';
+    display: block;
+    height: 1.5em;
+    left: 2px;
+    margin: 0 1px 0 0;
+    overflow: hidden;
+    position: relative;
+    top: 0.5em;
+}
+
 #local-joulegrader-gradepane div.status.s0 {
     padding: 0px;
     background-color: #FFFACD;
@@ -131,6 +166,11 @@
 
 .pagelayout-embedded .local_joulegrader_commentloop, .pagelayout-embedded .local_joulegrader_commentloop .mform .fitem .felement {
     margin: 0.5em;
+}
+
+.pagelayout-embedded #local-joulegrader .local_joulegrader_commentloop {
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .local_joulegrader_commentloop .mform fieldset div.fdescription.required, .local_joulegrader_commentloop .mform fieldset div.fitem.required label {
