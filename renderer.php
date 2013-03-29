@@ -224,6 +224,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         } else {
             // Student view of the grading pane
+            if ($feedback = $gradepane->get_overall_feedback()) {
+                $feedback = html_writer::tag('div', get_string('overallfeedback', 'local_joulegrader') . ': ' . $feedback);
+            }
+
             if ($gradepane->has_modal()) {
                 //this is for a student
                 $options = $gradepane->get_controller()->get_options();
@@ -267,6 +271,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 } else {
                     $controller->set_grade_range(make_grades_menu($gradepane->get_grade()));
                     $modalhtml = $controller->render_grade($PAGE, $gradepane->get_agitemid(), $item, $gradestr, false);
+                    $modalhtml .= $feedback;
                 }
             } else {
                 $grade = -1;
@@ -294,6 +299,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     $html .= get_string('gradeoutof', 'local_joulegrader', $gradepane->get_grade()) . ': ';
                     $html .= $grade;
                 }
+                $html .= $feedback;
                 $html .= html_writer::end_tag('div');
             }
         }
