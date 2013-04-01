@@ -96,7 +96,9 @@ class local_joulegrader_controller_default extends mr_controller {
         $currentareaid = $gareashelper->get_currentarea();
         $currentuserid = $usershelper->get_currentuser();
 
-        $buttons = $this->helper->navigation->get_navigation_buttons($this->url, $this->get_context());
+        $buttonbaseurl = clone $this->url;
+        $buttonbaseurl->params(array('guser' => $currentuserid, 'garea' => $currentareaid));
+        $buttons = $this->helper->navigation->get_navigation_buttons($buttonbaseurl, $this->get_context());
 
         $menunav = $OUTPUT->container($activitynav . $usernav, 'content');
         $buttonnavcon = $OUTPUT->container($buttons, 'yui3-u-1-3', 'local-joulegrader-buttonnav');
