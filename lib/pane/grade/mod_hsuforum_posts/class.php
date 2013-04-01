@@ -158,8 +158,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
         if ($this->has_overall_feedback()) {
 
             $editor = $mform->addElement('editor', 'hsuforumfeedback_editor',
-                html_writer::tag('span', get_string('overallfeedback', 'local_joulegrader'),
-                    array('class' => 'accesshide')), null, null);
+                get_string('overallfeedback', 'local_joulegrader') . ': ', null, null);
 
             $feedbackinfo = $this->get_feedback_info();
 

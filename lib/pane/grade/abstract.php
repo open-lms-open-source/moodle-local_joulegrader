@@ -110,6 +110,20 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     }
 
     /**
+     * @return bool
+     */
+    public function has_file_feedback() {
+        return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_file_feedback() {
+        return '';
+    }
+
+    /**
      * @param MoodleQuickForm $mform
      */
     public function paneform_hook($mform) {

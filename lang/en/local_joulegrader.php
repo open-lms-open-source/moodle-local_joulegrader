@@ -52,6 +52,7 @@ $string['download'] = 'download';
 $string['viewinline'] = 'view inline';
 $string['activitycomments'] = 'Activity comments';
 $string['overallfeedback'] = 'Overall feedback';
+$string['filefeedback'] = 'File feedback';
 
 // Form strings.
 $string['gradeoutof'] = 'Grade (out of {$a})';

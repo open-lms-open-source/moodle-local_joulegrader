@@ -10,9 +10,9 @@ require_once($CFG->dirroot . '/local/joulegrader/lib/pane/grade/abstract.php');
 class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  local_joulegrader_lib_pane_grade_abstract {
 
     /**
-     * @var assign_feedback_comments
+     * @var array
      */
-    protected $feedbackplugin;
+    protected $feedbackplugins;
 
     /**
      * @var array
@@ -138,9 +138,15 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     /**
      * @return bool
      */
+    public function has_file_feedback() {
+        return $this->has_feedback_type('file');
+    }
+
+    /**
+     * @return bool
+     */
     public function has_overall_feedback() {
-        $fbcommentplugin = $this->get_feedbackcomment_plugin();
-        return (!empty($fbcommentplugin) && $fbcommentplugin->is_enabled() && $fbcommentplugin->is_visible());
+        return $this->has_feedback_type('comments');
     }
 
     /**
@@ -168,11 +174,10 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     public function add_feedback_form($mform) {
         if ($this->has_overall_feedback()) {
             $editor = $mform->addElement('editor', 'assignfeedbackcomments_editor',
-                html_writer::tag('span', get_string('overallfeedback', 'local_joulegrader'),
-                    array('class' => 'accesshide')), null, null);
+                get_string('overallfeedback', 'local_joulegrader') . ': ', null, null);
 
             if ($grade = $this->get_usergrade($this->gradingarea->get_guserid())) {
-                $feedbackcomments = $this->feedbackplugin->get_feedback_comments($grade->id);
+                $feedbackcomments = $this->get_feedbackcomment_plugin()->get_feedback_comments($grade->id);
                 if ($feedbackcomments) {
                     $data = array();
                     $data['text'] = $feedbackcomments->commenttext;
@@ -182,6 +187,39 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                 }
             }
         }
+    }
+
+    /**
+     * Conditionally adds the file feedback form element to the form.
+     *
+     * @param MoodleQuickForm $mform
+     */
+    public function add_filefeedback_form($mform) {
+        if ($this->has_file_feedback()) {
+            $userid = $this->gradingarea->get_guserid();
+            $data = new stdClass();
+            $this->get_feedbackfile_plugin()->get_form_elements_for_user($this->get_usergrade($userid), $mform, $data, $userid);
+            $elementname = 'files_' . $userid . '_filemanager';
+            $mform->setDefault($elementname, $data->$elementname);
+            $mform->getElement($elementname)->setLabel(html_writer::tag('div', get_string('filefeedback', 'local_joulegrader') . ': '));
+        }
+    }
+
+    /**
+     * Returns the formatted file feedback from the assign_feedback_file plugin.
+     * For use with the student view.
+     *
+     * @return string
+     */
+    public function get_file_feedback() {
+        $feedback = '';
+        if ($this->has_file_feedback()) {
+            if ($grade = $this->get_usergrade($this->gradingarea->get_guserid())) {
+                $feedback = $this->get_feedbackfile_plugin()->view($grade);
+            }
+        }
+
+        return $feedback;
     }
 
     /**
@@ -414,6 +452,10 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
             $this->get_feedbackcomment_plugin()->save($usergrade, $data);
         }
 
+        if ($this->has_file_feedback()) {
+            $this->get_feedbackfile_plugin()->save($usergrade, $data);
+        }
+
         // If blind marking is used don't upgrade the gradebook.
         if ($blindmarking)  {
             // Blind marking is being used and identities have not been revealed. Return here.
@@ -502,13 +544,37 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     /**
-     * @return mixed
+     * @return assign_feedback_comments|null
      */
     protected function get_feedbackcomment_plugin() {
-        if (!isset($this->feedbackplugin)) {
-            $this->feedbackplugin = $this->gradingarea->get_assign()->get_feedback_plugin_by_type('comments');
+        return $this->get_feedback_plugin('comments');
+    }
+
+    /**
+     * @return assign_feedback_file|null
+     */
+    protected function get_feedbackfile_plugin() {
+        return $this->get_feedback_plugin('file');
+    }
+
+    /**
+     * @param string $type
+     * @return assign_feedback_plugin|null
+     */
+    protected function get_feedback_plugin($type) {
+        if (!isset($this->feedbackplugins[$type])) {
+            $this->feedbackplugins[$type] = $this->gradingarea->get_assign()->get_feedback_plugin_by_type($type);
         }
-        return $this->feedbackplugin;
+        return $this->feedbackplugins[$type];
+    }
+
+    /**
+     * @param string $type
+     * @return bool
+     */
+    protected function has_feedback_type($type) {
+        $feedbackplugin = $this->get_feedback_plugin($type);
+        return (!empty($feedbackplugin) && $feedbackplugin->is_enabled() && $feedbackplugin->is_visible());
     }
 
     /**

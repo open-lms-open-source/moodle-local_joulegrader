@@ -228,6 +228,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 $feedback = html_writer::tag('div', get_string('overallfeedback', 'local_joulegrader') . ': ' . $feedback);
             }
 
+            if ($filefeedback = $gradepane->get_file_feedback()) {
+                $filefeedback = html_writer::tag('div', get_string('filefeedback', 'local_joulegrader') . ': ' . $filefeedback);
+            }
+
             if ($gradepane->has_modal()) {
                 //this is for a student
                 $options = $gradepane->get_controller()->get_options();
@@ -272,6 +276,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     $controller->set_grade_range(make_grades_menu($gradepane->get_grade()));
                     $modalhtml = $controller->render_grade($PAGE, $gradepane->get_agitemid(), $item, $gradestr, false);
                     $modalhtml .= $feedback;
+                    $modalhtml .= $filefeedback;
                 }
             } else {
                 $grade = -1;
@@ -300,6 +305,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     $html .= $grade;
                 }
                 $html .= $feedback;
+                $html .= $filefeedback;
                 $html .= html_writer::end_tag('div');
             }
         }
