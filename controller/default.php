@@ -135,8 +135,8 @@ class local_joulegrader_controller_default extends mr_controller {
             //get the grade pane contents
             $gradepane = '<div class="content">' . $gradehtml . $commentloophtml . '</div>';
 
-            $panescontainer = $OUTPUT->container($viewpane, 'yui3-u-4-5', 'local-joulegrader-viewpane');
-            $panescontainer .= $OUTPUT->container($gradepane, 'yui3-u-1-5', 'local-joulegrader-gradepane');
+            $panescontainer = $OUTPUT->container($viewpane, 'yui3-u-2-3', 'local-joulegrader-viewpane');
+            $panescontainer .= $OUTPUT->container($gradepane, 'yui3-u-1-3', 'local-joulegrader-gradepane');
         } else {
             $panescontainer = $OUTPUT->container(html_writer::tag('h1', get_string('nothingtodisplay', 'local_joulegrader')), 'content');
         }
