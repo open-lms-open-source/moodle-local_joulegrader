@@ -187,7 +187,7 @@ class local_joulegrader_helper_navigation extends mr_helper_abstract {
             $buttonnav = $OUTPUT->single_button($buttonurl, $buttonstring, 'get');
         }
 
-        return $returncoursebutton . $fullscreenbutton . $buttonnav;
+        return $fullscreenbutton . $returncoursebutton . $buttonnav;
     }
 
     /**
