@@ -131,12 +131,16 @@ class local_joulegrader_controller_default extends mr_controller {
             //get the view pane contents
             $viewpane = '<div class="content">' . $viewhtml . '</div>';
 
+            // Resize bar used by drag and drop.
+            $rs = html_writer::tag('div', "\t", array('id' => 'local-joulegrader-resize'));
 
             //get the grade pane contents
-            $gradepane = '<div class="content">' . $gradehtml . $commentloophtml . '</div>';
+            $gradepane = '<div class="content">' . $rs . $gradehtml . $commentloophtml . '</div>';
 
             $panescontainer = $OUTPUT->container($viewpane, 'yui3-u-2-3', 'local-joulegrader-viewpane');
             $panescontainer .= $OUTPUT->container($gradepane, 'yui3-u-1-3', 'local-joulegrader-gradepane');
+
+            $PAGE->requires->js_init_call('M.local_joulegrader.init_resize', null, true, $renderer->get_js_module());
         } else {
             $panescontainer = $OUTPUT->container(html_writer::tag('h1', get_string('nothingtodisplay', 'local_joulegrader')), 'content');
         }
@@ -146,6 +150,9 @@ class local_joulegrader_controller_default extends mr_controller {
 
         //panes container
         $output .= $OUTPUT->container($panescontainer, 'yui3-u-1', 'local-joulegrader-panes');
+
+        // Dummy panes used for calculations.
+        $output .= $renderer->help_render_dummygrids();
 
         //wrap it all up
         $output = $OUTPUT->container($output, 'yui3-g', 'local-joulegrader');

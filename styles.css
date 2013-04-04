@@ -2,6 +2,24 @@
     min-height: 600px;
 }
 
+#local-joulegrader-resize {
+    min-height: 200px;
+    width: 5px;
+    background-color: gray;
+    display: inline-block;
+    position: absolute;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#local-joulegrader-resize:hover, #local-joulegrader-resize.yui3-dd-dragging {
+    background-color: darkgray;
+    border: 1px solid lightgray;
+    cursor: move;
+}
+
+
 #local-joulegrader-viewpane .content {
     margin-right: 0.75em;
     overflow: auto;
@@ -112,6 +130,10 @@
 #local-joulegrader-gradepane .fitem .felement {
     width: 100%;
     margin: 0px;
+}
+
+#local-joulegrader-gradepane .fitem_feditor .fitemtitle {
+    float: none;
 }
 
 #local-joulegrader .dontshow {

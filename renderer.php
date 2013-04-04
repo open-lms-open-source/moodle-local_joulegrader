@@ -364,7 +364,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      *
      * @return array
      */
-    protected function get_js_module() {
+    public function get_js_module() {
 
         return array(
             'name' => 'local_joulegrader',
@@ -374,6 +374,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 'node',
                 'event',
                 'io',
+                'dd-drag',
+                'dd-constrain',
                 'panel',
                 'dd-plugin',
                 'json-parse',
@@ -694,6 +696,49 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         }
 
         return $html;
+    }
+
+    /**
+     * Generates HTML for the calculating grid widths/positions for drag and drop grade pane resize.
+     *
+     * @return string
+     */
+    public function help_render_dummygrids() {
+        global $OUTPUT;
+
+        $dummythirds = $OUTPUT->container('', 'yui3-u-2-3');
+        $dummythirds .= $OUTPUT->container('', 'yui3-u-1-3   local-joulegrader-dummy');
+        $output = $OUTPUT->container($dummythirds, 'yui3-u-1');
+
+        $dummyhalves = $OUTPUT->container('', 'yui3-u-1-2');
+        $dummyhalves .= $OUTPUT->container('', 'yui3-u-1-2   local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummyhalves, 'yui3-u-1');
+
+        $dummyfifths = $OUTPUT->container('', 'yui3-u-4-5');
+        $dummyfifths .= $OUTPUT->container('', 'yui3-u-1-5  local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummyfifths, 'yui3-u-1');
+
+        $dummysixths = $OUTPUT->container('', 'yui3-u-5-6');
+        $dummysixths .= $OUTPUT->container('', 'yui3-u-1-6 local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummysixths, 'yui3-u-1');
+
+        $dummyfourths = $OUTPUT->container('', 'yui3-u-3-4');
+        $dummyfourths .= $OUTPUT->container('', 'yui3-u-1-4 local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummyfourths, 'yui3-u-1');
+
+        $dummyeighths = $OUTPUT->container('', 'yui3-u-5-8');
+        $dummyeighths .= $OUTPUT->container('', 'yui3-u-3-8 local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummyeighths, 'yui3-u-1');
+
+        $dummytwelfths = $OUTPUT->container('', 'yui3-u-7-12');
+        $dummytwelfths .= $OUTPUT->container('', 'yui3-u-5-12 local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummytwelfths, 'yui3-u-1');
+
+        $dummy24ths = $OUTPUT->container('', 'yui3-u-13-24');
+        $dummy24ths .= $OUTPUT->container('', 'yui3-u-11-24 local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummy24ths, 'yui3-u-1');
+
+        return $output;
     }
 
     /**

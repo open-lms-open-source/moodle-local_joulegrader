@@ -7,6 +7,98 @@
 
 M.local_joulegrader = M.local_joulegrader || {};
 
+/**
+ * Initializes grade pane resizing via YUI 3 drag and drop.
+ *
+ * @param Y
+ */
+M.local_joulegrader.init_resize = function(Y) {
+
+    var gradepanegridpositions = ['yui3-u-1-2', 'yui3-u-11-24', 'yui3-u-5-12', 'yui3-u-3-8', 'yui3-u-1-3', 'yui3-u-1-4', 'yui3-u-1-5', 'yui3-u-1-6'];
+    var viewpanegridpositions = ['yui3-u-1-2', 'yui3-u-13-24', 'yui3-u-7-12', 'yui3-u-5-8', 'yui3-u-2-3', 'yui3-u-3-4', 'yui3-u-4-5', 'yui3-u-5-6'];
+
+    var gradepane = Y.one('#local-joulegrader-gradepane');
+    var viewpane = Y.one('#local-joulegrader-viewpane');
+    var draghandle = Y.one('#local-joulegrader-resize');
+    var gradepanecontent = gradepane.one('.content');
+
+    /**
+     * Updates the position and height of the drag handle.
+     */
+    var updatehandlepos = function() {
+        var handleheight = gradepanecontent.getComputedStyle('height');
+        var handlex = gradepane.getX();
+        draghandle.setX(handlex - 10);
+        draghandle.setStyle('height', handleheight);
+    };
+
+    /**
+     * Calculates the pixel positions for each of the grade pane grid classes based on dummy grid elements.
+     * These positions are used to constrain the YUI 3 drag and drop.
+     *
+     * @returns {Array}
+     */
+    var calculatepixels = function() {
+        var pixels = [];
+
+        for (var i = 0; i < gradepanegridpositions.length; i++) {
+            pixels.push(Y.one('.' + gradepanegridpositions[i] + '.local-joulegrader-dummy').getX() - 10);
+        }
+        return pixels;
+    };
+
+    // Initialize the handle position and the grid pixel positions.
+    updatehandlepos();
+    var pixels = calculatepixels();
+
+    // Create the drag instance using the draghandle as the drag node.
+    var drag = new Y.DD.Drag({
+        node: draghandle
+    });
+
+    // Constrain the drag node to only drag along the X-Axis and to snap to the grid pixel positions.
+    drag.plug(Y.Plugin.DDConstrained, {
+        stickX: true,
+        tickXArray: pixels,
+        constrain2node: '#local-joulegrader-panes'
+    });
+
+    // Update the YUI 3 grid classes when the drag is aligned with a grid pixel position.
+    drag.con.on('drag:tickAlignX', function(e) {
+        var actx = drag.actXY[0];
+        var lastx = drag.lastXY[0];
+
+        if (parseInt(actx) == parseInt(lastx)) {
+            return;
+        }
+
+        var pixidx = pixels.indexOf(actx);
+
+        if (pixidx === -1 || !gradepanegridpositions[pixidx]) {
+            return;
+        }
+
+        var newgpclass = gradepanegridpositions[pixidx];
+        var newvpclass = viewpanegridpositions[pixidx];
+
+        var currentgpclass = gradepane.getAttribute('class');
+        var currentvpclass = viewpane.getAttribute('class');
+
+        gradepane.removeClass(currentgpclass);
+        viewpane.removeClass(currentvpclass);
+
+        gradepane.addClass(newgpclass);
+        viewpane.addClass(newvpclass);
+    });
+
+    // Recalculate the grid pixel positions, update the handle position, and reset constrained drag "snap" points.
+    Y.on('windowresize', function(e) {
+        pixels = calculatepixels();
+        drag.con.set('tickXArray', pixels);
+        updatehandlepos();
+    });
+};
+
 M.local_joulegrader.init_gradepane_panel = function(Y, options) {
     var panelnode = Y.one('#' + options.id);
     var btn = Y.one('#local-joulegrader-preview-button');
