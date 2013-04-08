@@ -283,6 +283,13 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
             $mform->addElement('select', 'applytoall', get_string('applytoall', 'local_joulegrader'), array(get_string('no'), get_string('yes')));
             $mform->setDefault('applytoall', 1);
             $mform->setType('applytoall', PARAM_BOOL);
+            $mform->addHelpButton('applytoall', 'applytoall', 'local_joulegrader');
+
+            // Check to see if the override element has been added to the form.
+            if ($mform->elementExists('override')) {
+                // Disable override if "Apply grade and feedback to all" is set to yes.
+                $mform->disabledIf('override', 'applytoall', 'eq', 1);
+            }
         }
     }
 
