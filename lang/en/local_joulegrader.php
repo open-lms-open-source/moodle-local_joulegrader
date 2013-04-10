@@ -62,7 +62,7 @@ $string['save'] = 'Save';
 $string['saveandnext'] = 'Save and Next';
 $string['gradingdisabled'] = 'This activity\'s grading is locked. To enable grading please unlock the grade via the Gradebook.';
 $string['applytoall'] = 'Apply grades and feedback to entire group';
-$string['applytoall_help'] = 'If "Yes" is selected and a student has a gradebook override then the group grade will remove the gradebook override and the student will receive the grade of the group.';
+$string['applytoall_help'] = 'If "Yes" is selected all group members will receive the grade and feedback regardless of any existing grade or feedback in the gradebook.';
 
 $string['criteria'] = 'Criteria';
 $string['checklist'] = 'Checklist';
