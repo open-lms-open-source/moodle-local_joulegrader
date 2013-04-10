@@ -56,6 +56,8 @@ M.local_joulegrader.init_resize = function(Y) {
         node: draghandle
     });
 
+    Y.DD.DDM.set('dragCursor', 'ew-resize');
+
     // Constrain the drag node to only drag along the X-Axis and to snap to the grid pixel positions.
     drag.plug(Y.Plugin.DDConstrained, {
         stickX: true,

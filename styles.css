@@ -16,7 +16,7 @@
 #local-joulegrader-resize:hover, #local-joulegrader-resize.yui3-dd-dragging {
     background-color: darkgray;
     border: 1px solid lightgray;
-    cursor: move;
+    cursor: ew-resize;
 }
 
 
