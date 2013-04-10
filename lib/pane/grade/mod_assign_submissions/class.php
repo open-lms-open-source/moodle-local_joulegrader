@@ -361,19 +361,28 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                         $groupid = $group->id;
                     }
                 }
+
+                $gradessaved = 0;
+                $couldnotsave = array();
                 $members = $assignment->get_submission_group_members($groupid, true);
                 foreach ($members as $member) {
                     // User may exist in multiple groups (which should put them in the default group).
                     if ($this->apply_grade_to_user($data, $member->id)) {
-                        $notify->good('gradesaved');
+                        $gradessaved++;
+                    } else {
+                        $couldnotsave[] = $member->id;
                     }
                 }
+
+                // Set notifications for grades saves/failures.
+                $this->set_notifications($notify, $gradessaved, $couldnotsave);
             } else {
                 if ($this->apply_grade_to_user($data, $userid)) {
                     $notify->good('gradesaved');
+                } else {
+                    $notify->bad('couldnotsave');
                 }
             }
-
 
             //redirect to next user if set
             if (optional_param('saveandnext', 0, PARAM_BOOL) && !empty($data->nextuser)) {
@@ -548,6 +557,37 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         }
 
         return $success;
+    }
+
+    /**
+     * @param mr_notify $notify
+     * @param int $gradessaved
+     * @param array $couldnotsave
+     */
+    protected function set_notifications($notify, $gradessaved, $couldnotsave) {
+        global $DB;
+
+        // Set notification for grades successfully updated.
+        if ($gradessaved > 0) {
+            $notify->good('gradesavedx', $gradessaved);
+        }
+
+        // Set nofifications for grades that were not successfully updated.
+        if (!empty($couldnotsave)) {
+            $assign = $this->gradingarea->get_assign();
+            $blindmarking = $assign->is_blind_marking();
+
+            foreach ($couldnotsave as $userid) {
+                if ($blindmarking) {
+                    $username = get_string('hiddenuser', 'assign') . $assign->get_uniqueid_for_user($userid);
+                } else {
+                    $user = $DB->get_record('user', array('id' => $userid), 'id, firstname, lastname');
+                    $username = fullname($user);
+                }
+
+                $notify->bad('couldnotsavex', $username);
+            }
+        }
     }
 
     /**

@@ -66,7 +66,10 @@ $string['applytoall_help'] = 'If "Yes" is selected all group members will receiv
 
 $string['criteria'] = 'Criteria';
 $string['checklist'] = 'Checklist';
-$string['gradesaved'] = 'Grade Saved';
+$string['gradesaved'] = 'Grade successfully updated';
+$string['gradesavedx'] = '{$a} grades successfully updated';
+$string['couldnotsave'] = 'Grade could not be updated';
+$string['couldnotsavex'] = 'Grade for {$a} could not be updated';
 $string['notgraded'] = 'Assignment Not Graded';
 $string['viewchecklistteacher'] = 'Grade with checklist';
 $string['viewrubricteacher'] = 'Grade with rubric';
