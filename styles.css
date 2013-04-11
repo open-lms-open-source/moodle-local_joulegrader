@@ -83,43 +83,10 @@
     text-align: left;
 }
 
-#local-joulegrader-gradepane .fieldset {
-    border: 2px groove threedface;
-    border-top: none;
+#local-joulegrader-gradepane fieldset.fieldset {
+    border: 1px solid #808080;
     padding: 0.5em;
-    margin-top: 0.25em;
-}
-
-#local-joulegrader-gradepane .local_joulegrader_commentloop.fieldset {
-    margin-top: 0.5em;
-}
-
-#local-joulegrader-gradepane .fieldset > h3 {
-    font: 1em normal;
-    margin: -1em -0.5em 0;
-}
-
-#local-joulegrader-gradepane .fieldset > h3 > span {
-    float: left;
-}
-
-#local-joulegrader-gradepane .fieldset > h3:before {
-    border-top: 2px groove threedface;
-    content: ' ';
-    float: left;
-    margin: 0.5em 2px 0 -1px;
-    width: 0.75em;
-}
-#local-joulegrader-gradepane .fieldset > h3:after {
-    border-top: 2px groove threedface;
-    content: ' ';
-    display: block;
-    height: 1.5em;
-    left: 2px;
-    margin: 0 1px 0 0;
-    overflow: hidden;
-    position: relative;
-    top: 0.5em;
+    margin-right: 0.5em;
 }
 
 #local-joulegrader-gradepane div.status.s0 {

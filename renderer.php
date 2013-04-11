@@ -34,11 +34,11 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $mrhelper = new mr_helper();
         $mformhtml = $mrhelper->buffer(array($mform, 'display'));
 
-        $commentlegend = html_writer::tag('span', get_string('activitycomments', 'local_joulegrader'));
-        $commentlegend = html_writer::tag('h3', $commentlegend);
+        $commentlegend = html_writer::tag('legend', get_string('activitycomments', 'local_joulegrader'));
 
         $id = uniqid('local-joulegrader-commentloop-con-');
-        $html = html_writer::tag('div', $commentlegend . $commentshtml . $mformhtml, array('id' => $id, 'class' => 'local_joulegrader_commentloop fieldset'));
+        $html = html_writer::tag('div', $commentshtml . $mformhtml, array('id' => $id, 'class' => 'local_joulegrader_commentloop'));
+        $html = html_writer::tag('fieldset', $commentlegend . $html, array('class' => 'fieldset'));
 
         $module = $this->get_js_module();
         $PAGE->requires->js_init_call('M.local_joulegrader.init_commentloop', array('id' => $id), true, $module);
