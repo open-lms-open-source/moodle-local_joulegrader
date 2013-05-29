@@ -326,67 +326,6 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         return $include;
     }
 
-    public function get_commentloop() {
-        parent::get_commentloop();
-        $assign = $this->get_assign();
-        if ($assign->get_instance()->teamsubmission) {
-            // Need to get the id of the group members to include all.
-            $groupid = 0;
-            if ($group = $assign->get_submission_group($this->guserid)) {
-                $groupid = $group->id;
-            }
-            $groupmembers = $assign->get_submission_group_members($groupid, true);
-            $commentusers = array();
-            foreach ($groupmembers as $member) {
-                $commentusers[] = $member->id;
-            }
-
-            $this->commentloop->set_commentusers($commentusers);
-        }
-
-        return $this->commentloop;
-    }
-
-    /**
-     * @param local_joulegrader_lib_comment[] $comments
-     * @return local_joulegrader_lib_comment[]
-     */
-    public function comments_hook(array $comments) {
-        global $USER;
-
-        if (!$this->get_assign()->is_blind_marking()) {
-            // Not blind marking or identities have already been revealed. Return the comments as-is.
-            return $comments;
-        }
-
-        $returncomments = array();
-
-        $hiddenuserstr = trim(get_string('hiddenuser', 'assign'));
-        $guestuser = guest_user();
-
-        // Blind marking is being used.
-        foreach ($comments as $comment) {
-            $commentuserid = $comment->get_commenterid();
-            if ($USER->id != $commentuserid && !has_capability('mod/assign:grade', $this->gradingmanager->get_context(), $commentuserid)) {
-                // Commenter is not the $USER and is not a teacher/admin. Need get the anonymous information.
-                $anonid = $this->get_assign()->get_uniqueid_for_user($commentuserid);
-                $commenter = new stdClass();
-                $commenter->firstname = $hiddenuserstr;
-                $commenter->lastname = $anonid;
-                $commenter->picture = 0;
-                $commenter->id = $guestuser->id;
-                $commenter->email = $guestuser->email;
-                $commenter->imagealt = $guestuser->imagealt;
-
-                $comment->set_commenter($commenter);
-            }
-
-            $returncomments[] = $comment;
-        }
-
-        return $returncomments;
-    }
-
     /**
      * @return assign
      */
@@ -445,6 +384,33 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         }
 
         return $this->submission;
+    }
+
+    /**
+     * @return stdClass
+     */
+    public function get_comment_info() {
+        $options          = new stdClass();
+        $options->area    = 'submission_comments';
+        $options->course  = $this->get_assign()->get_course();
+        $options->context = $this->get_assign()->get_context();
+        $options->itemid  = $this->get_submission()->id;
+        $options->component = 'assignsubmission_comments';
+
+        return $options;
+    }
+
+    /**
+     * @return bool
+     */
+    public function has_comments() {
+        $hascomments = false;
+        $submission = $this->get_submission();
+        if (!empty($submission)) {
+            $hascomments = $this->get_assign()->get_submission_plugin_by_type('comments')->is_enabled();
+        }
+
+        return $hascomments;
     }
 
     /**

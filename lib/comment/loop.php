@@ -15,6 +15,11 @@ class local_joulegrader_lib_comment_loop implements renderable {
     protected $gradingarea;
 
     /**
+     * @var comment - instance of comment class
+     */
+    protected $commentapi;
+
+    /**
      * @var array - comments that belong to this comment loop
      */
     protected $comments;
@@ -34,6 +39,22 @@ class local_joulegrader_lib_comment_loop implements renderable {
      */
     public function __construct($gradingarea) {
         $this->gradingarea = $gradingarea;
+    }
+
+    /**
+     * Initializes the commentapi data member by creating an instance the comment class
+     *
+     * @param null|stdClass $options
+     */
+    public function init($options = null) {
+        global $CFG;
+        require_once($CFG->dirroot . '/comment/lib.php');
+
+        if (is_null($options)) {
+            $options = $this->gradingarea->get_comment_info();
+        }
+
+        $this->commentapi = new comment($options);
     }
 
     /**
@@ -57,32 +78,10 @@ class local_joulegrader_lib_comment_loop implements renderable {
     }
 
     /**
-     * @param array $userids
-     */
-    public function set_commentusers(array $userids) {
-        $this->commentusers = $userids;
-    }
-
-    /**
      * @return bool
      */
     public function user_can_comment() {
-        global $USER;
-
-        //initialize
-        $cancomment = false;
-
-        //context to use in has_capability call
-        $context = $this->gradingarea->get_gradingmanager()->get_context();
-
-        //check for teacher cap first
-        if (has_capability($this->gradingarea->get_teachercapability(), $context)) {
-            $cancomment = true;
-        } else if (has_capability($this->gradingarea->get_studentcapability(), $context) && $USER->id == $this->gradingarea->get_guserid()) {
-            $cancomment = true;
-        }
-
-        return $cancomment;
+        return $this->commentapi->can_post();
     }
 
     /**
@@ -90,29 +89,20 @@ class local_joulegrader_lib_comment_loop implements renderable {
      * @return local_joulegrader_lib_comment_class
      */
     public function add_comment($commentdata) {
-        global $USER, $COURSE;
 
-        //create a new record
-        $commentrecord = new stdClass;
-        $commentrecord->content = $commentdata->comment['text'];
-        $commentrecord->gareaid = $this->gradingarea->get_areaid();
-        $commentrecord->guserid = $this->gradingarea->get_guserid();
-        $commentrecord->commenterid = $USER->id;
-        $commentrecord->timecreated = time();
+        // Add the comment via the comment object.
+        $commentrecord = $this->commentapi->add($commentdata->comment['text'], FORMAT_MOODLE);
 
-        //instantiate a comment object
+        // Instantiate a joule grader comment object.
         $comment = new local_joulegrader_lib_comment_class($commentrecord);
 
-        //save the new comment
-        $comment->save();
-
         //file area
-        $itemid = $commentdata->comment['itemid'];
+//        $itemid = $commentdata->comment['itemid'];
         $context = $this->gradingarea->get_gradingmanager()->get_context();
-        $content = file_save_draft_area_files($itemid, $context->id, 'local_joulegrader', 'comment', $comment->get_id(), null, $comment->get_content());
-
-        $comment->set_content($content);
-        $comment->save();
+//        $content = file_save_draft_area_files($itemid, $context->id, 'local_joulegrader', 'comment', $comment->id, null, $comment->content);
+//
+//        $comment->set_content($content);
+//        $comment->save();
 
         // set the context
         $comment->set_context($context);
@@ -126,44 +116,24 @@ class local_joulegrader_lib_comment_loop implements renderable {
      * @return void
      */
     protected function load_comments() {
-        global $DB;
-
-        //initialize
+        // Initialize
         $this->comments = array();
 
-        $gareaid = $this->gradingarea->get_areaid();
-        $guserid = $this->gradingarea->get_guserid();
-
-        $context = $this->gradingarea->get_gradingmanager()->get_context();
-
-        $commentusers = $guserid;
-        if (!empty($this->commentusers)) {
-            // Ensure that the graded user is still in the list of commentusers.
-            if (!in_array($guserid, $this->commentusers)) {
-                $this->commentusers[] = $guserid;
-            }
-
-            $commentusers = $this->commentusers;
+        if (!$this->commentapi instanceof comment) {
+            $this->init();
         }
 
-        list($inorequalsusers, $params) = $DB->get_in_or_equal($commentusers, SQL_PARAMS_NAMED);
-        $whereclause = "gareaid = :gareaid AND guserid $inorequalsusers";
-        $params['gareaid'] = $gareaid;
+        $comments = $this->commentapi->get_comments();
+        $context = $this->commentapi->get_context();
+        if (!empty($comments)) {
+            $comments = array_reverse($comments);
 
-        //try to get the comments for the area and user
-        $commentobjects = array();
-        if ($comments = $DB->get_records_select('local_joulegrader_comments', $whereclause, $params, 'timecreated ASC')) {
-            //iterate through comments and instantiate local_joulegrader_lib_comment_class objects
+            // Iterate through comments and instantiate local_joulegrader_lib_comment_class objects.
             foreach ($comments as $comment) {
                 $commentobject = new local_joulegrader_lib_comment_class($comment);
                 $commentobject->set_context($context);
-                $commentobjects[] = $commentobject;
+                $this->comments[] = $commentobject;
             }
-        }
-
-        if (!empty($commentobjects)) {
-            // Give the grading area a chance to update the comments.
-            $this->comments = $this->gradingarea->comments_hook($commentobjects);
         }
     }
 

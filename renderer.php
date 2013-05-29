@@ -16,6 +16,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     public function render_local_joulegrader_lib_comment_loop(local_joulegrader_lib_comment_loop $commentloop) {
         global $PAGE;
 
+        $commentloop->init();
+
         //get the comments
         $comments = $commentloop->get_comments();
 
@@ -53,47 +55,29 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     public function render_local_joulegrader_lib_comment_class(local_joulegrader_lib_comment_class $comment) {
         global $OUTPUT, $COURSE;
 
-        //get the commenter user object - has fields for $OUTPUT->user_picture() and fullname()
-        $commenter = $comment->get_commenter();
-
         //commenter picture
-        $userpic = html_writer::tag('div', $OUTPUT->user_picture($commenter), array('class' => 'local_joulegrader_comment_commenter_pic'));
-        $username = html_writer::tag('div', $commenter->firstname, array('class' => 'local_joulegrader_comment_commenter_firstname'));
+        $userpic = html_writer::tag('div', $comment->get_avatar(), array('class' => 'local_joulegrader_comment_commenter_pic'));
+        $username = html_writer::tag('div', $comment->get_user_fullname(), array('class' => 'local_joulegrader_comment_commenter_firstname'));
         $commenterpicture = html_writer::tag('div', $userpic . $username, array('class' => 'local_joulegrader_comment_commenter'));
 
         //comment timestamp
-        $commenttime = html_writer::tag('div', userdate($comment->get_timecreated(), '%d %B %H:%M'), array('class' => 'local_joulegrader_comment_time'));
+        $commenttime = html_writer::tag('div', userdate($comment->get_timecreated(), $comment->get_dateformat()), array('class' => 'local_joulegrader_comment_time'));
 
         //comment content
-        $content = file_rewrite_pluginfile_urls($comment->get_content(), 'pluginfile.php', $comment->get_context()->id
-                , 'local_joulegrader', 'comment', $comment->get_id());
-        $content = $this->filter_kaltura_video(format_text($content, FORMAT_HTML));
+//        $content = file_rewrite_pluginfile_urls($comment->get_content(), 'pluginfile.php', $comment->get_context()->id
+//                , 'local_joulegrader', 'comment', $comment->get_id());
+        $content = $this->filter_kaltura_video($comment->get_content());
         $commentcontent = html_writer::tag('div', $content, array('class' => 'local_joulegrader_comment_content'));
 
         //coment body
-        $commentbody = $commenttime;
-        $commentdeleted = $comment->get_deleted();
-
-        if ($commentdeleted) {
-            //comment has been deleted, check for admin capability
-            if (has_capability('moodle/site:config', context_system::instance())) {
-                //this is an admin viewing, they can see the content of the comment still
-                $commentbody .= $commentcontent;
-            }
-            //everyone sees who deleted the comment and when
-            $commentbody .= get_string('commentdeleted', 'local_joulegrader'
-                    , array('deletedby' => fullname($commenter), 'deletedon' => userdate($commentdeleted, '%d %B %H:%M')));
-        } else {
-            //comment has not been deleted, add the comment content
-            $commentbody .= $commentcontent;
-        }
+        $commentbody = $commenttime . $commentcontent;
 
         //comment body
         $commentbody = html_writer::tag('div', $commentbody, array('class' => 'local_joulegrader_comment_body'));
 
         //delete button
         $deletebutton = '';
-        if ($comment->user_can_delete()) {
+        if ($comment->can_delete()) {
             $deleteurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'action' => 'deletecomment'
                     , 'commentid' => $comment->get_id(), 'sesskey' => sesskey()));
             $deletebutton = $OUTPUT->action_icon($deleteurl, new pix_icon('t/delete'
@@ -105,9 +89,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         //determine classes for comment
         $commentclasses = array('local_joulegrader_comment');
-        if ($commentdeleted) {
-            $commentclasses[] = 'deleted';
-        }
+
         //put it all together
         $html = html_writer::tag('div', $commenterpicture . $commentbody . $deletebutton, array('class' => implode(' ', $commentclasses)));
 

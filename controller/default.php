@@ -124,8 +124,11 @@ class local_joulegrader_controller_default extends mr_controller {
             $gradinglegend = html_writer::tag('legend', get_string('grading', 'local_joulegrader'));
             $gradehtml = html_writer::tag('fieldset', $gradinglegend . $gradehtml, array('class' => 'fieldset'));
 
-            //get the comment loop for the gradingarea
-            $commentloophtml = $renderer->render($gradeareainstance->get_commentloop());
+            // Get the comment loop for the gradingarea
+            $commentloophtml = '';
+            if ($gradeareainstance->has_comments()) {
+                $commentloophtml = $renderer->render($gradeareainstance->get_commentloop());
+            }
 
             //get the view pane contents
             $viewpane = '<div class="content">' . $viewhtml . '</div>';
@@ -344,8 +347,11 @@ class local_joulegrader_controller_default extends mr_controller {
             //load the current area instance
             $gradeareainstance = $gareashelper::get_gradingarea_instance($currentareaid, $currentuserid);
 
-            //commentloop
+            /**
+             * @var local_joulegrader_lib_comment_loop $commentloop
+             */
             $commentloop = $gradeareainstance->get_commentloop();
+            $commentloop->init();
 
             if (!$commentloop->user_can_comment()) {
                 throw new moodle_exception('nopermissiontocomment', 'local_joulegrader');
@@ -357,7 +363,7 @@ class local_joulegrader_controller_default extends mr_controller {
             //check to see that form was submitted
             if ($data = $mform->get_data()) {
                 //add the comment to the comment loop
-                $newcomment = $commentloop->add_comment($data);
+                $commentloop->add_comment($data);
             }
 
             if (!$isajaxrequest) {
@@ -435,6 +441,7 @@ class local_joulegrader_controller_default extends mr_controller {
 
         //commentloop
         $commentloop = $gradeareainstance->get_commentloop();
+        $commentloop->init();
 
         $renderer = $PAGE->get_renderer('local_joulegrader');
         //generate loop html

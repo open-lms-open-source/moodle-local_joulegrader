@@ -266,6 +266,22 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
     }
 
     /**
+     * @return stdClass
+     */
+    public function get_comment_info() {
+        global $COURSE;
+
+        $options          = new stdClass();
+        $options->area    = 'submission_comments';
+        $options->course  = $COURSE;
+        $options->context = $this->get_gradingmanager()->get_context();
+        $options->itemid  = $this->get_submission(true)->id;
+        $options->component = 'assignment';
+
+        return $options;
+    }
+
+    /**
      * Load the submission record for the set user / assignment
      *
      * @param $create

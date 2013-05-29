@@ -269,12 +269,33 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     }
 
     /**
+     * @param $commentloop
+     */
+    public function set_commentloop($commentloop) {
+        $this->commentloop = $commentloop;
+    }
+
+    /**
      * @param local_joulegrader_lib_comment[] $comments
      * @return local_joulegrader_lib_comment[]
      */
     public function comments_hook($comments) {
         return $comments;
     }
+
+    /**
+     * @return bool
+     */
+    public function has_comments() {
+        return true;
+    }
+
+    /**
+     * Returns the $options object to be passed to comment/lib.php comment class constructor
+     *
+     * @return stdClass|null
+     */
+    abstract public function get_comment_info();
 
     /**
      * Return the name of and path to the viewpane class that this grading_area class should use
