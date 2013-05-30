@@ -75,8 +75,15 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         //delete button
         $deletebutton = '';
         if ($comment->can_delete()) {
-            $deleteurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'action' => 'deletecomment'
-                    , 'commentid' => $comment->get_id(), 'sesskey' => sesskey()));
+            $deleteparams = array(
+                'courseid' => $COURSE->id,
+                'action' => 'deletecomment',
+                'commentid' => $comment->get_id(),
+                'sesskey' => sesskey(),
+                'garea' => $comment->get_gareaid(),
+                'guser' => $comment->get_guserid()
+            );
+            $deleteurl = new moodle_url('/local/joulegrader/view.php', $deleteparams);
             $deletebutton = $OUTPUT->action_icon($deleteurl, new pix_icon('t/delete'
                 , get_string('deletecomment', 'local_joulegrader', userdate($comment->get_timecreated(), '%d %B %H:%M:%S'))));
         }

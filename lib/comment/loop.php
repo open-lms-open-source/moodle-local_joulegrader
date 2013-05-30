@@ -85,6 +85,26 @@ class local_joulegrader_lib_comment_loop implements renderable {
     }
 
     /**
+     * @param int $commentid
+     * @return bool
+     */
+    public function user_can_delete($commentid) {
+        global $DB, $USER;
+        $comment = $DB->get_record('comments', array('id' => $commentid), '*', MUST_EXIST);
+
+        return ($USER->id == $comment->userid) || $this->commentapi->can_delete($commentid);
+    }
+
+    /**
+     * @param int $commentid
+     *
+     * @return bool
+     */
+    public function delete_comment($commentid) {
+        return $this->commentapi->delete($commentid);
+    }
+
+    /**
      * @param stdClass $commentdata - data from submitted comment form
      * @return local_joulegrader_lib_comment_class
      */
@@ -106,6 +126,8 @@ class local_joulegrader_lib_comment_loop implements renderable {
 
         // set the context
         $comment->set_context($context);
+        $comment->set_gareaid($this->gradingarea->get_areaid());
+        $comment->set_guserid($this->gradingarea->get_guserid());
 
         return $comment;
     }
@@ -132,6 +154,8 @@ class local_joulegrader_lib_comment_loop implements renderable {
             foreach ($comments as $comment) {
                 $commentobject = new local_joulegrader_lib_comment_class($comment);
                 $commentobject->set_context($context);
+                $commentobject->set_gareaid($this->gradingarea->get_areaid());
+                $commentobject->set_guserid($this->gradingarea->get_guserid());
                 $this->comments[] = $commentobject;
             }
         }

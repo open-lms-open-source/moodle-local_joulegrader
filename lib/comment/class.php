@@ -20,6 +20,16 @@ class local_joulegrader_lib_comment_class implements renderable {
     protected $context;
 
     /**
+     * @var int
+     */
+    protected $guserid;
+
+    /**
+     * @var int
+     */
+    protected $gareaid;
+
+    /**
      * @param stdClass|null  $commentrecord
      */
     public function __construct(stdClass $commentrecord = null) {
@@ -95,4 +105,33 @@ class local_joulegrader_lib_comment_class implements renderable {
     public function get_context() {
         return $this->context;
     }
+
+    /**
+     * @return int
+     */
+    public function get_guserid() {
+        return $this->guserid;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function get_gareaid() {
+        return $this->gareaid;
+    }
+
+    /**
+     * @param int $guserid
+     */
+    public function set_guserid($guserid) {
+        $this->guserid = $guserid;
+    }
+
+    /**
+     * @param int $gareaid
+     */
+    public function set_gareaid($gareaid) {
+        $this->gareaid = $gareaid;
+    }
+
 }

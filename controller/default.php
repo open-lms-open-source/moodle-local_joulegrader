@@ -248,37 +248,68 @@ class local_joulegrader_controller_default extends mr_controller {
         require_once($CFG->dirroot . '/local/joulegrader/lib/comment/class.php');
         require_once($CFG->dirroot . '/grade/grading/lib.php');
 
-        //ajax request?
+        // Ajax request?
         $isajaxrequest = optional_param('ajax', false, PARAM_BOOL);
 
         try {
-            //required param for commentid
+            // Required param for commentid.
             $commentid = required_param('commentid', PARAM_INT);
 
-            //require sesskey
+            // Get current area id and current user parameters for the gradingarea instance.
+            $currentareaid = required_param('garea', PARAM_INT);
+            $currentuserid = required_param('guser', PARAM_INT);
+
+            // Require sesskey.
             require_sesskey();
 
-            $commentrecord = $DB->get_record('local_joulegrader_comments', array('id' => $commentid), '*', MUST_EXIST);
-            $comment = new local_joulegrader_lib_comment_class($commentrecord);
+            //@var local_joulegrader_helper_gradingareas $gareashelper
+            $gareashelper = $this->helper->gradingareas;
+
+            // Need to prime the helper with the grading areas for the get_currentarea().
+            $gareashelper->get_gradingareas();
+
+            // Make sure that the area passed from the form matches what is determined by the areas helper.
+            if ($currentareaid != $gareashelper->get_currentarea()) {
+                //should not get here unless ppl are messing with form data
+                throw new moodle_exception('areaidpassednotvalid', 'local_joulegrader');
+            }
+
+            // Pull out the users helper and gradingareas helper.
+            $usershelper = $this->helper->users;
+
+            // Just need prime the helper for the currentuser() and nextuser() calls.
+            $usershelper->get_users($gareashelper);
+
+            // Make sure the passed user and passed area match what is available.
+            if ($currentuserid != $usershelper->get_currentuser()) {
+                // There is some funny business going on here.
+                throw new moodle_exception('useridpassednotvalid', 'local_joulegrader');
+            }
+
+            // Load the current area instance.
+            $gradeareainstance = $gareashelper::get_gradingarea_instance($currentareaid, $currentuserid);
+
+            /**
+             * @var local_joulegrader_lib_comment_loop $commentloop
+             */
+            $commentloop = $gradeareainstance->get_commentloop();
+            $commentloop->init();
 
             //check to make sure that the logged in user can delete
-            if ($comment->user_can_delete()) {
+            if ($commentloop->user_can_delete($commentid)) {
 
                 //yes we can delete, delete the comment
-                $comment->delete();
+                $commentloop->delete_comment($commentid);
             }
 
             if (!$isajaxrequest) {
-                redirect(new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $comment->get_gareaid(), 'guser' => $comment->get_guserid())));
+                redirect(new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid, 'guser' => $currentuserid)));
             } else {
                 $renderer = $PAGE->get_renderer('local_joulegrader');
 
-                // @var local_joulegrader_helper_gradingareas $gareashelper
-                $gareashelper = $this->helper->gradingareas;
-                $gareainstance = $gareashelper::get_gradingarea_instance($comment->get_gareaid(), $comment->get_guserid());
 
                 // get the comment loop comments and render comments
-                $comments = $gareainstance->get_commentloop()->get_comments();
+                $comments = $commentloop->get_comments();
                 $commenthtml = '';
                 foreach ($comments as $comment) {
                     $commenthtml .= $renderer->render($comment);
