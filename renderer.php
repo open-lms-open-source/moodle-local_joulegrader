@@ -57,20 +57,17 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         //commenter picture
         $userpic = html_writer::tag('div', $comment->get_avatar(), array('class' => 'local_joulegrader_comment_commenter_pic'));
-        $username = html_writer::tag('div', $comment->get_user_fullname(), array('class' => 'local_joulegrader_comment_commenter_firstname'));
-        $commenterpicture = html_writer::tag('div', $userpic . $username, array('class' => 'local_joulegrader_comment_commenter'));
+        $username = html_writer::tag('div', $comment->get_user_fullname(), array('class' => 'local_joulegrader_comment_commenter_fullname'));
 
         //comment timestamp
         $commenttime = html_writer::tag('div', userdate($comment->get_timecreated(), $comment->get_dateformat()), array('class' => 'local_joulegrader_comment_time'));
+        $fullnametime =  html_writer::tag('div', $username . $commenttime, array('class' => 'local_joulegrader_comment_fullnametime'));
 
         //comment content
 //        $content = file_rewrite_pluginfile_urls($comment->get_content(), 'pluginfile.php', $comment->get_context()->id
 //                , 'local_joulegrader', 'comment', $comment->get_id());
         $content = $this->filter_kaltura_video($comment->get_content());
-        $commentcontent = html_writer::tag('div', $content, array('class' => 'local_joulegrader_comment_content'));
-
-        //coment body
-        $commentbody = $commenttime . $commentcontent;
+        $commentbody = html_writer::tag('div', $content, array('class' => 'local_joulegrader_comment_content'));
 
         //comment body
         $commentbody = html_writer::tag('div', $commentbody, array('class' => 'local_joulegrader_comment_body'));
@@ -85,13 +82,13 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         }
         $deletebutton = html_writer::tag('div', $deletebutton, array('class' => 'local_joulegrader_comment_delete'));
 
-        //attachments - tricky
-
         //determine classes for comment
         $commentclasses = array('local_joulegrader_comment');
 
+        $commenttopbar = html_writer::tag('div', $userpic . $fullnametime . $deletebutton, array('class' => 'local-joulegrader-comment-topbar'));
+
         //put it all together
-        $html = html_writer::tag('div', $commenterpicture . $commentbody . $deletebutton, array('class' => implode(' ', $commentclasses)));
+        $html = html_writer::tag('div', $commenttopbar . $commentbody, array('class' => implode(' ', $commentclasses)));
 
         return $html;
     }

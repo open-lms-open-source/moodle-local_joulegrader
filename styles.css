@@ -117,18 +117,14 @@
     margin-top: 2px;
 }
 
-.local_joulegrader_comment_commenter, .local_joulegrader_comment_body, .local_joulegrader_comment_delete {
+.local_joulegrader_comment_commenter_pic, .local_joulegrader_comment_fullnametime, .local_joulegrader_comment_delete {
     display: inline-block;
+    vertical-align: top;
 }
 
-.local_joulegrader_comment_commenter {
-    float: left;
-    width: 15%;
-}
-
-.local_joulegrader_comment_commenter_firstname {
-    font-size: 0.5em;
-    text-align: center;
+.local_joulegrader_comment_fullnametime {
+    font-size: 0.8em;
+    padding-left: 1em;
 }
 
 .local_joulegrader_comment_delete {
@@ -136,17 +132,12 @@
 }
 
 .local_joulegrader_comment_body {
-    width: 65%;
-    padding: 0 .5em .5em .5em;
+    padding: .5em .5em .5em 0em;
     font-size: 0.8em;
 }
 
 .local_joulegrader_comment {
     clear: both;
-}
-
-.local_joulegrader_comment.deleted {
-    color: grey;
 }
 
 .local_joulegrader_commentloop #fitem_id_comment, .local_joulegrader_commentloop .mform fieldset div {
