@@ -36,16 +36,12 @@ class local_joulegrader_form_comment extends moodleform {
             'theme_advanced_buttons3_add' => null,
         );
 
-        //editoroptions
-        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true, 'tinymceparams' => $tineymceparams);
+        // Editor options.
+        $editoroptions = array('return_types' => FILE_EXTERNAL, 'tinymceparams' => $tineymceparams);
 
         //comment editor
         $mform->addElement('editor', 'comment', null, array('cols' => 10, 'rows' => 8), $editoroptions);
         $mform->addRule('comment', get_string('commentrequired', 'local_joulegrader'), 'required', null, 'client');
-
-        //file manager
-//        $mform->addElement('filemanager', 'attachments', null, null
-//                , array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes, 'maxfiles' => 50));
 
         //submit button
         $this->add_action_buttons(false, get_string('add', 'local_joulegrader'));
