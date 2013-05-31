@@ -344,10 +344,10 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
      * @return array - cm and assign record
      */
     protected static function get_assign_info(grading_manager $gradingmanager) {
-        global $COURSE, $DB;
+        global $DB;
 
         //load the course_module from the context
-        $cm = get_coursemodule_from_id('assign', $gradingmanager->get_context()->instanceid, $COURSE->id, false, MUST_EXIST);
+        $cm = get_coursemodule_from_id('assign', $gradingmanager->get_context()->instanceid, 0, false, MUST_EXIST);
 
         //load the assignment record
         $assign = $DB->get_record('assign', array('id' => $cm->instance), '*', MUST_EXIST);
@@ -359,7 +359,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
      * @throws coding_exception
      */
     protected function load_assign() {
-        global $CFG, $COURSE;
+        global $CFG;
 
         try {
             //load the assignment record
@@ -368,7 +368,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
             //instantiate the assign class
             /// Load up the required assignment code
             require_once($CFG->dirroot.'/mod/assign/locallib.php');
-            $this->assign = new assign($this->get_gradingmanager()->get_context(), $cm, $COURSE);
+            $this->assign = new assign($this->get_gradingmanager()->get_context(), $cm, null);
 
             // Set the db record as the instance
             $this->assign->set_instance($assign);

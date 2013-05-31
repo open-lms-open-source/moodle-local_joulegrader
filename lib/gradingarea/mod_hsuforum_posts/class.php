@@ -123,11 +123,8 @@ class local_joulegrader_lib_gradingarea_mod_hsuforum_posts_class extends local_j
      * @return stdClass
      */
     public function get_comment_info() {
-        global $COURSE;
-
         $options          = new stdClass();
         $options->area    = 'userposts_comments';
-        $options->course  = $COURSE;
         $options->context = $this->get_gradingmanager()->get_context();
         $options->itemid  = $this->get_guserid();
         $options->component = 'hsuforum';
