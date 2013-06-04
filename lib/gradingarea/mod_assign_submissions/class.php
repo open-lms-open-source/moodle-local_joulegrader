@@ -414,6 +414,16 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
     }
 
     /**
+     * @return stdClass File area information for use in comments
+     */
+    public function get_comment_filearea_info() {
+        return (object) array(
+            'component' => 'assignsubmission_comments',
+            'filearea' => 'comments'
+        );
+    }
+
+    /**
      * Loads the submission
      *
      * @return mixed

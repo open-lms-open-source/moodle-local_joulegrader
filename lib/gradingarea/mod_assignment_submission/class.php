@@ -279,6 +279,16 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
     }
 
     /**
+     * @return stdClass File area information for use in comments
+     */
+    public function get_comment_filearea_info() {
+        return (object) array(
+            'component' => 'mod_assignment',
+            'filearea' => 'comments'
+        );
+    }
+
+    /**
      * Load the submission record for the set user / assignment
      *
      * @param $create

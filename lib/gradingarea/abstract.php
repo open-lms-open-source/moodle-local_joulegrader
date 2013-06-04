@@ -275,13 +275,6 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
         $this->commentloop = $commentloop;
     }
 
-    /**
-     * @param local_joulegrader_lib_comment[] $comments
-     * @return local_joulegrader_lib_comment[]
-     */
-    public function comments_hook($comments) {
-        return $comments;
-    }
 
     /**
      * @return bool
@@ -289,6 +282,20 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     public function has_comments() {
         return true;
     }
+
+
+    public function get_editor_options() {
+        return array(
+            'return_types' => FILE_EXTERNAL | FILE_INTERNAL,
+            'maxfiles' => EDITOR_UNLIMITED_FILES,
+            'context' => $this->get_gradingmanager()->get_context(),
+        );
+    }
+
+    /**
+     * @return stdClass
+     */
+    abstract public function get_comment_filearea_info();
 
     /**
      * Returns the $options object to be passed to comment/lib.php comment class constructor

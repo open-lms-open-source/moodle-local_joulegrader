@@ -12,7 +12,7 @@ class local_joulegrader_lib_comment_class implements renderable {
     /**
      * @var stdClass Comment record from comment api
      */
-    public $commmentrecord;
+    public $commentrecord;
 
     /**
      * @var context
@@ -48,6 +48,13 @@ class local_joulegrader_lib_comment_class implements renderable {
      */
     public function get_content() {
         return $this->commentrecord->content;
+    }
+
+    /**
+     * @param string $content
+     */
+    public function set_content($content) {
+        $this->commentrecord->content = $content;
     }
 
     /**

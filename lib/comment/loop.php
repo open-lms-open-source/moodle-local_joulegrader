@@ -109,6 +109,7 @@ class local_joulegrader_lib_comment_loop implements renderable {
      * @return local_joulegrader_lib_comment_class
      */
     public function add_comment($commentdata) {
+        global $DB;
 
         // Add the comment via the comment object.
         $commentrecord = $this->commentapi->add($commentdata->comment['text'], FORMAT_MOODLE);
@@ -117,12 +118,17 @@ class local_joulegrader_lib_comment_loop implements renderable {
         $comment = new local_joulegrader_lib_comment_class($commentrecord);
 
         //file area
-//        $itemid = $commentdata->comment['itemid'];
+        $itemid = $commentdata->comment['itemid'];
         $context = $this->gradingarea->get_gradingmanager()->get_context();
-//        $content = file_save_draft_area_files($itemid, $context->id, 'local_joulegrader', 'comment', $comment->id, null, $comment->content);
-//
-//        $comment->set_content($content);
-//        $comment->save();
+        $fileareainfo = $this->gradingarea->get_comment_filearea_info();
+        $editoroptions = $this->gradingarea->get_editor_options();
+        $content = file_save_draft_area_files($itemid, $context->id, $fileareainfo->component, $fileareainfo->filearea,
+                $comment->get_id(), $editoroptions, $commentdata->comment['text']);
+
+        if ($content != $commentdata->comment['text']) {
+            $comment->set_content(format_text($content, FORMAT_MOODLE, array('overflowdiv' => true)));
+            $DB->update_record('comments', (object) array('id' => $comment->get_id(), 'content' => $content));
+        }
 
         // set the context
         $comment->set_context($context);
@@ -178,6 +184,6 @@ class local_joulegrader_lib_comment_loop implements renderable {
         $mformurl = new moodle_url('/local/joulegrader/view.php', $urlparams);
 
         //instantiate the form
-        $this->mform = new local_joulegrader_form_comment($mformurl);
+        $this->mform = new local_joulegrader_form_comment($mformurl, $this->gradingarea->get_editor_options());
     }
 }

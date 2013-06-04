@@ -133,6 +133,16 @@ class local_joulegrader_lib_gradingarea_mod_hsuforum_posts_class extends local_j
     }
 
     /**
+     * @return stdClass File area information for use in comments
+     */
+    public function get_comment_filearea_info() {
+        return (object) array(
+            'component' => 'mod_hsuforum',
+            'filearea' => 'comments'
+        );
+    }
+
+    /**
      * @return array - the viewpane class and path to the class that this gradingarea class should use
      */
     protected function get_viewpane_info() {

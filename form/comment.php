@@ -37,7 +37,8 @@ class local_joulegrader_form_comment extends moodleform {
         );
 
         // Editor options.
-        $editoroptions = array('return_types' => FILE_EXTERNAL, 'tinymceparams' => $tineymceparams);
+        $editoroptions = $this->_customdata;
+        $editoroptions['tinymceparams'] = $tineymceparams;
 
         //comment editor
         $mform->addElement('editor', 'comment', null, array('cols' => 10, 'rows' => 8), $editoroptions);
