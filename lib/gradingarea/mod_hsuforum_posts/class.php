@@ -127,7 +127,7 @@ class local_joulegrader_lib_gradingarea_mod_hsuforum_posts_class extends local_j
         $options->area    = 'userposts_comments';
         $options->context = $this->get_gradingmanager()->get_context();
         $options->itemid  = $this->get_guserid();
-        $options->component = 'hsuforum';
+        $options->component = 'mod_hsuforum';
 
         return $options;
     }

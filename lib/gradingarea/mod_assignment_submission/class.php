@@ -273,7 +273,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
         $options->area    = 'submission_comments';
         $options->context = $this->get_gradingmanager()->get_context();
         $options->itemid  = $this->get_submission(true)->id;
-        $options->component = 'assignment';
+        $options->component = 'mod_assignment';
 
         return $options;
     }
