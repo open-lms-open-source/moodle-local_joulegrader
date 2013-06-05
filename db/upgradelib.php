@@ -32,7 +32,7 @@ class local_joulegrader_comments_upgrader {
      * Upgrades all the Joule Grader comments that are supported by the core comment api.
      */
     public function upgrade() {
-        global $CFG;
+        global $CFG, $DB;
         require_once($CFG->dirroot . '/comment/lib.php');
 
         $gradeareahelper = $this->gradeareahelper;
@@ -40,7 +40,7 @@ class local_joulegrader_comments_upgrader {
         $gareaid = 0;
         $guserid = 0;
         $fs = get_file_storage();
-        if ($rs = $this->db->get_recordset_select('local_joulegrader_comments', 'deleted IS NULL', array(),
+        if ($rs = $DB->get_recordset_select('local_joulegrader_comments', 'deleted IS NULL', array(),
             'gareaid ASC, guserid ASC')) {
             foreach ($rs as $crecord) {
                 try {
@@ -100,11 +100,12 @@ class local_joulegrader_comment_upgrader {
 
 
     public function __construct(comment $commentapi, file_storage $fs, $db = null) {
+        global $DB;
+
         $this->commentapi = $commentapi;
         $this->fs = $fs;
 
         if (is_null($db)) {
-            global $DB;
             $db = $DB;
         }
         $this->db = $db;
@@ -127,11 +128,11 @@ class local_joulegrader_comment_upgrader {
         );
 
         if ($newid = $this->db->insert_record('comments', (object) $newcomment)) {
-            if ($commentfiles = $this->fs->get_area_files($newcomment['contextid'], 'local_joulegrader', 'comments', $commentrecord->id)) {
+            if ($commentfiles = $this->fs->get_area_files($newcomment['contextid'], 'local_joulegrader', 'comment', $commentrecord->id)) {
                 foreach ($commentfiles as $commentfile) {
-                    $newfilerecord = stdClass();
+                    $newfilerecord = new stdClass();
                     $newfilerecord->component = $this->commentapi->get_compontent();
-                    $newfilerecord->filearea  = $newcomment['commentarea'];
+                    $newfilerecord->filearea  = 'comments';
                     $newfilerecord->itemid    = $newid;
 
                     $this->fs->create_file_from_storedfile($newfilerecord, $commentfile);
