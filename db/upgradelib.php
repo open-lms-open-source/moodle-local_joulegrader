@@ -49,6 +49,7 @@ class local_joulegrader_comments_upgrader {
         $commentupgrader = null;
         $gareaid = 0;
         $guserid = 0;
+        $fs = get_file_storage();
         while ($rs = $this->commentloader->load()) {
             foreach ($rs as $crecord) {
                 try {
@@ -61,7 +62,7 @@ class local_joulegrader_comments_upgrader {
                         $gradingarea = $gradeareahelper::get_gradingarea_instance($crecord->gareaid, $crecord->guserid);
                         $commentapi  = new comment($gradingarea->get_comment_info());
 
-                        $commentupgrader = new local_joulegrader_comment_upgrader($commentapi);
+                        $commentupgrader = new local_joulegrader_comment_upgrader($commentapi, $fs);
 
                         // Update the current grading area and user.
                         $gareaid = $crecord->gareaid;
@@ -97,13 +98,19 @@ class local_joulegrader_comment_upgrader {
     protected $commentapi;
 
     /**
+     * @var file_storage
+     */
+    protected $fs;
+
+    /**
      * @var moodle_database
      */
     protected $db;
 
 
-    public function __construct(comment $commentapi, $db = null) {
+    public function __construct(comment $commentapi, file_storage $fs, $db = null) {
         $this->commentapi = $commentapi;
+        $this->fs = $fs;
 
         if (is_null($db)) {
             global $DB;
@@ -128,7 +135,18 @@ class local_joulegrader_comment_upgrader {
             'timecreated' => $commentrecord->timecreated,
         );
 
-        $this->db->insert_record('comments', (object) $newcomment);
+        if ($newid = $this->db->insert_record('comments', (object) $newcomment)) {
+            if ($commentfiles = $this->fs->get_area_files($newcomment['contextid'], 'local_joulegrader', 'comments', $commentrecord->id)) {
+                foreach ($commentfiles as $commentfile) {
+                    $newfilerecord = stdClass();
+                    $newfilerecord->component = $this->commentapi->get_compontent();
+                    $newfilerecord->filearea  = $newcomment['commentarea'];
+                    $newfilerecord->itemid    = $newid;
+
+                    $this->fs->create_file_from_storedfile($newfilerecord, $commentfile);
+                }
+            }
+        }
     }
 }
 
