@@ -19,23 +19,13 @@ class local_joulegrader_comments_upgrader {
      */
     protected $gradeareahelper;
 
-    /**
-     * @var local_joulegrader_comment_loader
-     */
-    protected $commentloader;
-
-    public function __construct($gradeareahelper = null, $commentloader = null) {
+    public function __construct($gradeareahelper = null) {
         if (is_null($gradeareahelper)) {
             global $CFG;
             require_once($CFG->dirroot. '/local/joulegrader/helper/gradingareas.php');
             $gradeareahelper = new local_joulegrader_helper_gradingareas();
         }
         $this->gradeareahelper = $gradeareahelper;
-
-        if (is_null($commentloader)) {
-            $commentloader = new local_joulegrader_comment_loader();
-        }
-        $this->commentloader = $commentloader;
     }
 
     /**
@@ -50,7 +40,8 @@ class local_joulegrader_comments_upgrader {
         $gareaid = 0;
         $guserid = 0;
         $fs = get_file_storage();
-        while ($rs = $this->commentloader->load()) {
+        if ($rs = $this->db->get_recordset_select('local_joulegrader_comments', 'deleted IS NULL', array(),
+            'gareaid ASC, guserid ASC')) {
             foreach ($rs as $crecord) {
                 try {
                     if (!$commentupgrader instanceof local_joulegrader_comment_upgrader or
@@ -147,54 +138,5 @@ class local_joulegrader_comment_upgrader {
                 }
             }
         }
-    }
-}
-
-/**
- * Class local_joulegrader_comment_loader
- *
- * @author Sam Chaffee
- * @package local/joulegrader
- */
-class local_joulegrader_comment_loader {
-
-    /**
-     * @var moodle_database
-     */
-    protected $db;
-
-    /**
-     * @var int
-     */
-    protected $limitfrom = 0;
-
-    /**
-     * @const int
-     */
-    const LIMITNUM = 500;
-
-    public function __construct($db = null) {
-        if (is_null($db)) {
-            global $DB;
-
-            $this->db = $DB;
-        }
-    }
-
-    /**
-     * @return moodle_recordset|false
-     */
-    public function load() {
-        $select = 'deleted IS NULL';
-        $rs = $this->db->get_recordset_select('local_joulegrader_comments', $select, array(),
-                'gareaid ASC, guserid ASC', '*', $this->limitfrom, self::LIMITNUM);
-
-        $this->limitfrom += self::LIMITNUM;
-
-        if ($rs->valid()) {
-            return $rs;
-        }
-
-        return false;
     }
 }
