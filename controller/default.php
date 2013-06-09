@@ -351,7 +351,9 @@ class local_joulegrader_controller_default extends mr_controller {
             $currentareaid = required_param('garea', PARAM_INT);
             $currentuserid = required_param('guser', PARAM_INT);
 
-            //@var local_joulegrader_helper_gradingareas $gareashelper
+            /**
+             * @var local_joulegrader_helper_gradingareas $gareashelper
+             */
             $gareashelper = $this->helper->gradingareas;
 
             //need to prime the helper with the grading areas for the get_currentarea()
