@@ -35,6 +35,11 @@ class local_joulegrader_lib_comment_loop implements renderable {
     protected $mform;
 
     /**
+     * @var int - most recent comment item id
+     */
+    protected $commentitemid;
+
+    /**
      * @param $gradingarea - local_joulegrader_lib_gradingarea_abstract
      */
     public function __construct($gradingarea) {
@@ -109,31 +114,48 @@ class local_joulegrader_lib_comment_loop implements renderable {
      * @return local_joulegrader_lib_comment_class
      */
     public function add_comment($commentdata) {
-        global $DB;
+
+        // Store for comment_post_insert callback.
+        $this->commentitemid = $commentdata->comment['itemid'];
 
         // Add the comment via the comment object.
-        $commentrecord = $this->commentapi->add($commentdata->comment['text'], FORMAT_MOODLE);
+        $commentrecord = $this->commentapi->add($commentdata->comment['text'], FORMAT_MOODLE, array($this, 'comment_post_insert'));
 
         // Instantiate a joule grader comment object.
         $comment = new local_joulegrader_lib_comment_class($commentrecord);
 
-        //file area
-        $itemid = $commentdata->comment['itemid'];
         $context = $this->gradingarea->get_gradingmanager()->get_context();
-        $fileareainfo = $this->gradingarea->get_comment_filearea_info();
-        $editoroptions = $this->gradingarea->get_editor_options();
-        $content = file_save_draft_area_files($itemid, $context->id, $fileareainfo->component, $fileareainfo->filearea,
-                $comment->get_id(), $editoroptions, $commentdata->comment['text']);
-
-        if ($content != $commentdata->comment['text']) {
-            $comment->set_content(format_text($content, FORMAT_MOODLE, array('overflowdiv' => true)));
-            $DB->update_record('comments', (object) array('id' => $comment->get_id(), 'content' => $content));
-        }
 
         // set the context
         $comment->set_context($context);
         $comment->set_gareaid($this->gradingarea->get_areaid());
         $comment->set_guserid($this->gradingarea->get_guserid());
+
+        return $comment;
+    }
+
+    /**
+     * Callback from comment:add() to handle files.
+     *
+     * @param stdClass $comment
+     * @return stdClass
+     */
+    public function comment_post_insert(stdClass $comment) {
+        global $DB;
+
+        $itemid = $this->commentitemid;
+        $context = $this->gradingarea->get_gradingmanager()->get_context();
+        $fileareainfo = $this->gradingarea->get_comment_filearea_info();
+        $editoroptions = $this->gradingarea->get_editor_options();
+        $content = file_save_draft_area_files($itemid, $context->id, $fileareainfo->component, $fileareainfo->filearea,
+            $comment->id, $editoroptions, $comment->content);
+
+        if ($content != $comment->content) {
+            $DB->update_record('comments', (object) array('id' => $comment->id, 'content' => $content));
+            $comment->content = $content;
+        }
+
+        $this->commentitemid = null;
 
         return $comment;
     }
