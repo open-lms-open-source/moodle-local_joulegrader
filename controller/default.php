@@ -105,8 +105,8 @@ class local_joulegrader_controller_default extends mr_controller {
         $activitynavcon = $OUTPUT->container($menunav, 'yui3-u-2-3', 'local-joulegrader-menunav');
 
         //if the current user id and the current area id are not empty, load the class and get the pane contents
+        $renderer = $PAGE->get_renderer('local_joulegrader');
         if (!empty($currentareaid) && !empty($currentuserid)) {
-            $renderer = $PAGE->get_renderer('local_joulegrader');
 
             //load the current area instance
             if (!isset($this->gradeareainstance)) {
