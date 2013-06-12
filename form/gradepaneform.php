@@ -63,6 +63,16 @@ class local_joulegrader_form_gradepaneform extends moodleform {
             $mform->setDefault('grade', $grade);
         }
 
+        // Add overall feedback.
+        if ($this->_customdata->has_overall_feedback()) {
+            $this->_customdata->add_feedback_form($mform);
+        }
+
+        // Add file feedback.
+        if ($this->_customdata->has_file_feedback()) {
+            $this->_customdata->add_filefeedback_form($mform);
+        }
+
         //check for override
         if ($this->_customdata->has_override()) {
             //if overridden in gradebook, add a checkbox

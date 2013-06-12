@@ -16,6 +16,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     public function render_local_joulegrader_lib_comment_loop(local_joulegrader_lib_comment_loop $commentloop) {
         global $PAGE;
 
+        $commentloop->init();
+
         //get the comments
         $comments = $commentloop->get_comments();
 
@@ -34,8 +36,11 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $mrhelper = new mr_helper();
         $mformhtml = $mrhelper->buffer(array($mform, 'display'));
 
+        $commentlegend = html_writer::tag('legend', get_string('activitycomments', 'local_joulegrader'));
+
         $id = uniqid('local-joulegrader-commentloop-con-');
         $html = html_writer::tag('div', $commentshtml . $mformhtml, array('id' => $id, 'class' => 'local_joulegrader_commentloop'));
+        $html = html_writer::tag('fieldset', $commentlegend . $html, array('class' => 'fieldset'));
 
         $module = $this->get_js_module();
         $PAGE->requires->js_init_call('M.local_joulegrader.init_commentloop', array('id' => $id), true, $module);
@@ -50,63 +55,47 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     public function render_local_joulegrader_lib_comment_class(local_joulegrader_lib_comment_class $comment) {
         global $OUTPUT, $COURSE;
 
-        //get the commenter user object - has fields for $OUTPUT->user_picture() and fullname()
-        $commenter = $comment->get_commenter();
-
         //commenter picture
-        $userpic = html_writer::tag('div', $OUTPUT->user_picture($commenter), array('class' => 'local_joulegrader_comment_commenter_pic'));
-        $username = html_writer::tag('div', $commenter->firstname, array('class' => 'local_joulegrader_comment_commenter_firstname'));
-        $commenterpicture = html_writer::tag('div', $userpic . $username, array('class' => 'local_joulegrader_comment_commenter'));
+        $userpic = html_writer::tag('div', $comment->get_avatar(), array('class' => 'local_joulegrader_comment_commenter_pic'));
+        $username = html_writer::tag('div', $comment->get_user_fullname(), array('class' => 'local_joulegrader_comment_commenter_fullname'));
 
         //comment timestamp
-        $commenttime = html_writer::tag('div', userdate($comment->get_timecreated(), '%d %B %H:%M'), array('class' => 'local_joulegrader_comment_time'));
+        $commenttime = html_writer::tag('div', userdate($comment->get_timecreated(), $comment->get_dateformat()), array('class' => 'local_joulegrader_comment_time'));
+        $fullnametime =  html_writer::tag('div', $username . $commenttime, array('class' => 'local_joulegrader_comment_fullnametime'));
 
         //comment content
-        $content = file_rewrite_pluginfile_urls($comment->get_content(), 'pluginfile.php', $comment->get_context()->id
-                , 'local_joulegrader', 'comment', $comment->get_id());
-        $content = $this->filter_kaltura_video(format_text($content, FORMAT_HTML));
-        $commentcontent = html_writer::tag('div', $content, array('class' => 'local_joulegrader_comment_content'));
-
-        //coment body
-        $commentbody = $commenttime;
-        $commentdeleted = $comment->get_deleted();
-
-        if ($commentdeleted) {
-            //comment has been deleted, check for admin capability
-            if (has_capability('moodle/site:config', context_system::instance())) {
-                //this is an admin viewing, they can see the content of the comment still
-                $commentbody .= $commentcontent;
-            }
-            //everyone sees who deleted the comment and when
-            $commentbody .= get_string('commentdeleted', 'local_joulegrader'
-                    , array('deletedby' => fullname($commenter), 'deletedon' => userdate($commentdeleted, '%d %B %H:%M')));
-        } else {
-            //comment has not been deleted, add the comment content
-            $commentbody .= $commentcontent;
-        }
+//        $content = file_rewrite_pluginfile_urls($comment->get_content(), 'pluginfile.php', $comment->get_context()->id
+//                , 'local_joulegrader', 'comment', $comment->get_id());
+        $content = $this->filter_kaltura_video($comment->get_content());
+        $commentbody = html_writer::tag('div', $content, array('class' => 'local_joulegrader_comment_content'));
 
         //comment body
         $commentbody = html_writer::tag('div', $commentbody, array('class' => 'local_joulegrader_comment_body'));
 
         //delete button
         $deletebutton = '';
-        if ($comment->user_can_delete()) {
-            $deleteurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'action' => 'deletecomment'
-                    , 'commentid' => $comment->get_id(), 'sesskey' => sesskey()));
+        if ($comment->can_delete()) {
+            $deleteparams = array(
+                'courseid' => $COURSE->id,
+                'action' => 'deletecomment',
+                'commentid' => $comment->get_id(),
+                'sesskey' => sesskey(),
+                'garea' => $comment->get_gareaid(),
+                'guser' => $comment->get_guserid()
+            );
+            $deleteurl = new moodle_url('/local/joulegrader/view.php', $deleteparams);
             $deletebutton = $OUTPUT->action_icon($deleteurl, new pix_icon('t/delete'
                 , get_string('deletecomment', 'local_joulegrader', userdate($comment->get_timecreated(), '%d %B %H:%M:%S'))));
         }
         $deletebutton = html_writer::tag('div', $deletebutton, array('class' => 'local_joulegrader_comment_delete'));
 
-        //attachments - tricky
-
         //determine classes for comment
         $commentclasses = array('local_joulegrader_comment');
-        if ($commentdeleted) {
-            $commentclasses[] = 'deleted';
-        }
+
+        $commenttopbar = html_writer::tag('div', $userpic . $fullnametime . $deletebutton, array('class' => 'local-joulegrader-comment-topbar'));
+
         //put it all together
-        $html = html_writer::tag('div', $commenterpicture . $commentbody . $deletebutton, array('class' => implode(' ', $commentclasses)));
+        $html = html_writer::tag('div', $commenttopbar . $commentbody, array('class' => implode(' ', $commentclasses)));
 
         return $html;
     }
@@ -181,7 +170,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function help_render_gradepane($gradepane) {
-        global $PAGE, $CFG;
+        global $PAGE;
 
         $html = '';
         $modalhtml = '';
@@ -221,6 +210,14 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         } else {
             // Student view of the grading pane
+            if ($feedback = $gradepane->get_overall_feedback()) {
+                $feedback = html_writer::tag('div', get_string('overallfeedback', 'local_joulegrader') . ': ' . $feedback);
+            }
+
+            if ($filefeedback = $gradepane->get_file_feedback()) {
+                $filefeedback = html_writer::tag('div', get_string('filefeedback', 'local_joulegrader') . ': ' . $filefeedback);
+            }
+
             if ($gradepane->has_modal()) {
                 //this is for a student
                 $options = $gradepane->get_controller()->get_options();
@@ -241,11 +238,6 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 $html .= $this->help_render_currentgrade($gradepane);
                 $html .= $this->help_render_modalbutton($gradepane);
 
-//                if ((!$grade->grade === false) && empty($grade->hidden)) {
-//                    $gradestr = '<div class="grade">'. get_string("grade").': '.$grade->str_long_grade. '</div>';
-//                } else {
-//                    $gradestr = '';
-//                }
                 $gradestr = $this->help_render_currentgrade($gradepane);
                 $controller = $gradepane->get_controller();
 
@@ -269,6 +261,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 } else {
                     $controller->set_grade_range(make_grades_menu($gradepane->get_grade()));
                     $modalhtml = $controller->render_grade($PAGE, $gradepane->get_agitemid(), $item, $gradestr, false);
+                    $modalhtml .= $feedback;
+                    $modalhtml .= $filefeedback;
                 }
             } else {
                 $grade = -1;
@@ -296,6 +290,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     $html .= get_string('gradeoutof', 'local_joulegrader', $gradepane->get_grade()) . ': ';
                     $html .= $grade;
                 }
+                $html .= $feedback;
+                $html .= $filefeedback;
                 $html .= html_writer::end_tag('div');
             }
         }
@@ -354,7 +350,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      *
      * @return array
      */
-    protected function get_js_module() {
+    public function get_js_module() {
 
         return array(
             'name' => 'local_joulegrader',
@@ -364,6 +360,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 'node',
                 'event',
                 'io',
+                'dd-drag',
+                'dd-constrain',
                 'panel',
                 'dd-plugin',
                 'json-parse',
@@ -684,6 +682,49 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         }
 
         return $html;
+    }
+
+    /**
+     * Generates HTML for the calculating grid widths/positions for drag and drop grade pane resize.
+     *
+     * @return string
+     */
+    public function help_render_dummygrids() {
+        global $OUTPUT;
+
+        $dummythirds = $OUTPUT->container('', 'yui3-u-2-3');
+        $dummythirds .= $OUTPUT->container('', 'yui3-u-1-3   local-joulegrader-dummy');
+        $output = $OUTPUT->container($dummythirds, 'yui3-u-1');
+
+        $dummyhalves = $OUTPUT->container('', 'yui3-u-1-2');
+        $dummyhalves .= $OUTPUT->container('', 'yui3-u-1-2   local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummyhalves, 'yui3-u-1');
+
+        $dummyfifths = $OUTPUT->container('', 'yui3-u-4-5');
+        $dummyfifths .= $OUTPUT->container('', 'yui3-u-1-5  local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummyfifths, 'yui3-u-1');
+
+        $dummysixths = $OUTPUT->container('', 'yui3-u-5-6');
+        $dummysixths .= $OUTPUT->container('', 'yui3-u-1-6 local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummysixths, 'yui3-u-1');
+
+        $dummyfourths = $OUTPUT->container('', 'yui3-u-3-4');
+        $dummyfourths .= $OUTPUT->container('', 'yui3-u-1-4 local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummyfourths, 'yui3-u-1');
+
+        $dummyeighths = $OUTPUT->container('', 'yui3-u-5-8');
+        $dummyeighths .= $OUTPUT->container('', 'yui3-u-3-8 local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummyeighths, 'yui3-u-1');
+
+        $dummytwelfths = $OUTPUT->container('', 'yui3-u-7-12');
+        $dummytwelfths .= $OUTPUT->container('', 'yui3-u-5-12 local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummytwelfths, 'yui3-u-1');
+
+        $dummy24ths = $OUTPUT->container('', 'yui3-u-13-24');
+        $dummy24ths .= $OUTPUT->container('', 'yui3-u-11-24 local-joulegrader-dummy');
+        $output .= $OUTPUT->container($dummy24ths, 'yui3-u-1');
+
+        return $output;
     }
 
     /**

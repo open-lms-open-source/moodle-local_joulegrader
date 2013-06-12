@@ -16,6 +16,7 @@ class local_joulegrader_controller_default extends mr_controller {
         switch ($this->action) {
             case 'process':
                 require_capability('local/joulegrader:grade', $this->get_context());
+                break;
             case 'view':
             default:
                 if (!has_capability('local/joulegrader:grade', $this->get_context())) {
@@ -37,11 +38,23 @@ class local_joulegrader_controller_default extends mr_controller {
         //add 'joule Grader' to bread crumb
         $PAGE->navbar->add(get_string('pluginname', 'local_joulegrader'));
 
+        $fullscreen = get_user_preferences('local_joulegrader_fullscreen', 1);
+        $fullscreenchg = optional_param('fullscreen', -1, PARAM_INT);
+        if ($fullscreenchg != -1) {
+            set_user_preference('local_joulegrader_fullscreen', $fullscreenchg);
+            $fullscreen = $fullscreenchg;
+        }
+
+        $layout = 'standard';
+        if (!empty($fullscreen)) {
+            $layout = 'embedded';
+        }
+
         // set layout to include blocks
         switch ($this->action) {
             case 'view':
             case 'process':
-                $PAGE->set_pagelayout('standard');
+                $PAGE->set_pagelayout($layout);
                 break;
             case 'viewcommentloop':
                 $PAGE->set_pagelayout('embedded');
@@ -55,7 +68,7 @@ class local_joulegrader_controller_default extends mr_controller {
      * @return string - the html for the view action
      */
     public function view_action() {
-        global $OUTPUT, $COURSE, $PAGE;
+        global $OUTPUT, $PAGE;
 
         //check for mobile browsers (currently not supported)
         if (get_device_type() == 'mobile') {
@@ -83,30 +96,17 @@ class local_joulegrader_controller_default extends mr_controller {
         $currentareaid = $gareashelper->get_currentarea();
         $currentuserid = $usershelper->get_currentuser();
 
-        //needs grading button
-        //button nav
-        $buttonnav = '';
-        if (has_capability('local/joulegrader:grade', $this->get_context())) {
-            $buttonurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid
-                    , 'guser' => $currentuserid));
-
-            $needsgrading = optional_param('needsgrading', 0, PARAM_BOOL);
-            if (empty($needsgrading)) {
-                $buttonstring = get_string('needsgrading', 'local_joulegrader');
-                $buttonurl->param('needsgrading', 1);
-            } else {
-                $buttonstring = get_string('allactivities', 'local_joulegrader');
-            }
-            $buttonnav = $OUTPUT->single_button($buttonurl, $buttonstring, 'get');
-        }
+        $buttonbaseurl = clone $this->url;
+        $buttonbaseurl->params(array('guser' => $currentuserid, 'garea' => $currentareaid));
+        $buttons = $this->helper->navigation->get_navigation_buttons($buttonbaseurl, $this->get_context());
 
         $menunav = $OUTPUT->container($activitynav . $usernav, 'content');
-        $buttonnavcon = $OUTPUT->container($buttonnav, 'yui3-u-1-3', 'local-joulegrader-buttonnav');
+        $buttonnavcon = $OUTPUT->container($buttons, 'yui3-u-1-3', 'local-joulegrader-buttonnav');
         $activitynavcon = $OUTPUT->container($menunav, 'yui3-u-2-3', 'local-joulegrader-menunav');
 
         //if the current user id and the current area id are not empty, load the class and get the pane contents
+        $renderer = $PAGE->get_renderer('local_joulegrader');
         if (!empty($currentareaid) && !empty($currentuserid)) {
-            $renderer = $PAGE->get_renderer('local_joulegrader');
 
             //load the current area instance
             if (!isset($this->gradeareainstance)) {
@@ -121,19 +121,28 @@ class local_joulegrader_controller_default extends mr_controller {
             $viewhtml = $renderer->render($gradeareainstance->get_viewpane());
             $gradehtml = $renderer->render($gradeareainstance->get_gradepane());
 
+            $gradinglegend = html_writer::tag('legend', get_string('grading', 'local_joulegrader'));
+            $gradehtml = html_writer::tag('fieldset', $gradinglegend . $gradehtml, array('class' => 'fieldset'));
 
-            //get the comment loop for the gradingarea
-            $commentloophtml = $renderer->render($gradeareainstance->get_commentloop());
+            // Get the comment loop for the gradingarea
+            $commentloophtml = '';
+            if ($gradeareainstance->has_comments()) {
+                $commentloophtml = $renderer->render($gradeareainstance->get_commentloop());
+            }
 
             //get the view pane contents
             $viewpane = '<div class="content">' . $viewhtml . '</div>';
 
+            // Resize bar used by drag and drop.
+            $rs = html_writer::tag('div', "\t", array('id' => 'local-joulegrader-resize'));
 
             //get the grade pane contents
-            $gradepane = '<div class="content">' . $gradehtml . $commentloophtml . '</div>';
+            $gradepane = '<div class="content">' . $rs . $gradehtml . $commentloophtml . '</div>';
 
-            $panescontainer = $OUTPUT->container($viewpane, 'yui3-u-4-5', 'local-joulegrader-viewpane');
-            $panescontainer .= $OUTPUT->container($gradepane, 'yui3-u-1-5', 'local-joulegrader-gradepane');
+            $panescontainer = $OUTPUT->container($viewpane, 'yui3-u-2-3', 'local-joulegrader-viewpane');
+            $panescontainer .= $OUTPUT->container($gradepane, 'yui3-u-1-3', 'local-joulegrader-gradepane');
+
+            $PAGE->requires->js_init_call('M.local_joulegrader.init_resize', null, true, $renderer->get_js_module());
         } else {
             $panescontainer = $OUTPUT->container(html_writer::tag('h1', get_string('nothingtodisplay', 'local_joulegrader')), 'content');
         }
@@ -143,6 +152,9 @@ class local_joulegrader_controller_default extends mr_controller {
 
         //panes container
         $output .= $OUTPUT->container($panescontainer, 'yui3-u-1', 'local-joulegrader-panes');
+
+        // Dummy panes used for calculations.
+        $output .= $renderer->help_render_dummygrids();
 
         //wrap it all up
         $output = $OUTPUT->container($output, 'yui3-g', 'local-joulegrader');
@@ -209,9 +221,9 @@ class local_joulegrader_controller_default extends mr_controller {
         if ((!empty($modalform) && $modalform->is_submitted() && !$modalform->is_validated())
                 || (!empty($paneform) && $paneform->is_submitted() && !$paneform->is_validated())) {
             $this->gradeareainstance = $gradeareainstance;
-            echo $this->print_header();
+            $this->print_header();
             echo $this->view_action();
-            echo $this->print_footer();
+            $this->print_footer();
             die;
         }
 
@@ -236,37 +248,68 @@ class local_joulegrader_controller_default extends mr_controller {
         require_once($CFG->dirroot . '/local/joulegrader/lib/comment/class.php');
         require_once($CFG->dirroot . '/grade/grading/lib.php');
 
-        //ajax request?
+        // Ajax request?
         $isajaxrequest = optional_param('ajax', false, PARAM_BOOL);
 
         try {
-            //required param for commentid
+            // Required param for commentid.
             $commentid = required_param('commentid', PARAM_INT);
 
-            //require sesskey
+            // Get current area id and current user parameters for the gradingarea instance.
+            $currentareaid = required_param('garea', PARAM_INT);
+            $currentuserid = required_param('guser', PARAM_INT);
+
+            // Require sesskey.
             require_sesskey();
 
-            $commentrecord = $DB->get_record('local_joulegrader_comments', array('id' => $commentid), '*', MUST_EXIST);
-            $comment = new local_joulegrader_lib_comment_class($commentrecord);
+            //@var local_joulegrader_helper_gradingareas $gareashelper
+            $gareashelper = $this->helper->gradingareas;
+
+            // Need to prime the helper with the grading areas for the get_currentarea().
+            $gareashelper->get_gradingareas();
+
+            // Make sure that the area passed from the form matches what is determined by the areas helper.
+            if ($currentareaid != $gareashelper->get_currentarea()) {
+                //should not get here unless ppl are messing with form data
+                throw new moodle_exception('areaidpassednotvalid', 'local_joulegrader');
+            }
+
+            // Pull out the users helper and gradingareas helper.
+            $usershelper = $this->helper->users;
+
+            // Just need prime the helper for the currentuser() and nextuser() calls.
+            $usershelper->get_users($gareashelper);
+
+            // Make sure the passed user and passed area match what is available.
+            if ($currentuserid != $usershelper->get_currentuser()) {
+                // There is some funny business going on here.
+                throw new moodle_exception('useridpassednotvalid', 'local_joulegrader');
+            }
+
+            // Load the current area instance.
+            $gradeareainstance = $gareashelper::get_gradingarea_instance($currentareaid, $currentuserid);
+
+            /**
+             * @var local_joulegrader_lib_comment_loop $commentloop
+             */
+            $commentloop = $gradeareainstance->get_commentloop();
+            $commentloop->init();
 
             //check to make sure that the logged in user can delete
-            if ($comment->user_can_delete()) {
+            if ($commentloop->user_can_delete($commentid)) {
 
                 //yes we can delete, delete the comment
-                $comment->delete();
+                $commentloop->delete_comment($commentid);
             }
 
             if (!$isajaxrequest) {
-                redirect(new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $comment->get_gareaid(), 'guser' => $comment->get_guserid())));
+                redirect(new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid, 'guser' => $currentuserid)));
             } else {
                 $renderer = $PAGE->get_renderer('local_joulegrader');
 
-                // @var local_joulegrader_helper_gradingareas $gareashelper
-                $gareashelper = $this->helper->gradingareas;
-                $gareainstance = $gareashelper::get_gradingarea_instance($comment->get_gareaid(), $comment->get_guserid());
 
                 // get the comment loop comments and render comments
-                $comments = $gareainstance->get_commentloop()->get_comments();
+                $comments = $commentloop->get_comments();
                 $commenthtml = '';
                 foreach ($comments as $comment) {
                     $commenthtml .= $renderer->render($comment);
@@ -308,7 +351,9 @@ class local_joulegrader_controller_default extends mr_controller {
             $currentareaid = required_param('garea', PARAM_INT);
             $currentuserid = required_param('guser', PARAM_INT);
 
-            //@var local_joulegrader_helper_gradingareas $gareashelper
+            /**
+             * @var local_joulegrader_helper_gradingareas $gareashelper
+             */
             $gareashelper = $this->helper->gradingareas;
 
             //need to prime the helper with the grading areas for the get_currentarea()
@@ -335,8 +380,11 @@ class local_joulegrader_controller_default extends mr_controller {
             //load the current area instance
             $gradeareainstance = $gareashelper::get_gradingarea_instance($currentareaid, $currentuserid);
 
-            //commentloop
+            /**
+             * @var local_joulegrader_lib_comment_loop $commentloop
+             */
             $commentloop = $gradeareainstance->get_commentloop();
+            $commentloop->init();
 
             if (!$commentloop->user_can_comment()) {
                 throw new moodle_exception('nopermissiontocomment', 'local_joulegrader');
@@ -348,7 +396,7 @@ class local_joulegrader_controller_default extends mr_controller {
             //check to see that form was submitted
             if ($data = $mform->get_data()) {
                 //add the comment to the comment loop
-                $newcomment = $commentloop->add_comment($data);
+                $commentloop->add_comment($data);
             }
 
             if (!$isajaxrequest) {
@@ -426,6 +474,7 @@ class local_joulegrader_controller_default extends mr_controller {
 
         //commentloop
         $commentloop = $gradeareainstance->get_commentloop();
+        $commentloop->init();
 
         $renderer = $PAGE->get_renderer('local_joulegrader');
         //generate loop html
