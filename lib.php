@@ -128,7 +128,8 @@ function local_joulegrader_pluginfile($course, $cm, $context, $filearea, $args, 
  * @return int
  */
 function local_joulegrader_area_from_context(context $context, $activityname) {
-    require_once(__DIR__ . '/helper/gradingareas.php');
+    global $CFG;
+    require_once($CFG->dirroot . '/local/joulegrader/helper/gradingareas.php');
 
     return local_joulegrader_helper_gradingareas::get_areaid_from_context_activityname($context, $activityname);
 }
