@@ -30,17 +30,33 @@ class local_joulegrader_comments_upgrader {
 
     /**
      * Upgrades all the Joule Grader comments that are supported by the core comment api.
+     *
+     * @param int[] $idstoupgrade Array of local_joulegrader_comments.id
+     * @param bool $requireids
      */
-    public function upgrade() {
+    public function upgrade($idstoupgrade = null, $requireids = false) {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/comment/lib.php');
+
+        // Sanity check for the restore process.
+        if ($requireids and (empty($idstoupgrade) or !is_array($idstoupgrade))) {
+            return;
+        }
 
         $gradeareahelper = $this->gradeareahelper;
         $commentupgrader = null;
         $gareaid = 0;
         $guserid = 0;
         $fs = get_file_storage();
-        if ($rs = $DB->get_recordset_select('local_joulegrader_comments', 'deleted IS NULL', array(),
+
+        $whereclause = 'deleted IS NULL';
+        $params = array();
+        if (!empty($idstoupgrade) and is_array($idstoupgrade)) {
+            list($inorequalsql, $params) = $DB->get_in_or_equal($idstoupgrade);
+            $whereclause .= " AND id $inorequalsql";
+        }
+
+        if ($rs = $DB->get_recordset_select('local_joulegrader_comments', $whereclause, $params,
             'gareaid ASC, guserid ASC')) {
             foreach ($rs as $crecord) {
                 try {
