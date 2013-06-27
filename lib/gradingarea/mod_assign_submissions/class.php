@@ -316,6 +316,17 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
                     $include[$userid]->firstname = trim($hiddenuserstr);
                     $include[$userid]->lastname = $uniqueid;
                 }
+
+                uasort($include, function($a, $b) {
+                    $return = 0;
+                    if ($a->lastname > $b->lastname) {
+                        $return = 1;
+                    } else if ($a->lastname < $b->lastname) {
+                        $return = -1;
+                    }
+
+                    return $return;
+                });
             }
 
 
@@ -336,6 +347,36 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         }
 
         return $this->assign;
+    }
+
+    /**
+     * @param local_joulegrader_helper_users $userhelper
+     */
+    public function current_user($userhelper) {
+        global $COURSE, $USER;
+
+        if ($USER->id == $this->guserid) {
+            return;
+        }
+
+        $preferences = new mr_preferences($COURSE->id, 'local_joulegrader');
+        $previousarea = $preferences->get('previousarea', null);
+
+        if (!is_null($previousarea) and $previousarea != $this->areaid) {
+            if ($this->get_assign()->is_blind_marking()) {
+                $userhelper->set_currentuser(array_shift(array_keys($userhelper->get_users())));
+                $this->guserid = $userhelper->get_currentuser();
+            }
+        }
+    }
+
+    /**
+     * @param local_joulegrader_helper_navigation $navhelper
+     */
+    public function current_navuser(local_joulegrader_helper_navigation $navhelper) {
+        if ($this->get_assign()->is_blind_marking()) {
+            $navhelper->set_navcurrentuser(null);
+        }
     }
 
     /**

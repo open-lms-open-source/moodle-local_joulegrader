@@ -203,6 +203,20 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     }
 
     /**
+     * @param local_joulegrader_helper_users $userhelper
+     */
+    public function current_user($userhelper) {
+        return;
+    }
+
+    /**
+     * @param local_joulegrader_helper_navigation $navhelper
+     */
+    public function current_navuser(local_joulegrader_helper_navigation $navhelper) {
+        return;
+    }
+
+    /**
      * @return int - the grading_areas entry id
      */
     public function get_areaid() {

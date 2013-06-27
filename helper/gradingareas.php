@@ -50,13 +50,19 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
 
     /**
      * Main method into helper
+     * @param context $context
      */
-    public function direct() {}
+    public function direct(context $context) {
+        $this->load_gradingareas(has_capability('local/joulegrader:grade', $context));
+    }
 
     /**
      * @static
      * @param $currentareaid
      * @param $currentuserid
+     *
+     * @throws coding_exception
+     *
      * @return local_joulegrader_lib_gradingarea_abstract - instance of a gradingarea class
      */
     public static function get_gradingarea_instance($currentareaid, $currentuserid) {
@@ -139,12 +145,10 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
     }
 
     /**
-     * Get the grading areas for the menu
-     *
-     * @param bool $asstudent - is this being viewed as a student
-     * @return array - array of grading area activities
+     * @param bool $asteacher
+     * @return array
      */
-    public function get_gradingareas($asstudent = false) {
+    protected function load_gradingareas($asteacher) {
         global $DB, $COURSE, $CFG;
 
         if (is_null($this->gradingareas)) {
@@ -154,8 +158,9 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
 
             //if there are no child contexts then bail
             if (empty($childcontexts)) {
-                //RETURN EMPTY ARRAY
-                return array();
+                //RETURN
+                $this->gradingareas = array();
+                return;
             }
 
             // *********************
@@ -215,7 +220,7 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
                 }
 
                 //is this being viewed as a student?
-                if (!empty($asstudent)) {
+                if (empty($asteacher)) {
                     $method = 'get_studentcapability';
                 } else {
                     $method = 'get_teachercapability';
@@ -255,7 +260,13 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
             //set the gradingareas data member
             $this->gradingareas = $gradingareas;
         }
+    }
 
+    /**
+     * Get the grading areas for the menu
+     * @return array - array of grading area activities
+     */
+    public function get_gradingareas() {
         return $this->gradingareas;
     }
 
