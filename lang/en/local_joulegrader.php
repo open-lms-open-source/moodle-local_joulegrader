@@ -58,8 +58,8 @@ $string['filefeedback'] = 'File feedback';
 $string['gradeoutof'] = 'Grade (out of {$a})';
 $string['gradeoutofrange'] = 'Grade is out range';
 $string['overridetext'] = 'Previously, an instructor created a grade for this activity directly in the gradebook.  Check this box if you want to replace that grade, too.';
-$string['save'] = 'Save';
-$string['saveandnext'] = 'Save and Next';
+$string['save'] = 'Save grade';
+$string['saveandnext'] = 'Save grade and next';
 $string['gradingdisabled'] = 'This activity\'s grading is locked. To enable grading please unlock the grade via the Gradebook.';
 $string['applytoall'] = 'Apply grades and feedback to entire group';
 $string['applytoall_help'] = 'If "Yes" is selected all group members will receive the grade and feedback regardless of any existing grade or feedback in the gradebook.';
@@ -87,7 +87,7 @@ $string['close'] = 'Close';
 $string['allfiles'] = 'All files';
 
 //form/comment.php strings
-$string['add'] = 'Add';
+$string['add'] = 'Save comment';
 $string['attachments'] = 'Attachments';
 $string['commentrequired'] = 'Comment required';
 $string['commentloop'] = 'Comment Loop';
