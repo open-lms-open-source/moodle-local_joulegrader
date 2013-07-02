@@ -46,6 +46,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
         $this->gradinginfo = grade_get_grades($this->cm->course, 'mod', 'hsuforum', $this->forum->id, array($this->gradingarea->get_guserid()));
 
         $this->gradingdisabled = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->locked;
+        $this->gradeoverride = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
 
         if (($gradingmethod = $this->gradingarea->get_active_gradingmethod()) && in_array($gradingmethod, self::get_supportedplugins())) {
             $this->controller = $this->gradingarea->get_gradingmanager()->get_controller($gradingmethod);
@@ -302,15 +303,28 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
             'itemnumber'   => 0,
         ));
 
+        $success = false;
         //if no grade item, create a new one
         if (!empty($gradeitem)) {
             //if grade is -1 in assignment_submissions table, it should be passed as null
             if ($grade == -1) {
                 $grade = null;
             }
-            return $gradeitem->update_final_grade($this->gradingarea->get_guserid(), $grade, 'local/joulegrader',
+            if (!$this->gradeoverride) {
+                $grades = array(
+                    'userid' => $this->gradingarea->get_guserid(),
+                    'rawgrade' => $grade,
+                    'feedback' => $feedbackinfo['text'],
+                    'feedbackformat' => $feedbackinfo['format'],
+                );
+                $success = grade_update('local/joulegrader', $gradeitem->courseid, $gradeitem->itemtype,
+                        $gradeitem->itemmodule, $gradeitem->iteminstance, 0, $grades);
+                $success = $success == GRADE_UPDATE_OK ? true : false;
+            } else {
+                $success = $gradeitem->update_final_grade($this->gradingarea->get_guserid(), $grade, 'local/joulegrader',
                     $feedbackinfo['text'], $feedbackinfo['format']);
+            }
         }
-        return false;
+        return $success;
     }
 }
