@@ -9,6 +9,14 @@ require_once($CFG->dirroot . '/local/joulegrader/lib/pane/grade/abstract.php');
  */
 class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  local_joulegrader_lib_pane_grade_abstract {
 
+    /**
+     * @var array
+     */
+    protected $feedbackplugins;
+
+    /**
+     * @var array
+     */
     protected $usergrades;
 
     /**
@@ -130,6 +138,93 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     /**
      * @return bool
      */
+    public function has_file_feedback() {
+        return $this->has_feedback_type('file');
+    }
+
+    /**
+     * @return bool
+     */
+    public function has_overall_feedback() {
+        return $this->has_feedback_type('comments');
+    }
+
+    /**
+     * Returns the formatted overall feedback from the assign_feedback_comments plugin.
+     * For use with the student view.
+     *
+     * @return string
+     */
+    public function get_overall_feedback() {
+        $feedback = '';
+        if ($this->has_overall_feedback()) {
+            if ($grade = $this->get_usergrade($this->gradingarea->get_guserid())) {
+                $feedback = $this->get_feedbackcomment_plugin()->view($grade);
+            }
+        }
+
+        return $feedback;
+    }
+
+    /**
+     * Conditionally adds the feedback form element to the form.
+     *
+     * @param MoodleQuickForm $mform
+     */
+    public function add_feedback_form($mform) {
+        if ($this->has_overall_feedback()) {
+            $editor = $mform->addElement('editor', 'assignfeedbackcomments_editor',
+                get_string('overallfeedback', 'local_joulegrader') . ': ', null, null);
+
+            if ($grade = $this->get_usergrade($this->gradingarea->get_guserid())) {
+                $feedbackcomments = $this->get_feedbackcomment_plugin()->get_feedback_comments($grade->id);
+                if ($feedbackcomments) {
+                    $data = array();
+                    $data['text'] = $feedbackcomments->commenttext;
+                    $data['format'] = $feedbackcomments->commentformat;
+
+                    $editor->setValue($data);
+                }
+            }
+        }
+    }
+
+    /**
+     * Conditionally adds the file feedback form element to the form.
+     *
+     * @param MoodleQuickForm $mform
+     */
+    public function add_filefeedback_form($mform) {
+        if ($this->has_file_feedback()) {
+            $userid = $this->gradingarea->get_guserid();
+            $data = new stdClass();
+            $this->get_feedbackfile_plugin()->get_form_elements_for_user($this->get_usergrade($userid), $mform, $data, $userid);
+            $elementname = 'files_' . $userid . '_filemanager';
+            $mform->setDefault($elementname, $data->$elementname);
+            $mform->getElement($elementname)->setLabel(html_writer::tag('div', get_string('filefeedback', 'local_joulegrader') . ': '));
+        }
+    }
+
+    /**
+     * Returns the formatted file feedback from the assign_feedback_file plugin.
+     * For use with the student view.
+     *
+     * @return string
+     */
+    public function get_file_feedback() {
+        $feedback = '';
+        if ($this->has_file_feedback()) {
+            if ($grade = $this->get_usergrade($this->gradingarea->get_guserid())) {
+                $feedback = $this->get_feedbackfile_plugin()->view($grade);
+            }
+        }
+
+        return $feedback;
+    }
+
+    /**
+     * @return bool
+     */
     public function not_graded() {
         $notgraded = false;
 
@@ -188,6 +283,13 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
             $mform->addElement('select', 'applytoall', get_string('applytoall', 'local_joulegrader'), array(get_string('no'), get_string('yes')));
             $mform->setDefault('applytoall', 1);
             $mform->setType('applytoall', PARAM_BOOL);
+            $mform->addHelpButton('applytoall', 'applytoall', 'local_joulegrader');
+
+            // Check to see if the override element has been added to the form.
+            if ($mform->elementExists('override')) {
+                // Disable override if "Apply grade and feedback to all" is set to yes.
+                $mform->disabledIf('override', 'applytoall', 'eq', 1);
+            }
         }
     }
 
@@ -259,19 +361,28 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                         $groupid = $group->id;
                     }
                 }
+
+                $gradessaved = 0;
+                $couldnotsave = array();
                 $members = $assignment->get_submission_group_members($groupid, true);
                 foreach ($members as $member) {
                     // User may exist in multiple groups (which should put them in the default group).
                     if ($this->apply_grade_to_user($data, $member->id)) {
-                        $notify->good('gradesaved');
+                        $gradessaved++;
+                    } else {
+                        $couldnotsave[] = $member->id;
                     }
                 }
+
+                // Set notifications for grades saves/failures.
+                $this->set_notifications($notify, $gradessaved, $couldnotsave);
             } else {
                 if ($this->apply_grade_to_user($data, $userid)) {
                     $notify->good('gradesaved');
+                } else {
+                    $notify->bad('couldnotsave');
                 }
             }
-
 
             //redirect to next user if set
             if (optional_param('saveandnext', 0, PARAM_BOOL) && !empty($data->nextuser)) {
@@ -327,17 +438,18 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
             $override = isset($data->override) || (!empty($teamsubmission) && !empty($data->applytoall));
         }
 
-        return $this->save_grade($usergrade, $override, $blindmarking);
+        return $this->save_grade($usergrade, $data, $override, $blindmarking);
     }
 
     /**
      * @param $usergrade
+     * @param $data
      * @param bool $override
      * @param bool $blindmarking
      *
      * @return bool
      */
-    protected function save_grade($usergrade, $override, $blindmarking = false) {
+    protected function save_grade($usergrade, $data, $override, $blindmarking = false) {
         global $USER, $DB;
 
         // Need to do two things here.
@@ -352,6 +464,14 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         // Update the submission.
         $success = $DB->update_record('assign_grades', $usergrade);
 
+        if ($this->has_overall_feedback()) {
+            $this->get_feedbackcomment_plugin()->save($usergrade, $data);
+        }
+
+        if ($this->has_file_feedback()) {
+            $this->get_feedbackfile_plugin()->save($usergrade, $data);
+        }
+
         // If blind marking is used don't upgrade the gradebook.
         if ($blindmarking)  {
             // Blind marking is being used and identities have not been revealed. Return here.
@@ -365,6 +485,18 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
             $gradinginfo = grade_get_grades($this->get_courseid(), 'mod', 'assign', $assignment->get_instance()->id, array($usergrade->userid));
         }
         $gradeoverridden = $gradinginfo->items[0]->grades[$usergrade->userid]->overridden;
+
+        if ($this->has_overall_feedback()) {
+            $assignadmincfg = $this->gradingarea->get_assign()->get_admin_config();
+            $gradebookplugin = $assignadmincfg->feedback_plugin_for_gradebook;
+
+            if ('assignfeedback_' . $this->get_feedbackcomment_plugin()->get_type() == $gradebookplugin) {
+                $usergrade->feedbacktext = $this->get_feedbackcomment_plugin()->text_for_gradebook($usergrade);
+                $usergrade->feedbackformat = $this->get_feedbackcomment_plugin()->format_for_gradebook($usergrade);
+            }
+        }
+
+
         if ($success && !$gradeoverridden) {
             $gradebookgrade = $this->convert_grade_for_gradebook($usergrade);
 
@@ -410,11 +542,86 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                 $grade = null;
             }
 
-            $success = $success && (bool) $gradeitem->update_final_grade($usergrade->userid, $grade, 'local/joulegrader', false
-                    , FORMAT_MOODLE, $usergrade->grader);
+            $feedback = false;
+            if (isset($usergrade->feedbacktext)) {
+                $feedback = $usergrade->feedbacktext;
+            }
+
+            $feedbackformat = FORMAT_MOODLE;
+            if (isset($usergrade->feedbackformat)) {
+                $feedbackformat = $usergrade->feedbackformat;
+            }
+
+            $success = $success && (bool) $gradeitem->update_final_grade($usergrade->userid, $grade, 'local/joulegrader',
+                    $feedback, $feedbackformat, $usergrade->grader);
         }
 
         return $success;
+    }
+
+    /**
+     * @param mr_notify $notify
+     * @param int $gradessaved
+     * @param array $couldnotsave
+     */
+    protected function set_notifications($notify, $gradessaved, $couldnotsave) {
+        global $DB;
+
+        // Set notification for grades successfully updated.
+        if ($gradessaved > 0) {
+            $notify->good('gradesavedx', $gradessaved);
+        }
+
+        // Set nofifications for grades that were not successfully updated.
+        if (!empty($couldnotsave)) {
+            $assign = $this->gradingarea->get_assign();
+            $blindmarking = $assign->is_blind_marking();
+
+            foreach ($couldnotsave as $userid) {
+                if ($blindmarking) {
+                    $username = get_string('hiddenuser', 'assign') . $assign->get_uniqueid_for_user($userid);
+                } else {
+                    $user = $DB->get_record('user', array('id' => $userid), 'id, firstname, lastname');
+                    $username = fullname($user);
+                }
+
+                $notify->bad('couldnotsavex', $username);
+            }
+        }
+    }
+
+    /**
+     * @return assign_feedback_comments|null
+     */
+    protected function get_feedbackcomment_plugin() {
+        return $this->get_feedback_plugin('comments');
+    }
+
+    /**
+     * @return assign_feedback_file|null
+     */
+    protected function get_feedbackfile_plugin() {
+        return $this->get_feedback_plugin('file');
+    }
+
+    /**
+     * @param string $type
+     * @return assign_feedback_plugin|null
+     */
+    protected function get_feedback_plugin($type) {
+        if (!isset($this->feedbackplugins[$type])) {
+            $this->feedbackplugins[$type] = $this->gradingarea->get_assign()->get_feedback_plugin_by_type($type);
+        }
+        return $this->feedbackplugins[$type];
+    }
+
+    /**
+     * @param string $type
+     * @return bool
+     */
+    protected function has_feedback_type($type) {
+        $feedbackplugin = $this->get_feedback_plugin($type);
+        return (!empty($feedbackplugin) && $feedbackplugin->is_enabled() && $feedbackplugin->is_visible());
     }
 
     /**

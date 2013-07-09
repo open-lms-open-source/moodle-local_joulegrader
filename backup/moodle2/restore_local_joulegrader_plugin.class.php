@@ -54,6 +54,26 @@ class restore_local_joulegrader_plugin extends restore_local_plugin {
      * Add related files
      */
     public function after_execute_area() {
-       $this->add_related_files('local_joulegrader', 'comment', 'comment');
+        $this->add_related_files('local_joulegrader', 'comment', 'comment');
+    }
+
+    /**
+     * After restore process. Currently handles upgrading 2.3 Joule Grader comments restored into 2.4+.
+     */
+    public function after_restore_area() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/local/joulegrader/db/upgradelib.php');
+
+        $newcommentsqls = "SELECT newitemid, newitemid
+                             FROM {backup_ids_temp}
+                            WHERE itemname = ?
+                              AND parentitemid = ?";
+
+        $params = array('comment', $this->task->get_old_contextid());
+
+        if ($commentids = $DB->get_records_sql($newcommentsqls, $params)) {
+            $commentsupgrade = new local_joulegrader_comments_upgrader();
+            $commentsupgrade->upgrade(array_keys($commentids), true);
+        }
     }
 }

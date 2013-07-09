@@ -31,20 +31,46 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
     protected $users;
 
     /**
+     * @var int
+     */
+    protected $currentgroup;
+
+    /**
+     * @var int
+     */
+    protected $nextgroup;
+
+    /**
+     * @var int
+     */
+    protected $prevgroup;
+
+    /**
+     * @var array
+     */
+    protected $groups;
+
+    /**
+     * @var string
+     */
+    protected $grouplabel;
+
+    /**
      * Main method for the users helper
      *
      */
-    public function direct() {}
+    public function direct(local_joulegrader_helper_gradingareas $gareahelper, context $context) {
+        global $USER;
+        if (has_capability('local/joulegrader:grade', $context)) {
+            $this->load_groups();
+            $this->load_users($gareahelper);
+        } else {
+            // This is being viewed as a student, logged in user is current user.
+            $this->currentuser = $USER->id;
+        }
+    }
 
-    /**
-     * Get the users menu
-     *
-     * @param $gareahelper- the current
-     * @param $currentgroup = id of currently selected group
-     *
-     * @return array - users that can be graded for the current area
-     */
-    public function get_users($gareahelper, $currentgroup = 0) {
+    protected function load_users($gareahelper) {
         global $COURSE, $CFG;
 
         if (is_null($this->users)) {
@@ -74,7 +100,7 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
             }
 
             //get the enrolled users with the required capability
-            $users = get_enrolled_users(context_course::instance($COURSE->id), $requiredcap, $currentgroup, 'u.id, u.firstname, u.lastname');
+            $users = get_enrolled_users(context_course::instance($COURSE->id), $requiredcap, $this->get_currentgroup(), 'u.id, u.firstname, u.lastname');
 
             //make menu from the users
             $this->users = array();
@@ -95,7 +121,15 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
                 $this->users[$userid] = fullname($user);
             }
         }
+    }
 
+    /**
+     * Get the users menu
+     *
+     *
+     * @return array - users that can be graded for the current area
+     */
+    public function get_users() {
         return $this->users;
     }
 
@@ -142,10 +176,17 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
      */
     public function get_nextuser() {
         if (is_null($this->nextuser) && !empty($this->users) && count($this->users) > 1) {
-            $this->find_previous_and_next();
+            list($this->prevuser, $this->nextuser) = $this->find_previous_and_next($this->users, $this->get_currentuser());
         }
 
         return $this->nextuser;
+    }
+
+    /**
+     * @param int $nextuser
+     */
+    public function set_nextuser($nextuser) {
+        $this->nextuser = $nextuser;
     }
 
     /**
@@ -155,42 +196,137 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
      */
     public function get_prevuser() {
         if (is_null($this->prevuser) && !empty($this->users) && count($this->users) > 1) {
-            $this->find_previous_and_next();
+            list($this->prevuser, $this->nextuser) = $this->find_previous_and_next($this->users, $this->get_currentuser());
         }
 
         return $this->prevuser;
     }
 
     /**
+     * @param int $prevuser
+     */
+    public function set_prevuser($prevuser) {
+        $this->prevuser = $prevuser;
+    }
+
+    /**
+     * @return array
+     */
+    public function get_groups() {
+        return $this->groups;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_currentgroup() {
+        return $this->currentgroup;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_prevgroup() {
+        if (is_null($this->prevgroup) && !empty($this->groups) && count($this->groups) > 1) {
+            list($this->prevgroup, $this->nextgroup) = $this->find_previous_and_next($this->groups, $this->get_currentgroup());
+        }
+
+        return $this->prevgroup;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_nextgroup() {
+        if (is_null($this->nextgroup) && !empty($this->groups) && count($this->groups) > 1) {
+            list($this->prevgroup, $this->nextgroup) = $this->find_previous_and_next($this->groups, $this->get_currentgroup());
+        }
+
+        return $this->nextgroup;
+    }
+
+    /**
      * Find the previous and next user ids
      */
-    protected function find_previous_and_next() {
-        $currentuser = $this->get_currentuser();
-        $userids     = array_keys($this->users);
+    protected function find_previous_and_next($list, $currentid) {
+        $ids     = array_keys($list);
         $previd      = null;
         $nextid      = null;
 
-        //try to get the user before the current user
-        while (list($unused, $userid) = each($userids)) {
-            if ($userid == $currentuser) {
+        //try to get the id before the current id
+        while (list($unused, $id) = each($ids)) {
+            if ($id == $currentid) {
                 break;
             }
-            $previd = $userid;
+            $previd = $id;
         }
 
         //if we haven't reached the end of the array, current should give "nextid"
-        $nextid = current($userids);
+        $nextid = current($ids);
 
-        reset($userids);
+        reset($ids);
         if ($nextid === false) {
             //the current category is the last so start at the beginning
-            $nextid = $userids[0];
+            $nextid = $ids[0];
         } else if ($previd === null) {
             //the current category is the first so get the last
-            $previd = end($userids);
+            $previd = end($ids);
         }
 
-        $this->prevuser = $previd;
-        $this->nextuser = $nextid;
+        return array($previd, $nextid);
+    }
+
+    /**
+     * Get necessary info to create the group selector navigation
+     * This uses code modified from lib/grouplib.php's groups_print_course_menu
+     *
+     * @return array - array containing current group, groups menu array,group label, previous and next ids
+     */
+    protected function load_groups() {
+        global $COURSE, $USER;
+
+        //first, make sure that the course is using a groupmode
+        if (!$groupmode = $COURSE->groupmode) {
+            //not using a group mode, so return
+            return;
+        }
+
+        $context = context_course::instance($COURSE->id);
+        $aag = has_capability('moodle/site:accessallgroups', $context);
+
+        if ($groupmode == VISIBLEGROUPS or $aag) {
+            $allowedgroups = groups_get_all_groups($COURSE->id, 0, $COURSE->defaultgroupingid);
+        } else {
+            $allowedgroups = groups_get_all_groups($COURSE->id, $USER->id, $COURSE->defaultgroupingid);
+        }
+
+        $activegroup = groups_get_course_group($COURSE, true, $allowedgroups);
+
+        $groupsmenu = array();
+        if (!$allowedgroups or $groupmode == VISIBLEGROUPS or $aag) {
+            $groupsmenu[0] = get_string('allparticipants');
+        }
+
+        if ($allowedgroups) {
+            foreach ($allowedgroups as $group) {
+                $groupsmenu[$group->id] = shorten_text(format_string($group->name), 20, true);
+            }
+        }
+
+        if ($groupmode == VISIBLEGROUPS) {
+            $grouplabel = get_string('groupsvisible');
+        } else {
+            $grouplabel = get_string('groupsseparate');
+        }
+
+        if ($aag and $COURSE->defaultgroupingid) {
+            if ($grouping = groups_get_grouping($COURSE->defaultgroupingid)) {
+                $grouplabel = $grouplabel . ' (' . format_string($grouping->name) . ')';
+            }
+        }
+
+        $this->groups = $groupsmenu;
+        $this->grouplabel = $grouplabel;
+        $this->currentgroup = $activegroup;
     }
 }

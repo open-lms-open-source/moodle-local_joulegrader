@@ -121,3 +121,15 @@ function local_joulegrader_pluginfile($course, $cm, $context, $filearea, $args, 
         send_stored_file($file, 86400, 0, true, $options);
     }
 }
+
+/**
+ * @param context $context
+ * @param string $activityname
+ * @return int
+ */
+function local_joulegrader_area_from_context(context $context, $activityname) {
+    global $CFG;
+    require_once($CFG->dirroot . '/local/joulegrader/helper/gradingareas.php');
+
+    return local_joulegrader_helper_gradingareas::get_areaid_from_context_activityname($context, $activityname);
+}

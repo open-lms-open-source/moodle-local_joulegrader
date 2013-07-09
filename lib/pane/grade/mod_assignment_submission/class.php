@@ -123,6 +123,67 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
     }
 
     /**
+     * @return bool
+     */
+    public function has_overall_feedback() {
+        return true;
+    }
+
+    /**
+     * Returns the formatted overall feedback from the assignment_submissions table.
+     * For use with the student view.
+     *
+     * @return string
+     */
+    public function get_overall_feedback() {
+        $feedback = '';
+        $feedbackinfo = $this->get_feedback_info();
+        if (!empty($feedbackinfo['feedback'])) {
+            $feedback = format_text($feedbackinfo['feedback'], $feedbackinfo['feedbackformat']);
+        }
+
+        return $feedback;
+    }
+
+    /**
+     * Conditionally adds the feedback form element to the form.
+     *
+     * @param MoodleQuickForm $mform
+     */
+    public function add_feedback_form($mform) {
+        if ($this->has_overall_feedback()) {
+
+            $editor = $mform->addElement('editor', 'submissioncomment_editor',
+                    get_string('overallfeedback', 'local_joulegrader') . ': ', null, null);
+
+            $feedbackinfo = $this->get_feedback_info();
+
+            if (!empty($feedbackinfo['feedback'])) {
+                // Add the existing feedback.
+                $data = array();
+                $data['text'] = $feedbackinfo['feedback'];
+                $data['format'] = $feedbackinfo['feedbackformat'];
+
+                $editor->setValue($data);
+            }
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function get_feedback_info() {
+        $feedbackinfo = array('feedback' => '', 'feedbackformat' => FORMAT_HTML);
+        if ($submission = $this->get_gradingarea()->get_submission()) {
+            if (!empty($submission->submissioncomment)) {
+                $feedbackinfo['feedback'] = $submission->submissioncomment;
+            }
+        }
+
+        return $feedbackinfo;
+    }
+
+    /**
      * Process the grade data
      * @param $data
      * @param $notify
@@ -139,12 +200,6 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
 
         //get the data from the form
         if ($data) {
-
-//            if ($data->assignment != $assignment->assignment->id) {
-//                //throw an exception, could be some funny business going on here
-//                throw new moodle_exception('assignmentnotmatched', 'local_joulegrader');
-//            }
-
             if (isset($data->gradinginstanceid)) {
                 //using advanced grading
                 $gradinginstance = $this->gradinginstance;
@@ -203,7 +258,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
             }
 
             //save the grade
-            if ($this->save_grade($grade, isset($data->override))) {
+            if ($this->save_grade($grade, $data->submissioncomment_editor['text'], isset($data->override))) {
                 $notify->good('gradesaved');
             }
         }
@@ -213,11 +268,12 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
 
     /**
      * @param $grade
+     * @param $feedback
      * @param $override
      *
      * @return bool
      */
-    protected function save_grade($grade, $override) {
+    protected function save_grade($grade, $feedback, $override) {
         global $USER, $DB;
 
         $success = true;
@@ -232,6 +288,9 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
 
         $submission->grade      = $grade;
         $submission->teacher    = $USER->id;
+        $submission->submissioncomment = $feedback;
+        $submission->format = FORMAT_HTML;
+
         $mailinfo = get_user_preferences('assignment_mailinfo', 0);
         if (!$mailinfo) {
             $submission->mailed = 1;       // treat as already mailed
@@ -288,7 +347,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                 $grade = null;
             }
 
-            $success = $success && (bool) $gradeitem->update_final_grade($submission->userid, $grade, 'local/joulegrader', false, FORMAT_MOODLE, $submission->teacher);
+            $success = $success && (bool) $gradeitem->update_final_grade($submission->userid, $grade, 'local/joulegrader', $feedback, FORMAT_MOODLE, $submission->teacher);
         }
 
         return $success;

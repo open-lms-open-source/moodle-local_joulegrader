@@ -46,6 +46,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
         $this->gradinginfo = grade_get_grades($this->cm->course, 'mod', 'hsuforum', $this->forum->id, array($this->gradingarea->get_guserid()));
 
         $this->gradingdisabled = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->locked;
+        $this->gradeoverride = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
 
         if (($gradingmethod = $this->gradingarea->get_active_gradingmethod()) && in_array($gradingmethod, self::get_supportedplugins())) {
             $this->controller = $this->gradingarea->get_gradingmanager()->get_controller($gradingmethod);
@@ -125,6 +126,71 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
     }
 
     /**
+     * @return bool
+     */
+    public function has_overall_feedback() {
+        return true;
+    }
+
+    /**
+     * Returns the formatted overall feedback from the gradebook.
+     * For use with the student view.
+     *
+     * @return string
+     */
+    public function get_overall_feedback() {
+        $feedback = '';
+        if ($this->has_overall_feedback()) {
+            $feedbackinfo = $this->get_feedback_info();
+            if (!empty($feedbackinfo['feedback'])) {
+                $feedback = format_text($feedbackinfo['feedback'], $feedbackinfo['feedbackformat']);
+            }
+        }
+
+        return $feedback;
+    }
+
+    /**
+     * Conditionally adds the feedback form element to the form.
+     *
+     * @param MoodleQuickForm $mform
+     */
+    public function add_feedback_form($mform) {
+        if ($this->has_overall_feedback()) {
+
+            $editor = $mform->addElement('editor', 'hsuforumfeedback_editor',
+                get_string('overallfeedback', 'local_joulegrader') . ': ', null, null);
+
+            $feedbackinfo = $this->get_feedback_info();
+
+            if (!empty($feedbackinfo['feedback'])) {
+                // Add the existing feedback.
+                $data = array();
+                $data['text'] = $feedbackinfo['feedback'];
+                $data['format'] = $feedbackinfo['feedbackformat'];
+
+                $editor->setValue($data);
+            }
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function get_feedback_info() {
+        $feedbackinfo = array('feedback' => '', 'feedbackformat' => FORMAT_HTML);
+
+        if (!empty($this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()])
+            && !empty($this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->feedback)) {
+
+            $feedbackinfo['feedback'] = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->feedback;
+            $feedbackinfo['feedbackformat'] = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->feedbackformat;
+        }
+
+        return $feedbackinfo;
+    }
+
+    /**
      * Process the grade data
      * @param $data
      * @param mr_html_notify $notify
@@ -137,12 +203,6 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
 
         //get the data from the form
         if ($data) {
-
-//            if ($data->instance != $this->forum->id) {
-//                //throw an exception, could be some funny business going on here
-//                throw new moodle_exception('assignmentnotmatched', 'local_joulegrader');
-//            }
-
             if (isset($data->gradinginstanceid)) {
                 //using advanced grading
                 $gradinginstance = $this->gradinginstance;
@@ -200,7 +260,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
             }
 
             //save the grade
-            if ($this->save_grade($grade, isset($data->override))) {
+            if ($this->save_grade($grade, $data->hsuforumfeedback_editor)) {
                 $notify->good('gradesaved');
             }
         }
@@ -234,7 +294,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
      *
      * @return bool
      */
-    protected function save_grade($grade, $override) {
+    protected function save_grade($grade, $feedbackinfo) {
         $gradeitem = grade_item::fetch(array(
             'courseid'     => $this->cm->course,
             'itemtype'     => 'mod',
@@ -243,14 +303,28 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
             'itemnumber'   => 0,
         ));
 
+        $success = false;
         //if no grade item, create a new one
         if (!empty($gradeitem)) {
             //if grade is -1 in assignment_submissions table, it should be passed as null
             if ($grade == -1) {
                 $grade = null;
             }
-            return $gradeitem->update_final_grade($this->gradingarea->get_guserid(), $grade, 'local/joulegrader');
+            if (!$this->gradeoverride) {
+                $grades = array(
+                    'userid' => $this->gradingarea->get_guserid(),
+                    'rawgrade' => $grade,
+                    'feedback' => $feedbackinfo['text'],
+                    'feedbackformat' => $feedbackinfo['format'],
+                );
+                $success = grade_update('local/joulegrader', $gradeitem->courseid, $gradeitem->itemtype,
+                        $gradeitem->itemmodule, $gradeitem->iteminstance, 0, $grades);
+                $success = $success == GRADE_UPDATE_OK ? true : false;
+            } else {
+                $success = $gradeitem->update_final_grade($this->gradingarea->get_guserid(), $grade, 'local/joulegrader',
+                    $feedbackinfo['text'], $feedbackinfo['format']);
+            }
         }
-        return false;
+        return $success;
     }
 }

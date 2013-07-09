@@ -15,6 +15,11 @@ class local_joulegrader_lib_comment_loop implements renderable {
     protected $gradingarea;
 
     /**
+     * @var comment - instance of comment class
+     */
+    protected $commentapi;
+
+    /**
      * @var array - comments that belong to this comment loop
      */
     protected $comments;
@@ -30,10 +35,31 @@ class local_joulegrader_lib_comment_loop implements renderable {
     protected $mform;
 
     /**
+     * @var int - most recent comment item id
+     */
+    protected $commentitemid;
+
+    /**
      * @param $gradingarea - local_joulegrader_lib_gradingarea_abstract
      */
     public function __construct($gradingarea) {
         $this->gradingarea = $gradingarea;
+    }
+
+    /**
+     * Initializes the commentapi data member by creating an instance the comment class
+     *
+     * @param null|stdClass $options
+     */
+    public function init($options = null) {
+        global $CFG;
+        require_once($CFG->dirroot . '/comment/lib.php');
+
+        if (is_null($options)) {
+            $options = $this->gradingarea->get_comment_info();
+        }
+
+        $this->commentapi = new comment($options);
     }
 
     /**
@@ -57,32 +83,30 @@ class local_joulegrader_lib_comment_loop implements renderable {
     }
 
     /**
-     * @param array $userids
-     */
-    public function set_commentusers(array $userids) {
-        $this->commentusers = $userids;
-    }
-
-    /**
      * @return bool
      */
     public function user_can_comment() {
-        global $USER;
+        return $this->commentapi->can_post();
+    }
 
-        //initialize
-        $cancomment = false;
+    /**
+     * @param int $commentid
+     * @return bool
+     */
+    public function user_can_delete($commentid) {
+        global $DB, $USER;
+        $comment = $DB->get_record('comments', array('id' => $commentid), '*', MUST_EXIST);
 
-        //context to use in has_capability call
-        $context = $this->gradingarea->get_gradingmanager()->get_context();
+        return ($USER->id == $comment->userid) || $this->commentapi->can_delete($commentid);
+    }
 
-        //check for teacher cap first
-        if (has_capability($this->gradingarea->get_teachercapability(), $context)) {
-            $cancomment = true;
-        } else if (has_capability($this->gradingarea->get_studentcapability(), $context) && $USER->id == $this->gradingarea->get_guserid()) {
-            $cancomment = true;
-        }
-
-        return $cancomment;
+    /**
+     * @param int $commentid
+     *
+     * @return bool
+     */
+    public function delete_comment($commentid) {
+        return $this->commentapi->delete($commentid);
     }
 
     /**
@@ -90,32 +114,48 @@ class local_joulegrader_lib_comment_loop implements renderable {
      * @return local_joulegrader_lib_comment_class
      */
     public function add_comment($commentdata) {
-        global $USER, $COURSE;
 
-        //create a new record
-        $commentrecord = new stdClass;
-        $commentrecord->content = $commentdata->comment['text'];
-        $commentrecord->gareaid = $this->gradingarea->get_areaid();
-        $commentrecord->guserid = $this->gradingarea->get_guserid();
-        $commentrecord->commenterid = $USER->id;
-        $commentrecord->timecreated = time();
+        // Store for comment_post_insert callback.
+        $this->commentitemid = $commentdata->comment['itemid'];
 
-        //instantiate a comment object
+        // Add the comment via the comment object.
+        $commentrecord = $this->commentapi->add($commentdata->comment['text'], FORMAT_MOODLE, array($this, 'comment_post_insert'));
+
+        // Instantiate a joule grader comment object.
         $comment = new local_joulegrader_lib_comment_class($commentrecord);
 
-        //save the new comment
-        $comment->save();
-
-        //file area
-        $itemid = $commentdata->comment['itemid'];
         $context = $this->gradingarea->get_gradingmanager()->get_context();
-        $content = file_save_draft_area_files($itemid, $context->id, 'local_joulegrader', 'comment', $comment->get_id(), null, $comment->get_content());
-
-        $comment->set_content($content);
-        $comment->save();
 
         // set the context
         $comment->set_context($context);
+        $comment->set_gareaid($this->gradingarea->get_areaid());
+        $comment->set_guserid($this->gradingarea->get_guserid());
+
+        return $comment;
+    }
+
+    /**
+     * Callback from comment:add() to handle files.
+     *
+     * @param stdClass $comment
+     * @return stdClass
+     */
+    public function comment_post_insert(stdClass $comment) {
+        global $DB;
+
+        $itemid = $this->commentitemid;
+        $context = $this->gradingarea->get_gradingmanager()->get_context();
+        $fileareainfo = $this->gradingarea->get_comment_filearea_info();
+        $editoroptions = $this->gradingarea->get_editor_options();
+        $content = file_save_draft_area_files($itemid, $context->id, $fileareainfo->component, $fileareainfo->filearea,
+            $comment->id, $editoroptions, $comment->content);
+
+        if ($content != $comment->content) {
+            $DB->update_record('comments', (object) array('id' => $comment->id, 'content' => $content));
+            $comment->content = $content;
+        }
+
+        $this->commentitemid = null;
 
         return $comment;
     }
@@ -126,44 +166,26 @@ class local_joulegrader_lib_comment_loop implements renderable {
      * @return void
      */
     protected function load_comments() {
-        global $DB;
-
-        //initialize
+        // Initialize
         $this->comments = array();
 
-        $gareaid = $this->gradingarea->get_areaid();
-        $guserid = $this->gradingarea->get_guserid();
-
-        $context = $this->gradingarea->get_gradingmanager()->get_context();
-
-        $commentusers = $guserid;
-        if (!empty($this->commentusers)) {
-            // Ensure that the graded user is still in the list of commentusers.
-            if (!in_array($guserid, $this->commentusers)) {
-                $this->commentusers[] = $guserid;
-            }
-
-            $commentusers = $this->commentusers;
+        if (!$this->commentapi instanceof comment) {
+            $this->init();
         }
 
-        list($inorequalsusers, $params) = $DB->get_in_or_equal($commentusers, SQL_PARAMS_NAMED);
-        $whereclause = "gareaid = :gareaid AND guserid $inorequalsusers";
-        $params['gareaid'] = $gareaid;
+        $comments = $this->commentapi->get_comments();
+        $context = $this->commentapi->get_context();
+        if (!empty($comments)) {
+            $comments = array_reverse($comments);
 
-        //try to get the comments for the area and user
-        $commentobjects = array();
-        if ($comments = $DB->get_records_select('local_joulegrader_comments', $whereclause, $params, 'timecreated ASC')) {
-            //iterate through comments and instantiate local_joulegrader_lib_comment_class objects
+            // Iterate through comments and instantiate local_joulegrader_lib_comment_class objects.
             foreach ($comments as $comment) {
                 $commentobject = new local_joulegrader_lib_comment_class($comment);
                 $commentobject->set_context($context);
-                $commentobjects[] = $commentobject;
+                $commentobject->set_gareaid($this->gradingarea->get_areaid());
+                $commentobject->set_guserid($this->gradingarea->get_guserid());
+                $this->comments[] = $commentobject;
             }
-        }
-
-        if (!empty($commentobjects)) {
-            // Give the grading area a chance to update the comments.
-            $this->comments = $this->gradingarea->comments_hook($commentobjects);
         }
     }
 
@@ -184,6 +206,6 @@ class local_joulegrader_lib_comment_loop implements renderable {
         $mformurl = new moodle_url('/local/joulegrader/view.php', $urlparams);
 
         //instantiate the form
-        $this->mform = new local_joulegrader_form_comment($mformurl);
+        $this->mform = new local_joulegrader_form_comment($mformurl, $this->gradingarea->get_editor_options());
     }
 }

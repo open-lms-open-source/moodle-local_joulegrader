@@ -2,6 +2,24 @@
     min-height: 600px;
 }
 
+#local-joulegrader-resize {
+    min-height: 200px;
+    width: 5px;
+    background-color: gray;
+    display: inline-block;
+    position: absolute;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#local-joulegrader-resize:hover, #local-joulegrader-resize.yui3-dd-dragging {
+    background-color: darkgray;
+    border: 1px solid lightgray;
+    cursor: ew-resize;
+}
+
+
 #local-joulegrader-viewpane .content {
     margin-right: 0.75em;
     overflow: auto;
@@ -13,6 +31,7 @@
 
 #local-joulegrader-buttonnav .singlebutton {
     padding-left: 3px;
+    display: inline-block;
 }
 
 #local-joulegrader-navigation {
@@ -64,6 +83,12 @@
     text-align: left;
 }
 
+#local-joulegrader-gradepane fieldset.fieldset {
+    border: 1px solid #808080;
+    padding: 0.5em;
+    margin-right: 0.5em;
+}
+
 #local-joulegrader-gradepane div.status.s0 {
     padding: 0px;
     background-color: #FFFACD;
@@ -72,6 +97,10 @@
 #local-joulegrader-gradepane .fitem .felement {
     width: 100%;
     margin: 0px;
+}
+
+#local-joulegrader-gradepane .fitem_feditor .fitemtitle {
+    float: none;
 }
 
 #local-joulegrader .dontshow {
@@ -88,18 +117,14 @@
     margin-top: 2px;
 }
 
-.local_joulegrader_comment_commenter, .local_joulegrader_comment_body, .local_joulegrader_comment_delete {
+.local_joulegrader_comment_commenter_pic, .local_joulegrader_comment_fullnametime, .local_joulegrader_comment_delete {
     display: inline-block;
+    vertical-align: top;
 }
 
-.local_joulegrader_comment_commenter {
-    float: left;
-    width: 15%;
-}
-
-.local_joulegrader_comment_commenter_firstname {
-    font-size: 0.5em;
-    text-align: center;
+.local_joulegrader_comment_fullnametime {
+    font-size: 0.8em;
+    padding-left: 1em;
 }
 
 .local_joulegrader_comment_delete {
@@ -107,17 +132,12 @@
 }
 
 .local_joulegrader_comment_body {
-    width: 65%;
-    padding: 0 .5em .5em .5em;
+    padding: .5em .5em .5em 0em;
     font-size: 0.8em;
 }
 
 .local_joulegrader_comment {
     clear: both;
-}
-
-.local_joulegrader_comment.deleted {
-    color: grey;
 }
 
 .local_joulegrader_commentloop #fitem_id_comment, .local_joulegrader_commentloop .mform fieldset div {
@@ -128,8 +148,21 @@
     padding-left: 0px;
 }
 
+#local-joulegrader-gradepane .mform .fitemtitle {
+    text-align: left;
+}
+
+#local-joulegrader-gradepane .mform .felement.ffilemanager {
+    margin-top: 0.5em;
+}
+
 .pagelayout-embedded .local_joulegrader_commentloop, .pagelayout-embedded .local_joulegrader_commentloop .mform .fitem .felement {
     margin: 0.5em;
+}
+
+.pagelayout-embedded #local-joulegrader .local_joulegrader_commentloop {
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .local_joulegrader_commentloop .mform fieldset div.fdescription.required, .local_joulegrader_commentloop .mform fieldset div.fitem.required label {

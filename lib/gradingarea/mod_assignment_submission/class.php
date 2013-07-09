@@ -87,10 +87,10 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
      * @return array - cm and assignment record
      */
     protected static function get_assignment_info(grading_manager $gradingmanager) {
-        global $COURSE, $DB;
+        global $DB;
 
         //load the course_module from the context
-        $cm = get_coursemodule_from_id('assignment', $gradingmanager->get_context()->instanceid, $COURSE->id, false, MUST_EXIST);
+        $cm = get_coursemodule_from_id('assignment', $gradingmanager->get_context()->instanceid, 0, false, MUST_EXIST);
 
         //load the assignment record
         $assignment = $DB->get_record("assignment", array("id"=>$cm->instance), '*', MUST_EXIST);
@@ -235,7 +235,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
      * @throws coding_exception
      */
     protected function load_assignment() {
-        global $CFG, $COURSE;
+        global $CFG;
 
         try {
             //load the assignment record
@@ -247,7 +247,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
             $assignmentclass = 'assignment_'.$assignment->assignmenttype;
 
             //instantiate the assignment class
-            $this->assignment = new $assignmentclass($cm->id, $assignment, $cm, $COURSE);
+            $this->assignment = new $assignmentclass($cm->id, $assignment, $cm, null);
         } catch (Exception $e) {
             throw new coding_exception('Could not load the assignment class: ' . $e->getMessage());
         }
@@ -263,6 +263,29 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
             $this->load_submission($create);
         }
         return $this->submission;
+    }
+
+    /**
+     * @return stdClass
+     */
+    public function get_comment_info() {
+        $options          = new stdClass();
+        $options->area    = 'submission_comments';
+        $options->context = $this->get_gradingmanager()->get_context();
+        $options->itemid  = $this->get_submission(true)->id;
+        $options->component = 'mod_assignment';
+
+        return $options;
+    }
+
+    /**
+     * @return stdClass File area information for use in comments
+     */
+    public function get_comment_filearea_info() {
+        return (object) array(
+            'component' => 'mod_assignment',
+            'filearea' => 'comments'
+        );
     }
 
     /**

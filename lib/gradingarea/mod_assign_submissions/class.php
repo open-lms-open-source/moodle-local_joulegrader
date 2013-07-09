@@ -316,6 +316,17 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
                     $include[$userid]->firstname = trim($hiddenuserstr);
                     $include[$userid]->lastname = $uniqueid;
                 }
+
+                uasort($include, function($a, $b) {
+                    $return = 0;
+                    if ($a->lastname > $b->lastname) {
+                        $return = 1;
+                    } else if ($a->lastname < $b->lastname) {
+                        $return = -1;
+                    }
+
+                    return $return;
+                });
             }
 
 
@@ -324,67 +335,6 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         }
 
         return $include;
-    }
-
-    public function get_commentloop() {
-        parent::get_commentloop();
-        $assign = $this->get_assign();
-        if ($assign->get_instance()->teamsubmission) {
-            // Need to get the id of the group members to include all.
-            $groupid = 0;
-            if ($group = $assign->get_submission_group($this->guserid)) {
-                $groupid = $group->id;
-            }
-            $groupmembers = $assign->get_submission_group_members($groupid, true);
-            $commentusers = array();
-            foreach ($groupmembers as $member) {
-                $commentusers[] = $member->id;
-            }
-
-            $this->commentloop->set_commentusers($commentusers);
-        }
-
-        return $this->commentloop;
-    }
-
-    /**
-     * @param local_joulegrader_lib_comment[] $comments
-     * @return local_joulegrader_lib_comment[]
-     */
-    public function comments_hook(array $comments) {
-        global $USER;
-
-        if (!$this->get_assign()->is_blind_marking()) {
-            // Not blind marking or identities have already been revealed. Return the comments as-is.
-            return $comments;
-        }
-
-        $returncomments = array();
-
-        $hiddenuserstr = trim(get_string('hiddenuser', 'assign'));
-        $guestuser = guest_user();
-
-        // Blind marking is being used.
-        foreach ($comments as $comment) {
-            $commentuserid = $comment->get_commenterid();
-            if ($USER->id != $commentuserid && !has_capability('mod/assign:grade', $this->gradingmanager->get_context(), $commentuserid)) {
-                // Commenter is not the $USER and is not a teacher/admin. Need get the anonymous information.
-                $anonid = $this->get_assign()->get_uniqueid_for_user($commentuserid);
-                $commenter = new stdClass();
-                $commenter->firstname = $hiddenuserstr;
-                $commenter->lastname = $anonid;
-                $commenter->picture = 0;
-                $commenter->id = $guestuser->id;
-                $commenter->email = $guestuser->email;
-                $commenter->imagealt = $guestuser->imagealt;
-
-                $comment->set_commenter($commenter);
-            }
-
-            $returncomments[] = $comment;
-        }
-
-        return $returncomments;
     }
 
     /**
@@ -400,15 +350,45 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
     }
 
     /**
+     * @param local_joulegrader_helper_users $userhelper
+     */
+    public function current_user($userhelper) {
+        global $COURSE, $USER;
+
+        if ($USER->id == $this->guserid) {
+            return;
+        }
+
+        $preferences = new mr_preferences($COURSE->id, 'local_joulegrader');
+        $previousarea = $preferences->get('previousarea', null);
+
+        if (!is_null($previousarea) and $previousarea != $this->areaid) {
+            if ($this->get_assign()->is_blind_marking()) {
+                $userhelper->set_currentuser(array_shift(array_keys($userhelper->get_users())));
+                $this->guserid = $userhelper->get_currentuser();
+            }
+        }
+    }
+
+    /**
+     * @param local_joulegrader_helper_navigation $navhelper
+     */
+    public function current_navuser(local_joulegrader_helper_navigation $navhelper) {
+        if ($this->get_assign()->is_blind_marking()) {
+            $navhelper->set_navcurrentuser(null);
+        }
+    }
+
+    /**
      * @static
      * @param $gradingmanager - instance of the grading_manager
      * @return array - cm and assign record
      */
     protected static function get_assign_info(grading_manager $gradingmanager) {
-        global $COURSE, $DB;
+        global $DB;
 
         //load the course_module from the context
-        $cm = get_coursemodule_from_id('assign', $gradingmanager->get_context()->instanceid, $COURSE->id, false, MUST_EXIST);
+        $cm = get_coursemodule_from_id('assign', $gradingmanager->get_context()->instanceid, 0, false, MUST_EXIST);
 
         //load the assignment record
         $assign = $DB->get_record('assign', array('id' => $cm->instance), '*', MUST_EXIST);
@@ -420,7 +400,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
      * @throws coding_exception
      */
     protected function load_assign() {
-        global $CFG, $COURSE;
+        global $CFG;
 
         try {
             //load the assignment record
@@ -429,7 +409,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
             //instantiate the assign class
             /// Load up the required assignment code
             require_once($CFG->dirroot.'/mod/assign/locallib.php');
-            $this->assign = new assign($this->get_gradingmanager()->get_context(), $cm, $COURSE);
+            $this->assign = new assign($this->get_gradingmanager()->get_context(), $cm, null);
 
             // Set the db record as the instance
             $this->assign->set_instance($assign);
@@ -445,6 +425,43 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         }
 
         return $this->submission;
+    }
+
+    /**
+     * @return stdClass
+     */
+    public function get_comment_info() {
+        $options          = new stdClass();
+        $options->area    = 'submission_comments';
+        $options->course  = $this->get_assign()->get_course();
+        $options->context = $this->get_assign()->get_context();
+        $options->itemid  = $this->get_submission()->id;
+        $options->component = 'assignsubmission_comments';
+
+        return $options;
+    }
+
+    /**
+     * @return bool
+     */
+    public function has_comments() {
+        $hascomments = false;
+        $submission = $this->get_submission();
+        if (!empty($submission)) {
+            $hascomments = $this->get_assign()->get_submission_plugin_by_type('comments')->is_enabled();
+        }
+
+        return $hascomments;
+    }
+
+    /**
+     * @return stdClass File area information for use in comments
+     */
+    public function get_comment_filearea_info() {
+        return (object) array(
+            'component' => 'assignsubmission_comments',
+            'filearea' => 'comments'
+        );
     }
 
     /**

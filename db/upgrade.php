@@ -47,4 +47,14 @@ function xmldb_local_joulegrader_upgrade($oldversion) {
         // joulegrader savepoint reached
         upgrade_plugin_savepoint(true, 2012030700, 'local', 'joulegrader');
     }
+
+    if ($oldversion < 2013053000) {
+        require_once(__DIR__ . '/upgradelib.php');
+
+        $commentsupgrader = new local_joulegrader_comments_upgrader();
+        $commentsupgrader->upgrade();
+
+        // Joule grader savepoint reached.
+        upgrade_plugin_savepoint(true, 2013053000, 'local', 'joulegrader');
+    }
 }

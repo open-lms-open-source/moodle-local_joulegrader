@@ -203,6 +203,20 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     }
 
     /**
+     * @param local_joulegrader_helper_users $userhelper
+     */
+    public function current_user($userhelper) {
+        return;
+    }
+
+    /**
+     * @param local_joulegrader_helper_navigation $navhelper
+     */
+    public function current_navuser(local_joulegrader_helper_navigation $navhelper) {
+        return;
+    }
+
+    /**
      * @return int - the grading_areas entry id
      */
     public function get_areaid() {
@@ -269,12 +283,40 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     }
 
     /**
-     * @param local_joulegrader_lib_comment[] $comments
-     * @return local_joulegrader_lib_comment[]
+     * @param $commentloop
      */
-    public function comments_hook($comments) {
-        return $comments;
+    public function set_commentloop($commentloop) {
+        $this->commentloop = $commentloop;
     }
+
+
+    /**
+     * @return bool
+     */
+    public function has_comments() {
+        return true;
+    }
+
+
+    public function get_editor_options() {
+        return array(
+            'return_types' => FILE_EXTERNAL | FILE_INTERNAL,
+            'maxfiles' => EDITOR_UNLIMITED_FILES,
+            'context' => $this->get_gradingmanager()->get_context(),
+        );
+    }
+
+    /**
+     * @return stdClass
+     */
+    abstract public function get_comment_filearea_info();
+
+    /**
+     * Returns the $options object to be passed to comment/lib.php comment class constructor
+     *
+     * @return stdClass|null
+     */
+    abstract public function get_comment_info();
 
     /**
      * Return the name of and path to the viewpane class that this grading_area class should use
