@@ -246,6 +246,13 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
     }
 
     /**
+     * @return string
+     */
+    public function get_grouplabel() {
+        return $this->grouplabel;
+    }
+
+    /**
      * Find the previous and next user ids
      */
     protected function find_previous_and_next($list, $currentid) {
