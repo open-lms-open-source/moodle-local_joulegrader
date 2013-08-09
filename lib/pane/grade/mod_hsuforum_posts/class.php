@@ -89,6 +89,17 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
         return $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->grade;
     }
 
+    public function format_gradevalue($grade) {
+        $gradeitem = grade_item::fetch(array('itemtype'=> 'mod', 'itemmodule'=> 'hsuforum',
+            'iteminstance'=> $this->forum->id, 'courseid'=> $this->courseid,
+            'outcomeid' => null));
+
+        $decimals = $gradeitem->get_decimals();
+        $formattedgrade = format_float($grade, $decimals, true);
+
+        return $formattedgrade;
+    }
+
     public function has_active_gradinginstances() {
         return $this->controller->get_active_instances($this->gradingarea->get_guserid());
     }
@@ -231,7 +242,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                     }
 
                     //transform to an integer within the range of the assignment
-                    $grade = (int) ($this->forum->scale * ($percentvalue / 100));
+                    $grade = (float) ($this->forum->scale * ($percentvalue / 100));
 
                 } else if (strpos($grade, '%') !== false) {
                     //trying to submit percentage
@@ -239,14 +250,14 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                     $percentgrade = clean_param($percentgrade, PARAM_FLOAT);
 
                     //transform to an integer within the range of the assignment
-                    $grade = (int) ($this->forum->scale * ($percentgrade / 100));
+                    $grade = (float) ($this->forum->scale * ($percentgrade / 100));
 
                 } else if ($grade === '') {
                     //setting to "No grade"
                     $grade = -1;
                 } else {
                     //just a numeric value, clean it as int b/c that's what assignment module accepts
-                    $grade = clean_param($grade, PARAM_INT);
+                    $grade = clean_param($grade, PARAM_FLOAT);
                 }
             }
 

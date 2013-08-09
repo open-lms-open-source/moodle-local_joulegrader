@@ -124,6 +124,23 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     }
 
     /**
+     * @param mixed $grade
+     * @return mixed
+     */
+    public function format_gradevalue($grade) {
+        return $grade;
+    }
+
+    /**
+     * @param array $data
+     * @param array $validated
+     * @return array
+     */
+    public function gradepane_validation($data, $validated) {
+        return $validated;
+    }
+
+    /**
      * @param MoodleQuickForm $mform
      */
     public function paneform_hook($mform) {

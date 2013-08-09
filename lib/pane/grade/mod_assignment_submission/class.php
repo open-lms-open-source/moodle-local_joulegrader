@@ -122,6 +122,21 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
         return $submission->id;
     }
 
+    public function gradepane_validation($data, $validated) {
+        $grade = trim($data['grade']);
+
+        // Only need extra validation if it is not empty and is numeric.
+        if ($grade !== '' and is_numeric($grade)) {
+            // We only want to allow integers.
+            $cleanedint = clean_param($grade, PARAM_INT);
+            if ($cleanedint != $grade) {
+                $validated['grade'] = get_string('modassignmentintonly', 'local_joulegrader');
+            }
+        }
+
+        return $validated;
+    }
+
     /**
      * @return bool
      */
@@ -229,7 +244,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                     }
 
                     //transform to an integer within the range of the assignment
-                    $grade = (int) ($assignment->assignment->grade * ($percentvalue / 100));
+                    $grade =  round($assignment->assignment->grade * ($percentvalue / 100));
 
                 } else if (strpos($grade, '%') !== false) {
                     //trying to submit percentage
@@ -237,7 +252,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                     $percentgrade = clean_param($percentgrade, PARAM_FLOAT);
 
                     //transform to an integer within the range of the assignment
-                    $grade = (int) ($assignment->assignment->grade * ($percentgrade / 100));
+                    $grade = round($assignment->assignment->grade * ($percentgrade / 100));
 
                 } else if ($grade === '') {
                     //setting to "No grade"

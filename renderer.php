@@ -286,6 +286,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     //if grade isn't set yet then, make is blank, instead of -1
                     if ($grade == -1) {
                         $grade = ' - ';
+                    } else {
+                        $grade = $gradepane->format_gradevalue($grade);
                     }
                     $html .= get_string('gradeoutof', 'local_joulegrader', $gradepane->get_grade()) . ': ';
                     $html .= $grade;

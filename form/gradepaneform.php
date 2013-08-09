@@ -54,6 +54,8 @@ class local_joulegrader_form_gradepaneform extends moodleform {
                 //if the there is no grade yet make it blank
                 if ($grade == -1) {
                     $grade = '';
+                } else {
+                    $grade = $this->_customdata->format_gradevalue($grade);
                 }
             }
             if ($this->_customdata->get_gradingdisabled()) {
@@ -119,14 +121,14 @@ class local_joulegrader_form_gradepaneform extends moodleform {
 
             //determine if user is submitting as a letter grade, percentage or float
             if ($grade === '') {
-                $validated = true;
+                $validated = array();
             } else if (is_numeric($grade)) {
                 //straight point value
-                $grade = clean_param($grade, PARAM_INT);
+                $grade = clean_param($grade, PARAM_FLOAT);
 
                 //needs to be in range 0 - $assignmentgrade
                 if ($grade >= 0 && $grade <= $outofgrade) {
-                    $validated = true;
+                    $validated = array();
                 }
             } else if (strpos($grade, '%') !== false) {
                 // trying to submit percentage
@@ -136,13 +138,15 @@ class local_joulegrader_form_gradepaneform extends moodleform {
                 if (is_numeric($percentgrade)) {
                     $percentgrade = clean_param($percentgrade, PARAM_INT);
                     if ($percentgrade >= 0 && $percentgrade <= 100) {
-                        $validated = true;
+                        $validated = array();
                     }
                 }
             } else if (in_array(textlib::strtoupper($grade), array_map('textlib::strtoupper', $lettergrades))) {
                 //look for a lettergrade
-                $validated = true;
+                $validated = array();
             }
+
+            $validated = $this->_customdata->gradepane_validation($data, $validated);
         }
 
         return $validated;

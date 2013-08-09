@@ -116,6 +116,17 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         return $grade;
     }
 
+    public function format_gradevalue($grade) {
+        $gradeitem = grade_item::fetch(array('itemtype'=> 'mod', 'itemmodule'=> 'assign',
+                'iteminstance'=> $this->gradingarea->get_assign()->get_instance()->id, 'courseid'=> $this->courseid,
+                'outcomeid' => null));
+
+        $decimals = $gradeitem->get_decimals();
+        $formattedgrade = format_float($grade, $decimals, true);
+
+        return $formattedgrade;
+    }
+
     public function has_paneform() {
         return (empty($this->controller) || empty($this->gradinginstance) || (!empty($this->controller) && !$this->controller->is_form_available()));
     }
@@ -331,8 +342,8 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                         $max = $value - 1;
                     }
 
-                    // Transform to an integer within the range of the assignment.
-                    $data->grade = (int) ($assignment->get_instance()->grade * ($percentvalue / 100));
+                    // Transform to a float within the range of the assignment.
+                    $data->grade = (float) ($assignment->get_instance()->grade * ($percentvalue / 100));
 
                 } else if (strpos($grade, '%') !== false) {
                     // Trying to submit percentage.
@@ -340,14 +351,14 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                     $percentgrade = clean_param($percentgrade, PARAM_FLOAT);
 
                     // Transform to an integer within the range of the assignment.
-                    $data->grade = (int) ($assignment->get_instance()->grade * ($percentgrade / 100));
+                    $data->grade = (float) ($assignment->get_instance()->grade * ($percentgrade / 100));
 
                 } else if ($grade === '') {
                     // Setting to "No grade".
                     $data->grade = -1;
                 } else {
-                    // Just a numeric value, clean it as int b/c that's what assignment module accepts.
-                    $data->grade = clean_param($grade, PARAM_INT);
+                    // Just a numeric value, clean it as float b/c that's what assign module accepts.
+                    $data->grade = clean_param($grade, PARAM_FLOAT);
                 }
             }
 
