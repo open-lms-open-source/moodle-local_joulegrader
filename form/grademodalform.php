@@ -33,6 +33,7 @@ class local_joulegrader_form_grademodalform extends moodleform {
             $gradingelement->freeze();
         } else {
             $mform->addElement('hidden', 'gradinginstanceid', $gradinginstance->get_id());
+            $mform->setType('gradinginstanceid', PARAM_INT);
         }
 
         // Add overall feedback.
