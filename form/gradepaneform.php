@@ -79,6 +79,7 @@ class local_joulegrader_form_gradepaneform extends moodleform {
         if ($this->_customdata->has_override()) {
             //if overridden in gradebook, add a checkbox
             $mform->addElement('checkbox', 'override', null, get_string('overridetext', 'local_joulegrader'));
+            $mform->setType('override', PARAM_BOOL);
         }
 
         $this->_customdata->paneform_hook($mform);

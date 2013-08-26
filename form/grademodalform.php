@@ -50,6 +50,7 @@ class local_joulegrader_form_grademodalform extends moodleform {
         if ($this->_customdata->has_override()) {
             // If overridden in gradebook, add a checkbox.
             $mform->addElement('checkbox', 'override', null, get_string('overridetext', 'local_joulegrader'));
+            $mform->setType('override', PARAM_BOOL);
         }
 
         $this->_customdata->modalform_hook($mform);

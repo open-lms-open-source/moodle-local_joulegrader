@@ -42,6 +42,7 @@ class local_joulegrader_form_comment extends moodleform {
 
         //comment editor
         $mform->addElement('editor', 'comment', null, array('cols' => 10, 'rows' => 8), $editoroptions);
+        $mform->setType('comment', PARAM_RAW);
         $mform->addRule('comment', get_string('commentrequired', 'local_joulegrader'), 'required', null, 'client');
 
         //submit button

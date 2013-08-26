@@ -186,6 +186,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         if ($this->has_overall_feedback()) {
             $editor = $mform->addElement('editor', 'assignfeedbackcomments_editor',
                 get_string('overallfeedback', 'local_joulegrader') . ': ', null, null);
+            $mform->setType('assignfeedbackcomments_editor', PARAM_RAW);
 
             if ($grade = $this->get_usergrade($this->gradingarea->get_guserid())) {
                 $feedbackcomments = $this->get_feedbackcomment_plugin()->get_feedback_comments($grade->id);

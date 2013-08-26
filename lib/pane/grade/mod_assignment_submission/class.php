@@ -170,6 +170,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
 
             $editor = $mform->addElement('editor', 'submissioncomment_editor',
                     get_string('overallfeedback', 'local_joulegrader') . ': ', null, null);
+            $mform->setType('submissioncomment_editor', PARAM_RAW);
 
             $feedbackinfo = $this->get_feedback_info();
 

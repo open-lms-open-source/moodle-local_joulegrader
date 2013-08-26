@@ -171,6 +171,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
 
             $editor = $mform->addElement('editor', 'hsuforumfeedback_editor',
                 get_string('overallfeedback', 'local_joulegrader') . ': ', null, null);
+            $mform->setType('hsuforumfeedback_editor', PARAM_RAW);
 
             $feedbackinfo = $this->get_feedback_info();
 
