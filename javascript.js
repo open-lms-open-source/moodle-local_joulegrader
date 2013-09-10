@@ -56,15 +56,17 @@ M.local_joulegrader.init_resize = function(Y) {
         width = width - 50;
 
         var eds = tinymce.editors;
-        for (var i in eds) {
-            var con = Y.one(eds[i].getContentAreaContainer());
-            if (con.ancestor('#local-joulegrader-gradepane-panel')) {
-                continue;
-            }
+        if (eds) {
+            for (var i in eds) {
+                var con = Y.one(eds[i].getContentAreaContainer());
+                if (con.ancestor('#local-joulegrader-gradepane-panel')) {
+                    continue;
+                }
 
-            var tmceiframe = con.one('iframe');
-            if (tmceiframe) {
-                tmceiframe.setStyle('width', width + 'px');
+                var tmceiframe = con.one('iframe');
+                if (tmceiframe) {
+                    tmceiframe.setStyle('width', width + 'px');
+                }
             }
         }
     }
