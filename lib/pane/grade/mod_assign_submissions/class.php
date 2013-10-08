@@ -319,46 +319,48 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         //get the data from the form
         if ($data) {
 
-            if ($assignment->get_instance()->grade < 0) {
-                // Scale grade.
-                $data->grade = clean_param($data->grade, PARAM_INT);
-            } else if (!isset($data->gradinginstanceid)) {
-                //just using regular grading
-                $lettergrades = grade_get_letters(context_course::instance($this->courseid));
-                $grade = $data->grade;
-
-                // Determine if user is submitting as a letter grade, percentage or float.
-                $touppergrade = textlib::strtoupper($grade);
-                $toupperlettergrades = array_map('textlib::strtoupper', $lettergrades);
-                if (in_array($touppergrade, $toupperlettergrades)) {
-                    // Submitting lettergrade, find percent grade.
-                    $percentvalue = 0;
-                    $max = 100;
-                    foreach ($toupperlettergrades as $value => $letter) {
-                        if ($touppergrade == $letter) {
-                            $percentvalue = ($max + $value) / 2;
-                            break;
-                        }
-                        $max = $value - 1;
-                    }
-
-                    // Transform to a float within the range of the assignment.
-                    $data->grade = (float) ($assignment->get_instance()->grade * ($percentvalue / 100));
-
-                } else if (strpos($grade, '%') !== false) {
-                    // Trying to submit percentage.
-                    $percentgrade = trim(strstr($grade, '%', true));
-                    $percentgrade = clean_param($percentgrade, PARAM_FLOAT);
-
-                    // Transform to an integer within the range of the assignment.
-                    $data->grade = (float) ($assignment->get_instance()->grade * ($percentgrade / 100));
-
-                } else if ($grade === '') {
-                    // Setting to "No grade".
-                    $data->grade = -1;
+            if (!isset($data->gradinginstanceid)) {
+                if ($assignment->get_instance()->grade < 0) {
+                    // Scale grade.
+                    $data->grade = clean_param($data->grade, PARAM_INT);
                 } else {
-                    // Just a numeric value, clean it as float b/c that's what assign module accepts.
-                    $data->grade = clean_param($grade, PARAM_FLOAT);
+                    //just using regular grading
+                    $lettergrades = grade_get_letters(context_course::instance($this->courseid));
+                    $grade = $data->grade;
+
+                    // Determine if user is submitting as a letter grade, percentage or float.
+                    $touppergrade = textlib::strtoupper($grade);
+                    $toupperlettergrades = array_map('textlib::strtoupper', $lettergrades);
+                    if (in_array($touppergrade, $toupperlettergrades)) {
+                        // Submitting lettergrade, find percent grade.
+                        $percentvalue = 0;
+                        $max = 100;
+                        foreach ($toupperlettergrades as $value => $letter) {
+                            if ($touppergrade == $letter) {
+                                $percentvalue = ($max + $value) / 2;
+                                break;
+                            }
+                            $max = $value - 1;
+                        }
+
+                        // Transform to a float within the range of the assignment.
+                        $data->grade = (float) ($assignment->get_instance()->grade * ($percentvalue / 100));
+
+                    } else if (strpos($grade, '%') !== false) {
+                        // Trying to submit percentage.
+                        $percentgrade = trim(strstr($grade, '%', true));
+                        $percentgrade = clean_param($percentgrade, PARAM_FLOAT);
+
+                        // Transform to an integer within the range of the assignment.
+                        $data->grade = (float) ($assignment->get_instance()->grade * ($percentgrade / 100));
+
+                    } else if ($grade === '') {
+                        // Setting to "No grade".
+                        $data->grade = -1;
+                    } else {
+                        // Just a numeric value, clean it as float b/c that's what assign module accepts.
+                        $data->grade = clean_param($grade, PARAM_FLOAT);
+                    }
                 }
             }
 

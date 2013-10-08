@@ -283,9 +283,11 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
 
             //if no param passed take the first area in the course (in the menu)
             if (empty($garea) && !empty($this->gradingareas)) {
-                $garea = array_shift(array_keys($this->gradingareas));
+                reset($this->gradingareas);
+                $garea = key($this->gradingareas);
             } else if (!array_key_exists($garea, $this->gradingareas) && !empty($this->gradingareas)) {
-                $garea = array_shift(array_keys($this->gradingareas));
+                reset($this->gradingareas);
+                $garea = key($this->gradingareas);;
             }
 
             //special case where needs grading has excluded all grading areas
