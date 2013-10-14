@@ -146,9 +146,11 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
 
             //if no param passed take the first user in the course (in the menu)
             if (empty($guser) && !empty($this->users)) {
-                $guser = array_shift(array_keys($this->users));
+                reset($this->users);
+                $guser = key($this->users);
             } else if (!array_key_exists($guser, $this->users) && !empty($this->users)) {
-                $guser = array_shift(array_keys($this->users));
+                reset($this->users);
+                $guser = key($this->users);
             }
 
             //special case where needs grading has excluded all grading areas
