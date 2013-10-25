@@ -26,7 +26,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         global $USER;
 
         $assignment = $this->gradingarea->get_assign();
-        $usergrade = $this->get_usergrade($this->gradingarea->get_guserid());
+        $usergrade = $this->get_usergrade($this->gradingarea->get_guserid(), false, $this->gradingarea->get_attemptnumber());
 
         $this->courseid = $assignment->get_instance()->course;
 
@@ -106,7 +106,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     public function get_currentgrade() {
-        $usergrade = $this->get_usergrade($this->gradingarea->get_guserid());
+        $usergrade = $this->get_usergrade($this->gradingarea->get_guserid(), false, $this->gradingarea->get_attemptnumber());
 
         $grade = -1;
         if (!empty($usergrade) && isset($usergrade->grade)) {
@@ -132,13 +132,13 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     public function has_active_gradinginstances() {
-        $usergrade = $this->get_usergrade($this->gradingarea->get_guserid());
+        $usergrade = $this->get_usergrade($this->gradingarea->get_guserid(), false, $this->gradingarea->get_attemptnumber());
         return !(empty($usergrade) || !$this->controller->get_active_instances($usergrade->id));
     }
 
     public function get_agitemid() {
         $agitem = null;
-        $usergrade = $this->get_usergrade($this->gradingarea->get_guserid());
+        $usergrade = $this->get_usergrade($this->gradingarea->get_guserid(), false, $this->gradingarea->get_attemptnumber());
 
         if (!empty($usergrade) && isset($usergrade->id)) {
             $agitem = $usergrade->id;
@@ -169,7 +169,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     public function get_overall_feedback() {
         $feedback = '';
         if ($this->has_overall_feedback()) {
-            if ($grade = $this->get_usergrade($this->gradingarea->get_guserid())) {
+            if ($grade = $this->get_usergrade($this->gradingarea->get_guserid(), false, $this->gradingarea->get_attemptnumber())) {
                 $feedback = $this->get_feedbackcomment_plugin()->view($grade);
             }
         }
@@ -188,7 +188,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                 get_string('overallfeedback', 'local_joulegrader') . ': ', null, null);
             $mform->setType('assignfeedbackcomments_editor', PARAM_RAW);
 
-            if ($grade = $this->get_usergrade($this->gradingarea->get_guserid())) {
+            if ($grade = $this->get_usergrade($this->gradingarea->get_guserid(), false, $this->gradingarea->get_attemptnumber())) {
                 $feedbackcomments = $this->get_feedbackcomment_plugin()->get_feedback_comments($grade->id);
                 if ($feedbackcomments) {
                     $data = array();
@@ -210,7 +210,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         if ($this->has_file_feedback()) {
             $userid = $this->gradingarea->get_guserid();
             $data = new stdClass();
-            $this->get_feedbackfile_plugin()->get_form_elements_for_user($this->get_usergrade($userid), $mform, $data, $userid);
+            $this->get_feedbackfile_plugin()->get_form_elements_for_user($this->get_usergrade($userid, false, $this->gradingarea->get_attemptnumber()), $mform, $data, $userid);
             $elementname = 'files_' . $userid . '_filemanager';
             $mform->setDefault($elementname, $data->$elementname);
             $mform->getElement($elementname)->setLabel(html_writer::tag('div', get_string('filefeedback', 'local_joulegrader') . ': '));
@@ -226,7 +226,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     public function get_file_feedback() {
         $feedback = '';
         if ($this->has_file_feedback()) {
-            if ($grade = $this->get_usergrade($this->gradingarea->get_guserid())) {
+            if ($grade = $this->get_usergrade($this->gradingarea->get_guserid(), false, $this->gradingarea->get_attemptnumber())) {
                 $feedback = $this->get_feedbackfile_plugin()->view($grade);
             }
         }
@@ -241,7 +241,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         $notgraded = false;
 
         $assignment = $this->gradingarea->get_assign();
-        $usergrade  = $this->get_usergrade($this->gradingarea->get_guserid());
+        $usergrade  = $this->get_usergrade($this->gradingarea->get_guserid(), false, $this->gradingarea->get_attemptnumber());
 
         if ($assignment->get_instance()->grade != 0) {
             //check the submission first
@@ -261,6 +261,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
      */
     public function paneform_hook($mform) {
         $this->add_applyall_element($mform);
+        $this->add_newattempt_element($mform);
         $this->blindmarking_modification($mform);
     }
 
@@ -269,6 +270,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
      */
     public function modalform_hook($mform) {
         $this->add_applyall_element($mform);
+        $this->add_newattempt_element($mform);
         $this->blindmarking_modification($mform);
     }
 
@@ -302,6 +304,16 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                 // Disable override if "Apply grade and feedback to all" is set to yes.
                 $mform->disabledIf('override', 'applytoall', 'eq', 1);
             }
+        }
+    }
+
+    /**
+     * @param MoodleQuickForm $mform
+     */
+    private function add_newattempt_element($mform) {
+        if ($this->gradingarea->allow_new_manualattempt()) {
+            $mform->addElement('selectyesno', 'addattempt', get_string('addattempt', 'assign'));
+            $mform->setDefault('addattempt', 0);
         }
     }
 
@@ -398,6 +410,10 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                 }
             }
 
+            if ($this->should_reopen_attempt($data)) {
+                $this->process_add_attempt($userid);
+            }
+
             //redirect to next user if set
             if (optional_param('saveandnext', 0, PARAM_BOOL) && !empty($data->nextuser)) {
                 $redirecturl->param('guser', $data->nextuser);
@@ -411,11 +427,28 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         redirect($redirecturl);
     }
 
+    /**
+     * @return bool
+     */
+    public function read_only() {
+        $readonly = false;
+        $attemptnumber = $this->gradingarea->get_attemptnumber();
+        if ($attemptnumber != -1) {
+            if ($submissions = $this->gradingarea->get_all_submissions()) {
+                $mostrecent = end($submissions);
+                $readonly = ($mostrecent->attemptnumber != $attemptnumber);
+            }
+        }
+
+        return $readonly;
+    }
+
     protected function apply_grade_to_user($data, $userid) {
         global $USER;
 
+        /** @var assign $assignment */
         $assignment = $this->gradingarea->get_assign();
-        $usergrade = $this->get_usergrade($userid, true);
+        $usergrade = $this->get_usergrade($userid, true, $this->gradingarea->get_attemptnumber());
 
         $teamsubmission = $assignment->get_instance()->teamsubmission;
 
@@ -641,14 +674,18 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     /**
      * @param int $userid
      * @param bool $create
+     * @param int $attemptnumber
      * @return bool|stdClass
      */
-    private function get_usergrade($userid, $create = false) {
+    private function get_usergrade($userid, $create = false, $attemptnumber = -1) {
         if (empty($this->usergrades[$userid])) {
-            $this->usergrades[$userid] = $this->gradingarea->get_assign()->get_user_grade($userid, $create);
+            $this->usergrades[$userid] = array();
+        }
+        if (empty($this->usergrades[$userid][$attemptnumber])) {
+            $this->usergrades[$userid][$attemptnumber] = $this->gradingarea->get_assign()->get_user_grade($userid, $create, $attemptnumber);
         }
 
-        return $this->usergrades[$userid];
+        return $this->usergrades[$userid][$attemptnumber];
     }
 
     /**
@@ -678,5 +715,174 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         }
 
         return $gradebookgrade;
+    }
+
+    /**
+     * @param $formdata
+     * @return bool
+     */
+    public function should_reopen_attempt($formdata) {
+
+        if (!$this->gradingarea->allows_multiple_attempts()) {
+            // Assignment doesn't allow reopening attempts.
+            return false;
+        }
+
+        /** @var assign $assignment */
+        $assignment = $this->gradingarea->get_assign();
+        $instance   = $assignment->get_instance();
+
+        if (($instance->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL) and empty($formdata->addattempt)) {
+            // Reopen method is manual and the user did NOT elect to add a new attempt.
+            return false;
+        }
+
+        $submission = $this->gradingarea->get_submission();
+
+        $maxattemptsreached = !empty($submission) && ($instance->maxattempts != ASSIGN_UNLIMITED_ATTEMPTS) &&
+            ($submission->attemptnumber >= ($instance->maxattempts - 1));
+
+        if ($maxattemptsreached) {
+            // Reached the max attempts allowed.
+            return false;
+        }
+
+        // At this point we haven't reach max attempts, if the method was manual then the user did select to add a new attempt.
+        if ($instance->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL) {
+            // Method is manual so we can reopen.
+            return true;
+        }
+
+        // Reopen method is until passing grade.
+        if ($instance->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS) {
+            $userid = $this->gradingarea->get_guserid();
+            // Check the gradetopass from the gradebook.
+            $gradinginfo = grade_get_grades($assignment->get_course()->id,
+                'mod',
+                'assign',
+                $instance->id,
+                $userid);
+
+            // What do we do if the grade has not been added to the gradebook (e.g. blind marking)?
+            $gradingitem = null;
+            $gradebookgrade = null;
+            if (isset($gradinginfo->items[0])) {
+                $gradingitem = $gradinginfo->items[0];
+                /** @var grade_grade $gradebookgrade */
+                $gradebookgrade = $gradingitem->grades[$userid];
+            }
+
+            if (!empty($gradebookgrade)) {
+                // TODO: This code should call grade_grade->is_passed().
+                $shouldreopen = true;
+                if (is_null($gradebookgrade->grade)) {
+                    $shouldreopen = false;
+                }
+                if (empty($gradingitem->gradepass) || $gradingitem->gradepass == $gradingitem->grademin) {
+                    $shouldreopen = false;
+                }
+                if ($gradebookgrade->grade >= $gradingitem->gradepass) {
+                    $shouldreopen = false;
+                }
+                return $shouldreopen;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Add a new attempt for a user.
+     *
+     * @param int $userid int The user to add the attempt for
+     * @return bool - true if successful.
+     */
+    protected function process_add_attempt($userid) {
+        /** @var assign $assignment */
+        $assignment = $this->gradingarea->get_assign();
+        $instance   = $assignment->get_instance();
+
+        $submission = $this->gradingarea->get_submission();
+
+        if (!$submission) {
+            return false;
+        }
+
+        // Create the new submission record for the group/user.
+        if ($instance->teamsubmission) {
+            $submission = $assignment->get_group_submission($userid, 0, true, $submission->attemptnumber+1);
+        } else {
+            $submission = $assignment->get_user_submission($userid, true, $submission->attemptnumber+1);
+        }
+
+        // Set the status of the new attempt to reopened.
+        $submission->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
+        $this->update_submission($submission, $userid, false, $instance->teamsubmission);
+        return true;
+    }
+
+    /**
+     * Update grades in the gradebook based on submission time. Modified from protected method in assign class.
+     * In Joule Grader it is only used when adding a new attempt to the assignment.
+     *
+     * @param stdClass $submission
+     * @param int $userid
+     * @param bool $updatetime
+     * @param bool $teamsubmission
+     * @return bool
+     */
+    protected function update_submission(stdClass $submission, $userid, $updatetime, $teamsubmission) {
+        global $DB;
+
+        if ($teamsubmission) {
+            return $this->update_team_submission($submission, $userid, $updatetime);
+        }
+
+        if ($updatetime) {
+            $submission->timemodified = time();
+        }
+        $result = $DB->update_record('assign_submission', $submission);
+
+        return $result;
+    }
+
+    /**
+     * Update team submission.  Modified from protected method in assign class.
+     * In Joule Grader it is only used when adding a new attempt to the assignment.
+     *
+     * @param stdClass $submission
+     * @param int $userid
+     * @param bool $updatetime
+     * @return bool
+     */
+    protected function update_team_submission(stdClass $submission, $userid, $updatetime) {
+        global $DB;
+
+        /** @var assign $assignment */
+        $assignment = $this->gradingarea->get_assign();
+
+        if ($updatetime) {
+            $submission->timemodified = time();
+        }
+
+        // First update the submission for the current user.
+        $mysubmission = $assignment->get_user_submission($userid, true, $submission->attemptnumber);
+        $mysubmission->status = $submission->status;
+
+        $this->update_submission($mysubmission, 0, $updatetime, false);
+
+        // Now check the team settings to see if this assignment qualifies as submitted or draft.
+        $team = $assignment->get_submission_group_members($submission->groupid, true);
+
+        $result = true;
+        // Set the group submission to reopened.
+        foreach ($team as $member) {
+            $membersubmission = $assignment->get_user_submission($member->id, true, $submission->attemptnumber);
+            $membersubmission->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
+            $result = $DB->update_record('assign_submission', $membersubmission) && $result;
+        }
+        $result = $DB->update_record('assign_submission', $submission) && $result;
+
+        return $result;
     }
 }

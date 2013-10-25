@@ -307,6 +307,13 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     }
 
     /**
+     * @param MoodleQuickForm $mform
+     */
+    public function comment_form_hook($mform) {
+
+    }
+
+    /**
      * @return stdClass
      */
     abstract public function get_comment_filearea_info();

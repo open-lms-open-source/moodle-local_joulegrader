@@ -206,6 +206,6 @@ class local_joulegrader_lib_comment_loop implements renderable {
         $mformurl = new moodle_url('/local/joulegrader/view.php', $urlparams);
 
         //instantiate the form
-        $this->mform = new local_joulegrader_form_comment($mformurl, $this->gradingarea->get_editor_options());
+        $this->mform = new local_joulegrader_form_comment($mformurl, $this->gradingarea);
     }
 }

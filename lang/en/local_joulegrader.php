@@ -53,6 +53,10 @@ $string['viewinline'] = 'view inline';
 $string['activitycomments'] = 'Activity comments';
 $string['overallfeedback'] = 'Overall feedback';
 $string['filefeedback'] = 'File feedback';
+$string['attemptnumber'] = 'Attempt {$a->attemptnumber}: {$a->attempttime}';
+$string['viewingattempt'] = 'Viewing attempt';
+$string['attemptstatus'] = 'Student has made {$a->number} out of {$a->outof} attempts.';
+$string['assignmentstatus'] = 'Assignment status';
 
 // Form strings.
 $string['gradeoutof'] = 'Grade (out of {$a})';

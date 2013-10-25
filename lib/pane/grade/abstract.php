@@ -98,6 +98,13 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     /**
      * @return bool
      */
+    public function read_only() {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
     public function has_overall_feedback() {
         return false;
     }

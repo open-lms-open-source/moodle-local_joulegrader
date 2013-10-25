@@ -37,13 +37,15 @@ class local_joulegrader_form_comment extends moodleform {
         );
 
         // Editor options.
-        $editoroptions = $this->_customdata;
+        $editoroptions = $this->_customdata->get_editor_options();
         $editoroptions['tinymceparams'] = $tineymceparams;
 
         //comment editor
         $mform->addElement('editor', 'comment', null, array('cols' => 10, 'rows' => 8), $editoroptions);
         $mform->setType('comment', PARAM_RAW);
         $mform->addRule('comment', get_string('commentrequired', 'local_joulegrader'), 'required', null, 'client');
+
+        $this->_customdata->comment_form_hook($mform);
 
         //submit button
         $this->add_action_buttons(false, get_string('add', 'local_joulegrader'));
