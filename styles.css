@@ -190,3 +190,7 @@
     overflow: auto;
     min-height: 0%;
 }
+
+#local-joulegrader-viewpane .local_joulegrader-hsuforum-showposts {
+    margin-bottom: .5em;
+}
