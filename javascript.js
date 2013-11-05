@@ -47,9 +47,34 @@ M.local_joulegrader.init_resize = function(Y) {
         return pixels;
     };
 
+    var resize_tinymce = function() {
+        if (!tinymce) {
+            return;
+        }
+
+        var width = parseInt(gradepanecontent.getComputedStyle('width'));
+        width = width - 50;
+
+        var eds = tinymce.editors;
+        if (eds) {
+            for (var i in eds) {
+                var con = Y.one(eds[i].getContentAreaContainer());
+                if (con.ancestor('#local-joulegrader-gradepane-panel')) {
+                    continue;
+                }
+
+                var tmceiframe = con.one('iframe');
+                if (tmceiframe) {
+                    tmceiframe.setStyle('width', width + 'px');
+                }
+            }
+        }
+    }
+
     // Initialize the handle position and the grid pixel positions.
     updatehandlepos();
     var pixels = calculatepixels();
+    resize_tinymce();
 
     // Create the drag instance using the draghandle as the drag node.
     var drag = new Y.DD.Drag({
@@ -91,6 +116,8 @@ M.local_joulegrader.init_resize = function(Y) {
 
         gradepane.addClass(newgpclass);
         viewpane.addClass(newvpclass);
+
+        resize_tinymce();
     });
 
     // Recalculate the grid pixel positions, update the handle position, and reset constrained drag "snap" points.
@@ -98,6 +125,7 @@ M.local_joulegrader.init_resize = function(Y) {
         pixels = calculatepixels();
         drag.con.set('tickXArray', pixels);
         updatehandlepos();
+        resize_tinymce();
     });
 };
 
