@@ -738,6 +738,10 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         }
 
         $submission = $this->gradingarea->get_submission();
+        // Don't re-open a submission if there isn't one yet.
+        if (empty($submission)) {
+            return false;
+        }
 
         $maxattemptsreached = !empty($submission) && ($instance->maxattempts != ASSIGN_UNLIMITED_ATTEMPTS) &&
             ($submission->attemptnumber >= ($instance->maxattempts - 1));

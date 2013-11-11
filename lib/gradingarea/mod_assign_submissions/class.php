@@ -549,11 +549,16 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
 
         $submission = $this->get_submission();
 
+        // Don't allow a submission to be re-opened if there is no submission.
         $issubmission = !empty($submission);
-        $isunlimited = $instance->maxattempts == ASSIGN_UNLIMITED_ATTEMPTS;
-        $islessthanmaxattempts = $issubmission && ($submission->attemptnumber < ($instance->maxattempts-1));
+        if (!$issubmission) {
+            return false;
+        }
 
-        return ($issubmission or $isunlimited or $islessthanmaxattempts);
+        $isunlimited = $instance->maxattempts == ASSIGN_UNLIMITED_ATTEMPTS;
+        $islessthanmaxattempts = $issubmission && ($submission->attemptnumber + 1 < ($instance->maxattempts));
+
+        return ($isunlimited or $islessthanmaxattempts);
     }
 
     public function get_attemptnumber() {
@@ -564,6 +569,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         $attemptnumber = $this->get_attemptnumber();
         if ($attemptnumber >= 0) {
             $mform->addElement('hidden', 'attempt', $attemptnumber);
+            $mform->setType('attempt', PARAM_INT);
         }
     }
 }

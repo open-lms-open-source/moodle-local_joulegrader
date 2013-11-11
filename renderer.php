@@ -676,14 +676,24 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     $attemptmenu = $OUTPUT->render($select);
                 }
 
-                if ($submission and $numattempts) {
-                    $submissionnum = $submission->attemptnumber + 1;
-                    $a = new stdClass();
-                    $a->number = $submissionnum;
-                    $a->outof  = $numattempts;
-
-                    $attemptstatus = html_writer::tag('div', get_string('attemptstatus', 'local_joulegrader', $a));
+                $submittedcount = 0;
+                foreach ($attempts as $attempt) {
+                    if ($attempt->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+                        $submittedcount++;
+                    }
                 }
+
+                $maxattempts = $assignment->get_instance()->maxattempts;
+                if ($maxattempts === ASSIGN_UNLIMITED_ATTEMPTS) {
+                    $maxattempts = get_string('unlimited', 'local_joulegrader');
+                }
+
+                $a = new stdClass();
+                $a->number = $submittedcount;
+                $a->outof  = $maxattempts;
+
+                $attemptstatus = html_writer::tag('div', get_string('attemptstatus', 'local_joulegrader', $a));
+
             }
 
             $html .= $attemptmenu;
