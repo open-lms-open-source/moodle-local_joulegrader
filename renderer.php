@@ -684,7 +684,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 }
 
                 $maxattempts = $assignment->get_instance()->maxattempts;
-                if ($maxattempts === ASSIGN_UNLIMITED_ATTEMPTS) {
+                if ($maxattempts == ASSIGN_UNLIMITED_ATTEMPTS) {
                     $maxattempts = get_string('unlimited', 'local_joulegrader');
                 }
 
