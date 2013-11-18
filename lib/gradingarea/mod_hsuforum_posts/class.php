@@ -143,6 +143,39 @@ class local_joulegrader_lib_gradingarea_mod_hsuforum_posts_class extends local_j
     }
 
     /**
+     * @return int
+     */
+    public function get_showpost_preference() {
+        $preferenceparam = optional_param('showposts', -1, PARAM_INT);
+        if ($preferenceparam != -1) {
+            $this->update_showpost_preference($preferenceparam);
+        }
+
+        return get_user_preferences('local_joulegrader_mod_hsuforum_posts_showposts_grouped', 1);
+    }
+
+    /**
+     * @param $preference
+     * @return string
+     */
+    public function get_showpost_preference_label($preference) {
+        if (!empty($preference)) {
+            $label = get_string('showonlyuserposts', 'local_joulegrader');
+        } else {
+            $label = get_string('groupbydiscussion', 'local_joulegrader');
+        }
+
+        return $label;
+    }
+
+    /**
+     * @param $newpreference
+     */
+    protected function update_showpost_preference($newpreference) {
+        set_user_preference('local_joulegrader_mod_hsuforum_posts_showposts_grouped', $newpreference);
+    }
+
+    /**
      * @return array - the viewpane class and path to the class that this gradingarea class should use
      */
     protected function get_viewpane_info() {

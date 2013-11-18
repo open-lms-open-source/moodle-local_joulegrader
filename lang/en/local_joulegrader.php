@@ -28,6 +28,8 @@ $string['nogradeableareas'] = 'No gradable activities';
 $string['nogradeableusers'] = 'No gradable users';
 
 //renderer.php strings
+$string['showonlyuserposts'] = 'Show only user\'s posts';
+$string['groupbydiscussion'] = 'Group by discussion';
 $string['activity'] = 'Gradable activity';
 $string['activitynav'] = 'Gradable activities';
 $string['activitynav_help'] = 'Use this widget to select which gradable activity to grade.';

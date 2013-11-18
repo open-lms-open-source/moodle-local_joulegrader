@@ -610,19 +610,42 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      * @return string
      */
     public function render_local_joulegrader_lib_pane_view_mod_hsuforum_posts_class(local_joulegrader_lib_pane_view_mod_hsuforum_posts_class $viewpane) {
-        global $PAGE;
+        global $PAGE, $OUTPUT, $COURSE;
 
+        /** @var local_joulegrader_lib_gradingarea_mod_hsuforum_posts_class $gradingarea */
+        $gradingarea = $viewpane->get_gradingarea();
         $context = $viewpane->get_gradingarea()->get_gradingmanager()->get_context();
         $cm      = get_coursemodule_from_id('hsuforum', $context->instanceid, 0, false, MUST_EXIST);
 
         /** @var $renderer mod_hsuforum_renderer */
         $renderer = $PAGE->get_renderer('mod_hsuforum');
 
-        $html = $renderer->user_posts_overview($viewpane->get_gradingarea()->get_guserid(), $cm);
+        $showonlypreference = new stdClass();
+        $showonlypreference->preference = 1;
+        $showonlypreference->button = '';
+        if (has_capability($gradingarea::get_teachercapability(), $context)) {
+            $preference = $gradingarea->get_showpost_preference();
+            $buttonlabel = $gradingarea->get_showpost_preference_label($preference);
+            $urlparams = array(
+                'courseid' => $COURSE->id,
+                'guser' => $gradingarea->get_guserid(),
+                'garea' => $gradingarea->get_areaid(),
+                'showposts' => !$preference,
+
+            );
+            $preferenceurl = new moodle_url('/local/joulegrader/view.php', $urlparams);
+            $singlebutton = $OUTPUT->single_button($preferenceurl, $buttonlabel, 'get');
+
+            $showonlypreference->preference = $preference;
+            $showonlypreference->button = html_writer::tag('div', $singlebutton,
+                    array('class' => 'local_joulegrader-hsuforum-showposts'));
+        }
+        $html = $renderer->user_posts_overview($gradingarea->get_guserid(), $cm, $showonlypreference);
 
         if (empty($html)) {
             return html_writer::tag('h3', $viewpane->get_emptymessage());
         }
+
         return $html;
     }
 
