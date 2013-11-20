@@ -265,33 +265,9 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     $modalhtml .= $filefeedback;
                 }
             } else {
-                $grade = -1;
-
-                $gradinginfo = $gradepane->get_gradinginfo();
-                if (!empty($gradinginfo->items[0]) and !empty($gradinginfo->items[0]->grades[$gradepane->get_gradingarea()->get_guserid()])
-                    and !is_null($gradinginfo->items[0]->grades[$gradepane->get_gradingarea()->get_guserid()]->grade)) {
-                    $grade = $gradinginfo->items[0]->grades[$gradepane->get_gradingarea()->get_guserid()]->str_grade;
-                }
-
                 //start the html
                 $html = html_writer::start_tag('div', array('id' => 'local-joulegrader-gradepane-grade'));
-                if ($gradepane->get_grade() < 0) {
-                    $html .= get_string('grade') . ': ';
-                    if ($grade != -1) {
-                        $html .= $grade;
-                    } else {
-                        $html .= get_string('nograde');
-                    }
-                } else {
-                    //if grade isn't set yet then, make is blank, instead of -1
-                    if ($grade == -1) {
-                        $grade = ' - ';
-                    } else {
-                        $grade = $gradepane->format_gradevalue($grade);
-                    }
-                    $html .= get_string('gradeoutof', 'local_joulegrader', $gradepane->get_grade()) . ': ';
-                    $html .= $grade;
-                }
+                $html .= $this->help_render_currentgrade($gradepane);
                 $html .= $feedback;
                 $html .= $filefeedback;
                 $html .= html_writer::end_tag('div');
@@ -318,15 +294,56 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     }
 
     protected function help_render_currentgrade($gradepane) {
-        // Current grade.
-        $grade = $gradepane->get_gradinginfo()->items[0]->grades[$gradepane->get_gradingarea()->get_guserid()];
-        if ((!$grade->grade === false) && empty($grade->hidden)) {
-            $gradeval = $grade->str_long_grade;
+        $gradeoutof = $gradepane->get_grade();
+        $gradegrade = $gradepane->get_gradebook_grade();
+        $activitygrade = $gradepane->get_activity_grade();
+        if ($gradeoutof < 0) {
+            //Scale grade.
+            $gradeinfo = $gradepane->get_gradinginfo();
+            $scale = $gradeinfo->items[0]->scaleid;
+            $scale = grade_scale::fetch(array('id' => $scale));
+            $scale = $scale->load_items();
+
+            // Current gradebook grade.
+            if (!empty($gradegrade) && (!$gradegrade->grade === false) && empty($gradegrade->hidden)) {
+                $gbval = $scale[$gradegrade->str_long_grade];
+            } else {
+                $gbval = get_string('nograde');
+            }
+
+            // Activity grade.
+            if ($activitygrade !== null) {
+                if ($activitygrade < 0) {
+                    $activitygrade = get_string('nograde');
+                } else {
+                    $activitygrade = $scale[(int) $activitygrade];
+                }
+            }
         } else {
-            $gradeval = '-';
+            // Not a scale
+            // Current gradebook grade.
+            if (!empty($gradegrade) && (!$gradegrade->grade === false) && empty($gradegrade->hidden)) {
+                $gbval = $gradegrade->str_long_grade;
+            } else {
+                $gbval = ' - ';
+            }
+            // Activity grade.
+            if ($activitygrade !== null) {
+                if ($activitygrade < 0) {
+                    $activitygrade = ' - ';
+                } else {
+                    $activitygrade = $gradepane->format_gradevalue($activitygrade);
+                }
+            }
         }
 
-        return '<div class="grade">'. get_string('grade').': '.$gradeval. '</div>';
+        $currentgradestr = html_writer::tag('div', get_string('gradebookgrade', 'local_joulegrader').': '.$gbval, array('class' => 'grade'));
+
+        if ($activitygrade !== null) {
+            $currentgradestr .= html_writer::tag('div', $gradepane->get_activity_grade_label().': '.$activitygrade, array('class' => 'grade'));
+        }
+
+        return $currentgradestr;
     }
 
     protected function help_render_modalbutton($gradepane) {

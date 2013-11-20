@@ -116,6 +116,14 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
         return $grade;
     }
 
+    public function get_activity_grade() {
+        return $this->get_currentgrade();
+    }
+
+    public function get_activity_grade_label() {
+        return get_string('attemptgrade', 'local_joulegrader');
+    }
+
     public function format_gradevalue($grade) {
         $gradeitem = grade_item::fetch(array('itemtype'=> 'mod', 'itemmodule'=> 'assign',
                 'iteminstance'=> $this->gradingarea->get_assign()->get_instance()->id, 'courseid'=> $this->courseid,

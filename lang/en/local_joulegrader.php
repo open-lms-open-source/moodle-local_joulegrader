@@ -58,6 +58,8 @@ $string['viewingattempt'] = 'Viewing attempt';
 $string['attemptstatus'] = 'Student has made {$a->number} out of {$a->outof} attempts.';
 $string['assignmentstatus'] = 'Assignment status';
 $string['unlimited'] = 'unlimited';
+$string['gradebookgrade'] = 'Current grade in grade book';
+$string['attemptgrade'] = 'Attempt grade';
 
 // Form strings.
 $string['gradeoutof'] = 'Grade (out of {$a})';
