@@ -392,4 +392,10 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
 
         return $notgraded;
     }
+
+    public function get_activity_grade() {
+        return $this->get_currentgrade();
+    }
+
+
 }

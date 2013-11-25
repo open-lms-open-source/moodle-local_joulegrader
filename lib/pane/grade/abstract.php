@@ -98,6 +98,13 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     /**
      * @return bool
      */
+    public function read_only() {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
     public function has_overall_feedback() {
         return false;
     }
@@ -161,6 +168,27 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
         }
 
         return $posturl;
+    }
+
+    /**
+     * @return false|grade_grade
+     */
+    public function get_gradebook_grade() {
+        // Current gradebook grade.
+        $grade = $this->get_gradinginfo()->items[0]->grades[$this->get_gradingarea()->get_guserid()];
+
+        return $grade;
+    }
+
+    /**
+     * @return null|int
+     */
+    public function get_activity_grade() {
+        return null;
+    }
+
+    public function get_activity_grade_label() {
+        return get_string('grade');
     }
 
     /**

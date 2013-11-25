@@ -45,16 +45,6 @@
     font-size: .75em;
 }
 
-.local_joulegrader_assign23_submission {
-    border: solid thin;
-    margin: 0.2em;
-    padding: 0 0.2em 0.2em 0.2em;
-}
-
-.local_joulegrader_assign23_submission_name {
-    font-size: 1.2em;
-}
-
 #local-joulegrader-mobilenotsupportedmsg {
     text-align: center;
 }
@@ -83,7 +73,7 @@
     text-align: left;
 }
 
-#local-joulegrader-gradepane fieldset.fieldset {
+#local-joulegrader-gradepane fieldset.fieldset, #local-joulegrader-viewpane fieldset.fieldset {
     border: 1px solid #808080;
     padding: 0.5em;
     margin-right: 0.5em;

@@ -37,6 +37,11 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         'assign_submission_file',
     );
 
+    /**
+     * @var int
+     */
+    protected $attemptnumber;
+
     public function get_supported_plugins() {
         return self::$supportedsubmissionplugins;
     }
@@ -337,6 +342,12 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         return $include;
     }
 
+    public function __construct(grading_manager $gradingmanager, $areaid, $guserid) {
+        parent::__construct($gradingmanager, $areaid, $guserid);
+
+        $this->attemptnumber = optional_param('attempt', -1, PARAM_INT);
+    }
+
     /**
      * @return assign
      */
@@ -475,12 +486,90 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
 
         if (!empty($teamsubmission)) {
             // Team submissions enabled, get the group submission.
-            $submission = $assign->get_group_submission($this->guserid, 0, false);
+            $submission = $assign->get_group_submission($this->guserid, 0, false, $this->attemptnumber);
         } else {
             // Team submissions not enabled, get the user's submission.
-            $submission = $assign->get_user_submission($this->guserid, false);
+            $submission = $assign->get_user_submission($this->guserid, false, $this->attemptnumber);
         }
 
         return $submission;
+    }
+
+    /**
+     * Get the submissions for all previous attempts.
+     *
+     * @return array $submissions All submission records for this user (or group).
+     */
+    public function get_all_submissions() {
+        global $DB;
+
+        $assign = $this->get_assign();
+
+        if ($assign->get_instance()->teamsubmission) {
+            $groupid = 0;
+            $group = $assign->get_submission_group($this->guserid);
+            if ($group) {
+                $groupid = $group->id;
+            }
+
+            // Params to get the group submissions.
+            $params = array('assignment' => $assign->get_instance()->id, 'groupid' => $groupid, 'userid' => 0);
+        } else {
+            // Params to get the user submissions.
+            $params = array('assignment' => $assign->get_instance()->id, 'userid' => $this->guserid);
+        }
+
+        // Return the submissions ordered by attempt.
+        $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
+
+        return $submissions;
+    }
+
+    public function allows_multiple_attempts() {
+        return ($this->get_assign()->get_instance()->attemptreopenmethod !== ASSIGN_ATTEMPT_REOPEN_METHOD_NONE);
+    }
+
+    /**
+     * @return bool
+     */
+    public function allow_new_manualattempt() {
+        $attemptnumber = $this->get_attemptnumber();
+        if ($attemptnumber != -1) {
+            // Only allow a new manual attempt if this is the current attempt.
+            return false;
+        }
+
+        $assign = $this->get_assign();
+        $instance = $assign->get_instance();
+
+        if (!$this->allows_multiple_attempts() || $instance->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS) {
+            // If assignment doesn't allow multiple attempts or reopen method is automatic until pass.
+            return false;
+        }
+
+        $submission = $this->get_submission();
+
+        // Don't allow a submission to be re-opened if there is no submission.
+        $issubmission = !empty($submission);
+        if (!$issubmission) {
+            return false;
+        }
+
+        $isunlimited = $instance->maxattempts == ASSIGN_UNLIMITED_ATTEMPTS;
+        $islessthanmaxattempts = $issubmission && ($submission->attemptnumber + 1 < ($instance->maxattempts));
+
+        return ($isunlimited or $islessthanmaxattempts);
+    }
+
+    public function get_attemptnumber() {
+        return $this->attemptnumber;
+    }
+
+    public function comment_form_hook($mform) {
+        $attemptnumber = $this->get_attemptnumber();
+        if ($attemptnumber >= 0) {
+            $mform->addElement('hidden', 'attempt', $attemptnumber);
+            $mform->setType('attempt', PARAM_INT);
+        }
     }
 }

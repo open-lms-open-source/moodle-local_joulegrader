@@ -178,7 +178,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         if (!$gradepane->has_grading()) {
             //no grade for this assignment
             $html .= html_writer::tag('div', get_string('notgraded', 'local_joulegrader'), array('class' => 'local_joulegrader_notgraded'));
-        } else if ($gradepane->has_teachercap()) {
+        } else if ($gradepane->has_teachercap() and !$gradepane->read_only()) {
             $mrhelper = new mr_helper();
 
             // Teacher view of the grading pane
@@ -265,33 +265,9 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     $modalhtml .= $filefeedback;
                 }
             } else {
-                $grade = -1;
-
-                $gradinginfo = $gradepane->get_gradinginfo();
-                if (!empty($gradinginfo->items[0]) and !empty($gradinginfo->items[0]->grades[$gradepane->get_gradingarea()->get_guserid()])
-                    and !is_null($gradinginfo->items[0]->grades[$gradepane->get_gradingarea()->get_guserid()]->grade)) {
-                    $grade = $gradinginfo->items[0]->grades[$gradepane->get_gradingarea()->get_guserid()]->str_grade;
-                }
-
                 //start the html
                 $html = html_writer::start_tag('div', array('id' => 'local-joulegrader-gradepane-grade'));
-                if ($gradepane->get_grade() < 0) {
-                    $html .= get_string('grade') . ': ';
-                    if ($grade != -1) {
-                        $html .= $grade;
-                    } else {
-                        $html .= get_string('nograde');
-                    }
-                } else {
-                    //if grade isn't set yet then, make is blank, instead of -1
-                    if ($grade == -1) {
-                        $grade = ' - ';
-                    } else {
-                        $grade = $gradepane->format_gradevalue($grade);
-                    }
-                    $html .= get_string('gradeoutof', 'local_joulegrader', $gradepane->get_grade()) . ': ';
-                    $html .= $grade;
-                }
+                $html .= $this->help_render_currentgrade($gradepane);
                 $html .= $feedback;
                 $html .= $filefeedback;
                 $html .= html_writer::end_tag('div');
@@ -318,15 +294,56 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     }
 
     protected function help_render_currentgrade($gradepane) {
-        // Current grade.
-        $grade = $gradepane->get_gradinginfo()->items[0]->grades[$gradepane->get_gradingarea()->get_guserid()];
-        if ((!$grade->grade === false) && empty($grade->hidden)) {
-            $gradeval = $grade->str_long_grade;
+        $gradeoutof = $gradepane->get_grade();
+        $gradegrade = $gradepane->get_gradebook_grade();
+        $activitygrade = $gradepane->get_activity_grade();
+        if ($gradeoutof < 0) {
+            //Scale grade.
+            $gradeinfo = $gradepane->get_gradinginfo();
+            $scale = $gradeinfo->items[0]->scaleid;
+            $scale = grade_scale::fetch(array('id' => $scale));
+            $scale = $scale->load_items();
+
+            // Current gradebook grade.
+            if (!empty($gradegrade) && (!$gradegrade->grade === false) && empty($gradegrade->hidden)) {
+                $gbval = $scale[$gradegrade->str_long_grade];
+            } else {
+                $gbval = get_string('nograde');
+            }
+
+            // Activity grade.
+            if ($activitygrade !== null) {
+                if ($activitygrade < 0) {
+                    $activitygrade = get_string('nograde');
+                } else {
+                    $activitygrade = $scale[(int) $activitygrade];
+                }
+            }
         } else {
-            $gradeval = '-';
+            // Not a scale
+            // Current gradebook grade.
+            if (!empty($gradegrade) && (!$gradegrade->grade === false) && empty($gradegrade->hidden)) {
+                $gbval = $gradegrade->str_long_grade;
+            } else {
+                $gbval = ' - ';
+            }
+            // Activity grade.
+            if ($activitygrade !== null) {
+                if ($activitygrade < 0) {
+                    $activitygrade = ' - ';
+                } else {
+                    $activitygrade = $gradepane->format_gradevalue($activitygrade);
+                }
+            }
         }
 
-        return '<div class="grade">'. get_string('grade').': '.$gradeval. '</div>';
+        $currentgradestr = html_writer::tag('div', get_string('gradebookgrade', 'local_joulegrader').': '.$gbval, array('class' => 'grade'));
+
+        if ($activitygrade !== null) {
+            $currentgradestr .= html_writer::tag('div', $gradepane->get_activity_grade_label().': '.$activitygrade, array('class' => 'grade'));
+        }
+
+        return $currentgradestr;
     }
 
     protected function help_render_modalbutton($gradepane) {
@@ -654,9 +671,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      * @return string
      */
     public function render_local_joulegrader_lib_pane_view_mod_assign_submissions_class(local_joulegrader_lib_pane_view_mod_assign_submissions_class $viewpane) {
-        global $USER;
+        global $USER, $OUTPUT;
         $html = '';
 
+        /** @var local_joulegrader_lib_gradingarea_mod_assign_submissions_class $gradingarea */
         $gradingarea = $viewpane->get_gradingarea();
         $gacontext = $gradingarea->get_gradingmanager()->get_context();
         $guserid   = $gradingarea->get_guserid();
@@ -672,16 +690,71 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         //check capabilities
         if ($hasteachercap || ($hasstudentcap && $USER->id == $guserid)) {
+
+            $attemptmenu = '';
+            $attemptstatus = '';
+            if ($gradingarea->allows_multiple_attempts()) {
+                $attempts = $gradingarea->get_all_submissions();
+                $numattempts = count($attempts);
+                if ($numattempts > 1) {
+                    $options = array();
+                    foreach ($attempts as $attempt) {
+                        $a = new stdClass();
+                        $a->attemptnumber = $attempt->attemptnumber + 1;
+                        $a->attempttime   = userdate($attempt->timemodified);
+                        $options[$attempt->attemptnumber] = get_string('attemptnumber', 'local_joulegrader', $a);
+                    }
+                    $selected = $gradingarea->get_attemptnumber();
+                    $mostrecent = array_pop($options);
+                    $options[-1] = $mostrecent;
+
+                    $url = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->get_course()->id,
+                            'garea' => $gradingarea->get_areaid(), 'guser' => $gradingarea->get_guserid()));
+
+                    $select = new single_select($url, 'attempt', $options, $selected, false);
+                    $select->set_label(get_string('viewingattempt', 'local_joulegrader') . ':');
+                    $attemptmenu = $OUTPUT->render($select);
+                }
+
+                $submittedcount = 0;
+                foreach ($attempts as $attempt) {
+                    if ($attempt->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+                        $submittedcount++;
+                    }
+                }
+
+                $maxattempts = $assignment->get_instance()->maxattempts;
+                if ($maxattempts == ASSIGN_UNLIMITED_ATTEMPTS) {
+                    $maxattempts = get_string('unlimited', 'local_joulegrader');
+                }
+
+                $a = new stdClass();
+                $a->number = $submittedcount;
+                $a->outof  = $maxattempts;
+
+                $attemptstatus = html_writer::tag('div', get_string('attemptstatus', 'local_joulegrader', $a));
+
+            }
+
+            $html .= $attemptmenu;
+
             // Determine if we need to display a late submission message.
+            $lateby = '';
             if (!empty($submission) && (!empty($submission->timemodified)) && !empty($assignment->get_instance()->duedate)
                     && ($assignment->get_instance()->duedate < $submission->timemodified)) {
                 // Format the lateness time and get the message.
                 $lateby = format_time($submission->timemodified - $assignment->get_instance()->duedate);
-                $html .= html_writer::tag('div', get_string('assign23-latesubmission', 'local_joulegrader', $lateby));
+                $lateby = html_writer::tag('div', get_string('assign23-latesubmission', 'local_joulegrader', $lateby));
+            }
+
+            if (!empty($attemptstatus) or !empty($lateby)) {
+                $assignmentstatus = html_writer::tag('legend', get_string('assignmentstatus', 'local_joulegrader'));
+                $html .= html_writer::tag('fieldset', $assignmentstatus . $attemptstatus . $lateby, array('class' => 'fieldset'));
             }
 
             if (!empty($submission)) {
                 $submissionplugins = $assignment->get_submission_plugins();
+                /** @var assign_submission_plugin $plugin */
                 foreach ($submissionplugins as $plugin) {
                     $pluginclass = get_class($plugin);
                     // First make sure that the submission plugin is supported by joule Grader.
@@ -692,11 +765,11 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     if ($plugin->is_enabled() && $plugin->is_visible() && !$plugin->is_empty($submission)) {
                         $rendermethod = 'help_render_' . $pluginclass;
 
-                        $pluginhtml = html_writer::tag('div', $plugin->get_name(), array('class' => 'local_joulegrader_assign23_submission_name'));
+                        $pluginhtml = html_writer::tag('legend', $plugin->get_name(), array('class' => 'local_joulegrader_assign23_submission_name'));
                         $pluginhtml .= $this->$rendermethod($plugin, $assignment, $submission);
 
-                        $attributes = array('class' => 'local_joulegrader_assign23_submission', 'id' => 'local-joulegrader-assign23-' . $pluginclass);
-                        $html .= html_writer::tag('div', $pluginhtml, $attributes);
+                        $attributes = array('class' => 'local_joulegrader_assign23_submission, fieldset', 'id' => 'local-joulegrader-assign23-' . $pluginclass);
+                        $html .= html_writer::tag('fieldset', $pluginhtml, $attributes);
                     }
                 }
             }
