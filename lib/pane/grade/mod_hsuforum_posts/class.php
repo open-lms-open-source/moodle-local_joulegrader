@@ -228,8 +228,8 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                 $lettergrades = grade_get_letters(context_course::instance($this->cm->course));
                 $grade = $data->grade;
 
-                $touppergrade = textlib::strtoupper($grade);
-                $toupperlettergrades = array_map('textlib::strtoupper', $lettergrades);
+                $touppergrade = core_text::strtoupper($grade);
+                $toupperlettergrades = array_map('core_text::strtoupper', $lettergrades);
                 if (in_array($touppergrade, $toupperlettergrades)) {
                     //submitting lettergrade, find percent grade
                     $percentvalue = 0;

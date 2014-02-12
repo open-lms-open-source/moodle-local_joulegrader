@@ -142,7 +142,7 @@ class local_joulegrader_form_gradepaneform extends moodleform {
                         $validated = array();
                     }
                 }
-            } else if (in_array(textlib::strtoupper($grade), array_map('textlib::strtoupper', $lettergrades))) {
+            } else if (in_array(core_text::strtoupper($grade), array_map('core_text::strtoupper', $lettergrades))) {
                 //look for a lettergrade
                 $validated = array();
             }

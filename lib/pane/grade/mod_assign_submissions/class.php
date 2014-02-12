@@ -350,8 +350,8 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                     $grade = $data->grade;
 
                     // Determine if user is submitting as a letter grade, percentage or float.
-                    $touppergrade = textlib::strtoupper($grade);
-                    $toupperlettergrades = array_map('textlib::strtoupper', $lettergrades);
+                    $touppergrade = core_text::strtoupper($grade);
+                    $toupperlettergrades = array_map('core_text::strtoupper', $lettergrades);
                     if (in_array($touppergrade, $toupperlettergrades)) {
                         // Submitting lettergrade, find percent grade.
                         $percentvalue = 0;
