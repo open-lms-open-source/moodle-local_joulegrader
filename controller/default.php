@@ -71,7 +71,7 @@ class local_joulegrader_controller_default extends mr_controller {
         global $OUTPUT, $PAGE, $COURSE;
 
         //check for mobile browsers (currently not supported)
-        if (get_device_type() == 'mobile') {
+        if (core_useragent::get_device_type() == 'mobile') {
             //just return a message that mobile devices are not currently supported
             return $OUTPUT->container(html_writer::tag('h2', get_string('mobilenotsupported', 'local_joulegrader')), null, 'local-joulegrader-mobilenotsupportedmsg');
         }
