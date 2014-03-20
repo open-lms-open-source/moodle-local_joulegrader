@@ -94,6 +94,10 @@ class local_joulegrader_controller_default extends mr_controller {
         //initialize the navigation
         $this->helper->navigation($usershelper, $gareashelper);
 
+        // Set defaults for log values.
+        $cm = 0;
+        $urlparams = array();
+        $urlparams[] = 'courseid='.$COURSE->id;
         //if the current user id and the current area id are not empty, load the class and get the pane contents
         $renderer = $PAGE->get_renderer('local_joulegrader');
         if (!empty($currentareaid) && !empty($currentuserid)) {
@@ -105,6 +109,12 @@ class local_joulegrader_controller_default extends mr_controller {
             } else {
                 $gradeareainstance = $this->gradeareainstance;
             }
+
+            $context = $gradeareainstance->get_gradingmanager()->get_context();
+            $context = context::instance_by_id($context->id);
+            $cm = $context->instanceid;
+            $urlparams[] = 'guser='.$currentuserid;
+            $urlparams[] = 'garea='.$currentareaid;
 
             $preferences = new mr_preferences($COURSE->id, 'local_joulegrader');
             $preferences->set('previousarea', $currentareaid);
@@ -172,6 +182,9 @@ class local_joulegrader_controller_default extends mr_controller {
         //wrap it all up
         $output = $OUTPUT->container($output, 'yui3-g', 'local-joulegrader');
 
+        $logurl = 'view.php?'.implode('&', $urlparams);
+        add_to_log($COURSE->id, 'local_joulegrader', 'view', $logurl, "Viewed joule Grader", $cm);
+
         //return all of that
         return $output;
     }
@@ -182,7 +195,7 @@ class local_joulegrader_controller_default extends mr_controller {
      * @return void
      */
     public function process_action() {
-        global $CFG;
+        global $CFG, $COURSE;
         require_once($CFG->dirroot . '/local/joulegrader/form/grademodalform.php');
         require_once($CFG->dirroot . '/local/joulegrader/form/gradepaneform.php');
 
@@ -240,6 +253,13 @@ class local_joulegrader_controller_default extends mr_controller {
             die;
         }
 
+        $context = $gradeareainstance->get_gradingmanager()->get_context();
+        $context = context::instance_by_id($context->id);
+        $cm = $context->instanceid;
+        $logurl = "view.php?courseid=$COURSE->id&guser=$currentuserid&garea=$currentareaid";
+
+        add_to_log($COURSE->id, 'local_joulegrader', 'grade', $logurl, 'Graded via joule Grader', $cm);
+
         if (!empty($modalform) && $modalform->is_submitted()) {
             $formdata = $modalform->get_data();
         } else if (!empty($paneform) && $paneform->is_submitted()) {
@@ -256,7 +276,7 @@ class local_joulegrader_controller_default extends mr_controller {
      * @throws Exception
      */
     public function deletecomment_action() {
-        global $CFG, $DB, $COURSE, $PAGE;
+        global $CFG, $COURSE, $PAGE;
 
         require_once($CFG->dirroot . '/local/joulegrader/lib/comment/class.php');
         require_once($CFG->dirroot . '/grade/grading/lib.php');
@@ -313,6 +333,13 @@ class local_joulegrader_controller_default extends mr_controller {
 
                 //yes we can delete, delete the comment
                 $commentloop->delete_comment($commentid);
+
+                $context = $gradeareainstance->get_gradingmanager()->get_context();
+                $context = context::instance_by_id($context->id);
+                $cm = $context->instanceid;
+                $logurl = "view.php?courseid=$COURSE->id&guser=$currentuserid&garea=$currentareaid";
+
+                add_to_log($COURSE->id, 'local_joulegrader', 'comment deleted', $logurl, 'Comment deleted in Joule Grader', $cm);
             }
 
             if (!$isajaxrequest) {
@@ -408,6 +435,13 @@ class local_joulegrader_controller_default extends mr_controller {
             if ($data = $mform->get_data()) {
                 //add the comment to the comment loop
                 $commentloop->add_comment($data);
+
+                $context = $gradeareainstance->get_gradingmanager()->get_context();
+                $context = context::instance_by_id($context->id);
+                $cm = $context->instanceid;
+                $logurl = "view.php?courseid=$COURSE->id&guser=$currentuserid&garea=$currentareaid";
+
+                add_to_log($COURSE->id, 'local_joulegrader', 'comment added', $logurl, 'Comment made in Joule Grader', $cm);
             }
 
             if (!$isajaxrequest) {
