@@ -480,7 +480,8 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                 }
             }
 
-            $this->controller->set_grade_range($gradesmenu);
+            $allowgradedecimals = $assignment->get_instance()->grade > 0;
+            $this->controller->set_grade_range($gradesmenu, $allowgradedecimals);
             $usergrade->grade = $gradinginstance->submit_and_get_grade($data->grade, $usergrade->id);
         } else {
             // The grade has already been processed in the process method.
