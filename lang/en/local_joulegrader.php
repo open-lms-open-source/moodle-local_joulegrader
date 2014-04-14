@@ -1,23 +1,23 @@
 <?php
 /**
- * joule Grader lang file
+ * Joule Grader lang file
  *
  * @author Sam Chaffee
  * @package local/joulegrader
  */
 
-$string['pluginname'] = 'joule Grader';
+$string['pluginname'] = 'Joule Grader';
 
 //access.php strings
-$string['joulegrader:grade'] = 'Grade work via joule Grader';
-$string['joulegrader:view'] = 'View graded work via joule Grader';
+$string['joulegrader:grade'] = 'Grade work via Joule Grader';
+$string['joulegrader:view'] = 'View graded work via Joule Grader';
 
 //default.php strings
 $string['gradebook'] = 'Gradebook';
 $string['nothingtodisplay'] = 'Nothing to Display';
 $string['needsgrading'] = 'Show Activities Requiring Grading';
 $string['allactivities'] = 'Show All Activities';
-$string['mobilenotsupported'] = 'joule Grader does not currently support mobile browsers';
+$string['mobilenotsupported'] = 'Joule Grader does not currently support mobile browsers';
 $string['exitfullscreen'] = 'Exit full screen mode';
 $string['fullscreen'] = 'Full screen mode';
 $string['returncourse'] = 'Return to course';
