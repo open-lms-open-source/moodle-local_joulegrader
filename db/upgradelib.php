@@ -1,4 +1,5 @@
 <?php
+use local_joulegrader\utility\gradingareas;
 /**
  * Upgrade classes and functions for joule Grader
  *
@@ -15,20 +16,6 @@
 class local_joulegrader_comments_upgrader {
 
     /**
-     * @var local_joulegrader_helper_gradingareas
-     */
-    protected $gradeareahelper;
-
-    public function __construct($gradeareahelper = null) {
-        if (is_null($gradeareahelper)) {
-            global $CFG;
-            require_once($CFG->dirroot. '/local/joulegrader/helper/gradingareas.php');
-            $gradeareahelper = new local_joulegrader_helper_gradingareas();
-        }
-        $this->gradeareahelper = $gradeareahelper;
-    }
-
-    /**
      * Upgrades all the Joule Grader comments that are supported by the core comment api.
      *
      * @param int[] $idstoupgrade Array of local_joulegrader_comments.id
@@ -43,7 +30,6 @@ class local_joulegrader_comments_upgrader {
             return;
         }
 
-        $gradeareahelper = $this->gradeareahelper;
         $commentupgrader = null;
         $gareaid = 0;
         $guserid = 0;
@@ -66,7 +52,7 @@ class local_joulegrader_comments_upgrader {
                         /**
                          * @var local_joulegrader_lib_gradingarea_abstract $gradingarea
                          */
-                        $gradingarea = $gradeareahelper::get_gradingarea_instance($crecord->gareaid, $crecord->guserid);
+                        $gradingarea = gradingareas::get_gradingarea_instance($crecord->gareaid, $crecord->guserid);
                         $commentapi  = new comment($gradingarea->get_comment_info());
 
                         $commentupgrader = new local_joulegrader_comment_upgrader($commentapi, $fs);

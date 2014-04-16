@@ -1,14 +1,15 @@
 <?php
+namespace local_joulegrader\utility;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
-require_once($CFG->dirroot . '/local/mr/framework/helper/abstract.php');
+
 /**
- * joule Grader users helper
+ * joule Grader users utility
  *
  * @author Sam Chaffee
  * @package local/joulegrader
  */
 
-class local_joulegrader_helper_users extends mr_helper_abstract {
+class users {
 
     /**
      * @var int - id of the current user
@@ -56,26 +57,26 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
     protected $grouplabel;
 
     /**
-     * Main method for the users helper
-     *
+     * @param gradingareas $gareautility
+     * @param \context     $context
      */
-    public function direct(local_joulegrader_helper_gradingareas $gareahelper, context $context) {
+    public function __construct(gradingareas $gareautility, \context $context) {
         global $USER;
         if (has_capability('local/joulegrader:grade', $context)) {
             $this->load_groups();
-            $this->load_users($gareahelper);
+            $this->load_users($gareautility);
         } else {
             // This is being viewed as a student, logged in user is current user.
             $this->currentuser = $USER->id;
         }
     }
 
-    protected function load_users($gareahelper) {
+    protected function load_users($gareautility) {
         global $COURSE, $CFG;
 
         if (is_null($this->users)) {
             //is there a current grading area set?
-            $currentarea = $gareahelper->get_currentarea();
+            $currentarea = $gareautility->get_currentarea();
 
             $requiredcap = 'local/joulegrader:view';
             if (!empty($currentarea)) {
@@ -100,7 +101,8 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
             }
 
             //get the enrolled users with the required capability
-            $users = get_enrolled_users(context_course::instance($COURSE->id), $requiredcap, $this->get_currentgroup(), 'u.id, u.firstname, u.lastname');
+            $users = get_enrolled_users(\context_course::instance($COURSE->id), $requiredcap, $this->get_currentgroup(),
+                'u.id, '.get_all_user_name_fields(true, 'u'));
 
             //make menu from the users
             $this->users = array();
@@ -300,7 +302,7 @@ class local_joulegrader_helper_users extends mr_helper_abstract {
             return;
         }
 
-        $context = context_course::instance($COURSE->id);
+        $context = \context_course::instance($COURSE->id);
         $aag = has_capability('moodle/site:accessallgroups', $context);
 
         if ($groupmode == VISIBLEGROUPS or $aag) {

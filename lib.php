@@ -1,4 +1,5 @@
 <?php
+use local_joulegrader\utility\gradingareas;
 /**
  * joule Grader lib functions
  *
@@ -27,10 +28,8 @@ function local_joulegrader_extends_settings_navigation($settings, $context) {
             //try to see if this is within an activity
             $activityname = $PAGE->activityname;
             if (isset($activityname)) {
-                require_once($CFG->dirroot . '/local/joulegrader/helper/gradingareas.php');
-
                 //try to get an areaid from the context and activity name
-                if ($areaid = local_joulegrader_helper_gradingareas::get_areaid_from_context_activityname($context, $activityname)) {
+                if ($areaid = gradingareas::get_areaid_from_context_activityname($context, $activityname)) {
                     //add it to the url
                     $urlparams['garea'] = $areaid;
                 }
@@ -128,8 +127,5 @@ function local_joulegrader_pluginfile($course, $cm, $context, $filearea, $args, 
  * @return int
  */
 function local_joulegrader_area_from_context(context $context, $activityname) {
-    global $CFG;
-    require_once($CFG->dirroot . '/local/joulegrader/helper/gradingareas.php');
-
-    return local_joulegrader_helper_gradingareas::get_areaid_from_context_activityname($context, $activityname);
+    return gradingareas::get_areaid_from_context_activityname($context, $activityname);
 }

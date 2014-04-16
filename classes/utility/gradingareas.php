@@ -1,15 +1,15 @@
 <?php
+namespace local_joulegrader\utility;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 require_once($CFG->dirroot . '/grade/grading/lib.php');
-require_once($CFG->dirroot . '/local/mr/framework/helper/abstract.php');
 
 /**
- * joule Grader grading areas helper
+ * joule Grader grading areas utility
  *
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
+class gradingareas {
 
     /**
      * Grading areas currently supported by joule Grader
@@ -49,10 +49,9 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
     protected $gradingareas;
 
     /**
-     * Main method into helper
-     * @param context $context
+     * @param \context $context
      */
-    public function direct(context $context) {
+    public function __construct(\context $context) {
         $this->load_gradingareas(has_capability('local/joulegrader:grade', $context));
     }
 
@@ -61,9 +60,9 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
      * @param $currentareaid
      * @param $currentuserid
      *
-     * @throws coding_exception
+     * @throws \coding_exception
      *
-     * @return local_joulegrader_lib_gradingarea_abstract - instance of a gradingarea class
+     * @return \local_joulegrader_lib_gradingarea_abstract - instance of a gradingarea class
      */
     public static function get_gradingarea_instance($currentareaid, $currentuserid) {
         global $CFG;
@@ -81,7 +80,7 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
 
         //check to be sure the class was loaded
         if (!class_exists($classname)) {
-            throw new coding_exception("Class: $classname does not exist or could not be loaded");
+            throw new \coding_exception("Class: $classname does not exist or could not be loaded");
         }
 
         return new $classname($gradingmanager, $currentareaid, $currentuserid);
@@ -89,11 +88,11 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
 
     /**
      * @static
-     * @param context $context
+     * @param \context $context
      * @param string $activityname
      * @return int - an areaid from grading_areas table
      */
-    public static function get_areaid_from_context_activityname(context $context, $activityname) {
+    public static function get_areaid_from_context_activityname(\context $context, $activityname) {
         global $DB, $CFG, $COURSE;
 
         //initialize
@@ -153,7 +152,7 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
 
         if (is_null($this->gradingareas)) {
             //get course context children
-            $coursecontext = context_course::instance($COURSE->id);
+            $coursecontext = \context_course::instance($COURSE->id);
             $childcontexts = array_keys($coursecontext->get_child_contexts());
 
             //if there are no child contexts then bail
@@ -233,7 +232,7 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
                 }
 
                 $capability = $classname::$method();
-                if (!has_capability($capability, context::instance_by_id($garea->contextid))) {
+                if (!has_capability($capability, \context::instance_by_id($garea->contextid))) {
                     //if the menu is limited and the $USER does have capability then continue
                     continue;
                 }
@@ -364,12 +363,12 @@ class local_joulegrader_helper_gradingareas extends mr_helper_abstract {
 
     /**
      * @param array $gradingareas
-     * @param course_modinfo $courseinfo
+     * @param \course_modinfo $courseinfo
      * @param array $cmsbyareaid - array of cm ids arrays keyed by grading area id
      *
      * @return array - ordered grading areas
      */
-    protected function order_gradingareas($gradingareas, course_modinfo $courseinfo, $cmsbyareaid) {
+    protected function order_gradingareas($gradingareas, \course_modinfo $courseinfo, $cmsbyareaid) {
         //if grading areas is empty, return empty array
         if (empty($gradingareas)) {
             //nothing to see here, move along

@@ -23,7 +23,7 @@ $string['fullscreen'] = 'Full screen mode';
 $string['returncourse'] = 'Return to course';
 $string['grading']  = 'Grading';
 
-//helper/navigation.php strings
+// Navigation utility strings.
 $string['nogradeableareas'] = 'No gradable activities';
 $string['nogradeableusers'] = 'No gradable users';
 

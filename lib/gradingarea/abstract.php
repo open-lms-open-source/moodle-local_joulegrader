@@ -58,8 +58,8 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     protected $commentloop;
 
     /**
-     * Additional checks called by gradingareas helper to see if the area should be included in the navigation.
-     * This is in addition to the capability check done by the helper. For instance, this will be used to make
+     * Additional checks called by gradingareas utility to see if the area should be included in the navigation.
+     * This is in addition to the capability check done by the utility. For instance, this will be used to make
      * sure that a mod_assignment_submission grading area is of a type that joule Grader will support at this time
      *
      * @param course_modinfo $courseinfo
@@ -203,16 +203,16 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     }
 
     /**
-     * @param local_joulegrader_helper_users $userhelper
+     * @param \local_joulegrader\utility\users $userutility
      */
-    public function current_user($userhelper) {
+    public function current_user($userutility) {
         return;
     }
 
     /**
-     * @param local_joulegrader_helper_navigation $navhelper
+     * @param \local_joulegrader\utility\navigation $navutility
      */
-    public function current_navuser(local_joulegrader_helper_navigation $navhelper) {
+    public function current_navuser(\local_joulegrader\utility\navigation $navutility) {
         return;
     }
 

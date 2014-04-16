@@ -1,4 +1,5 @@
 <?php
+use local_joulegrader\renderable;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 /**
@@ -8,6 +9,21 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
  * @package local/mrooms
  */
 class local_joulegrader_renderer extends plugin_renderer_base {
+
+    public function render(\renderable $renderable) {
+        try {
+            $output = parent::render($renderable);
+        } catch (\coding_exception $e) {
+            $class = get_class($renderable);
+            $rendermethod = 'render_'.str_replace('\\', '_', $class);
+            if (!method_exists($this, $rendermethod)) {
+                throw $e;
+            }
+            $output = $this->$rendermethod($renderable);
+        }
+
+        return $output;
+    }
 
     /**
      * @param local_joulegrader_lib_comment_loop $commentloop
@@ -402,10 +418,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     /**
      * Renders a navigation widget containing a previous link, a next link, and a select menu
      *
-     * @param local_joulegrader_lib_navigation_widget $navwidget
+     * @param renderable\navigation_widget $navwidget
      * @return string
      */
-    public function render_local_joulegrader_lib_navigation_widget(local_joulegrader_lib_navigation_widget $navwidget) {
+    public function render_local_joulegrader_renderable_navigation_widget(renderable\navigation_widget $navwidget) {
         global $OUTPUT;
 
         //widget name

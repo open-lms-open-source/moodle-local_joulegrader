@@ -361,9 +361,9 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
     }
 
     /**
-     * @param local_joulegrader_helper_users $userhelper
+     * @param local_joulegrader\utility\users $userutility
      */
-    public function current_user($userhelper) {
+    public function current_user($userutility) {
         global $COURSE, $USER;
 
         if ($USER->id == $this->guserid) {
@@ -375,18 +375,18 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
 
         if (!is_null($previousarea) and $previousarea != $this->areaid) {
             if ($this->get_assign()->is_blind_marking()) {
-                $userhelper->set_currentuser(array_shift(array_keys($userhelper->get_users())));
-                $this->guserid = $userhelper->get_currentuser();
+                $userutility->set_currentuser(array_shift(array_keys($userutility->get_users())));
+                $this->guserid = $userutility->get_currentuser();
             }
         }
     }
 
     /**
-     * @param local_joulegrader_helper_navigation $navhelper
+     * @param local_joulegrader\utility\navigation $navutility
      */
-    public function current_navuser(local_joulegrader_helper_navigation $navhelper) {
+    public function current_navuser(\local_joulegrader\utility\navigation $navutility) {
         if ($this->get_assign()->is_blind_marking()) {
-            $navhelper->set_navcurrentuser(null);
+            $navutility->set_navcurrentuser(null);
         }
     }
 

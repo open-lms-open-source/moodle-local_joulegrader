@@ -1,4 +1,5 @@
 <?php
+namespace local_joulegrader\renderable;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 /**
@@ -8,7 +9,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
  * @package local/joulegrader
  */
 
-class local_joulegrader_lib_navigation_widget implements renderable {
+class navigation_widget implements \renderable {
 
     /**
      * @var string - the name of the navigation widget (likely user or activity)
@@ -18,7 +19,7 @@ class local_joulegrader_lib_navigation_widget implements renderable {
     protected $name;
 
     /**
-     * @var moodle_url - the url for the form action/links
+     * @var \moodle_url - the url for the form action/links
      */
     protected $url;
 
@@ -54,14 +55,14 @@ class local_joulegrader_lib_navigation_widget implements renderable {
 
     /**
      * @param string $name -the name of the navigation widget (likely user or activity)
-     * @param moodle_url $url - the url for the form action/links
+     * @param \moodle_url $url - the url for the form action/links
      * @param array $options - options for the select menu
      * @param string $param - the parameter that changes on select/used in link
      * @param int $currentid - the currently selected id (used to set the selected menu item)
      * @param mixed $nextid - the id for the next link
      * @param mixed $previd - the id for previous link
      */
-    public function __construct($name, moodle_url $url, array $options, $param, $currentid, $nextid, $previd) {
+    public function __construct($name, \moodle_url $url, array $options, $param, $currentid, $nextid, $previd) {
         $this->name      = $name;
         $this->url       = $url;
         $this->options   = $options;
