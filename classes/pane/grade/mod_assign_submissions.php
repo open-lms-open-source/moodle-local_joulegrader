@@ -1,18 +1,24 @@
 <?php
+namespace local_joulegrader\pane\grade;
+use local_joulegrader\gradingarea;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
-require_once($CFG->dirroot . '/local/joulegrader/lib/pane/grade/abstract.php');
 /**
  * joule Grader mod_assign_submissions grade pane class
  *
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  local_joulegrader_lib_pane_grade_abstract {
+class mod_assign_submissions extends grade_abstract {
 
     /**
      * @var array
      */
     protected $feedbackplugins;
+
+    /**
+     * @var gradingarea\mod_assign_submissions
+     */
+    protected $gradingarea;
 
     /**
      * @var array
@@ -55,7 +61,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                     $currentinstance = $this->gradinginstance->get_current_instance();
                 }
                 $this->needsupdate = false;
-                if (!empty($currentinstance) && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
+                if (!empty($currentinstance) && $currentinstance->get_status() == \gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
                     $this->needsupdate = true;
                 }
             } else {
@@ -125,7 +131,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     public function format_gradevalue($grade) {
-        $gradeitem = grade_item::fetch(array('itemtype'=> 'mod', 'itemmodule'=> 'assign',
+        $gradeitem = \grade_item::fetch(array('itemtype'=> 'mod', 'itemmodule'=> 'assign',
                 'iteminstance'=> $this->gradingarea->get_assign()->get_instance()->id, 'courseid'=> $this->courseid,
                 'outcomeid' => null));
 
@@ -217,11 +223,11 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     public function add_filefeedback_form($mform) {
         if ($this->has_file_feedback()) {
             $userid = $this->gradingarea->get_guserid();
-            $data = new stdClass();
+            $data = new \stdClass();
             $this->get_feedbackfile_plugin()->get_form_elements_for_user($this->get_usergrade($userid, false, $this->gradingarea->get_attemptnumber()), $mform, $data, $userid);
             $elementname = 'files_' . $userid . '_filemanager';
             $mform->setDefault($elementname, $data->$elementname);
-            $mform->getElement($elementname)->setLabel(html_writer::tag('div', get_string('filefeedback', 'local_joulegrader') . ': '));
+            $mform->getElement($elementname)->setLabel(\html_writer::tag('div', get_string('filefeedback', 'local_joulegrader') . ': '));
         }
     }
 
@@ -265,7 +271,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     /**
-     * @param MoodleQuickForm $mform
+     * @param \MoodleQuickForm $mform
      */
     public function paneform_hook($mform) {
         $this->add_applyall_element($mform);
@@ -274,7 +280,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     /**
-     * @param MoodleQuickForm $mform
+     * @param \MoodleQuickForm $mform
      */
     public function modalform_hook($mform) {
         $this->add_applyall_element($mform);
@@ -283,7 +289,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     /**
-     * @param MoodleQuickForm $mform
+     * @param \MoodleQuickForm $mform
      */
     private function blindmarking_modification($mform) {
         // Check to see if the assignment uses blind marking.
@@ -296,7 +302,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     /**
-     * @param MoodleQuickForm $mform
+     * @param \MoodleQuickForm $mform
      */
     private function add_applyall_element($mform) {
         $assignment = $this->gradingarea->get_assign();
@@ -316,7 +322,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     /**
-     * @param MoodleQuickForm $mform
+     * @param \MoodleQuickForm $mform
      */
     private function add_newattempt_element($mform) {
         if ($this->gradingarea->allow_new_manualattempt()) {
@@ -327,14 +333,14 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
 
     /**
      * @param $data
-     * @param mr_notify $notify
+     * @param \mr_notify $notify
      */
     public function process($data, $notify) {
         //a little setup
         $assignment = $this->gradingarea->get_assign();
 
         //set up a redirect url
-        $redirecturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $this->courseid
+        $redirecturl = new \moodle_url('/local/joulegrader/view.php', array('courseid' => $this->courseid
                 , 'garea' => $this->get_gradingarea()->get_areaid(), 'guser' => $this->get_gradingarea()->get_guserid()));
 
         //get the data from the form
@@ -346,11 +352,11 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                     $data->grade = clean_param($data->grade, PARAM_INT);
                 } else {
                     //just using regular grading
-                    $lettergrades = grade_get_letters(context_course::instance($this->courseid));
+                    $lettergrades = grade_get_letters(\context_course::instance($this->courseid));
                     $grade = $data->grade;
 
                     // Determine if user is submitting as a letter grade, percentage or float.
-                    $touppergrade = core_text::strtoupper($grade);
+                    $touppergrade = \core_text::strtoupper($grade);
                     $toupperlettergrades = array_map('core_text::strtoupper', $lettergrades);
                     if (in_array($touppergrade, $toupperlettergrades)) {
                         // Submitting lettergrade, find percent grade.
@@ -454,7 +460,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     protected function apply_grade_to_user($data, $userid) {
         global $USER;
 
-        /** @var assign $assignment */
+        /** @var \assign $assignment */
         $assignment = $this->gradingarea->get_assign();
         $usergrade = $this->get_usergrade($userid, true, $this->gradingarea->get_attemptnumber());
 
@@ -565,7 +571,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
             $params = array('courseid' => $this->courseid, 'itemtype' => 'mod'
             , 'itemmodule' => 'assign', 'iteminstance' => $assignment->get_instance()->id);
 
-            $gradeitem = grade_item::fetch($params);
+            $gradeitem = \grade_item::fetch($params);
 
             // If no grade item, create a new one.
             if (empty($gradeitem)) {
@@ -588,7 +594,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
                 }
 
                 // Create and insert the new grade item.
-                $gradeitem = new grade_item($params);
+                $gradeitem = new \grade_item($params);
                 $gradeitem->insert();
             }
 
@@ -616,7 +622,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     /**
-     * @param mr_notify $notify
+     * @param \mr_notify $notify
      * @param int $gradessaved
      * @param array $couldnotsave
      */
@@ -647,14 +653,14 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
     }
 
     /**
-     * @return assign_feedback_comments|null
+     * @return \assign_feedback_comments|null
      */
     protected function get_feedbackcomment_plugin() {
         return $this->get_feedback_plugin('comments');
     }
 
     /**
-     * @return assign_feedback_file|null
+     * @return \assign_feedback_file|null
      */
     protected function get_feedbackfile_plugin() {
         return $this->get_feedback_plugin('file');
@@ -662,7 +668,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
 
     /**
      * @param string $type
-     * @return assign_feedback_plugin|null
+     * @return \assign_feedback_plugin|null
      */
     protected function get_feedback_plugin($type) {
         if (!isset($this->feedbackplugins[$type])) {
@@ -684,7 +690,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
      * @param int $userid
      * @param bool $create
      * @param int $attemptnumber
-     * @return bool|stdClass
+     * @return bool|\stdClass
      */
     private function get_usergrade($userid, $create = false, $attemptnumber = -1) {
         if (empty($this->usergrades[$userid])) {
@@ -701,10 +707,10 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
      * convert the final raw grade(s) in the  grading table for the gradebook
      * (Taken from assign::convert_grade_for_gradebook, which is a private method
      *
-     * @param stdClass $grade
+     * @param \stdClass $grade
      * @return array
      */
-    private function convert_grade_for_gradebook(stdClass $grade) {
+    private function convert_grade_for_gradebook(\stdClass $grade) {
         $gradebookgrade = array();
         // trying to match those array keys in grade update function in gradelib.php
         // with keys in th database table assign_grades
@@ -737,7 +743,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
             return false;
         }
 
-        /** @var assign $assignment */
+        /** @var \assign $assignment */
         $assignment = $this->gradingarea->get_assign();
         $instance   = $assignment->get_instance();
 
@@ -781,7 +787,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
             $gradebookgrade = null;
             if (isset($gradinginfo->items[0])) {
                 $gradingitem = $gradinginfo->items[0];
-                /** @var grade_grade $gradebookgrade */
+                /** @var \grade_grade $gradebookgrade */
                 $gradebookgrade = $gradingitem->grades[$userid];
             }
 
@@ -811,7 +817,7 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
      * @return bool - true if successful.
      */
     protected function process_add_attempt($userid) {
-        /** @var assign $assignment */
+        /** @var \assign $assignment */
         $assignment = $this->gradingarea->get_assign();
         $instance   = $assignment->get_instance();
 
@@ -838,13 +844,13 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
      * Update grades in the gradebook based on submission time. Modified from protected method in assign class.
      * In Joule Grader it is only used when adding a new attempt to the assignment.
      *
-     * @param stdClass $submission
+     * @param \stdClass $submission
      * @param int $userid
      * @param bool $updatetime
      * @param bool $teamsubmission
      * @return bool
      */
-    protected function update_submission(stdClass $submission, $userid, $updatetime, $teamsubmission) {
+    protected function update_submission(\stdClass $submission, $userid, $updatetime, $teamsubmission) {
         global $DB;
 
         if ($teamsubmission) {
@@ -863,15 +869,15 @@ class local_joulegrader_lib_pane_grade_mod_assign_submissions_class extends  loc
      * Update team submission.  Modified from protected method in assign class.
      * In Joule Grader it is only used when adding a new attempt to the assignment.
      *
-     * @param stdClass $submission
+     * @param \stdClass $submission
      * @param int $userid
      * @param bool $updatetime
      * @return bool
      */
-    protected function update_team_submission(stdClass $submission, $userid, $updatetime) {
+    protected function update_team_submission(\stdClass $submission, $userid, $updatetime) {
         global $DB;
 
-        /** @var assign $assignment */
+        /** @var \assign $assignment */
         $assignment = $this->gradingarea->get_assign();
 
         if ($updatetime) {

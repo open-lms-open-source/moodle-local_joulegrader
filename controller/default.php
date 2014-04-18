@@ -191,8 +191,6 @@ class local_joulegrader_controller_default extends mr_controller {
      */
     public function process_action() {
         global $CFG, $COURSE;
-        require_once($CFG->dirroot . '/local/joulegrader/form/grademodalform.php');
-        require_once($CFG->dirroot . '/local/joulegrader/form/gradepaneform.php');
 
         //get current area id and current user parameters for the gradingarea instance
         $currentareaid = required_param('garea', PARAM_INT);
@@ -267,7 +265,6 @@ class local_joulegrader_controller_default extends mr_controller {
     public function deletecomment_action() {
         global $CFG, $COURSE, $PAGE;
 
-        require_once($CFG->dirroot . '/local/joulegrader/lib/comment/class.php');
         require_once($CFG->dirroot . '/grade/grading/lib.php');
 
         // Ajax request?
@@ -306,7 +303,7 @@ class local_joulegrader_controller_default extends mr_controller {
             $gradeareainstance = $gareasutility::get_gradingarea_instance($currentareaid, $currentuserid);
 
             /**
-             * @var local_joulegrader_lib_comment_loop $commentloop
+             * @var local_joulegrader\comment_loop $commentloop
              */
             $commentloop = $gradeareainstance->get_commentloop();
             $commentloop->init();

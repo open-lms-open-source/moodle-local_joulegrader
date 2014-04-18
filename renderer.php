@@ -1,5 +1,7 @@
 <?php
 use local_joulegrader\renderable;
+use local_joulegrader\pane\view as viewpane;
+use local_joulegrader\pane\grade as gradepane;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 /**
@@ -26,10 +28,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @param local_joulegrader_lib_comment_loop $commentloop
+     * @param local_joulegrader\comment_loop $commentloop
      * @return string
      */
-    public function render_local_joulegrader_lib_comment_loop(local_joulegrader_lib_comment_loop $commentloop) {
+    public function render_local_joulegrader_comment_loop(local_joulegrader\comment_loop $commentloop) {
         global $PAGE;
 
         $commentloop->init();
@@ -65,10 +67,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @param local_joulegrader_lib_comment_class $comment
+     * @param local_joulegrader\comment $comment
      * @return string
      */
-    public function render_local_joulegrader_lib_comment_class(local_joulegrader_lib_comment_class $comment) {
+    public function render_local_joulegrader_comment(local_joulegrader\comment $comment) {
         global $OUTPUT, $COURSE;
 
         //commenter picture
@@ -158,31 +160,31 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     /**
      * Renders grade pane
      *
-     * @param local_joulegrader_lib_pane_grade_mod_assignment_submission_class $gradepane
+     * @param gradepane\mod_assignment_submission $gradepane
      * @return string
      */
-    public function render_local_joulegrader_lib_pane_grade_mod_assignment_submission_class(local_joulegrader_lib_pane_grade_mod_assignment_submission_class $gradepane) {
+    public function render_local_joulegrader_pane_grade_mod_assignment_submission(gradepane\mod_assignment_submission $gradepane) {
         return $this->help_render_gradepane($gradepane);
     }
 
     /**
-     * @param local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class $gradepane
+     * @param gradepane\mod_hsuforum_posts $gradepane
      * @return string
      */
-    public function render_local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class(local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class $gradepane) {
+    public function render_local_joulegrader_pane_grade_mod_hsuforum_posts(gradepane\mod_hsuforum_posts $gradepane) {
         return $this->help_render_gradepane($gradepane);
     }
 
     /**
-     * @param local_joulegrader_lib_pane_grade_mod_assign_submissions_class $gradepane
+     * @param gradepane\mod_assign_submissions $gradepane
      * @return string
      */
-    public function render_local_joulegrader_lib_pane_grade_mod_assign_submissions_class(local_joulegrader_lib_pane_grade_mod_assign_submissions_class $gradepane) {
+    public function render_local_joulegrader_pane_grade_mod_assign_submissions(gradepane\mod_assign_submissions $gradepane) {
         return $this->help_render_gradepane($gradepane);
     }
 
     /**
-     * @param local_joulegrader_lib_pane_grade_abstract $gradepane
+     * @param gradepane\grade_abstract $gradepane
      * @return string
      */
     protected function help_render_gradepane($gradepane) {
@@ -464,10 +466,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @param local_joulegrader_lib_pane_view_mod_assignment_submission_online $viewpane
+     * @param viewpane\mod_assignment_submission_online $viewpane
      * @return string
      */
-    public function render_local_joulegrader_lib_pane_view_mod_assignment_submission_online(local_joulegrader_lib_pane_view_mod_assignment_submission_online $viewpane) {
+    public function render_local_joulegrader_pane_view_mod_assignment_submission_online(viewpane\mod_assignment_submission_online $viewpane) {
         global $USER, $OUTPUT;
         $html = '';
 
@@ -506,10 +508,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @param local_joulegrader_lib_pane_view_mod_assignment_submission_offline $viewpane
+     * @param viewpane\mod_assignment_submission_offline $viewpane
      * @return string
      */
-    public function render_local_joulegrader_lib_pane_view_mod_assignment_submission_offline(local_joulegrader_lib_pane_view_mod_assignment_submission_offline $viewpane) {
+    public function render_local_joulegrader_pane_view_mod_assignment_submission_offline(viewpane\mod_assignment_submission_offline $viewpane) {
         global $USER;
 
         $html = '';
@@ -537,10 +539,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @param local_joulegrader_lib_pane_view_mod_assignment_submission_uploadsingle $viewpane
+     * @param viewpane\mod_assignment_submission_uploadsingle $viewpane
      * @return string
      */
-    public function render_local_joulegrader_lib_pane_view_mod_assignment_submission_uploadsingle(local_joulegrader_lib_pane_view_mod_assignment_submission_uploadsingle $viewpane) {
+    public function render_local_joulegrader_pane_view_mod_assignment_submission_uploadsingle(viewpane\mod_assignment_submission_uploadsingle $viewpane) {
         global $USER;
 
         $html = '';
@@ -580,10 +582,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     /**
      * Renders the viewpane for upload assignment type (Advanced Uploading)
      *
-     * @param local_joulegrader_lib_pane_view_mod_assignment_submission_upload $viewpane
+     * @param viewpane\mod_assignment_submission_upload $viewpane
      * @return string
      */
-    public function render_local_joulegrader_lib_pane_view_mod_assignment_submission_upload(local_joulegrader_lib_pane_view_mod_assignment_submission_upload $viewpane) {
+    public function render_local_joulegrader_pane_view_mod_assignment_submission_upload(viewpane\mod_assignment_submission_upload $viewpane) {
         global $USER, $OUTPUT;
 
         $html = '';
@@ -639,13 +641,13 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @param local_joulegrader_lib_pane_view_mod_hsuforum_posts_class $viewpane
+     * @param viewpane\mod_hsuforum_posts $viewpane
      * @return string
      */
-    public function render_local_joulegrader_lib_pane_view_mod_hsuforum_posts_class(local_joulegrader_lib_pane_view_mod_hsuforum_posts_class $viewpane) {
+    public function render_local_joulegrader_pane_view_mod_hsuforum_posts(viewpane\mod_hsuforum_posts $viewpane) {
         global $PAGE, $OUTPUT, $COURSE;
 
-        /** @var local_joulegrader_lib_gradingarea_mod_hsuforum_posts_class $gradingarea */
+        /** @var local_joulegrader\gradingarea\mod_hsuforum_posts $gradingarea */
         $gradingarea = $viewpane->get_gradingarea();
         $context = $viewpane->get_gradingarea()->get_gradingmanager()->get_context();
         $cm      = get_coursemodule_from_id('hsuforum', $context->instanceid, 0, false, MUST_EXIST);
@@ -683,14 +685,14 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @param local_joulegrader_lib_pane_view_mod_assign_submissions_class $viewpane
+     * @param viewpane\mod_assign_submissions $viewpane
      * @return string
      */
-    public function render_local_joulegrader_lib_pane_view_mod_assign_submissions_class(local_joulegrader_lib_pane_view_mod_assign_submissions_class $viewpane) {
+    public function render_local_joulegrader_pane_view_mod_assign_submissions(viewpane\mod_assign_submissions $viewpane) {
         global $USER, $OUTPUT;
         $html = '';
 
-        /** @var local_joulegrader_lib_gradingarea_mod_assign_submissions_class $gradingarea */
+        /** @var local_joulegrader\gradingarea\mod_assign_submissions $gradingarea */
         $gradingarea = $viewpane->get_gradingarea();
         $gacontext = $gradingarea->get_gradingmanager()->get_context();
         $guserid   = $gradingarea->get_guserid();

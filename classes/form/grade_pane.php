@@ -1,4 +1,5 @@
 <?php
+namespace local_joulegrader\form;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 require_once($CFG->libdir.'/formslib.php');
 /**
@@ -8,7 +9,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @package local/joulegrader
  * @see moodleform
  */
-class local_joulegrader_form_gradepaneform extends moodleform {
+class grade_pane extends \moodleform {
 
     public function definition() {
         $mform =& $this->_form;
@@ -20,7 +21,7 @@ class local_joulegrader_form_gradepaneform extends moodleform {
         if (!$this->_customdata->has_modal()) {
             if ($this->_customdata->get_gradingdisabled()) {
                 // Add a message notifying user that grading is disabled.
-                $mform->addElement('html', html_writer::tag('div', get_string('gradingdisabled', 'local_joulegrader'),
+                $mform->addElement('html', \html_writer::tag('div', get_string('gradingdisabled', 'local_joulegrader'),
                     array('class' => 'warning')));
             }
 
@@ -117,7 +118,7 @@ class local_joulegrader_form_gradepaneform extends moodleform {
             $validated = array('grade' => get_string('gradeoutofrange', 'local_joulegrader'));
 
             //just using regular grading
-            $lettergrades = grade_get_letters(context_course::instance($this->_customdata->get_courseid()));
+            $lettergrades = grade_get_letters(\context_course::instance($this->_customdata->get_courseid()));
             $grade = trim($data['grade']);
 
             //determine if user is submitting as a letter grade, percentage or float
@@ -142,7 +143,7 @@ class local_joulegrader_form_gradepaneform extends moodleform {
                         $validated = array();
                     }
                 }
-            } else if (in_array(core_text::strtoupper($grade), array_map('core_text::strtoupper', $lettergrades))) {
+            } else if (in_array(\core_text::strtoupper($grade), array_map('core_text::strtoupper', $lettergrades))) {
                 //look for a lettergrade
                 $validated = array();
             }

@@ -87,10 +87,7 @@ class users {
                 $component = $gradingareamgr->get_component();
                 $area = $gradingareamgr->get_area();
 
-                $classname = "local_joulegrader_lib_gradingarea_{$component}_{$area}_class";
-
-                //include the class
-                include_once("$CFG->dirroot/local/joulegrader/lib/gradingarea/{$component}_{$area}/class.php");
+                $classname = "\\local_joulegrader\\gradingarea\\{$component}_{$area}";
 
                 $method = 'get_studentcapability';
                 //check to be sure the class was loaded

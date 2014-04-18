@@ -1,6 +1,7 @@
 <?php
+namespace local_joulegrader\pane\grade;
+use local_joulegrader\gradingarea;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
-require_once($CFG->dirroot . '/local/joulegrader/lib/pane/grade/abstract.php');
 
 /**
  * joule Grader mod_assignment_submission grade pane class
@@ -8,7 +9,12 @@ require_once($CFG->dirroot . '/local/joulegrader/lib/pane/grade/abstract.php');
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends local_joulegrader_lib_pane_grade_abstract {
+class mod_assignment_submission extends grade_abstract {
+
+    /**
+     * @var gradingarea\mod_assignment_submission
+     */
+    protected $gradingarea;
 
     /**
      * Do some initialization
@@ -27,6 +33,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
         $this->gradeoverridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
 
         if (($gradingmethod = $this->gradingarea->get_active_gradingmethod()) && in_array($gradingmethod, self::get_supportedplugins())) {
+            /** @var \gradingform_controller $controller */
             $controller = $this->gradingarea->get_gradingmanager()->get_controller($gradingmethod);
             $this->controller = $controller;
             if ($controller->is_form_available()) {
@@ -46,7 +53,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                     $currentinstance = $this->gradinginstance->get_current_instance();
                 }
                 $this->needsupdate = false;
-                if (!empty($currentinstance) && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
+                if (!empty($currentinstance) && $currentinstance->get_status() == \gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
                     $this->needsupdate = true;
                 }
             } else {
@@ -163,7 +170,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
     /**
      * Conditionally adds the feedback form element to the form.
      *
-     * @param MoodleQuickForm $mform
+     * @param \MoodleQuickForm $mform
      */
     public function add_feedback_form($mform) {
         if ($this->has_overall_feedback()) {
@@ -203,7 +210,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
      * Process the grade data
      * @param $data
      * @param $notify
-     * @throws moodle_exception
+     * @throws \moodle_exception
      */
     public function process($data, $notify) {
         //a little setup
@@ -211,7 +218,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
         $submission = $this->get_gradingarea()->get_submission(true);
 
         //set up a redirect url
-        $redirecturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->course->id
+        $redirecturl = new \moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->course->id
                 , 'garea' => $this->get_gradingarea()->get_areaid(), 'guser' => $this->get_gradingarea()->get_guserid()));
 
         //get the data from the form
@@ -226,11 +233,11 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                 $grade = clean_param($data->grade, PARAM_INT);
             } else {
                 //just using regular grading
-                $lettergrades = grade_get_letters(context_course::instance($assignment->course->id));
+                $lettergrades = grade_get_letters(\context_course::instance($assignment->course->id));
                 $grade = $data->grade;
 
                 //determine if user is submitting as a letter grade, percentage or float
-                $touppergrade = core_text::strtoupper($grade);
+                $touppergrade = \core_text::strtoupper($grade);
                 $toupperlettergrades = array_map('core_text::strtoupper', $lettergrades);
                 if (in_array($touppergrade, $toupperlettergrades)) {
                     //submitting lettergrade, find percent grade
@@ -330,7 +337,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
             $params = array('courseid' => $assignment->assignment->course, 'itemtype' => 'mod'
                     , 'itemmodule' => 'assignment', 'iteminstance' => $assignment->assignment->id);
 
-            $gradeitem = grade_item::fetch($params);
+            $gradeitem = \grade_item::fetch($params);
 
             //if no grade item, create a new one
             if (empty($gradeitem)) {
@@ -353,7 +360,7 @@ class local_joulegrader_lib_pane_grade_mod_assignment_submission_class extends l
                 }
 
                 //create and insert the new grade item
-                $gradeitem = new grade_item($params);
+                $gradeitem = new \grade_item($params);
                 $gradeitem->insert();
             }
 

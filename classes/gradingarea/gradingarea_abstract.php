@@ -1,7 +1,9 @@
 <?php
+namespace local_joulegrader\gradingarea;
+use local_joulegrader\pane\grade as gradepane;
+use local_joulegrader\pane\view as viewpane;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 require_once($CFG->dirroot . '/grade/grading/lib.php');
-require_once($CFG->dirroot . '/local/joulegrader/lib/comment/loop.php');
 /**
  * Grading area abstract class
  *
@@ -9,7 +11,7 @@ require_once($CFG->dirroot . '/local/joulegrader/lib/comment/loop.php');
  * @package local/joulegrader
  *
  */
-abstract class local_joulegrader_lib_gradingarea_abstract {
+abstract class gradingarea_abstract {
 
     /**
      * @var int - id of the grading_areas entry
@@ -27,7 +29,7 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     protected $nextuserid;
 
     /**
-     * @var gradingmanager - instance of the grading_manager for the area
+     * @var /gradingmanager - instance of the grading_manager for the area
      */
     protected $gradingmanager;
 
@@ -53,7 +55,7 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     protected $gradepane;
 
     /**
-     * @var local_joulegrader_lib_comment_loop - instance
+     * @var \local_joulegrader\comment_loop - instance
      */
     protected $commentloop;
 
@@ -62,12 +64,12 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
      * This is in addition to the capability check done by the utility. For instance, this will be used to make
      * sure that a mod_assignment_submission grading area is of a type that joule Grader will support at this time
      *
-     * @param course_modinfo $courseinfo
-     * @param grading_manager $gradingmanager
+     * @param \course_modinfo $courseinfo
+     * @param \grading_manager $gradingmanager
      * @param bool $needsgrading
      * @return bool
      */
-    public static function include_area(course_modinfo $courseinfo, grading_manager $gradingmanager, $needsgrading = false) {
+    public static function include_area(\course_modinfo $courseinfo, \grading_manager $gradingmanager, $needsgrading = false) {
         return false;
     }
 
@@ -87,11 +89,11 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
 
 
     /**
-     * @param grading_manager $gradingmanager - instance
+     * @param \grading_manager $gradingmanager - instance
      * @param $areaid - id of the grading_areas entry
      * @param $guserid - the id of the gradeable user
      */
-    public function __construct(grading_manager $gradingmanager, $areaid, $guserid) {
+    public function __construct(\grading_manager $gradingmanager, $areaid, $guserid) {
         $this->gradingmanager = $gradingmanager;
         $this->areaid = (int) $areaid;
         $this->guserid  = (int) $guserid;
@@ -101,7 +103,7 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
      * @return \grading_manager
      */
     public function get_gradingmanager() {
-        if (!($this->gradingmanager instanceof grading_manager)) {
+        if (!($this->gradingmanager instanceof \grading_manager)) {
             $this->load_gradingmanager();
         }
         return $this->gradingmanager;
@@ -110,14 +112,14 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     /**
      * Load the grading_manager instance
      *
-     * @return local_joulegrader_lib_gradingarea_abstract
-     * @throws coding_exception
+     * @return gradingarea_abstract
+     * @throws \coding_exception
      */
     public function load_gradingmanager() {
         //first check to see that an instance is not already loaded
-        if (!isset($this->gradingmanager) || !($this->gradingmanager instanceof grading_manager)) {
+        if (!isset($this->gradingmanager) || !($this->gradingmanager instanceof \grading_manager)) {
             if (!isset($this->areaid)) {
-                throw new coding_exception('Cannot load grading_manager instance if areaid is not set');
+                throw new \coding_exception('Cannot load grading_manager instance if areaid is not set');
             }
 
             //load the grading_manager instance
@@ -139,30 +141,22 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     /**
      * Load the viewpane instance
      *
-     * @return local_joulegrader_lib_gradingarea_abstract
-     * @throws coding_exception
+     * @return gradingarea_abstract
+     * @throws \coding_exception
      */
     protected function load_viewpane() {
         global $CFG; //don't remove this: needed for the include_once call
 
         //first check to see that an instance is not already loaded
-        if (!isset($this->viewpane) || !($this->viewpane instanceof local_joulegrader_lib_pane_view_abstract)) {
+        if (!isset($this->viewpane) || !($this->viewpane instanceof viewpane\view_abstract)) {
             //get the viewpane class info from the subclass
             list($classpath, $classname) = $this->get_viewpane_info();
-
-            //try to include the class
-            include_once($classpath);
-
-            //check to see that it was loaded
-            if (!class_exists($classname)) {
-                throw new coding_exception("View pane class $classname is not defined");
-            }
 
             //try to isntantiate it
             try {
                 $this->viewpane = new $classname($this);
-            } catch (Exception $e) {
-                throw new coding_exception("View pane class $classname could not be instantiated");
+            } catch (\Exception $e) {
+                throw new \coding_exception("View pane class $classname could not be instantiated");
             }
         }
 
@@ -172,30 +166,22 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     /**
      * Load the gradepane instance
      *
-     * @return local_joulegrader_lib_gradingarea_abstract
-     * @throws coding_exception
+     * @return gradepane\grade_abstract
+     * @throws \coding_exception
      */
     protected function load_gradepane() {
         global $CFG; //don't remove this: needed for the include_once call
 
         //first check to see that an instance is not already loaded
-        if (!isset($this->gradepane) || !($this->gradepane instanceof local_joulegrader_lib_pane_grade_abstract)) {
+        if (!isset($this->gradepane) || !($this->gradepane instanceof gradepane\grade_abstract)) {
             //get the viewpane class info from the subclass
             list($classpath, $classname) = $this->get_gradepane_info();
-
-            //try to include the class
-            include_once($classpath);
-
-            //check to see that it was loaded
-            if (!class_exists($classname)) {
-                throw new coding_exception("Grade pane class $classname is not defined");
-            }
 
             //try to isntantiate it
             try {
                 $this->gradepane = new $classname($this);
-            } catch (Exception $e) {
-                throw new coding_exception("Grade pane class $classname could not be instantiated");
+            } catch (\Exception $e) {
+                throw new \coding_exception("Grade pane class $classname could not be instantiated");
             }
         }
 
@@ -250,7 +236,7 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
      * @return string - the html for the view pane
      */
     public function get_viewpane() {
-        if (!($this->viewpane instanceof local_joulegrade_lib_pane_view_abstract)) {
+        if (!($this->viewpane instanceof viewpane\view_abstract)) {
             $this->load_viewpane();
             $this->viewpane->init();
         }
@@ -261,10 +247,10 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     /**
      * Get the grade pane for the grading area
      *
-     * @return local_joulegrade_lib_pane_grade_abstract
+     * @return gradepane\grade_abstract
      */
     public function get_gradepane() {
-        if (!($this->gradepane instanceof local_joulegrade_lib_pane_grade_abstract)) {
+        if (!($this->gradepane instanceof gradepane\grade_abstract)) {
             $this->load_gradepane();
             $this->gradepane->init();
         }
@@ -273,11 +259,11 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     }
 
     /**
-     * @return local_joulegrader_lib_comment_loop
+     * @return \local_joulegrader\comment_loop
      */
     public function get_commentloop() {
         if (is_null($this->commentloop)) {
-            $this->commentloop = new local_joulegrader_lib_comment_loop($this);
+            $this->commentloop = new \local_joulegrader\comment_loop($this);
         }
         return $this->commentloop;
     }
@@ -307,21 +293,21 @@ abstract class local_joulegrader_lib_gradingarea_abstract {
     }
 
     /**
-     * @param MoodleQuickForm $mform
+     * @param \MoodleQuickForm $mform
      */
     public function comment_form_hook($mform) {
 
     }
 
     /**
-     * @return stdClass
+     * @return \stdClass
      */
     abstract public function get_comment_filearea_info();
 
     /**
      * Returns the $options object to be passed to comment/lib.php comment class constructor
      *
-     * @return stdClass|null
+     * @return \stdClass|null
      */
     abstract public function get_comment_info();
 

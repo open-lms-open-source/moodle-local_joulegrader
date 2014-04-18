@@ -1,6 +1,6 @@
 <?php
+namespace local_joulegrader\gradingarea;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
-require_once($CFG->dirroot . '/local/joulegrader/lib/gradingarea/abstract.php');
 
 /**
  * Grading area class for mod_assignment component, submission areaname
@@ -8,7 +8,7 @@ require_once($CFG->dirroot . '/local/joulegrader/lib/gradingarea/abstract.php');
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends local_joulegrader_lib_gradingarea_abstract {
+class mod_assignment_submission extends gradingarea_abstract {
 
     /**
      * @var string
@@ -21,12 +21,12 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
     protected static $teachercapability = 'mod/assignment:grade';
 
     /**
-     * @var assignment_base - an instance of the assignment_base class (or most likely one of its subclasses)
+     * @var \assignment_base - an instance of the assignment_base class (or most likely one of its subclasses)
      */
     protected $assignment;
 
     /**
-     * @var stdClass - submission record for this assignment & gradeable user
+     * @var \stdClass - submission record for this assignment & gradeable user
      */
     protected $submission;
 
@@ -48,6 +48,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
      * @param $itemid
      * @param $args
      * @param $forcedownload
+     * @param $options
      * @return bool
      */
     public static function pluginfile($course, $cm, $context, $itemid, $args, $forcedownload, $options) {
@@ -86,7 +87,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
      * @param $gradingmanager - instance of the grading_manager
      * @return array - cm and assignment record
      */
-    protected static function get_assignment_info(grading_manager $gradingmanager) {
+    protected static function get_assignment_info(\grading_manager $gradingmanager) {
         global $DB;
 
         //load the course_module from the context
@@ -100,12 +101,12 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
 
     /**
      * @static
-     * @param course_modinfo $courseinfo
-     * @param grading_manager $gradingmanager
+     * @param \course_modinfo $courseinfo
+     * @param \grading_manager $gradingmanager
      * @param bool $needsgrading
      * @return bool
      */
-    public static function include_area(course_modinfo $courseinfo, grading_manager $gradingmanager, $needsgrading = false) {
+    public static function include_area(\course_modinfo $courseinfo, \grading_manager $gradingmanager, $needsgrading = false) {
         global $DB;
         $include = false;
 
@@ -118,7 +119,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
                 }
 
                 //check to see if it should be included based on whether the needs grading button was selected
-                if (!empty($include) && !empty($needsgrading) && has_capability(self::$teachercapability, context_module::instance($cm->id))) {
+                if (!empty($include) && !empty($needsgrading) && has_capability(self::$teachercapability, \context_module::instance($cm->id))) {
                     //needs to be limited by "needs grading"
                     //check for submissions for this assignment that have timemarked < timemodified
                     $submissions = $DB->get_records_select('assignment_submissions', 'assignment = ? AND timemarked < timemodified'
@@ -130,7 +131,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
                     }
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //don't need to do anything
         }
 
@@ -140,12 +141,12 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
     /**
      * @static
      * @param array $users
-     * @param grading_manager $gradingmanager
+     * @param \grading_manager $gradingmanager
      * @param bool $needsgrading
      *
      * @return bool
      */
-    public static function include_users($users, grading_manager $gradingmanager, $needsgrading) {
+    public static function include_users($users, \grading_manager $gradingmanager, $needsgrading) {
         global $DB;
         $include = array();
 
@@ -184,7 +185,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
             }
 
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
 
@@ -195,15 +196,13 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
      * @return array - the viewpane class and path to the class that this gradingarea class should use
      */
     protected function get_viewpane_info() {
-        global $CFG;
-
         // get the assignment and assignment type
         $assignment = $this->get_assignment();
         $assignmenttype = $assignment->type;
 
         return array(
-            "$CFG->dirroot/local/joulegrader/lib/pane/view/mod_assignment_submission/$assignmenttype.php",
-            "local_joulegrader_lib_pane_view_mod_assignment_submission_$assignmenttype",
+            '',
+            "\\local_joulegrader\\pane\\view\\mod_assignment_submission_$assignmenttype",
         );
     }
 
@@ -211,20 +210,18 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
      * @return array - the gradepane class and path to the class the this gradingarea class should use
      */
     protected function get_gradepane_info() {
-        global $CFG;
-
         return array(
-            "$CFG->dirroot/local/joulegrader/lib/pane/grade/mod_assignment_submission/class.php",
-            "local_joulegrader_lib_pane_grade_mod_assignment_submission_class",
+            '',
+            "\\local_joulegrader\\pane\\grade\\mod_assignment_submission",
         );
     }
 
     /**
-     * @return assignment_base
+     * @return \assignment_base
      */
     public function get_assignment() {
         //check to see that it's loaded
-        if (!isset($this->assignment) || !($this->assignment instanceof assignment_base)) {
+        if (!isset($this->assignment) || !($this->assignment instanceof \assignment_base)) {
             $this->load_assignment();
         }
 
@@ -232,7 +229,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
     }
 
     /**
-     * @throws coding_exception
+     * @throws \coding_exception
      */
     protected function load_assignment() {
         global $CFG;
@@ -248,14 +245,14 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
 
             //instantiate the assignment class
             $this->assignment = new $assignmentclass($cm->id, $assignment, $cm, null);
-        } catch (Exception $e) {
-            throw new coding_exception('Could not load the assignment class: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new \coding_exception('Could not load the assignment class: ' . $e->getMessage());
         }
     }
 
     /**
      * @param $create
-     * @return stdClass - the submission record
+     * @return \stdClass - the submission record
      */
     public function get_submission($create = false) {
         //if it's not set try to load it
@@ -266,10 +263,10 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
     }
 
     /**
-     * @return stdClass
+     * @return \stdClass
      */
     public function get_comment_info() {
-        $options          = new stdClass();
+        $options          = new \stdClass();
         $options->area    = 'submission_comments';
         $options->context = $this->get_gradingmanager()->get_context();
         $options->itemid  = $this->get_submission(true)->id;
@@ -279,7 +276,7 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
     }
 
     /**
-     * @return stdClass File area information for use in comments
+     * @return \stdClass File area information for use in comments
      */
     public function get_comment_filearea_info() {
         return (object) array(
@@ -292,14 +289,15 @@ class local_joulegrader_lib_gradingarea_mod_assignment_submission_class extends 
      * Load the submission record for the set user / assignment
      *
      * @param $create
+     * @throws \coding_exception
      */
     protected function load_submission($create) {
         $assignment = $this->get_assignment();
 
         try {
             $this->submission = $assignment->get_submission($this->guserid, $create, true);
-        } catch (Exception $e) {
-            throw new coding_exception("Could not load the submission for assignment: $assignment->assignment->name, userid: $this->guser");
+        } catch (\Exception $e) {
+            throw new \coding_exception("Could not load the submission for assignment: $assignment->assignment->name, userid: $this->guser");
         }
     }
 }

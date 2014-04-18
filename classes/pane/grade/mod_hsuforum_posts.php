@@ -1,6 +1,7 @@
 <?php
+namespace local_joulegrader\pane\grade;
+use local_joulegrader\gradingarea;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
-require_once($CFG->dirroot . '/local/joulegrader/lib/pane/grade/abstract.php');
 
 /**
  * joule Grader mod_hsuforum_posts grade pane class
@@ -8,22 +9,22 @@ require_once($CFG->dirroot . '/local/joulegrader/lib/pane/grade/abstract.php');
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_joulegrader_lib_pane_grade_abstract {
+class mod_hsuforum_posts extends grade_abstract {
 
     protected $cm;
     /**
-     * @var context_module
+     * @var \context_module
      */
     protected $context;
     protected $forum;
 
     /**
-     * @var gradingform_controller
+     * @var \gradingform_controller
      */
     protected $controller;
 
     /**
-     * @var gradingform_instance
+     * @var \gradingform_instance
      */
     protected $gradinginstance;
 
@@ -63,7 +64,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                     $currentinstance = $this->gradinginstance->get_current_instance();
                 }
                 $this->needsupdate = false;
-                if (!empty($currentinstance) && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
+                if (!empty($currentinstance) && $currentinstance->get_status() == \gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
                     $this->needsupdate = true;
                 }
             } else {
@@ -90,7 +91,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
     }
 
     public function format_gradevalue($grade) {
-        $gradeitem = grade_item::fetch(array('itemtype'=> 'mod', 'itemmodule'=> 'hsuforum',
+        $gradeitem = \grade_item::fetch(array('itemtype'=> 'mod', 'itemmodule'=> 'hsuforum',
             'iteminstance'=> $this->forum->id, 'courseid'=> $this->courseid,
             'outcomeid' => null));
 
@@ -164,7 +165,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
     /**
      * Conditionally adds the feedback form element to the form.
      *
-     * @param MoodleQuickForm $mform
+     * @param \MoodleQuickForm $mform
      */
     public function add_feedback_form($mform) {
         if ($this->has_overall_feedback()) {
@@ -205,12 +206,12 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
     /**
      * Process the grade data
      * @param $data
-     * @param mr_html_notify $notify
-     * @throws moodle_exception
+     * @param \mr_html_notify $notify
+     * @throws \moodle_exception
      */
     public function process($data, $notify) {
         //set up a redirect url
-        $redirecturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $this->cm->course
+        $redirecturl = new \moodle_url('/local/joulegrader/view.php', array('courseid' => $this->cm->course
                 , 'garea' => $this->get_gradingarea()->get_areaid(), 'guser' => $this->get_gradingarea()->get_guserid()));
 
         //get the data from the form
@@ -225,10 +226,10 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
                 $grade = clean_param($data->grade, PARAM_INT);
             } else {
                 //just using regular grading
-                $lettergrades = grade_get_letters(context_course::instance($this->cm->course));
+                $lettergrades = grade_get_letters(\context_course::instance($this->cm->course));
                 $grade = $data->grade;
 
-                $touppergrade = core_text::strtoupper($grade);
+                $touppergrade = \core_text::strtoupper($grade);
                 $toupperlettergrades = array_map('core_text::strtoupper', $lettergrades);
                 if (in_array($touppergrade, $toupperlettergrades)) {
                     //submitting lettergrade, find percent grade
@@ -302,12 +303,12 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
 
     /**
      * @param $grade
-     * @param $override
+     * @param $feedbackinfo
      *
      * @return bool
      */
     protected function save_grade($grade, $feedbackinfo) {
-        $gradeitem = grade_item::fetch(array(
+        $gradeitem = \grade_item::fetch(array(
             'courseid'     => $this->cm->course,
             'itemtype'     => 'mod',
             'itemmodule'   => 'hsuforum',
@@ -318,7 +319,7 @@ class local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class extends local_jo
         $success = false;
         //if no grade item, create a new one
         if (!empty($gradeitem)) {
-            //if grade is -1 in assignment_submissions table, it should be passed as null
+            //if grade is -1 in grade_item table, it should be passed as null
             if ($grade == -1) {
                 $grade = null;
             }

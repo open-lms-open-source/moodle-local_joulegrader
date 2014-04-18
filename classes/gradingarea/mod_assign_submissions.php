@@ -1,13 +1,14 @@
 <?php
+namespace local_joulegrader\gradingarea;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
-require_once($CFG->dirroot . '/local/joulegrader/lib/gradingarea/abstract.php');
+
 /**
  * Grading area class for mod_assign component, submissions areaname
  *
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends local_joulegrader_lib_gradingarea_abstract {
+class mod_assign_submissions extends gradingarea_abstract {
 
     /**
      * @var string
@@ -20,12 +21,12 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
     protected static $teachercapability = 'mod/assign:grade';
 
     /**
-     * @var assign - an instance of the assign class
+     * @var \assign - an instance of the assign class
      */
     protected $assign;
 
     /**
-     * @var stdClass - submission record for this assignment & gradeable user
+     * @var \stdClass - submission record for this assignment & gradeable user
      */
     protected $submission;
 
@@ -50,11 +51,9 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
      * @return array - the viewpane class and path to the class that this gradingarea class should use
      */
     protected function get_viewpane_info() {
-        global $CFG;
-
         return array(
-            "$CFG->dirroot/local/joulegrader/lib/pane/view/mod_assign_submissions/class.php",
-            "local_joulegrader_lib_pane_view_mod_assign_submissions_class",
+            '',
+            "\\local_joulegrader\\pane\\view\\mod_assign_submissions",
         );
     }
 
@@ -62,11 +61,9 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
      * @return array - the gradepane class and path to the class the this gradingarea class should use
      */
     protected function get_gradepane_info() {
-        global $CFG;
-
         return array(
-            "$CFG->dirroot/local/joulegrader/lib/pane/grade/mod_assign_submissions/class.php",
-            "local_joulegrader_lib_pane_grade_mod_assign_submissions_class",
+            '',
+            "\\local_joulegrader\\pane\\grade\\mod_assign_submissions",
         );
     }
 
@@ -100,7 +97,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
                 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
                 // Need to see if the $USER is a member of the group.
-                $assignobj = new assign($context, $cm, $course);
+                $assignobj = new \assign($context, $cm, $course);
                 $assignobj->set_instance($assign);
 
                 $groupmembers = $assignobj->get_submission_group_members($submission->groupid, true);
@@ -138,14 +135,14 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         send_stored_file($file, 86400, 0, $forcedownload, $options);
     }
 
-            /**
+    /**
      * @static
-     * @param course_modinfo $courseinfo
-     * @param grading_manager $gradingmanager
+     * @param \course_modinfo $courseinfo
+     * @param \grading_manager $gradingmanager
      * @param bool $needsgrading
      * @return bool
      */
-    public static function include_area(course_modinfo $courseinfo, grading_manager $gradingmanager, $needsgrading = false) {
+    public static function include_area(\course_modinfo $courseinfo, \grading_manager $gradingmanager, $needsgrading = false) {
         global $DB, $CFG;
         $include = false;
 
@@ -180,7 +177,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
                         $include = false;
                     } else {
                         $include = false;
-                        $assign = new assign(context_module::instance($cm->id), $cm, null);
+                        $assign = new \assign(\context_module::instance($cm->id), $cm, null);
 
                         foreach ($submissions as $submission) {
                             $groupusers = $assign->get_submission_group_members($submission->groupid, true);
@@ -219,7 +216,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
                     }
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //don't need to do anything
         }
 
@@ -229,12 +226,12 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
     /**
      * @static
      * @param array $users
-     * @param grading_manager $gradingmanager
+     * @param \grading_manager $gradingmanager
      * @param bool $needsgrading
      *
      * @return bool
      */
-    public static function include_users($users, grading_manager $gradingmanager, $needsgrading) {
+    public static function include_users($users, \grading_manager $gradingmanager, $needsgrading) {
         global $DB, $CFG;
         $include = array();
 
@@ -252,7 +249,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
                 if (!empty($assignment->teamsubmission)) {
                     // Team submissions is being used.
                     require_once($CFG->dirroot . '/mod/assign/locallib.php');
-                    $assign = new assign(context_module::instance($cm->id), $cm, null);
+                    $assign = new \assign(\context_module::instance($cm->id), $cm, null);
 
                     $groupswithnosubmission = array();
                     foreach ($users as $user) {
@@ -317,7 +314,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
                 require_once($CFG->dirroot . '/mod/assign/locallib.php');
                 $hiddenuserstr = get_string('hiddenuser', 'assign');
                 foreach ($include as $userid => $user) {
-                    $uniqueid = assign::get_uniqueid_for_user_static($assignment->id, $userid);
+                    $uniqueid = \assign::get_uniqueid_for_user_static($assignment->id, $userid);
                     $include[$userid]->firstname = trim($hiddenuserstr);
                     $include[$userid]->lastname = $uniqueid;
                 }
@@ -335,25 +332,25 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
             }
 
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
 
         return $include;
     }
 
-    public function __construct(grading_manager $gradingmanager, $areaid, $guserid) {
+    public function __construct(\grading_manager $gradingmanager, $areaid, $guserid) {
         parent::__construct($gradingmanager, $areaid, $guserid);
 
         $this->attemptnumber = optional_param('attempt', -1, PARAM_INT);
     }
 
     /**
-     * @return assign
+     * @return \assign
      */
     public function get_assign() {
         //check to see that it's loaded
-        if (!isset($this->assign) || !($this->assign instanceof assign)) {
+        if (!isset($this->assign) || !($this->assign instanceof \assign)) {
             $this->load_assign();
         }
 
@@ -361,7 +358,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
     }
 
     /**
-     * @param local_joulegrader\utility\users $userutility
+     * @param \local_joulegrader\utility\users $userutility
      */
     public function current_user($userutility) {
         global $COURSE, $USER;
@@ -370,7 +367,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
             return;
         }
 
-        $preferences = new mr_preferences($COURSE->id, 'local_joulegrader');
+        $preferences = new \mr_preferences($COURSE->id, 'local_joulegrader');
         $previousarea = $preferences->get('previousarea', null);
 
         if (!is_null($previousarea) and $previousarea != $this->areaid) {
@@ -382,7 +379,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
     }
 
     /**
-     * @param local_joulegrader\utility\navigation $navutility
+     * @param \local_joulegrader\utility\navigation $navutility
      */
     public function current_navuser(\local_joulegrader\utility\navigation $navutility) {
         if ($this->get_assign()->is_blind_marking()) {
@@ -392,10 +389,10 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
 
     /**
      * @static
-     * @param $gradingmanager - instance of the grading_manager
+     * @param \grading_manager $gradingmanager - instance of the grading_manager
      * @return array - cm and assign record
      */
-    protected static function get_assign_info(grading_manager $gradingmanager) {
+    protected static function get_assign_info(\grading_manager $gradingmanager) {
         global $DB;
 
         //load the course_module from the context
@@ -408,7 +405,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
     }
 
     /**
-     * @throws coding_exception
+     * @throws \coding_exception
      */
     protected function load_assign() {
         global $CFG;
@@ -420,13 +417,13 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
             //instantiate the assign class
             /// Load up the required assignment code
             require_once($CFG->dirroot.'/mod/assign/locallib.php');
-            $this->assign = new assign($this->get_gradingmanager()->get_context(), $cm, null);
+            $this->assign = new \assign($this->get_gradingmanager()->get_context(), $cm, null);
 
             // Set the db record as the instance
             $this->assign->set_instance($assign);
 
-        } catch (Exception $e) {
-            throw new coding_exception('Could not load the assign class: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new \coding_exception('Could not load the assign class: ' . $e->getMessage());
         }
     }
 
@@ -439,10 +436,10 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
     }
 
     /**
-     * @return stdClass
+     * @return \stdClass
      */
     public function get_comment_info() {
-        $options          = new stdClass();
+        $options          = new \stdClass();
         $options->area    = 'submission_comments';
         $options->course  = $this->get_assign()->get_course();
         $options->context = $this->get_assign()->get_context();
@@ -466,7 +463,7 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
     }
 
     /**
-     * @return stdClass File area information for use in comments
+     * @return \stdClass File area information for use in comments
      */
     public function get_comment_filearea_info() {
         return (object) array(
@@ -565,6 +562,9 @@ class local_joulegrader_lib_gradingarea_mod_assign_submissions_class extends loc
         return $this->attemptnumber;
     }
 
+    /**
+     * @param \MoodleQuickForm $mform
+     */
     public function comment_form_hook($mform) {
         $attemptnumber = $this->get_attemptnumber();
         if ($attemptnumber >= 0) {

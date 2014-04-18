@@ -1,8 +1,8 @@
 <?php
+namespace local_joulegrader\pane\grade;
+use local_joulegrader\gradingarea\gradingarea_abstract;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 require_once($CFG->dirroot . '/lib/gradelib.php');
-require_once($CFG->dirroot . '/local/joulegrader/form/gradepaneform.php');
-require_once($CFG->dirroot . '/local/joulegrader/form/grademodalform.php');
 
 /**
  * joule Grader Grade Pane abstract class
@@ -10,20 +10,20 @@ require_once($CFG->dirroot . '/local/joulegrader/form/grademodalform.php');
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
+abstract class grade_abstract implements \renderable {
 
     /**
-     * @var local_joulegrader_lib_gradingarea_abstract - instance of a gradingarea class
+     * @var gradingarea_abstract - instance of a gradingarea class
      */
     protected $gradingarea;
 
     /**
-     * @var moodleform - instance of moodleform
+     * @var \moodleform - instance of moodleform
      */
     protected $paneform = null;
 
     /**
-     * @var moodleform
+     * @var \moodleform
      */
     protected $modalform = null;
 
@@ -38,14 +38,14 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     protected $gradinginfo;
 
     /**
-     * @param local_joulegrader_lib_gradingarea_abstract $gradingarea
+     * @param gradingarea_abstract $gradingarea
      */
-    public function __construct(local_joulegrader_lib_gradingarea_abstract $gradingarea) {
+    public function __construct(gradingarea_abstract $gradingarea) {
         $this->gradingarea = $gradingarea;
     }
 
     /**
-     * @return local_joulegrader_lib_gradingarea_abstract
+     * @return gradingarea_abstract
      */
     public function get_gradingarea() {
         return $this->gradingarea;
@@ -80,7 +80,7 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     public function get_paneform() {
         if ($this->has_paneform()) {
             if (is_null($this->paneform)) {
-                $this->paneform = new local_joulegrader_form_gradepaneform($this->get_posturl(), $this);
+                $this->paneform = new \local_joulegrader\form\grade_pane($this->get_posturl(), $this);
             }
         }
         return $this->paneform;
@@ -89,7 +89,7 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     public function get_modalform() {
         if ($this->has_modal()) {
             if (is_null($this->modalform)) {
-                $this->modalform = new local_joulegrader_form_grademodalform($this->get_posturl(), $this);
+                $this->modalform = new \local_joulegrader\form\grade_modal($this->get_posturl(), $this);
             }
         }
         return $this->modalform;
@@ -148,19 +148,19 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     }
 
     /**
-     * @param MoodleQuickForm $mform
+     * @param \MoodleQuickForm $mform
      */
     public function paneform_hook($mform) {
     }
 
     /**
-     * @param MoodleQuickForm $mform
+     * @param \MoodleQuickForm $mform
      */
     public function modalform_hook($mform) {
     }
 
     private function get_posturl() {
-        $posturl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $this->get_courseid()
+        $posturl = new \moodle_url('/local/joulegrader/view.php', array('courseid' => $this->get_courseid()
         , 'garea' => $this->get_gradingarea()->get_areaid(), 'guser' => $this->get_gradingarea()->get_guserid(), 'action' => 'process'));
 
         if ($needsgrading = optional_param('needsgrading', 0, PARAM_BOOL)) {
@@ -171,7 +171,7 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
     }
 
     /**
-     * @return false|grade_grade
+     * @return false|\grade_grade
      */
     public function get_gradebook_grade() {
         // Current gradebook grade.
@@ -212,7 +212,7 @@ abstract class local_joulegrader_lib_pane_grade_abstract implements renderable {
      *
      * @abstract
      * @param $data
-     * @param $notify mr_notify
+     * @param $notify \mr_html_notify
      */
     abstract public function process($data, $notify);
 

@@ -1,21 +1,20 @@
 <?php
+namespace local_joulegrader;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
-require_once($CFG->dirroot . '/local/joulegrader/lib/comment/class.php');
-require_once($CFG->dirroot . '/local/joulegrader/form/comment.php');
 
 /**
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-class local_joulegrader_lib_comment_loop implements renderable {
+class comment_loop implements \renderable {
 
     /**
-     * @var local_joulegrader_lib_gradingarea_abstract - instance
+     * @var gradingarea\gradingarea_abstract - instance
      */
     protected $gradingarea;
 
     /**
-     * @var comment - instance of comment class
+     * @var \comment - instance of comment class
      */
     protected $commentapi;
 
@@ -30,7 +29,7 @@ class local_joulegrader_lib_comment_loop implements renderable {
     protected $commentusers;
 
     /**
-     * @var moodleform - comment form
+     * @var \moodleform - comment form
      */
     protected $mform;
 
@@ -40,7 +39,7 @@ class local_joulegrader_lib_comment_loop implements renderable {
     protected $commentitemid;
 
     /**
-     * @param $gradingarea - local_joulegrader_lib_gradingarea_abstract
+     * @param $gradingarea - gradingarea\gradingarea_abstract
      */
     public function __construct($gradingarea) {
         $this->gradingarea = $gradingarea;
@@ -49,7 +48,7 @@ class local_joulegrader_lib_comment_loop implements renderable {
     /**
      * Initializes the commentapi data member by creating an instance the comment class
      *
-     * @param null|stdClass $options
+     * @param null|\stdClass $options
      */
     public function init($options = null) {
         global $CFG;
@@ -59,7 +58,7 @@ class local_joulegrader_lib_comment_loop implements renderable {
             $options = $this->gradingarea->get_comment_info();
         }
 
-        $this->commentapi = new comment($options);
+        $this->commentapi = new \comment($options);
     }
 
     /**
@@ -73,7 +72,7 @@ class local_joulegrader_lib_comment_loop implements renderable {
     }
 
     /**
-     * @return moodleform - comment form
+     * @return \moodleform - comment form
      */
     public function get_mform() {
         if (is_null($this->mform)) {
@@ -110,8 +109,8 @@ class local_joulegrader_lib_comment_loop implements renderable {
     }
 
     /**
-     * @param stdClass $commentdata - data from submitted comment form
-     * @return local_joulegrader_lib_comment_class
+     * @param \stdClass $commentdata - data from submitted comment form
+     * @return comment
      */
     public function add_comment($commentdata) {
 
@@ -122,7 +121,7 @@ class local_joulegrader_lib_comment_loop implements renderable {
         $commentrecord = $this->commentapi->add($commentdata->comment['text'], FORMAT_MOODLE, array($this, 'comment_post_insert'));
 
         // Instantiate a joule grader comment object.
-        $comment = new local_joulegrader_lib_comment_class($commentrecord);
+        $comment = new comment($commentrecord);
 
         $context = $this->gradingarea->get_gradingmanager()->get_context();
 
@@ -137,10 +136,10 @@ class local_joulegrader_lib_comment_loop implements renderable {
     /**
      * Callback from comment:add() to handle files.
      *
-     * @param stdClass $comment
-     * @return stdClass
+     * @param \stdClass $comment
+     * @return \stdClass
      */
-    public function comment_post_insert(stdClass $comment) {
+    public function comment_post_insert(\stdClass $comment) {
         global $DB;
 
         $itemid = $this->commentitemid;
@@ -169,7 +168,7 @@ class local_joulegrader_lib_comment_loop implements renderable {
         // Initialize
         $this->comments = array();
 
-        if (!$this->commentapi instanceof comment) {
+        if (!$this->commentapi instanceof \comment) {
             $this->init();
         }
 
@@ -178,9 +177,9 @@ class local_joulegrader_lib_comment_loop implements renderable {
         if (!empty($comments)) {
             $comments = array_reverse($comments);
 
-            // Iterate through comments and instantiate local_joulegrader_lib_comment_class objects.
+            // Iterate through comments and instantiate local_joulegrader\comment objects.
             foreach ($comments as $comment) {
-                $commentobject = new local_joulegrader_lib_comment_class($comment);
+                $commentobject = new comment($comment);
                 $commentobject->set_context($context);
                 $commentobject->set_gareaid($this->gradingarea->get_areaid());
                 $commentobject->set_guserid($this->gradingarea->get_guserid());
@@ -203,9 +202,9 @@ class local_joulegrader_lib_comment_loop implements renderable {
 
         //build the form action url
         $urlparams = array('courseid' => $COURSE->id, 'action' => 'addcomment', 'garea' => $gareaid, 'guser' => $guserid);
-        $mformurl = new moodle_url('/local/joulegrader/view.php', $urlparams);
+        $mformurl = new \moodle_url('/local/joulegrader/view.php', $urlparams);
 
         //instantiate the form
-        $this->mform = new local_joulegrader_form_comment($mformurl, $this->gradingarea);
+        $this->mform = new form\comment($mformurl, $this->gradingarea);
     }
 }

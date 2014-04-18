@@ -57,6 +57,7 @@ function local_joulegrader_extends_settings_navigation($settings, $context) {
  * @param $filearea - not the actual file area, should be set to 'gradingarea'
  * @param array $args - first arg should be 'itemid', next needs to be the gradingarea compenent_area (e.g. mod_assignment_submission)
  * @param $forcedownload
+ * @param $options
  * @return bool
  */
 function local_joulegrader_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
@@ -75,13 +76,9 @@ function local_joulegrader_pluginfile($course, $cm, $context, $filearea, $args, 
         //next arg should be the gradingarea component_area (e.g. mod_assignment_submission)
         $gradingarea = array_shift($args);
 
-        $classname = 'local_joulegrader_lib_gradingarea_' . $gradingarea . '_class';
+        $classname = '\\local_joulegrader\\gradingarea\\' . $gradingarea;
         if (!class_exists($classname)) {
-            try {
-                include_once($CFG->dirroot . '/local/joulegrader/lib/gradingarea/' . $gradingarea . '/class.php');
-            } catch (Exception $e) {
-                return false;
-            }
+            return false;
         }
 
         //pass everything off to the gradingarea class to handle sending the file

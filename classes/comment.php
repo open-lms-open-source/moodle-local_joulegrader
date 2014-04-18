@@ -1,4 +1,5 @@
 <?php
+namespace local_joulegrader;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 /**
@@ -7,15 +8,15 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-class local_joulegrader_lib_comment_class implements renderable {
+class comment implements \renderable {
 
     /**
-     * @var stdClass Comment record from comment api
+     * @var \stdClass Comment record from comment api
      */
     public $commentrecord;
 
     /**
-     * @var context
+     * @var \context
      */
     protected $context;
 
@@ -30,9 +31,9 @@ class local_joulegrader_lib_comment_class implements renderable {
     protected $gareaid;
 
     /**
-     * @param stdClass|null  $commentrecord
+     * @param \stdClass|null  $commentrecord
      */
-    public function __construct(stdClass $commentrecord = null) {
+    public function __construct(\stdClass $commentrecord = null) {
         $this->commentrecord = $commentrecord;
     }
 

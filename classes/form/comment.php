@@ -1,4 +1,5 @@
 <?php
+namespace local_joulegrader\form;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 global $CFG;
 require_once($CFG->libdir.'/formslib.php');
@@ -7,7 +8,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @package local/joulegrader
  */
 
-class local_joulegrader_form_comment extends moodleform {
+class comment extends \moodleform {
 
     /**
      * Form definition
@@ -18,7 +19,7 @@ class local_joulegrader_form_comment extends moodleform {
         $mform =& $this->_form;
 
         //tinymce params
-        if (is_callable('mr_on') && mr_on('webcam', '_MR_LOCAL') && mr_on('kaltura', '_MR_LOCAL') && has_capability('local/webcam:create', context_course::instance($COURSE->id))) {
+        if (is_callable('mr_on') && mr_on('webcam', '_MR_LOCAL') && mr_on('kaltura', '_MR_LOCAL') && has_capability('local/webcam:create', \context_course::instance($COURSE->id))) {
             $webcamplugin = '-webcam,';
             $webcambutton = 'webcam';
         } else {

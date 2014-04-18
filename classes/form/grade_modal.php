@@ -1,14 +1,15 @@
 <?php
-    defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
-    require_once($CFG->libdir.'/formslib.php');
-    /**
-     * Grade form for advanced grading modal
-     *
-     * @author Sam Chaffee
-     * @package local/joulegrader
-     * @see moodleform
-     */
-class local_joulegrader_form_grademodalform extends moodleform {
+namespace local_joulegrader\form;
+defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
+require_once($CFG->libdir.'/formslib.php');
+/**
+ * Grade form for advanced grading modal
+ *
+ * @author Sam Chaffee
+ * @package local/joulegrader
+ * @see moodleform
+ */
+class grade_modal extends \moodleform {
 
     public function definition() {
         $mform =& $this->_form;
@@ -18,7 +19,7 @@ class local_joulegrader_form_grademodalform extends moodleform {
 
         if ($this->_customdata->get_gradingdisabled()) {
             // Add a message notifying user that grading is disabled.
-            $mform->addElement('html', html_writer::tag('div', get_string('gradingdisabled', 'local_joulegrader'),
+            $mform->addElement('html', \html_writer::tag('div', get_string('gradingdisabled', 'local_joulegrader'),
                 array('class' => 'warning')));
         }
 
