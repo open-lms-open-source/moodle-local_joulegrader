@@ -12,6 +12,26 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 class users {
 
     /**
+     * @var gradingareas
+     */
+    protected $gareautility;
+
+    /**
+     * @var int|null
+     */
+    protected $loggedinuser;
+
+    /**
+     * @var int The passed guser
+     */
+    protected $guserparam;
+
+    /**
+     * @var \context_course
+     */
+    protected $coursecontext;
+
+    /**
      * @var int - id of the current user
      */
     protected $currentuser;
@@ -58,68 +78,41 @@ class users {
 
     /**
      * @param gradingareas $gareautility
-     * @param \context     $context
+     * @param \context_course $context
+     * @param int $guserparam
+     * @param null|int $loggedinuser
      */
-    public function __construct(gradingareas $gareautility, \context $context) {
+    public function __construct(gradingareas $gareautility, \context_course $context, $guserparam, $loggedinuser = null) {
         global $USER;
-        if (has_capability('local/joulegrader:grade', $context)) {
-            $this->load_groups();
-            $this->load_users($gareautility);
-        } else {
-            // This is being viewed as a student, logged in user is current user.
-            $this->currentuser = $USER->id;
+        $this->coursecontext = $context;
+        if (is_null($loggedinuser)) {
+            $loggedinuser = $USER->id;
         }
+        $this->loggedinuser  = $loggedinuser;
+        $this->gareautility  = $gareautility;
+        $this->guserparam    = $guserparam;
+
+        $this->load_users();
     }
 
-    protected function load_users($gareautility) {
-        global $COURSE, $CFG;
+    /**
+     * @return array
+     */
+    public function get_users() {
+        return $this->users;
+    }
 
-        if (is_null($this->users)) {
-            //is there a current grading area set?
-            $currentarea = $gareautility->get_currentarea();
+    /**
+     * @param string $capability
+     * @param int $currentgroup
+     * @return array
+     */
+    public function get_enrolled_users($capability, $currentgroup = 0) {
+        // Get the enrolled users with the required capability.
+        $users = get_enrolled_users($this->coursecontext, $capability, $currentgroup,
+            'u.id, '.get_all_user_name_fields(true, 'u'));
 
-            $requiredcap = 'local/joulegrader:view';
-            if (!empty($currentarea)) {
-                //need to load the class for the grading area
-                //determine classname based on the grading area
-                $gradingareamgr = get_grading_manager($currentarea);
-
-                $component = $gradingareamgr->get_component();
-                $area = $gradingareamgr->get_area();
-
-                $classname = "\\local_joulegrader\\gradingarea\\{$component}_{$area}";
-
-                $method = 'get_studentcapability';
-                //check to be sure the class was loaded
-                if (class_exists($classname) && is_callable("{$classname}::{$method}")) {
-                    //find the grading area's required capability for students to appear in menu
-                    $requiredcap = $classname::$method();
-                }
-            }
-
-            //get the enrolled users with the required capability
-            $users = get_enrolled_users(\context_course::instance($COURSE->id), $requiredcap, $this->get_currentgroup(),
-                'u.id, '.get_all_user_name_fields(true, 'u'));
-
-            //make menu from the users
-            $this->users = array();
-
-            // allow the plugin to narrow down the users
-            $needsgrading = optional_param('needsgrading', 0, PARAM_BOOL);
-            $includemethod = 'include_users';
-            if (!empty($currentarea) && is_callable("{$classname}::{$includemethod}")) {
-                // check with the grading area class to make sure to include the current user
-                $users = $classname::$includemethod($users, $gradingareamgr, $needsgrading);
-            }
-
-            // make sure that the plugin gave us an array back
-            if (!is_array($users)) {
-                return array();
-            }
-            foreach ($users as $userid => $user) {
-                $this->users[$userid] = fullname($user);
-            }
-        }
+        return $users;
     }
 
     /**
@@ -128,7 +121,50 @@ class users {
      *
      * @return array - users that can be graded for the current area
      */
-    public function get_users() {
+    public function load_users() {
+        $this->users = array();
+
+        $this->load_groups();
+        //is there a current grading area set?
+        $currentarea = $this->gareautility->get_currentarea();
+
+        $requiredcap = 'local/joulegrader:view';
+        if (!empty($currentarea)) {
+            //need to load the class for the grading area
+            //determine classname based on the grading area
+            $gradingareamgr = get_grading_manager($currentarea);
+
+            $component = $gradingareamgr->get_component();
+            $area = $gradingareamgr->get_area();
+
+            $classname = "\\local_joulegrader\\gradingarea\\{$component}_{$area}";
+
+            $method = 'get_studentcapability';
+            //check to be sure the class was loaded
+            if (class_exists($classname) && is_callable("{$classname}::{$method}")) {
+                //find the grading area's required capability for students to appear in menu
+                $requiredcap = $classname::$method();
+            }
+        }
+        $users = $this->get_enrolled_users($requiredcap, $this->get_currentgroup());
+
+        // allow the plugin to narrow down the users
+        $needsgrading = $this->gareautility->get_needsgrading();
+        $includemethod = 'include_users';
+        if (!empty($currentarea) && !empty($classname) && is_callable("{$classname}::{$includemethod}")) {
+            // check with the grading area class to make sure to include the current user
+            $users = $classname::$includemethod($users, $gradingareamgr, $needsgrading);
+        }
+
+        // make sure that the plugin gave us an array back
+        if (!is_array($users)) {
+            return array();
+        }
+
+        foreach ($users as $userid => $user) {
+            $this->users[$userid] = fullname($user);
+        }
+
         return $this->users;
     }
 
@@ -138,10 +174,17 @@ class users {
      * @return int - id of the current user
      */
     public function get_currentuser() {
+        if (count($this->users) === 1) {
+            $user = reset($$this->users);
+            if ($user->id == $this->guserparam) {
+                $this->currentuser = $this->guserparam;
+            }
+        }
+
         //if property is null currently then try to set it
         if (is_null($this->currentuser)) {
             //first check to see if there was a param passed
-            $guser = optional_param('guser', 0, PARAM_INT);
+            $guser = $this->guserparam;
 
             //if no param passed take the first user in the course (in the menu)
             if (empty($guser) && !empty($this->users)) {
@@ -153,7 +196,8 @@ class users {
             }
 
             //special case where needs grading has excluded all grading areas
-            if (empty($this->users) && optional_param('needsgrading', 0, PARAM_BOOL)) {
+            $needsgrading = $this->gareautility->get_needsgrading();
+            if (empty($this->users) && !empty($needsgrading)) {
                 $guser = null;
             }
 
@@ -291,24 +335,24 @@ class users {
      * @return array - array containing current group, groups menu array,group label, previous and next ids
      */
     protected function load_groups() {
-        global $COURSE, $USER;
+        $context = $this->coursecontext;
+        $course  = get_course($context->instanceid);
 
         //first, make sure that the course is using a groupmode
-        if (!$groupmode = $COURSE->groupmode) {
+        if (!$groupmode = $course->groupmode) {
             //not using a group mode, so return
             return;
         }
 
-        $context = \context_course::instance($COURSE->id);
         $aag = has_capability('moodle/site:accessallgroups', $context);
 
         if ($groupmode == VISIBLEGROUPS or $aag) {
-            $allowedgroups = groups_get_all_groups($COURSE->id, 0, $COURSE->defaultgroupingid);
+            $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
         } else {
-            $allowedgroups = groups_get_all_groups($COURSE->id, $USER->id, $COURSE->defaultgroupingid);
+            $allowedgroups = groups_get_all_groups($course->id, $this->loggedinuser, $course->defaultgroupingid);
         }
 
-        $activegroup = groups_get_course_group($COURSE, true, $allowedgroups);
+        $activegroup = groups_get_course_group($course, true, $allowedgroups);
 
         $groupsmenu = array();
         if (!$allowedgroups or $groupmode == VISIBLEGROUPS or $aag) {
@@ -327,8 +371,8 @@ class users {
             $grouplabel = get_string('groupsseparate');
         }
 
-        if ($aag and $COURSE->defaultgroupingid) {
-            if ($grouping = groups_get_grouping($COURSE->defaultgroupingid)) {
+        if ($aag and $course->defaultgroupingid) {
+            if ($grouping = groups_get_grouping($course->defaultgroupingid)) {
                 $grouplabel = $grouplabel . ' (' . format_string($grouping->name) . ')';
             }
         }

@@ -45,12 +45,12 @@ abstract class gradingarea_abstract {
     protected static $teachercapability = 'local/joulegrader:grade';
 
     /**
-     * @var local_joulegrade_lib_pane_view_abstract - instance
+     * @var viewpane\view_abstract - instance
      */
     protected $viewpane;
 
     /**
-     * @var local_joulegrade_lib_pane_grade_abstract - instance
+     * @var gradepane\grade_abstract - instance
      */
     protected $gradepane;
 

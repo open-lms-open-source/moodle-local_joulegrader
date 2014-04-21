@@ -154,7 +154,7 @@ class mod_assign_submissions extends gradingarea_abstract {
             }
 
             // Check to see if it should be included based on whether the needs grading button was selected.
-            if (!empty($include) && !empty($needsgrading) && has_capability(self::$teachercapability, context_module::instance($cm->id))) {
+            if (!empty($include) && !empty($needsgrading) && has_capability(self::$teachercapability, \context_module::instance($cm->id))) {
                 // Needs to be limited by "needs grading".
                 // Check for submissions that do not have a grade yet.
 

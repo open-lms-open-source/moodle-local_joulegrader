@@ -77,11 +77,15 @@ class local_joulegrader_controller_default extends mr_controller {
             return $OUTPUT->container(html_writer::tag('h2', get_string('mobilenotsupported', 'local_joulegrader')), null, 'local-joulegrader-mobilenotsupportedmsg');
         }
 
+        $gareaparam = optional_param('garea', 0, PARAM_INT);
+        $guserparam = optional_param('guser', 0, PARAM_INT);
+        $needsgrading = optional_param('needsgrading', 0, PARAM_BOOL);
+
         /** @var utility\gradingareas $gareasutility */
-        $gareasutility = new utility\gradingareas($this->get_context());
+        $gareasutility = new utility\gradingareas($this->get_context(), $gareaparam, $needsgrading);
 
         /** @var utility\users $usersutility */
-        $usersutility = new utility\users($gareasutility, $this->get_context());
+        $usersutility = new utility\users($gareasutility, $this->get_context(), $guserparam);
 
         $currentareaid = $gareasutility->get_currentarea();
         $currentuserid = $usersutility->get_currentuser();
@@ -187,6 +191,7 @@ class local_joulegrader_controller_default extends mr_controller {
     /**
      * Process action - processes grade form and redirects
      *
+     * @throws moodle_exception
      * @return void
      */
     public function process_action() {
@@ -197,7 +202,7 @@ class local_joulegrader_controller_default extends mr_controller {
         $currentuserid = required_param('guser', PARAM_INT);
 
         /** @var utility\gradingareas $gareasutility */
-        $gareasutility = new utility\gradingareas($this->get_context());
+        $gareasutility = new utility\gradingareas($this->get_context(), $currentareaid);
 
         //make sure that the area passed from the form matches what is determined by the areas utility
         if ($currentareaid != $gareasutility->get_currentarea()) {
@@ -206,7 +211,7 @@ class local_joulegrader_controller_default extends mr_controller {
         }
 
         //just need prime the utility for the currentuser() and nextuser() calls
-        $usersutility = new utility\users($gareasutility, $this->get_context());
+        $usersutility = new utility\users($gareasutility, $this->get_context(), $currentuserid);
 
         //make sure the passed user and passed area match what is available
         if ($currentuserid != $usersutility->get_currentuser()) {
@@ -282,7 +287,7 @@ class local_joulegrader_controller_default extends mr_controller {
             require_sesskey();
 
             /** @var utility\gradingareas $gareasutility */
-            $gareasutility = new utility\gradingareas($this->get_context());
+            $gareasutility = new utility\gradingareas($this->get_context(), $currentareaid);
 
             // Make sure that the area passed from the form matches what is determined by the areas utility.
             if ($currentareaid != $gareasutility->get_currentarea()) {
@@ -291,7 +296,7 @@ class local_joulegrader_controller_default extends mr_controller {
             }
 
             // Just need prime the utility for the currentuser() and nextuser() calls.
-            $usersutility = new utility\users($gareasutility, $this->get_context());
+            $usersutility = new utility\users($gareasutility, $this->get_context(), $currentuserid);
 
             // Make sure the passed user and passed area match what is available.
             if ($currentuserid != $usersutility->get_currentuser()) {
@@ -372,7 +377,7 @@ class local_joulegrader_controller_default extends mr_controller {
             $currentuserid = required_param('guser', PARAM_INT);
 
             /** @var utility\gradingareas $gareasutility */
-            $gareasutility = new utility\gradingareas($this->get_context());
+            $gareasutility = new utility\gradingareas($this->get_context(), $currentareaid);
 
             // Make sure that the area passed from the form matches what is determined by the areas utility.
             if ($currentareaid != $gareasutility->get_currentarea()) {
@@ -380,7 +385,7 @@ class local_joulegrader_controller_default extends mr_controller {
                 throw new moodle_exception('areaidpassednotvalid', 'local_joulegrader');
             }
 
-            $usersutility = new utility\users($gareasutility, $this->get_context());
+            $usersutility = new utility\users($gareasutility, $this->get_context(), $currentuserid);
 
             //make sure the passed user and passed area match what is available
             if ($currentuserid != $usersutility->get_currentuser()) {
@@ -464,7 +469,7 @@ class local_joulegrader_controller_default extends mr_controller {
         $currentuserid = required_param('guser', PARAM_INT);
 
         /** @var utility\gradingareas $gareasutility */
-        $gareasutility = new utility\gradingareas($this->get_context());
+        $gareasutility = new utility\gradingareas($this->get_context(), $currentareaid);
 
         // Make sure that the area passed from the form matches what is determined by the areas utility.
         if ($currentareaid != $gareasutility->get_currentarea()) {
@@ -473,7 +478,7 @@ class local_joulegrader_controller_default extends mr_controller {
         }
 
         // Pull out the users utility and gradingareas utility.
-        $usersutility = new utility\users($gareasutility, $this->get_context());
+        $usersutility = new utility\users($gareasutility, $this->get_context(), $currentuserid);
 
         //make sure the passed user and passed area match what is available
         if ($currentuserid != $usersutility->get_currentuser()) {

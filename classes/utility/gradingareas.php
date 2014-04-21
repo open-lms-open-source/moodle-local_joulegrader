@@ -1,5 +1,6 @@
 <?php
 namespace local_joulegrader\utility;
+use local_joulegrader\gradingarea;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 require_once($CFG->dirroot . '/grade/grading/lib.php');
 
@@ -29,6 +30,16 @@ class gradingareas {
     );
 
     /**
+     * @var int
+     */
+    protected $gareaparam;
+
+    /**
+     * @var int
+     */
+    protected $needsgrading;
+
+    /**
      * @var int - id of the current grading area
      */
     protected $currentarea;
@@ -49,9 +60,13 @@ class gradingareas {
     protected $gradingareas;
 
     /**
-     * @param \context $context
+     * @param \context_course $context
+     * @param int $gareaparam
+     * @param int $needsgrading
      */
-    public function __construct(\context $context) {
+    public function __construct(\context_course $context, $gareaparam, $needsgrading = 0) {
+        $this->gareaparam = $gareaparam;
+        $this->needsgrading = $needsgrading;
         $this->load_gradingareas(has_capability('local/joulegrader:grade', $context));
     }
 
@@ -62,7 +77,7 @@ class gradingareas {
      *
      * @throws \coding_exception
      *
-     * @return \local_joulegrader_lib_gradingarea_abstract - instance of a gradingarea class
+     * @return gradingarea\gradingarea_abstract - instance of a gradingarea class
      */
     public static function get_gradingarea_instance($currentareaid, $currentuserid) {
         global $CFG;
@@ -230,9 +245,8 @@ class gradingareas {
                 }
 
                 //give the grading_area class an opportunity to exclude this particular grading_area
-                $needsgrading = optional_param('needsgrading', 0, PARAM_BOOL);
                 $includemethod = 'include_area';
-                if (!is_callable("{$classname}::{$includemethod}") || !($classname::$includemethod($courseinfo, $gradingareamgr, $needsgrading))) {
+                if (!is_callable("{$classname}::{$includemethod}") || !($classname::$includemethod($courseinfo, $gradingareamgr, $this->needsgrading))) {
                     //either the method isn't callable or the area shouldn't be included
                     continue;
                 }
@@ -270,7 +284,7 @@ class gradingareas {
 
         if (is_null($this->currentarea)) {
             //check for a passed parameter
-            $garea = optional_param('garea', 0, PARAM_INT);
+            $garea = $this->gareaparam;
 
             //if no param passed take the first area in the course (in the menu)
             if (empty($garea) && !empty($this->gradingareas)) {
@@ -282,7 +296,7 @@ class gradingareas {
             }
 
             //special case where needs grading has excluded all grading areas
-            if (empty($this->gradingareas) && optional_param('needsgrading', 0, PARAM_BOOL)) {
+            if (empty($this->gradingareas) && !empty($this->needsgrading)) {
                 $garea = null;
             }
 
@@ -318,6 +332,13 @@ class gradingareas {
         }
 
         return $this->prevarea;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_needsgrading() {
+        return $this->needsgrading;
     }
 
     /**

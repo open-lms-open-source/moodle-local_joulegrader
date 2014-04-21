@@ -74,7 +74,7 @@ class navigation {
     public function get_activity_navigation() {
         global $COURSE;
 
-        $needsgrading = optional_param('needsgrading', 0, PARAM_BOOL);
+        $needsgrading = $this->gareautility->get_needsgrading();
         $gradingareas = $this->gareautility->get_gradingareas();
 
         //activity navigation
@@ -193,7 +193,7 @@ class navigation {
         if (has_capability('local/joulegrader:grade', $context)) {
             $buttonurl = clone $controllerurl;
 
-            $needsgrading = optional_param('needsgrading', 0, PARAM_BOOL);
+            $needsgrading = $this->gareautility->get_needsgrading();
             if (empty($needsgrading)) {
                 $buttonstring = get_string('needsgrading', 'local_joulegrader');
                 $buttonurl->param('needsgrading', 1);
