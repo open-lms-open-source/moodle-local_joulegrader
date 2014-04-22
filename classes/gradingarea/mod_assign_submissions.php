@@ -232,24 +232,36 @@ class mod_assign_submissions extends gradingarea_abstract {
      * @return bool
      */
     public static function include_users($users, \grading_manager $gradingmanager, $needsgrading) {
-        global $DB, $CFG;
+        global $DB, $CFG, $USER;
         $include = array();
-
-        // right now only need to narrow users if $needsgrading is true
-        if (empty($users)) {
-            // return the users array as it was passed
-            return $users;
-        }
 
         try {
             list($cm, $assignment) = self::get_assign_info($gradingmanager);
+            $context = \context_module::instance($cm->id);
+            // First limit by assigned markers if necessary.
+            if (!empty($assignment->markingallocation) and !has_capability('mod/assign:manageallocations', $context)) {
+                $userflagparams  = array(
+                    'assignment' => $assignment->id,
+                    'allocatedmarker'     => $USER->id,
+                );
+                $assignuserflags = $DB->get_records_menu('assign_user_flags', $userflagparams, '', 'userid, allocatedmarker');
+                if (empty($assignuserflags)) {
+                    $users = array();
+                } else {
+                    $users = array_intersect_key($users, $assignuserflags);
+                }
+            }
+
+            if (empty($users)) {
+                return $users;
+            }
 
             if (!empty($needsgrading)) {
                 // Narrow the users to those that have submissions that have not been graded since they were modified.
                 if (!empty($assignment->teamsubmission)) {
                     // Team submissions is being used.
                     require_once($CFG->dirroot . '/mod/assign/locallib.php');
-                    $assign = new \assign(\context_module::instance($cm->id), $cm, null);
+                    $assign = new \assign($context, $cm, null);
 
                     $groupswithnosubmission = array();
                     foreach ($users as $user) {
@@ -333,10 +345,34 @@ class mod_assign_submissions extends gradingarea_abstract {
 
 
         } catch (\Exception $e) {
-
+            if (debugging('', DEBUG_DEVELOPER)) {
+                throw $e;
+            }
         }
 
         return $include;
+    }
+
+    public static function loggedinuser_can_grade(\grading_manager $gradingmanager, $loggedinuser) {
+        global $DB;
+        list($cm, $assignrecord) = self::get_assign_info($gradingmanager);
+        $context = \context_module::instance($cm->id);
+
+        if (!has_capability('mod/assign:grade', $context, $loggedinuser)) {
+            // Must have this capability to do any kind of grading. Return false here since they don't.
+            return false;
+        }
+
+        if (!empty($assignrecord->markingallocation)) {
+            // Using marking allocation and has the capability to be a marker.
+            if (!has_capability('mod/assign:manageallocations', $context, $loggedinuser)) {
+                // Logged in user can't allocate markers so they must be allocated to a marker.
+                $userflagparams = array('assignment' => $assignrecord->id, 'allocatedmarker' => $loggedinuser);
+                return ($DB->count_records('assign_user_flags', $userflagparams));
+            }
+        }
+
+        return true;
     }
 
     public function __construct(\grading_manager $gradingmanager, $areaid, $guserid) {
@@ -372,8 +408,8 @@ class mod_assign_submissions extends gradingarea_abstract {
 
         if (!is_null($previousarea) and $previousarea != $this->areaid) {
             if ($this->get_assign()->is_blind_marking()) {
-                $userutility->set_currentuser(array_shift(array_keys($userutility->get_users())));
-                $this->guserid = $userutility->get_currentuser();
+                $userutility->set_currentuser(array_shift(array_keys($userutility->get_items())));
+                $this->guserid = $userutility->get_current();
             }
         }
     }

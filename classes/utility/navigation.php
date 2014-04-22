@@ -53,7 +53,7 @@ class navigation {
 
         $this->gareautility = $gareautility;
         $this->usersutility = $usersutility;
-        $this->navcurrentuser = $usersutility->get_currentuser();
+        $this->navcurrentuser = $usersutility->get_current();
 
         if (is_null($renderer)) {
             $renderer = $PAGE->get_renderer('local_joulegrader');
@@ -75,14 +75,14 @@ class navigation {
         global $COURSE;
 
         $needsgrading = $this->gareautility->get_needsgrading();
-        $gradingareas = $this->gareautility->get_gradingareas();
+        $gradingareas = $this->gareautility->get_items();
 
         //activity navigation
         if (!empty($gradingareas)) {
             //find the current, next, and previous areas
-            $currentarea  = $this->gareautility->get_currentarea();
-            $nextarea     = $this->gareautility->get_nextarea();
-            $prevarea     = $this->gareautility->get_prevarea();
+            $currentarea  = $this->gareautility->get_current();
+            $nextarea     = $this->gareautility->get_next();
+            $prevarea     = $this->gareautility->get_previous();
 
             $gareaurl = new \moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'guser' => $this->navcurrentuser));
             if (!empty($needsgrading)) {
@@ -103,20 +103,20 @@ class navigation {
     public function get_users_navigation() {
         global $COURSE, $USER;
 
-        $users = $this->usersutility->get_users();
-        $currentarea = $this->gareautility->get_currentarea();
-        $currentuser = $this->usersutility->get_currentuser();
+        $users = $this->usersutility->get_items();
+        $currentarea = $this->gareautility->get_current();
+        $currentuser = $this->usersutility->get_current();
 
         //groups navigation
         $groupnav = '';
-        $groups = $this->usersutility->get_groups();
+        $groups = $this->usersutility->get_groupsutility()->get_items();
 
         if (!empty($groups)) {
             //check number of groups
             if (count($groups) == 1) {
                 //just a single group, so just use a label
                 $groupname = reset($groups);
-                $groupnav = $this->usersutility->get_grouplabel().': '.$groupname;
+                $groupnav = $this->usersutility->get_groupsutility()->get_grouplabel().': '.$groupname;
             } else {
                 //else need a groups navigation widget
                 //groupnav url
@@ -128,9 +128,9 @@ class navigation {
                     $groupurl->param('needsgrading', 1);
                 }
 
-                $currentgroup = $this->usersutility->get_currentgroup();
-                $nextgroup = $this->usersutility->get_nextgroup();
-                $prevgroup = $this->usersutility->get_prevgroup();
+                $currentgroup = $this->usersutility->get_groupsutility()->get_current();
+                $nextgroup = $this->usersutility->get_groupsutility()->get_next();
+                $prevgroup = $this->usersutility->get_groupsutility()->get_previous();
 
                 //create the widget and render it
                 $groupnavwidget = new navigation_widget('group', $groupurl, $groups, 'group', $currentgroup, $nextgroup, $prevgroup);
@@ -148,8 +148,8 @@ class navigation {
                 $guserurl->param('needsgrading', 1);
             }
 
-            $prevuser = $this->usersutility->get_prevuser();
-            $nextuser = $this->usersutility->get_nextuser();
+            $prevuser = $this->usersutility->get_previous();
+            $nextuser = $this->usersutility->get_next();
 
             $user_navwidget = new navigation_widget('user', $guserurl, $users, 'guser', $currentuser, $nextuser, $prevuser);
             $user_navwidget->set_label(get_string('user', 'local_joulegrader'));

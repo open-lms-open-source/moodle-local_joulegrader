@@ -87,8 +87,8 @@ class local_joulegrader_controller_default extends mr_controller {
         /** @var utility\users $usersutility */
         $usersutility = new utility\users($gareasutility, $this->get_context(), $guserparam);
 
-        $currentareaid = $gareasutility->get_currentarea();
-        $currentuserid = $usersutility->get_currentuser();
+        $currentareaid = $gareasutility->get_current();
+        $currentuserid = $usersutility->get_current();
 
         //initialize the navigation
         $navutil = new utility\navigation($usersutility, $gareasutility);
@@ -119,7 +119,7 @@ class local_joulegrader_controller_default extends mr_controller {
             $preferences->set('previousarea', $currentareaid);
 
             //set user id for "save and next" button
-            $gradeareainstance->set_nextuserid($usersutility->get_nextuser());
+            $gradeareainstance->set_nextuserid($usersutility->get_next());
 
             $viewhtml = $renderer->render($gradeareainstance->get_viewpane());
             $gradehtml = $renderer->render($gradeareainstance->get_gradepane());
@@ -162,7 +162,7 @@ class local_joulegrader_controller_default extends mr_controller {
         $usernav = $OUTPUT->container($usernav, null, 'local-joulegrader-usernav');
 
         $buttonbaseurl = clone $this->url;
-        $buttonbaseurl->params(array('guser' => $usersutility->get_currentuser(), 'garea' => $currentareaid));
+        $buttonbaseurl->params(array('guser' => $usersutility->get_current(), 'garea' => $currentareaid));
         $buttons = $navutil->get_navigation_buttons($buttonbaseurl, $this->get_context());
 
         $menunav = $OUTPUT->container($activitynav . $usernav, 'content');
@@ -205,7 +205,7 @@ class local_joulegrader_controller_default extends mr_controller {
         $gareasutility = new utility\gradingareas($this->get_context(), $currentareaid);
 
         //make sure that the area passed from the form matches what is determined by the areas utility
-        if ($currentareaid != $gareasutility->get_currentarea()) {
+        if ($currentareaid != $gareasutility->get_current()) {
             //should not get here unless ppl are messing with form data
             throw new moodle_exception('areaidpassednotvalid', 'local_joulegrader');
         }
@@ -214,7 +214,7 @@ class local_joulegrader_controller_default extends mr_controller {
         $usersutility = new utility\users($gareasutility, $this->get_context(), $currentuserid);
 
         //make sure the passed user and passed area match what is available
-        if ($currentuserid != $usersutility->get_currentuser()) {
+        if ($currentuserid != $usersutility->get_current()) {
             //there is some funny business going on here
             throw new moodle_exception('useridpassednotvalid', 'local_joulegrader');
         }
@@ -223,7 +223,7 @@ class local_joulegrader_controller_default extends mr_controller {
         $gradeareainstance = $gareasutility::get_gradingarea_instance($currentareaid, $currentuserid);
 
         //set next userid
-        $gradeareainstance->set_nextuserid($usersutility->get_nextuser());
+        $gradeareainstance->set_nextuserid($usersutility->get_next());
 
         $gradepane = $gradeareainstance->get_gradepane();
         $modalform = null;
@@ -290,7 +290,7 @@ class local_joulegrader_controller_default extends mr_controller {
             $gareasutility = new utility\gradingareas($this->get_context(), $currentareaid);
 
             // Make sure that the area passed from the form matches what is determined by the areas utility.
-            if ($currentareaid != $gareasutility->get_currentarea()) {
+            if ($currentareaid != $gareasutility->get_current()) {
                 //should not get here unless ppl are messing with form data
                 throw new moodle_exception('areaidpassednotvalid', 'local_joulegrader');
             }
@@ -299,7 +299,7 @@ class local_joulegrader_controller_default extends mr_controller {
             $usersutility = new utility\users($gareasutility, $this->get_context(), $currentuserid);
 
             // Make sure the passed user and passed area match what is available.
-            if ($currentuserid != $usersutility->get_currentuser()) {
+            if ($currentuserid != $usersutility->get_current()) {
                 // There is some funny business going on here.
                 throw new moodle_exception('useridpassednotvalid', 'local_joulegrader');
             }
@@ -380,7 +380,7 @@ class local_joulegrader_controller_default extends mr_controller {
             $gareasutility = new utility\gradingareas($this->get_context(), $currentareaid);
 
             // Make sure that the area passed from the form matches what is determined by the areas utility.
-            if ($currentareaid != $gareasutility->get_currentarea()) {
+            if ($currentareaid != $gareasutility->get_current()) {
                 //should not get here unless ppl are messing with form data
                 throw new moodle_exception('areaidpassednotvalid', 'local_joulegrader');
             }
@@ -388,7 +388,7 @@ class local_joulegrader_controller_default extends mr_controller {
             $usersutility = new utility\users($gareasutility, $this->get_context(), $currentuserid);
 
             //make sure the passed user and passed area match what is available
-            if ($currentuserid != $usersutility->get_currentuser()) {
+            if ($currentuserid != $usersutility->get_current()) {
                 //there is some funny business going on here
                 throw new moodle_exception('useridpassednotvalid', 'local_joulegrader');
             }
@@ -472,7 +472,7 @@ class local_joulegrader_controller_default extends mr_controller {
         $gareasutility = new utility\gradingareas($this->get_context(), $currentareaid);
 
         // Make sure that the area passed from the form matches what is determined by the areas utility.
-        if ($currentareaid != $gareasutility->get_currentarea()) {
+        if ($currentareaid != $gareasutility->get_current()) {
             //should not get here unless ppl are messing with form data
             throw new moodle_exception('areaidpassednotvalid', 'local_joulegrader');
         }
@@ -481,7 +481,7 @@ class local_joulegrader_controller_default extends mr_controller {
         $usersutility = new utility\users($gareasutility, $this->get_context(), $currentuserid);
 
         //make sure the passed user and passed area match what is available
-        if ($currentuserid != $usersutility->get_currentuser()) {
+        if ($currentuserid != $usersutility->get_current()) {
             //there is some funny business going on here
             throw new moodle_exception('useridpassednotvalid', 'local_joulegrader');
         }

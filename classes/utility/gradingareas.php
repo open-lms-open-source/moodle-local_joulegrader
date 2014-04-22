@@ -10,7 +10,7 @@ require_once($CFG->dirroot . '/grade/grading/lib.php');
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-class gradingareas {
+class gradingareas extends loopable_abstract {
 
     /**
      * Grading areas currently supported by joule Grader
@@ -39,25 +39,6 @@ class gradingareas {
      */
     protected $needsgrading;
 
-    /**
-     * @var int - id of the current grading area
-     */
-    protected $currentarea;
-
-    /**
-     * @var int - id of the next grading area
-     */
-    protected $nextarea;
-
-    /**
-     * @var int - id of the previous grading area
-     */
-    protected $prevarea;
-
-    /**
-     * @var array - grading areas available for the course
-     */
-    protected $gradingareas;
 
     /**
      * @param \context_course $context
@@ -67,7 +48,7 @@ class gradingareas {
     public function __construct(\context_course $context, $gareaparam, $needsgrading = 0) {
         $this->gareaparam = $gareaparam;
         $this->needsgrading = $needsgrading;
-        $this->load_gradingareas(has_capability('local/joulegrader:grade', $context));
+        $this->load_items();
     }
 
     /**
@@ -154,13 +135,12 @@ class gradingareas {
     }
 
     /**
-     * @param bool $asteacher
      * @return array
      */
-    protected function load_gradingareas($asteacher) {
+    public function load_items() {
         global $DB, $COURSE, $CFG;
 
-        if (is_null($this->gradingareas)) {
+        if (is_null($this->items)) {
             //get course context children
             $coursecontext = \context_course::instance($COURSE->id);
             $childcontexts = array_keys($coursecontext->get_child_contexts());
@@ -168,7 +148,7 @@ class gradingareas {
             //if there are no child contexts then bail
             if (empty($childcontexts)) {
                 //RETURN
-                $this->gradingareas = array();
+                $this->items = array();
                 return;
             }
 
@@ -204,6 +184,7 @@ class gradingareas {
             //get fast modinfo
             $courseinfo = get_fast_modinfo($COURSE);
 
+            $asteacher = has_capability('local/joulegrader:grade', $coursecontext);
             //attempt get the visible names for each grading area record from grading area class
             //and add to gradingareas array if not limited by logged-in $USER
 
@@ -263,16 +244,8 @@ class gradingareas {
             $gradingareas = $this->order_gradingareas($gradingareas, $courseinfo, $cmsbyareaid);
 
             //set the gradingareas data member
-            $this->gradingareas = $gradingareas;
+            $this->items = $gradingareas;
         }
-    }
-
-    /**
-     * Get the grading areas for the menu
-     * @return array - array of grading area activities
-     */
-    public function get_gradingareas() {
-        return $this->gradingareas;
     }
 
     /**
@@ -280,58 +253,30 @@ class gradingareas {
      *
      * @return int - id of the current grading area
      */
-    public function get_currentarea() {
+    public function get_current() {
 
-        if (is_null($this->currentarea)) {
+        if (is_null($this->current)) {
             //check for a passed parameter
             $garea = $this->gareaparam;
 
             //if no param passed take the first area in the course (in the menu)
-            if (empty($garea) && !empty($this->gradingareas)) {
-                reset($this->gradingareas);
-                $garea = key($this->gradingareas);
-            } else if (!array_key_exists($garea, $this->gradingareas) && !empty($this->gradingareas)) {
-                reset($this->gradingareas);
-                $garea = key($this->gradingareas);;
+            if (empty($garea) && !empty($this->items)) {
+                reset($this->items);
+                $garea = key($this->items);
+            } else if (!array_key_exists($garea, $this->items) && !empty($this->items)) {
+                reset($this->items);
+                $garea = key($this->items);
             }
 
             //special case where needs grading has excluded all grading areas
-            if (empty($this->gradingareas) && !empty($this->needsgrading)) {
+            if (empty($this->items) && !empty($this->needsgrading)) {
                 $garea = null;
             }
 
-            $this->currentarea = $garea;
+            $this->current = $garea;
         }
 
-        return $this->currentarea;
-    }
-
-    /**
-     * Get the id of the next grading area
-     *
-     * @return int - the id of the next area
-     */
-    public function get_nextarea() {
-
-        if (is_null($this->nextarea) && !empty($this->gradingareas) && count($this->gradingareas) > 1) {
-            $this->find_previous_and_next();
-        }
-
-        return $this->nextarea;
-    }
-
-    /**
-     * Get the id of the previous grading area
-     *
-     * @return int - the id of the previous area
-     */
-    public function get_prevarea() {
-
-        if (is_null($this->prevarea) && !empty($this->gradingareas) && count($this->gradingareas) > 1) {
-            $this->find_previous_and_next();
-        }
-
-        return $this->prevarea;
+        return $this->current;
     }
 
     /**
@@ -339,39 +284,6 @@ class gradingareas {
      */
     public function get_needsgrading() {
         return $this->needsgrading;
-    }
-
-    /**
-     * Find the previous and next area ids
-     */
-    protected function find_previous_and_next() {
-        $currentarea = $this->get_currentarea();
-        $areaids     = array_keys($this->gradingareas);
-        $previd      = null;
-        $nextid      = null;
-
-        //try to get the area before the current area
-        while (list($unused, $areaid) = each($areaids)) {
-            if ($areaid == $currentarea) {
-                break;
-            }
-            $previd = $areaid;
-        }
-
-        //if we haven't reached the end of the array, current should give "nextid"
-        $nextid = current($areaids);
-
-        reset($areaids);
-        if ($nextid === false) {
-            //the current category is the last so start at the beginning
-            $nextid = $areaids[0];
-        } else if ($previd === null) {
-            //the current category is the first so get the last
-            $previd = end($areaids);
-        }
-
-        $this->prevarea = $previd;
-        $this->nextarea = $nextid;
     }
 
     /**
@@ -479,13 +391,13 @@ EOL;
                 try {
                     // insert the record
                     $DB->insert_record('grading_areas', $record);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     // catch exceptions from insert attempt and ignore it
                 }
             }
 
             $rs->close();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // forget about it
         }
 
