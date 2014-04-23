@@ -76,14 +76,19 @@ class mod_assign_submissions extends grade_abstract {
      * @return bool
      */
     public function has_grading() {
-        $hasgrading = true;
         $assignment = $this->gradingarea->get_assign();
 
         if ($assignment->get_instance()->grade == 0) {
-            $hasgrading = false;
+            return false;
         }
 
-        return $hasgrading;
+        $grade = new \stdClass();
+        $grade->userid = $this->gradingarea->get_guserid();
+        if (!$this->has_teachercap() and !$this->marking_workflow_grade_released($grade)) {
+            return false;
+        }
+
+        return true;
     }
 
     public function has_teachercap() {
@@ -194,7 +199,7 @@ class mod_assign_submissions extends grade_abstract {
     /**
      * Conditionally adds the feedback form element to the form.
      *
-     * @param MoodleQuickForm $mform
+     * @param \MoodleQuickForm $mform
      */
     public function add_feedback_form($mform) {
         if ($this->has_overall_feedback()) {
@@ -218,7 +223,7 @@ class mod_assign_submissions extends grade_abstract {
     /**
      * Conditionally adds the file feedback form element to the form.
      *
-     * @param MoodleQuickForm $mform
+     * @param \MoodleQuickForm $mform
      */
     public function add_filefeedback_form($mform) {
         if ($this->has_file_feedback()) {
@@ -274,6 +279,7 @@ class mod_assign_submissions extends grade_abstract {
      * @param \MoodleQuickForm $mform
      */
     public function paneform_hook($mform) {
+        $this->add_marking_elements($mform);
         $this->add_applyall_element($mform);
         $this->add_newattempt_element($mform);
         $this->blindmarking_modification($mform);
@@ -283,9 +289,53 @@ class mod_assign_submissions extends grade_abstract {
      * @param \MoodleQuickForm $mform
      */
     public function modalform_hook($mform) {
+        $this->add_marking_elements($mform);
         $this->add_applyall_element($mform);
         $this->add_newattempt_element($mform);
         $this->blindmarking_modification($mform);
+    }
+
+    /**
+     * @param \MoodleQuickform $mform
+     */
+    private function add_marking_elements($mform) {
+        $assignment = $this->gradingarea->get_assign();
+        $assignrecord = $assignment->get_instance();
+        $context = $this->get_gradingarea()->get_gradingmanager()->get_context();
+        $userflags = $assignment->get_user_flags($this->get_gradingarea()->get_guserid(), false);
+
+        if ($assignrecord->markingworkflow) {
+            $states = $assignment->get_marking_workflow_states_for_current_user();
+            $options = array('' => get_string('markingworkflowstatenotmarked', 'assign')) + $states;
+            $mform->addElement('select', 'workflowstate', get_string('markingworkflowstate', 'assign'), $options);
+            $mform->addHelpButton('workflowstate', 'markingworkflowstate', 'assign');
+
+            $workflowstate = '';
+            if (!empty($userflags)) {
+                $workflowstate = $userflags->workflowstate;
+            }
+            $mform->setDefault('workflowstate', $workflowstate);
+        }
+
+        if ($assignrecord->markingallocation && has_capability('mod/assign:manageallocations', $context)) {
+            $markers = get_users_by_capability($context, 'mod/assign:grade');
+            $markerlist = array('' =>  get_string('choosemarker', 'assign'));
+            foreach ($markers as $marker) {
+                $markerlist[$marker->id] = fullname($marker);
+            }
+            $mform->addElement('select', 'allocatedmarker', get_string('allocatedmarker', 'assign'), $markerlist);
+            $mform->addHelpButton('allocatedmarker', 'allocatedmarker', 'assign');
+            $mform->disabledIf('allocatedmarker', 'workflowstate', 'eq', ASSIGN_MARKING_WORKFLOW_STATE_READYFORREVIEW);
+            $mform->disabledIf('allocatedmarker', 'workflowstate', 'eq', ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW);
+            $mform->disabledIf('allocatedmarker', 'workflowstate', 'eq', ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE);
+            $mform->disabledIf('allocatedmarker', 'workflowstate', 'eq', ASSIGN_MARKING_WORKFLOW_STATE_RELEASED);
+
+            $allocatedmarker = 0;
+            if (!empty($userflags)) {
+                $allocatedmarker = $userflags->allocatedmarker;
+            }
+            $mform->setDefault('allocatedmarker', $allocatedmarker);
+        }
     }
 
     /**
@@ -442,6 +492,22 @@ class mod_assign_submissions extends grade_abstract {
     }
 
     /**
+     * @param $grade
+     * @return bool
+     */
+    public function marking_workflow_grade_released($grade) {
+        $assignment = $this->gradingarea->get_assign();
+        if ($assignment->get_instance()->markingworkflow && !empty($grade)) {
+            $flags = $assignment->get_user_flags($grade->userid, false);
+            if (empty($flags->workflowstate) || $flags->workflowstate != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * @return bool
      */
     public function read_only() {
@@ -465,6 +531,7 @@ class mod_assign_submissions extends grade_abstract {
         $usergrade = $this->get_usergrade($userid, true, $this->gradingarea->get_attemptnumber());
 
         $teamsubmission = $assignment->get_instance()->teamsubmission;
+        $gradingdisabled = $assignment->grading_disabled($userid);
 
         if (isset($data->gradinginstanceid)) {
             $gradesmenu = make_grades_menu($assignment->get_instance()->grade);
@@ -473,7 +540,6 @@ class mod_assign_submissions extends grade_abstract {
                 // Can use the grading instance already set up by this object.
                 $gradinginstance = $this->gradinginstance;
             } else {
-                $gradingdisabled = $assignment->grading_disabled($userid);
                 $itemid = null;
                 if ($usergrade) {
                     $itemid = $usergrade->id;
@@ -500,18 +566,26 @@ class mod_assign_submissions extends grade_abstract {
             $override = isset($data->override) || (!empty($teamsubmission) && !empty($data->applytoall));
         }
 
-        return $this->save_grade($usergrade, $data, $override, $blindmarking);
+        if (!$gradingdisabled) {
+            if (isset($data->workflowstate) || isset($data->allocatedmarker)) {
+                $flags = $assignment->get_user_flags($userid, true);
+                $flags->workflowstate = isset($data->workflowstate) ? $data->workflowstate : $flags->workflowstate;
+                $flags->allocatedmarker = isset($data->allocatedmarker) ? $data->allocatedmarker : $flags->allocatedmarker;
+                $assignment->update_user_flags($flags);
+            }
+        }
+
+        return $this->save_grade($usergrade, $data, $override);
     }
 
     /**
      * @param $usergrade
      * @param $data
      * @param bool $override
-     * @param bool $blindmarking
      *
      * @return bool
      */
-    protected function save_grade($usergrade, $data, $override, $blindmarking = false) {
+    protected function save_grade($usergrade, $data, $override) {
         global $USER, $DB;
 
         // Need to do two things here.
@@ -523,9 +597,6 @@ class mod_assign_submissions extends grade_abstract {
         $usergrade->grader = $USER->id;
         $usergrade->timemodified = time();
 
-        // Update the submission.
-        $success = $DB->update_record('assign_grades', $usergrade);
-
         if ($this->has_overall_feedback()) {
             $this->get_feedbackcomment_plugin()->save($usergrade, $data);
         }
@@ -534,8 +605,18 @@ class mod_assign_submissions extends grade_abstract {
             $this->get_feedbackfile_plugin()->save($usergrade, $data);
         }
 
-        // If blind marking is used don't upgrade the gradebook.
-        if ($blindmarking)  {
+        if (!empty($usergrade->workflowstate)) {
+            $validstates = $assignment->get_marking_workflow_states_for_current_user();
+            if (!array_key_exists($usergrade->workflowstate, $validstates)) {
+                return false;
+            }
+        }
+
+        // Update the submission.
+        $success = $DB->update_record('assign_grades', $usergrade);
+
+        // If blind marking is used don't upgrade the gradebook or workflow is being used and hasn't been released.
+        if ($assignment->is_blind_marking() || !$this->marking_workflow_grade_released($usergrade))  {
             // Blind marking is being used and identities have not been revealed. Return here.
             return $success;
         }
@@ -557,7 +638,6 @@ class mod_assign_submissions extends grade_abstract {
                 $usergrade->feedbackformat = $this->get_feedbackcomment_plugin()->format_for_gradebook($usergrade);
             }
         }
-
 
         if ($success && !$gradeoverridden) {
             $gradebookgrade = $this->convert_grade_for_gradebook($usergrade);
@@ -622,7 +702,7 @@ class mod_assign_submissions extends grade_abstract {
     }
 
     /**
-     * @param \mr_notify $notify
+     * @param \mr_html_notify $notify
      * @param int $gradessaved
      * @param array $couldnotsave
      */

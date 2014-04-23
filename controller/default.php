@@ -98,6 +98,7 @@ class local_joulegrader_controller_default extends mr_controller {
         $urlparams = array();
         $urlparams[] = 'courseid='.$COURSE->id;
         //if the current user id and the current area id are not empty, load the class and get the pane contents
+        /** @var local_joulegrader_renderer $renderer */
         $renderer = $PAGE->get_renderer('local_joulegrader');
         if (!empty($currentareaid) && !empty($currentuserid)) {
 
