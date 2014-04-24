@@ -82,13 +82,29 @@ class mod_assign_submissions extends grade_abstract {
             return false;
         }
 
-        $grade = new \stdClass();
-        $grade->userid = $this->gradingarea->get_guserid();
-        if (!$this->has_teachercap() and !$this->marking_workflow_grade_released($grade)) {
-            return false;
+        return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_html_override() {
+        $attempt = $this->gradingarea->get_attemptnumber();
+        if ($attempt !== -1) {
+            return '';
         }
 
-        return true;
+        $grade = $this->get_usergrade($this->gradingarea->get_guserid(), false, $attempt);
+        if (empty($grade)) {
+            return '';
+        }
+
+        if (!$this->has_teachercap() and !$this->marking_workflow_grade_released($grade)) {
+            return \html_writer::tag('div', get_string('notreleased', 'local_joulegrader'),
+                    array('class' => 'local_joulegrader_notgraded'));
+        }
+
+        return '';
     }
 
     public function has_teachercap() {
@@ -279,6 +295,9 @@ class mod_assign_submissions extends grade_abstract {
      * @param \MoodleQuickForm $mform
      */
     public function paneform_hook($mform) {
+        if ($this->has_feedback_type('editpdf')) {
+            $this->add_editpdf_feedback_elements($mform);
+        }
         $this->add_marking_elements($mform);
         $this->add_applyall_element($mform);
         $this->add_newattempt_element($mform);
@@ -289,10 +308,40 @@ class mod_assign_submissions extends grade_abstract {
      * @param \MoodleQuickForm $mform
      */
     public function modalform_hook($mform) {
+        if ($this->has_feedback_type('editpdf')) {
+            $this->add_editpdf_feedback_elements($mform);
+        }
         $this->add_marking_elements($mform);
         $this->add_applyall_element($mform);
         $this->add_newattempt_element($mform);
         $this->blindmarking_modification($mform);
+    }
+
+    /**
+     * @return string
+     */
+    public function student_view_hook() {
+        $extrahtml = '';
+
+        if ($this->has_feedback_type('editpdf')) {
+            /** @var \assign_feedback_editpdf $editpdfplugin */
+            $editpdfplugin = $this->get_feedback_plugin('editpdf');
+            if ($grade = $this->get_usergrade($this->gradingarea->get_guserid(), false, $this->gradingarea->get_attemptnumber())) {
+                $extrahtml   = $editpdfplugin->view($grade);
+            }
+        }
+        return $extrahtml;
+    }
+
+    /**
+     * @param \MoodleQuickform $mform
+     */
+    private function add_editpdf_feedback_elements($mform) {
+        /** @var \assign_feedback_editpdf $editpdfplugin */
+        $editpdfplugin = $this->get_feedback_plugin('editpdf');
+        $grade = $this->get_usergrade($this->gradingarea->get_guserid(), false, $this->gradingarea->get_attemptnumber());
+        $data  = new \stdClass();
+        $editpdfplugin->get_form_elements_for_user($grade, $mform, $data, $this->gradingarea->get_guserid());
     }
 
     /**
@@ -603,6 +652,12 @@ class mod_assign_submissions extends grade_abstract {
 
         if ($this->has_file_feedback()) {
             $this->get_feedbackfile_plugin()->save($usergrade, $data);
+        }
+
+        if ($this->has_feedback_type('editpdf')) {
+            /** @var \assign_feedback_editpdf $editpdfplugin */
+            $editpdfplugin = $this->get_feedback_plugin('editpdf');
+            $editpdfplugin->save($usergrade, $data);
         }
 
         if (!empty($usergrade->workflowstate)) {

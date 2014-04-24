@@ -77,6 +77,16 @@ abstract class grade_abstract implements \renderable {
         return $this->controller;
     }
 
+    /**
+     * @return bool
+     */
+    public function has_paneform() {
+        return false;
+    }
+
+    /**
+     * @return \local_joulegrader\form\grade_pane
+     */
     public function get_paneform() {
         if ($this->has_paneform()) {
             if (is_null($this->paneform)) {
@@ -86,6 +96,16 @@ abstract class grade_abstract implements \renderable {
         return $this->paneform;
     }
 
+    /**
+     * @return bool
+     */
+    public function has_modal() {
+        return false;
+    }
+
+    /**
+     * @return \local_joulegrader\form\grade_modal
+     */
     public function get_modalform() {
         if ($this->has_modal()) {
             if (is_null($this->modalform)) {
@@ -98,8 +118,29 @@ abstract class grade_abstract implements \renderable {
     /**
      * @return bool
      */
+    public function has_teachercap() {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
     public function read_only() {
         return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function student_view_hook() {
+        return '';
+    }
+
+    /**
+     * @return string
+     */
+    public function get_html_override() {
+        return '';
     }
 
     /**

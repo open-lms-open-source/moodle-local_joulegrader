@@ -193,7 +193,9 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $html = '';
         $modalhtml = '';
 
-        if (!$gradepane->has_grading()) {
+        if ($gradepanehtmloverride = $gradepane->get_html_override()) {
+            $html .= $gradepanehtmloverride;
+        } else if (!$gradepane->has_grading()) {
             //no grade for this assignment
             $html .= html_writer::tag('div', get_string('notgraded', 'local_joulegrader'), array('class' => 'local_joulegrader_notgraded'));
         } else if ($gradepane->has_teachercap() and !$gradepane->read_only()) {
@@ -235,6 +237,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             if ($filefeedback = $gradepane->get_file_feedback()) {
                 $filefeedback = html_writer::tag('div', get_string('filefeedback', 'local_joulegrader') . ': ' . $filefeedback);
             }
+
+            $gradepaneextra = $gradepane->student_view_hook();
 
             if ($gradepane->has_modal()) {
                 //this is for a student
@@ -281,6 +285,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     $modalhtml = $controller->render_grade($PAGE, $gradepane->get_agitemid(), $item, $gradestr, false);
                     $modalhtml .= $feedback;
                     $modalhtml .= $filefeedback;
+                    $modalhtml .= $gradepaneextra;
                 }
             } else {
                 //start the html
@@ -288,6 +293,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 $html .= $this->help_render_currentgrade($gradepane);
                 $html .= $feedback;
                 $html .= $filefeedback;
+                $html .= $gradepaneextra;
                 $html .= html_writer::end_tag('div');
             }
         }

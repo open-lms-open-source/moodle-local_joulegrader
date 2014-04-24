@@ -101,3 +101,5 @@ $string['add'] = 'Save comment';
 $string['attachments'] = 'Attachments';
 $string['commentrequired'] = 'Comment required';
 $string['commentloop'] = 'Comment Loop';
+
+$string['notreleased'] = 'Assignment grade not released yet';
