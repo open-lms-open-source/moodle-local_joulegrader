@@ -198,7 +198,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         } else if (!$gradepane->has_grading()) {
             //no grade for this assignment
             $html .= html_writer::tag('div', get_string('notgraded', 'local_joulegrader'), array('class' => 'local_joulegrader_notgraded'));
-        } else if ($gradepane->has_teachercap() and !$gradepane->read_only()) {
+        } else if ($gradepane->can_user_grade() and !$gradepane->read_only()) {
             $mrhelper = new mr_helper();
 
             // Teacher view of the grading pane

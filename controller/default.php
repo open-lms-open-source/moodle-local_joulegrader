@@ -17,15 +17,8 @@ class local_joulegrader_controller_default extends mr_controller {
      * Require capabilities
      */
     public function require_capability() {
-        switch ($this->action) {
-            case 'process':
-                require_capability('local/joulegrader:grade', $this->get_context());
-                break;
-            case 'view':
-            default:
-                if (!has_capability('local/joulegrader:grade', $this->get_context())) {
-                    require_capability('local/joulegrader:view', $this->get_context());
-                }
+        if (!has_capability('local/joulegrader:grade', $this->get_context())) {
+            require_capability('local/joulegrader:view', $this->get_context());
         }
     }
 

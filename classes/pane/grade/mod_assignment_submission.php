@@ -79,6 +79,16 @@ class mod_assignment_submission extends grade_abstract {
         return $hasgrading;
     }
 
+    /**
+     * @return bool
+     */
+    public function can_user_grade() {
+        return $this->has_teachercap();
+    }
+
+    /**
+     * @return bool
+     */
     public function has_teachercap() {
         return $this->teachercap;
     }

@@ -85,7 +85,7 @@ abstract class gradingarea_abstract {
      * @return string
      */
     public static function get_teachercapability() {
-        return self::$teachercapability;
+        return static::$teachercapability;
     }
 
 

@@ -107,6 +107,17 @@ class mod_assign_submissions extends grade_abstract {
         return '';
     }
 
+    /**
+     * @return bool
+     */
+    public function can_user_grade() {
+        global $USER;
+        $gradingmgr  = $this->get_gradingarea()->get_gradingmanager();
+        $usertograde = $this->get_gradingarea()->get_guserid();
+
+        return \local_joulegrader\gradingarea\mod_assign_submissions::loggedinuser_can_grade($gradingmgr, $USER->id, $usertograde);
+    }
+
     public function has_teachercap() {
         return $this->teachercap;
     }

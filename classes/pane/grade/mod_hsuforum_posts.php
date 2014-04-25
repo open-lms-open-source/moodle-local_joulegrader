@@ -116,6 +116,13 @@ class mod_hsuforum_posts extends grade_abstract {
         return $this->forum->scale;
     }
 
+    /**
+     * @return bool
+     */
+    public function can_user_grade() {
+        return $this->has_teachercap();
+    }
+
     public function has_teachercap() {
         return $this->teachercap;
     }

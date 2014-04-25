@@ -239,7 +239,12 @@ class mod_assign_submissions extends gradingarea_abstract {
             list($cm, $assignment) = self::get_assign_info($gradingmanager);
             $context = \context_module::instance($cm->id);
             // First limit by assigned markers if necessary.
-            if (!empty($assignment->markingallocation) and !has_capability('mod/assign:manageallocations', $context)) {
+            if (!has_capability('mod/assign:manageallocations', $context)) {
+                $loggedinuser = null;
+                if (isset($users[$USER->id])) {
+                    // Preserve the logged in user in this list as he/she is enrolled as student as well.
+                    $loggedinuser = $users[$USER->id];
+                }
                 $userflagparams  = array(
                     'assignment' => $assignment->id,
                     'allocatedmarker'     => $USER->id,
@@ -249,6 +254,10 @@ class mod_assign_submissions extends gradingarea_abstract {
                     $users = array();
                 } else {
                     $users = array_intersect_key($users, $assignuserflags);
+                }
+
+                if (!empty($loggedinuser)) {
+                    $users[$USER->id] = $loggedinuser;
                 }
             }
 
@@ -353,7 +362,7 @@ class mod_assign_submissions extends gradingarea_abstract {
         return $include;
     }
 
-    public static function loggedinuser_can_grade(\grading_manager $gradingmanager, $loggedinuser) {
+    public static function loggedinuser_can_grade(\grading_manager $gradingmanager, $loggedinuser, $usertograde = null) {
         global $DB;
         list($cm, $assignrecord) = self::get_assign_info($gradingmanager);
         $context = \context_module::instance($cm->id);
@@ -368,6 +377,9 @@ class mod_assign_submissions extends gradingarea_abstract {
             if (!has_capability('mod/assign:manageallocations', $context, $loggedinuser)) {
                 // Logged in user can't allocate markers so they must be allocated to a marker.
                 $userflagparams = array('assignment' => $assignrecord->id, 'allocatedmarker' => $loggedinuser);
+                if (!empty($usertograde)) {
+                    $userflagparams['userid'] = $usertograde;
+                }
                 return ($DB->count_records('assign_user_flags', $userflagparams));
             }
         }
