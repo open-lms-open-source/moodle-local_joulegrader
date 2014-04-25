@@ -147,7 +147,7 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
         footerContent: '',
         centered: joulegrader,
 //        width: 500,
-        zIndex: 10,
+        zIndex: 2,
 //        modal: true,
         visible: false,
 //        render: true,
