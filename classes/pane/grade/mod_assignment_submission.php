@@ -1,6 +1,6 @@
 <?php
 namespace local_joulegrader\pane\grade;
-use local_joulegrader\gradingarea;
+use local_joulegrader\gradingarea\mod_assign_submissions as mod_assignment_submission_gradingarea;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 /**
@@ -12,7 +12,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 class mod_assignment_submission extends grade_abstract {
 
     /**
-     * @var gradingarea\mod_assignment_submission
+     * @var mod_assignment_submission_gradingarea
      */
     protected $gradingarea;
 

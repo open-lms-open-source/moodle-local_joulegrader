@@ -1,6 +1,6 @@
 <?php
 namespace local_joulegrader\pane\grade;
-use local_joulegrader\gradingarea;
+use local_joulegrader\gradingarea\mod_assign_submissions as mod_assign_submissions_gradingarea;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 /**
  * joule Grader mod_assign_submissions grade pane class
@@ -16,7 +16,7 @@ class mod_assign_submissions extends grade_abstract {
     protected $feedbackplugins;
 
     /**
-     * @var gradingarea\mod_assign_submissions
+     * @var mod_assign_submissions_gradingarea
      */
     protected $gradingarea;
 
@@ -432,7 +432,7 @@ class mod_assign_submissions extends grade_abstract {
 
     /**
      * @param $data
-     * @param \mr_notify $notify
+     * @param \mr_html_notify $notify
      */
     public function process($data, $notify) {
         //a little setup

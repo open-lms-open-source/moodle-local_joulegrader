@@ -4,6 +4,7 @@ use local_joulegrader\pane\grade as gradepane;
 use local_joulegrader\pane\view as viewpane;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 require_once($CFG->dirroot . '/grade/grading/lib.php');
+require_once($CFG->dirroot . '/repository/lib.php');
 /**
  * Grading area abstract class
  *

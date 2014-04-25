@@ -1,6 +1,5 @@
 <?php
 namespace local_joulegrader\pane\grade;
-use local_joulegrader\gradingarea;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 /**

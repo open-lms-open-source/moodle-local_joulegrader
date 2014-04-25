@@ -1,5 +1,5 @@
 <?php
-use local_joulegrader\renderable;
+use local_joulegrader\renderable\navigation_widget;
 use local_joulegrader\pane\view as viewpane;
 use local_joulegrader\pane\grade as gradepane;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
@@ -426,10 +426,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
     /**
      * Renders a navigation widget containing a previous link, a next link, and a select menu
      *
-     * @param renderable\navigation_widget $navwidget
+     * @param navigation_widget $navwidget
      * @return string
      */
-    public function render_local_joulegrader_renderable_navigation_widget(renderable\navigation_widget $navwidget) {
+    public function render_local_joulegrader_renderable_navigation_widget(navigation_widget $navwidget) {
         global $OUTPUT;
 
         //widget name

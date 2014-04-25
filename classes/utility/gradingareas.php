@@ -1,6 +1,6 @@
 <?php
 namespace local_joulegrader\utility;
-use local_joulegrader\gradingarea;
+use local_joulegrader\gradingarea\gradingarea_abstract;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 require_once($CFG->dirroot . '/grade/grading/lib.php');
 
@@ -58,7 +58,7 @@ class gradingareas extends loopable_abstract {
      *
      * @throws \coding_exception
      *
-     * @return gradingarea\gradingarea_abstract - instance of a gradingarea class
+     * @return gradingarea_abstract - instance of a gradingarea class
      */
     public static function get_gradingarea_instance($currentareaid, $currentuserid) {
         global $CFG;

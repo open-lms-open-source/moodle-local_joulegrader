@@ -181,7 +181,7 @@ class mod_hsuforum_posts extends gradingarea_abstract {
     protected function get_viewpane_info() {
         return array(
             '',
-            'local_joulegrader_lib_pane_view_mod_hsuforum_posts_class',
+            '\\local_joulegrader\\pane\\view\\mod_hsuforum_posts',
         );
     }
 
@@ -191,7 +191,7 @@ class mod_hsuforum_posts extends gradingarea_abstract {
     protected function get_gradepane_info() {
         return array(
             '',
-            "local_joulegrader_lib_pane_grade_mod_hsuforum_posts_class",
+            "\\local_joulegrader\\pane\\grade\\mod_hsuforum_posts",
         );
     }
 }
