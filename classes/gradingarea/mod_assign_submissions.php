@@ -420,7 +420,8 @@ class mod_assign_submissions extends gradingarea_abstract {
 
         if (!is_null($previousarea) and $previousarea != $this->areaid) {
             if ($this->get_assign()->is_blind_marking()) {
-                $userutility->set_currentuser(array_shift(array_keys($userutility->get_items())));
+                $currentuser = array_shift(array_keys($userutility->get_items()));
+                $userutility->set_currentuser($currentuser);
                 $this->guserid = $userutility->get_current();
             }
         }
