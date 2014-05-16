@@ -330,7 +330,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
             // Current gradebook grade.
             if (!empty($gradegrade) && (!$gradegrade->grade === false) && empty($gradegrade->hidden)) {
-                $gbval = $scale[$gradegrade->str_long_grade];
+                $gbval = $scale[(int) $gradegrade->grade - 1];
             } else {
                 $gbval = get_string('nograde');
             }
@@ -340,7 +340,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 if ($activitygrade < 0) {
                     $activitygrade = get_string('nograde');
                 } else {
-                    $activitygrade = $scale[(int) $activitygrade];
+                    $activitygrade = $scale[(int) $activitygrade - 1];
                 }
             }
         } else {
