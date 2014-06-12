@@ -225,7 +225,8 @@ class mod_hsuforum_posts extends grade_abstract {
             if (isset($data->gradinginstanceid)) {
                 //using advanced grading
                 $gradinginstance = $this->gradinginstance;
-                $this->controller->set_grade_range(make_grades_menu($this->forum->scale));
+                $allowgradedecimals = $this->forum->scale > 0;
+                $this->controller->set_grade_range(make_grades_menu($this->forum->scale), $allowgradedecimals);
                 $grade = $gradinginstance->submit_and_get_grade($data->grade, $this->gradingarea->get_guserid());
             } else if ($this->forum->scale < 0) {
                 //scale grade
