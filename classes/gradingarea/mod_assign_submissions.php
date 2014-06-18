@@ -194,18 +194,21 @@ class mod_assign_submissions extends gradingarea_abstract {
                     }
 
                 } else {
+                    list($enrolsql, $enrolparams) = get_enrolled_sql($gradingmanager->get_context(), self::$studentcapability);
                     // Team submissions are not being used, this simplifies the check.
-                    $sql = 'SELECT s.id
+                    $sql = "SELECT s.id
                           FROM {assign_submission} s
+                    INNER JOIN ($enrolsql) enrol ON (enrol.id = s.userid)
                      LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid
-                         WHERE s.assignment = ?
+                         WHERE s.assignment = :assign
                            AND s.timemodified IS NOT NULL
-                           AND s.status = ?
+                           AND s.status = :status
                            AND s.userid <> 0
-                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)';
+                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)";
 
 
-                    $params = array($assignment->id, 'submitted');
+                    $params = array('assign' => $assignment->id, 'status' => 'submitted');
+                    $params = array_merge($params, $enrolparams);
 
                     // Just need to check that there is at least one ungraded.
                     $submissions = $DB->get_records_sql($sql, $params, 0, 1);
@@ -420,7 +423,8 @@ class mod_assign_submissions extends gradingarea_abstract {
 
         if (!is_null($previousarea) and $previousarea != $this->areaid) {
             if ($this->get_assign()->is_blind_marking()) {
-                $currentuser = array_shift(array_keys($userutility->get_items()));
+                $userkeys = array_keys($userutility->get_items());
+                $currentuser = array_shift($userkeys);
                 $userutility->set_currentuser($currentuser);
                 $this->guserid = $userutility->get_current();
             }

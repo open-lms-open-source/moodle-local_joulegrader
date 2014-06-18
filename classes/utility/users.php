@@ -107,6 +107,7 @@ class users extends loopable_abstract {
         $requiredcap    = 'local/joulegrader:view';
         $classname      = '';
         $gradingareamgr = null;
+        $needsgrading   = $this->gareautility->get_needsgrading();
 
         if (!empty($currentarea)) {
             //need to load the class for the grading area
@@ -124,11 +125,13 @@ class users extends loopable_abstract {
                 //find the grading area's required capability for students to appear in menu
                 $requiredcap = $classname::$method();
             }
+        } else if (!empty($needsgrading)) {
+            // There is no current area and needsgrading filter is selected.
+            return array();
         }
         $users = $this->get_enrolled_users($requiredcap, $this->groupsutility->get_current());
 
         // allow the plugin to narrow down the users
-        $needsgrading = $this->gareautility->get_needsgrading();
         $includemethod = 'include_users';
         if (!empty($classname) && is_callable("{$classname}::{$includemethod}")) {
             // check with the grading area class to make sure to include the current user
