@@ -601,14 +601,11 @@ class mod_assign_submissions extends gradingarea_abstract {
 
         // Don't allow a submission to be re-opened if there is no submission.
         $issubmission = !empty($submission);
-        if (!$issubmission) {
-            return false;
-        }
 
         $isunlimited = $instance->maxattempts == ASSIGN_UNLIMITED_ATTEMPTS;
         $islessthanmaxattempts = $issubmission && ($submission->attemptnumber + 1 < ($instance->maxattempts));
 
-        return ($isunlimited or $islessthanmaxattempts);
+        return (!$issubmission or $isunlimited or $islessthanmaxattempts);
     }
 
     public function get_attemptnumber() {
