@@ -106,6 +106,7 @@ class navigation {
         $users = $this->usersutility->get_items();
         $currentarea = $this->gareautility->get_current();
         $currentuser = $this->usersutility->get_current();
+        $needsgrading = $this->gareautility->get_needsgrading();
 
         //groups navigation
         $groupnav = '';
