@@ -69,6 +69,11 @@
     text-align: center;
 }
 
+#local-joulegrader-gradepane .moodleSkin td.mceToolbar table tr td {
+    display:block;
+    float:left;
+}
+
 #local-joulegrader-gradepane .content {
     text-align: left;
 }

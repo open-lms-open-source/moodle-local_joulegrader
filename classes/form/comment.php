@@ -35,6 +35,7 @@ class comment extends \moodleform {
             'theme_advanced_buttons2_add' => null,
             'theme_advanced_buttons3' => null,
             'theme_advanced_buttons3_add' => null,
+            'width' => '100%',
         );
 
         // Editor options.
@@ -42,7 +43,7 @@ class comment extends \moodleform {
         $editoroptions['tinymceparams'] = $tineymceparams;
 
         //comment editor
-        $mform->addElement('editor', 'comment', null, array('cols' => 10, 'rows' => 8), $editoroptions);
+        $mform->addElement('editor', 'comment', null, null, $editoroptions);
         $mform->setType('comment', PARAM_RAW);
         $mform->addRule('comment', get_string('commentrequired', 'local_joulegrader'), 'required', null, 'client');
 
