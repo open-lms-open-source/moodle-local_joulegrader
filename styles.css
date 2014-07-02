@@ -74,6 +74,19 @@
     float:left;
 }
 
+.local_joulegrader_commentloop textarea {
+    width: 100%;
+}
+
+#local-joulegrader-gradepane  table.mceLayout {
+    width: 100% !important;
+}
+
+#local-joulegrader-gradepane .mceEditor iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
 #local-joulegrader-gradepane .content {
     text-align: left;
 }
