@@ -242,7 +242,7 @@ class mod_assign_submissions extends gradingarea_abstract {
             list($cm, $assignment) = self::get_assign_info($gradingmanager);
             $context = \context_module::instance($cm->id);
             // First limit by assigned markers if necessary.
-            if (!has_capability('mod/assign:manageallocations', $context)) {
+            if (!empty($assignment->markingallocation) && !has_capability('mod/assign:manageallocations', $context)) {
                 $loggedinuser = null;
                 if (isset($users[$USER->id])) {
                     // Preserve the logged in user in this list as he/she is enrolled as student as well.
