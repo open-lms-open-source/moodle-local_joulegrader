@@ -18,7 +18,7 @@ class mod_hsuforum_posts extends gradingarea_abstract {
     /**
      * @var string
      */
-    protected static $teachercapability = 'mod/hsuforum:rate';
+    protected static $teachercapability = 'local/joulegrader:grade';
 
     /**
      * @static
