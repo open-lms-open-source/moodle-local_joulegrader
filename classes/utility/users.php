@@ -37,16 +37,39 @@ class users extends loopable_abstract {
     protected $coursecontext;
 
     /**
+     * @param array $users
+     * @param \context $context
+     * @param array $gradebookroles
+     *
+     * @return array
+     */
+    public static function limit_to_roles($users, $context, $gradebookroles) {
+        $users = array_filter($users, function($user) use ($context, $gradebookroles) {
+            foreach ($gradebookroles as $roleid) {
+                if (user_has_role_assignment($user->id, $roleid, $context->id)) {
+                    // They have a gradebook role, return early.
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        return $users;
+    }
+
+    /**
      * @param gradingareas $gareautility
      * @param \context_course $context
      * @param int $guserparam
      * @param groups $groupsutility
      * @param null|int $loggedinuser
+     * @param mixed $gradebookroles
      */
     public function __construct(gradingareas $gareautility, \context_course $context, $guserparam,
-            groups $groupsutility = null, $loggedinuser = null) {
+            groups $groupsutility = null, $loggedinuser = null, $gradebookroles = null) {
 
-        global $USER;
+        global $USER, $CFG;
         $this->coursecontext = $context;
         if (is_null($loggedinuser)) {
             $loggedinuser = $USER->id;
@@ -54,10 +77,16 @@ class users extends loopable_abstract {
         if (is_null($groupsutility)) {
             $groupsutility = new groups($context, $loggedinuser);
         }
+        if (is_null($gradebookroles)) {
+            $gradebookroles = explode(',', $CFG->gradebookroles);
+        } else if (!empty($gradebookroles) and !is_array($gradebookroles)) {
+            $gradebookroles = explode(',', $gradebookroles);
+        }
         $this->groupsutility = $groupsutility;
         $this->loggedinuser  = $loggedinuser;
         $this->gareautility  = $gareautility;
         $this->guserparam    = $guserparam;
+        $this->gradebookroles = $gradebookroles;
 
         if ($this->loggedinuser_can_grade()) {
             $groupsutility->load_items();
@@ -88,6 +117,8 @@ class users extends loopable_abstract {
         // Get the enrolled users with the required capability.
         $users = get_enrolled_users($this->coursecontext, $capability, $currentgroup,
             'u.id, '.get_all_user_name_fields(true, 'u'));
+
+        $users = self::limit_to_roles($users, $this->coursecontext, $this->gradebookroles);
 
         return $users;
     }

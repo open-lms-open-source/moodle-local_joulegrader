@@ -46,8 +46,10 @@ class mod_hsuforum_posts extends gradingarea_abstract {
 
             //check to see if it should be included based on whether the needs grading button was selected
             if ($include and $needsgrading and has_capability(self::$teachercapability, $context)) {
+                $gradebookroles = explode(',', $CFG->gradebookroles);
                 // Determine if the student is missing a grade and has posts for grading...
                 $userids = get_enrolled_users($context, '', 0, 'u.id');
+                $userids = \local_joulegrader\utility\users::limit_to_roles($userids, $context, $gradebookroles);
                 $grades  = grade_get_grades($courseinfo->get_course_id(), 'mod', 'hsuforum', $forum->id, array_keys($userids));
 
                 $include = false;
