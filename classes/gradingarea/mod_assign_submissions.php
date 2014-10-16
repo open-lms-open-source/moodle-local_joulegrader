@@ -169,7 +169,7 @@ class mod_assign_submissions extends gradingarea_abstract {
                                AND s.userid = :groupuserid
                                AND s.status = :submissionstatus';
 
-                    $params = array('assignid' => $assignment->id, 'groupuserid' => 0, 'submissionstatus' => 'submitted');
+                    $params = array('assignid' => $assignment->id, 'groupuserid' => 0, 'submissionstatus' => ASSIGN_SUBMISSION_STATUS_SUBMITTED);
                     $submissions = $DB->get_records_sql($sql, $params);
 
                     if (empty($submissions)) {
@@ -183,7 +183,7 @@ class mod_assign_submissions extends gradingarea_abstract {
                             $groupusers = $assign->get_submission_group_members($submission->groupid, true);
 
                             foreach ($groupusers as $groupuser) {
-                                $grade = $assign->get_user_grade($groupuser->id, false);
+                                $grade = $assign->get_user_grade($groupuser->id, false, $submission->attemptnumber);
                                 if (empty($grade) OR is_null($grade->timemodified) OR $submission->timemodified > $grade->timemodified) {
                                     // Found a user that needs a grade updated
                                     $include = true;
@@ -194,20 +194,21 @@ class mod_assign_submissions extends gradingarea_abstract {
                     }
 
                 } else {
+                    require_once($CFG->dirroot.'/mod/assign/locallib.php');
+
                     list($enrolsql, $enrolparams) = get_enrolled_sql($gradingmanager->get_context(), self::$studentcapability);
                     // Team submissions are not being used, this simplifies the check.
                     $sql = "SELECT s.id
                           FROM {assign_submission} s
                     INNER JOIN ($enrolsql) enrol ON (enrol.id = s.userid)
-                     LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid
+                     LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid AND s.attemptnumber = g.attemptnumber
                          WHERE s.assignment = :assign
                            AND s.timemodified IS NOT NULL
                            AND s.status = :status
                            AND s.userid <> 0
                            AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)";
 
-
-                    $params = array('assign' => $assignment->id, 'status' => 'submitted');
+                    $params = array('assign' => $assignment->id, 'status' => ASSIGN_SUBMISSION_STATUS_SUBMITTED);
                     $params = array_merge($params, $enrolparams);
 
                     // Just need to check that there is at least one ungraded.
@@ -287,7 +288,7 @@ class mod_assign_submissions extends gradingarea_abstract {
                             continue;
                         }
                         $submission = $assign->get_group_submission($user->id, $groupid, false);
-                        if (empty($submission) OR is_null($submission->timemodified)) {
+                        if (empty($submission) OR is_null($submission->timemodified) OR $submission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
                             // No submission yet for this group. Keep the group so we can skip other group members.
                             $groupswithnosubmission[] = $groupid;
                             continue;
@@ -307,7 +308,7 @@ class mod_assign_submissions extends gradingarea_abstract {
                     //check for submissions that do not have a grade yet
                     $sql = "SELECT s.userid
                           FROM {assign_submission} s
-                     LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid
+                     LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid AND s.attemptnumber = g.attemptnumber
                          WHERE s.assignment = :assignid
                            AND s.userid $inorequals
                            AND s.timemodified IS NOT NULL
