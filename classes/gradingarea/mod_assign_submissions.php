@@ -310,11 +310,13 @@ class mod_assign_submissions extends gradingarea_abstract {
                           FROM {assign_submission} s
                      LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid AND s.attemptnumber = g.attemptnumber
                          WHERE s.assignment = :assignid
+                           AND s.status = :status
                            AND s.userid $inorequals
                            AND s.timemodified IS NOT NULL
                            AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)";
 
                     $params['assignid'] = $assignment->id;
+                    $params['status']   = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
                     // execute the query
                     $submissionusers = $DB->get_records_sql($sql, $params);
