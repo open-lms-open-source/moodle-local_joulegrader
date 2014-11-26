@@ -660,6 +660,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         /** @var $renderer mod_hsuforum_renderer */
         $renderer = $PAGE->get_renderer('mod_hsuforum');
+        $PAGE->requires->js_init_call('M.mod_hsuforum.init', null, false, $renderer->get_js_module());
 
         $showonlypreference = new stdClass();
         $showonlypreference->preference = 1;
