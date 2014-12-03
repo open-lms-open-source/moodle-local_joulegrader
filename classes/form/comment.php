@@ -14,14 +14,13 @@ class comment extends \moodleform {
      * Form definition
      */
     public function definition() {
-        global $COURSE;
 
         $mform =& $this->_form;
 
         //tinymce params
-        if (is_callable('mr_on') && mr_on('webcam', '_MR_LOCAL') && mr_on('kaltura', '_MR_LOCAL') && has_capability('local/webcam:create', \context_course::instance($COURSE->id))) {
-            $webcamplugin = '-webcam,';
-            $webcambutton = 'webcam';
+        if (is_callable('mr_on') && mr_on('kaltura', '_MR_LOCAL')) {
+            $webcamplugin = '-kalturamedia,';
+            $webcambutton = 'kalturamedia';
         } else {
             $webcamplugin = '';
             $webcambutton = '';
