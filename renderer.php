@@ -660,6 +660,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         /** @var $renderer mod_hsuforum_renderer */
         $renderer = $PAGE->get_renderer('mod_hsuforum');
+        $PAGE->requires->js_init_call('M.mod_hsuforum.init', null, false, $renderer->get_js_module());
 
         $showonlypreference = new stdClass();
         $showonlypreference->preference = 1;
@@ -682,11 +683,11 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     array('class' => 'local_joulegrader-hsuforum-showposts'));
         }
         $html = $renderer->user_posts_overview($gradingarea->get_guserid(), $cm, $showonlypreference);
-
         if (empty($html)) {
             return html_writer::tag('h3', $viewpane->get_emptymessage());
         }
 
+        $html .= $renderer->svg_sprite();
         return $html;
     }
 
