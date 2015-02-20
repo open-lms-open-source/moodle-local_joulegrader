@@ -46,19 +46,17 @@ class mod_hsuforum_posts extends gradingarea_abstract {
 
             //check to see if it should be included based on whether the needs grading button was selected
             if ($include and $needsgrading and has_capability(self::$teachercapability, $context)) {
-                $gradebookroles = explode(',', $CFG->gradebookroles);
                 // Determine if the student is missing a grade and has posts for grading...
                 $userids = get_enrolled_users($context, '', 0, 'u.id');
-                $userids = \local_joulegrader\utility\users::limit_to_roles($userids, $context, $gradebookroles);
+                $userids = \local_joulegrader\utility\users::limit_to_gradebook_roles($userids, $context);
                 $grades  = grade_get_grades($courseinfo->get_course_id(), 'mod', 'hsuforum', $forum->id, array_keys($userids));
 
                 $include = false;
+                $posted = hsuforum_get_users_with_posts($forum->id);
                 foreach ($grades->items as $item) {
                     foreach ($item->grades as $userid => $grade) {
                         if (is_null($grade->grade)) {
-                            $posts = hsuforum_get_user_posts($forum->id, $userid);
-
-                            if (!empty($posts)) {
+                            if (!empty($posted[$userid])) {
                                 return true;
                             }
                         }
@@ -100,14 +98,12 @@ class mod_hsuforum_posts extends gradingarea_abstract {
 
             // get existing grades
             $grades = grade_get_grades($COURSE->id, 'mod', 'hsuforum', $hsuforum->id, array_keys($users));
+            $posted = hsuforum_get_users_with_posts($hsuforum->id);
             $include = false;
             foreach ($grades->items as $item) {
                 foreach ($item->grades as $userid => $grade) {
                     if (is_null($grade->grade)) {
-                        $posts = hsuforum_get_user_posts($hsuforum->id, $userid);
-
-                        // if they have posts
-                        if (!empty($posts)) {
+                        if (!empty($posted[$userid])) {
                             $include[$userid] = $users[$userid];
                         }
                     }
@@ -117,7 +113,6 @@ class mod_hsuforum_posts extends gradingarea_abstract {
         } catch (\Exception $e) {
 
         }
-
         return $include;
     }
 

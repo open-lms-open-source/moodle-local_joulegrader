@@ -43,19 +43,37 @@ class users extends loopable_abstract {
      *
      * @return array
      */
-    public static function limit_to_roles($users, $context, $gradebookroles) {
-        $users = array_filter($users, function($user) use ($context, $gradebookroles) {
-            foreach ($gradebookroles as $roleid) {
-                if (user_has_role_assignment($user->id, $roleid, $context->id)) {
-                    // They have a gradebook role, return early.
-                    return true;
-                }
+    public static function limit_to_gradebook_roles($users, $context) {
+        $gradebookusers = self::users_with_gradebook_roles($context->id);
+        $users = array_filter($users, function($user) use ($gradebookusers) {
+            if (!empty($gradebookusers[$user->id])) {
+                return true;
             }
-
             return false;
         });
 
         return $users;
+    }
+
+    public static function users_with_gradebook_roles($contextid) {
+        global $DB, $CFG;
+
+        if (!$context = \context::instance_by_id($contextid, IGNORE_MISSING)) {
+            return false;
+        }
+        $parents = $context->get_parent_context_ids(true);
+        list($contextsql, $contextparams) = $DB->get_in_or_equal($parents, SQL_PARAMS_NAMED, 'r');
+        list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $CFG->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
+        $params = array_merge($contextparams, $gradebookrolesparams);
+
+        $sql = <<<SQL
+            SELECT DISTINCT ra.userid
+              FROM {role_assignments} ra
+             WHERE ra.roleid $gradebookrolessql
+               AND ra.contextid $contextsql
+SQL;
+
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
@@ -118,7 +136,7 @@ class users extends loopable_abstract {
         $users = get_enrolled_users($this->coursecontext, $capability, $currentgroup,
             'u.id, '.get_all_user_name_fields(true, 'u'));
 
-        $users = self::limit_to_roles($users, $this->coursecontext, $this->gradebookroles);
+        $users = self::limit_to_gradebook_roles($users, $this->coursecontext);
 
         return $users;
     }
