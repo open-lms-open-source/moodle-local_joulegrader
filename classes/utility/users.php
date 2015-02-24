@@ -44,7 +44,10 @@ class users extends loopable_abstract {
      * @return array
      */
     public static function limit_to_gradebook_roles($users, $context) {
-        $gradebookusers = self::users_with_gradebook_roles($context->id);
+        global $CFG;
+
+        $gradebookroles = explode(',', $CFG->gradebookroles);
+        $gradebookusers = get_role_users($gradebookroles, $context, true, 'u.id');
         $users = array_filter($users, function($user) use ($gradebookusers) {
             if (!empty($gradebookusers[$user->id])) {
                 return true;
@@ -55,26 +58,6 @@ class users extends loopable_abstract {
         return $users;
     }
 
-    public static function users_with_gradebook_roles($contextid) {
-        global $DB, $CFG;
-
-        if (!$context = \context::instance_by_id($contextid, IGNORE_MISSING)) {
-            return false;
-        }
-        $parents = $context->get_parent_context_ids(true);
-        list($contextsql, $contextparams) = $DB->get_in_or_equal($parents, SQL_PARAMS_NAMED, 'r');
-        list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $CFG->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
-        $params = array_merge($contextparams, $gradebookrolesparams);
-
-        $sql = <<<SQL
-            SELECT DISTINCT ra.userid
-              FROM {role_assignments} ra
-             WHERE ra.roleid $gradebookrolessql
-               AND ra.contextid $contextsql
-SQL;
-
-        return $DB->get_records_sql($sql, $params);
-    }
 
     /**
      * @param gradingareas $gareautility
