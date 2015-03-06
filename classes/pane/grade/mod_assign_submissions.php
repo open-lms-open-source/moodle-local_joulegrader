@@ -37,9 +37,10 @@ class mod_assign_submissions extends grade_abstract {
         $this->courseid = $assignment->get_instance()->course;
 
         $this->gradinginfo = grade_get_grades($this->courseid, 'mod', 'assign', $assignment->get_instance()->id, array($this->gradingarea->get_guserid()));
+        $gradeitemexists = !empty($this->gradinginfo->items);
 
-        $this->gradingdisabled = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->locked;
-        $this->gradeoverridden = $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
+        $this->gradingdisabled = $gradeitemexists && $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->locked;
+        $this->gradeoverridden = $gradeitemexists && $this->gradinginfo->items[0]->grades[$this->gradingarea->get_guserid()]->overridden;
 
         if (($gradingmethod = $this->gradingarea->get_active_gradingmethod()) && in_array($gradingmethod, self::get_supportedplugins())) {
             $controller = $this->gradingarea->get_gradingmanager()->get_controller($gradingmethod);
