@@ -53,10 +53,19 @@ class mod_hsuforum_posts extends gradingarea_abstract {
 
                 $include = false;
                 $posted = hsuforum_get_users_with_posts($forum->id);
+                $allgroups = true;
+                $course = $courseinfo->get_course();
+                if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                    $allgroups = false;
+                    $groups = groups_get_user_groups($course->id);
+                }
                 foreach ($grades->items as $item) {
                     foreach ($item->grades as $userid => $grade) {
                         if (is_null($grade->grade)) {
                             if (!empty($posted[$userid])) {
+                                if (!$allgroups and (empty($groups) or !self::user_in_groups($userid, $course->id, $groups[0]))) {
+                                    continue;
+                                }
                                 return true;
                             }
                         }
@@ -114,6 +123,20 @@ class mod_hsuforum_posts extends gradingarea_abstract {
 
         }
         return $include;
+    }
+
+    /**
+     * @param int $userid
+     * @param int $courseid
+     * @param array $groups
+     *
+     * @return bool
+     */
+    private static function user_in_groups($userid, $courseid, $groups) {
+        $usergroups = groups_get_user_groups($courseid, $userid);
+        $useringroups = array_intersect($usergroups[0], $groups);
+
+        return !empty($useringroups);
     }
 
     /**

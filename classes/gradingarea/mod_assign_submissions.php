@@ -181,9 +181,18 @@ class mod_assign_submissions extends gradingarea_abstract {
                         $include = false;
                     } else {
                         $include = false;
-                        $assign = new \assign(\context_module::instance($cm->id), $cm, null);
-
+                        $context = \context_module::instance($cm->id);
+                        $assign = new \assign($context, $cm, null);
+                        $course = $courseinfo->get_course();
+                        $allgroups = true;
+                        if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                            $allgroups = false;
+                            $groups = groups_get_user_groups($course->id);
+                        }
                         foreach ($submissions as $submission) {
+                            if (!$allgroups and (empty($groups) or !in_array($submission->groupid, $groups[0]))) {
+                                continue;
+                            }
                             $groupusers = $assign->get_submission_group_members($submission->groupid, true);
 
                             foreach ($groupusers as $groupuser) {
