@@ -18,9 +18,6 @@ class gradingareas extends loopable_abstract {
      * @var array - multidimesion array of grading_area compenents and areas
      */
     protected static $supportedareas = array(
-        'mod_assignment' => array(
-            'submission',
-        ),
         'mod_hsuforum' => array(
             'posts',
         ),
@@ -362,14 +359,6 @@ class gradingareas extends loopable_abstract {
 
         // build sql query
         $sql = <<<EOL
-    SELECT c.id AS contextid, 'mod_assignment' AS component, 'submission' AS areaname
-      FROM {assignment} a
-INNER JOIN {course_modules} cm ON (cm.instance = a.id AND cm.course = ?)
-INNER JOIN {modules} m ON (m.name = 'assignment' AND m.id = cm.module)
-INNER JOIN {context} c ON (c.instanceid = cm.id AND c.contextlevel = ?)
- LEFT JOIN {grading_areas} ga ON (ga.contextid = c.id)
-     WHERE ga.id IS NULL
- UNION ALL
     SELECT c.id AS contextid, 'mod_hsuforum' AS component, 'posts' AS areaname
       FROM {hsuforum} af
 INNER JOIN {course_modules} cm ON (cm.instance = af.id AND cm.course = ?)

@@ -72,7 +72,6 @@ $string['saveandnext'] = 'Save grade and next';
 $string['gradingdisabled'] = 'This activity\'s grading is locked. To enable grading please unlock the grade via the Gradebook.';
 $string['applytoall'] = 'Apply grades and feedback to entire group';
 $string['applytoall_help'] = 'If "Yes" is selected all group members will receive the grade and feedback regardless of any existing grade or feedback in the gradebook.';
-$string['modassignmentintonly'] = 'Assignment (2.2) only accepts integer values';
 
 $string['criteria'] = 'Criteria';
 $string['checklist'] = 'Checklist';
