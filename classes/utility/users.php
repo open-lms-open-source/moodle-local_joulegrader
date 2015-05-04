@@ -47,7 +47,8 @@ class users extends loopable_abstract {
         global $CFG;
 
         $gradebookroles = explode(',', $CFG->gradebookroles);
-        $gradebookusers = get_role_users($gradebookroles, $context, true, 'u.id');
+        // Specify the ra.id field to stop debugging message.
+        $gradebookusers = get_role_users($gradebookroles, $context, true, 'ra.id, u.id');
         $users = array_filter($users, function($user) use ($gradebookusers) {
             if (!empty($gradebookusers[$user->id])) {
                 return true;

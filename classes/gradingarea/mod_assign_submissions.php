@@ -219,7 +219,7 @@ class mod_assign_submissions extends gradingarea_abstract {
                            AND s.timemodified IS NOT NULL
                            AND s.status = :status
                            AND s.userid <> 0
-                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)";
+                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL OR g.grade = -1)";
 
                     $params = array('assign' => $assignment->id, 'status' => ASSIGN_SUBMISSION_STATUS_SUBMITTED);
                     $params = array_merge($params, $enrolparams);
@@ -326,7 +326,7 @@ class mod_assign_submissions extends gradingarea_abstract {
                            AND s.status = :status
                            AND s.userid $inorequals
                            AND s.timemodified IS NOT NULL
-                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)";
+                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL OR g.grade = -1)";
 
                     $params['assignid'] = $assignment->id;
                     $params['status']   = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
