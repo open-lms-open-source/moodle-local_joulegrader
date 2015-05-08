@@ -25,9 +25,11 @@ class mod_hsuforum_posts extends gradingarea_abstract {
      * @param \course_modinfo $courseinfo
      * @param \grading_manager $gradingmanager
      * @param bool $needsgrading
+     * @param int $currentgroup
      * @return bool
      */
-    public static function include_area(\course_modinfo $courseinfo, \grading_manager $gradingmanager, $needsgrading = false) {
+    public static function include_area(\course_modinfo $courseinfo, \grading_manager $gradingmanager, $needsgrading = false,
+                $currentgroup = 0) {
         global $CFG, $DB;
         $include = false;
 

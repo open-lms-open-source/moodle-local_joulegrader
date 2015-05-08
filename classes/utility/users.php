@@ -39,7 +39,6 @@ class users extends loopable_abstract {
     /**
      * @param array $users
      * @param \context $context
-     * @param array $gradebookroles
      *
      * @return array
      */
