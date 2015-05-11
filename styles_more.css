@@ -1,0 +1,10 @@
+/*
+ * Specific styles for the 'More' theme
+ */
+#local-joulegrader-panes {
+    background-color: #ffffff;
+}
+
+.path-local-joulegrader.pagelayout-embedded #page-content {
+    background-color: #ffffff;
+}
