@@ -68,9 +68,11 @@ abstract class gradingarea_abstract {
      * @param \course_modinfo $courseinfo
      * @param \grading_manager $gradingmanager
      * @param bool $needsgrading
+     * @param int $currentgroup
      * @return bool
      */
-    public static function include_area(\course_modinfo $courseinfo, \grading_manager $gradingmanager, $needsgrading = false) {
+    public static function include_area(\course_modinfo $courseinfo, \grading_manager $gradingmanager, $needsgrading = false,
+            $currentgroup = 0) {
         return false;
     }
 

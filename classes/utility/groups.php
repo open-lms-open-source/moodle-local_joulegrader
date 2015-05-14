@@ -54,6 +54,7 @@ class groups extends loopable_abstract {
             $loggedinuser = $USER->id;
         }
         $this->loggedinuser = $loggedinuser;
+        $this->load_items();
     }
 
     /**

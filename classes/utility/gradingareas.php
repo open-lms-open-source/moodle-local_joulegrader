@@ -41,10 +41,15 @@ class gradingareas extends loopable_abstract {
      * @param \context_course $context
      * @param int $gareaparam
      * @param int $needsgrading
+     * @param groups|null $groupsutility
      */
-    public function __construct(\context_course $context, $gareaparam, $needsgrading = 0) {
+    public function __construct(\context_course $context, $gareaparam, $needsgrading = 0, groups $groupsutility = null) {
         $this->gareaparam = $gareaparam;
         $this->needsgrading = $needsgrading;
+        if (is_null($groupsutility)) {
+            $groupsutility = new groups($context);
+        }
+        $this->groupsutility = $groupsutility;
         $this->load_items();
     }
 
@@ -224,7 +229,8 @@ class gradingareas extends loopable_abstract {
 
                 //give the grading_area class an opportunity to exclude this particular grading_area
                 $includemethod = 'include_area';
-                if (!is_callable("{$classname}::{$includemethod}") || !($classname::$includemethod($courseinfo, $gradingareamgr, $this->needsgrading))) {
+                if (!is_callable("{$classname}::{$includemethod}") || !($classname::$includemethod($courseinfo, $gradingareamgr,
+                            $this->needsgrading, $this->groupsutility->get_current()))) {
                     //either the method isn't callable or the area shouldn't be included
                     continue;
                 }

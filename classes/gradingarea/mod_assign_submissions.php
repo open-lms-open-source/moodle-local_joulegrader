@@ -140,9 +140,11 @@ class mod_assign_submissions extends gradingarea_abstract {
      * @param \course_modinfo $courseinfo
      * @param \grading_manager $gradingmanager
      * @param bool $needsgrading
+     * @param int $currentgroup
      * @return bool
      */
-    public static function include_area(\course_modinfo $courseinfo, \grading_manager $gradingmanager, $needsgrading = false) {
+    public static function include_area(\course_modinfo $courseinfo, \grading_manager $gradingmanager, $needsgrading = false,
+            $currentgroup = 0) {
         global $DB, $CFG;
         $include = false;
 
@@ -209,7 +211,7 @@ class mod_assign_submissions extends gradingarea_abstract {
                 } else {
                     require_once($CFG->dirroot.'/mod/assign/locallib.php');
 
-                    list($enrolsql, $enrolparams) = get_enrolled_sql($gradingmanager->get_context(), self::$studentcapability);
+                    list($enrolsql, $enrolparams) = get_enrolled_sql($gradingmanager->get_context(), self::$studentcapability, $currentgroup);
                     // Team submissions are not being used, this simplifies the check.
                     $sql = "SELECT s.id
                           FROM {assign_submission} s
