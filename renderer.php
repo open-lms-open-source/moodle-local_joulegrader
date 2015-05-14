@@ -22,6 +22,16 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 throw $e;
             }
             $output = $this->$rendermethod($renderable);
+
+            // Ensure the cssgrids yui module is loaded.
+            if (is_array($this->page->theme->yuicssmodules)) {
+                if (!in_array('cssgrids', $this->page->theme->yuicssmodules)) {
+                    $this->page->theme->yuicssmodules[] = 'cssgrids';
+                }
+            } else {
+                // Should not need to do this, but with theme dev's you never know.
+                $this->page->theme->yuicssmodules = array('cssgrids');
+            }
         }
 
         return $output;
