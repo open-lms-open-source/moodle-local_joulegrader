@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/joulegrader/db" VERSION="20120307" COMMENT="XMLDB file for Moodle local/joulegrader"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_joulegrader_comments" COMMENT="Contains the comments for the joule Grader feedback loop">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="gareaid"/>
+        <FIELD NAME="gareaid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Grading area id" PREVIOUS="id" NEXT="guserid"/>
+        <FIELD NAME="guserid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Id of the user whose work is being commented on" PREVIOUS="gareaid" NEXT="content"/>
+        <FIELD NAME="content" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" COMMENT="Content of the comment" PREVIOUS="guserid" NEXT="commenterid"/>
+        <FIELD NAME="commenterid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Id of the user making the comment" PREVIOUS="content" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Time the comment was created" PREVIOUS="commenterid" NEXT="attachment"/>
+        <FIELD NAME="attachment" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Attachment to the comment" PREVIOUS="timecreated" NEXT="deleted"/>
+        <FIELD NAME="deleted" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Indicates if the comment has been deleted" PREVIOUS="attachment"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="gareaid"/>
+        <KEY NAME="gareaid" TYPE="foreign" FIELDS="gareaid" REFTABLE="grading_areas" REFFIELDS="id" COMMENT="Foreign key for gareaid field" PREVIOUS="primary" NEXT="guserid"/>
+        <KEY NAME="guserid" TYPE="foreign" FIELDS="guserid" REFTABLE="user" REFFIELDS="id" COMMENT="Foreign key on guserid field" PREVIOUS="gareaid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="gareaid-guserid" UNIQUE="false" FIELDS="gareaid, guserid" COMMENT="Index on the grading_area id field and gradeable user id"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

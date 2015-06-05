@@ -1,0 +1,204 @@
+#local-joulegrader-panes {
+    min-height: 600px;
+}
+
+#local-joulegrader-resize {
+    min-height: 200px;
+    width: 5px;
+    background-color: gray;
+    display: inline-block;
+    position: absolute;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#local-joulegrader-resize:hover, #local-joulegrader-resize.yui3-dd-dragging {
+    background-color: darkgray;
+    border: 1px solid lightgray;
+    cursor: ew-resize;
+}
+
+
+#local-joulegrader-viewpane .content {
+    margin-right: 0.75em;
+    overflow: auto;
+}
+
+#local-joulegrader #local-joulegrader-viewpane .content {
+    text-align: left;
+}
+
+#local-joulegrader-buttonnav .singlebutton {
+    padding-left: 3px;
+    display: inline-block;
+}
+
+#local-joulegrader-navigation {
+    padding-bottom: 0.25em;
+    padding-top: 0.25em;
+    margin-bottom: .5em;
+    background-color: lightgrey;
+}
+
+#page-local-joulegrader-view #dates.generalbox {
+    font-size: .75em;
+}
+
+#local-joulegrader-mobilenotsupportedmsg {
+    text-align: center;
+}
+
+#local-joulegrader-navigation .yui3-u-1-3, #local-joulegrader-navigation .yui3-u-2-3 {
+    vertical-align: middle;
+}
+
+#local-joulegrader-navigation .singleselect, .local_joulegrader_navwidget, #local-joulegrader-activitynav, #local-joulegrader-usernav {
+    display: inline-block;
+}
+
+#local-joulegrader #local-joulegrader-menunav .content {
+    text-align: right;
+}
+
+.local_joulegrader_navwidget img{
+    vertical-align: middle;
+}
+
+#local-joulegrader .content {
+    text-align: center;
+}
+
+#local-joulegrader-gradepane .moodleSkin td.mceToolbar table tr td {
+    display:block;
+    float:left;
+}
+
+.local_joulegrader_commentloop textarea {
+    width: 100%;
+}
+
+#local-joulegrader-gradepane  table.mceLayout {
+    width: 100% !important;
+}
+
+#local-joulegrader-gradepane .mceEditor iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+#local-joulegrader-gradepane .content {
+    text-align: left;
+}
+
+#local-joulegrader-gradepane fieldset.fieldset, #local-joulegrader-viewpane fieldset.fieldset {
+    border: 1px solid #808080;
+    padding: 0.5em;
+    margin-right: 0.5em;
+}
+
+#local-joulegrader-gradepane div.status.s0 {
+    padding: 0px;
+    background-color: #FFFACD;
+}
+
+#local-joulegrader-gradepane .fitem .felement {
+    width: 100%;
+    margin: 0px;
+}
+
+#local-joulegrader-gradepane .fitemtitle {
+    float: none;
+}
+
+#local-joulegrader .dontshow {
+    visibility: hidden;
+}
+
+.local_joulegrader_commentloop_comments {
+    max-height: 300px;
+    overflow-y: auto;
+    word-wrap: break-word;
+}
+
+.local_joulegrader_commentloop {
+    margin-top: 2px;
+}
+
+.local_joulegrader_comment_commenter_pic, .local_joulegrader_comment_fullnametime, .local_joulegrader_comment_delete {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.local_joulegrader_comment_fullnametime {
+    font-size: 0.8em;
+    padding-left: 1em;
+}
+
+.local_joulegrader_comment_delete {
+    float: right;
+}
+
+.local_joulegrader_comment_body {
+    padding: .5em .5em .5em 0em;
+    font-size: 0.8em;
+}
+
+.local_joulegrader_comment {
+    clear: both;
+}
+
+.local_joulegrader_commentloop #fitem_id_comment, .local_joulegrader_commentloop .mform fieldset div {
+    margin: 0px;
+}
+
+#local-joulegrader-gradepane .local_joulegrader_simplegrading .mform .fitem fieldset.felement, .local_joulegrader_commentloop .mform .fitem fieldset.felement {
+    padding-left: 0px;
+}
+
+#local-joulegrader-gradepane .mform .fitemtitle {
+    text-align: left;
+}
+
+#local-joulegrader-gradepane .mform .felement.ffilemanager {
+    margin-top: 0.5em;
+}
+
+.pagelayout-embedded .local_joulegrader_commentloop, .pagelayout-embedded .local_joulegrader_commentloop .mform .fitem .felement {
+    margin: 0.5em;
+}
+
+.pagelayout-embedded #local-joulegrader .local_joulegrader_commentloop {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.local_joulegrader_commentloop .mform fieldset div.fdescription.required, .local_joulegrader_commentloop .mform fieldset div.fitem.required label {
+    display: none;
+}
+
+.local_joulegrader_hidden {
+    display: none !important;
+}
+
+#local-joulegrader-assign23-ctrl-con .control {
+    display: inline;
+}
+
+#local-joulegrader-assign23-ctrl-filename {
+    padding-right: .2em;
+}
+
+#local-joulegrader-gradepane-panel .gradingform_rubric .criterion .remark textarea {
+    min-width: 100px;
+}
+
+#local-joulegrader-gradepane-panel .gradingform_rubric {
+    max-width: 100%;
+    overflow: auto;
+    min-height: 0%;
+}
+
+#local-joulegrader-viewpane .local_joulegrader-hsuforum-showposts {
+    margin-bottom: .5em;
+}
