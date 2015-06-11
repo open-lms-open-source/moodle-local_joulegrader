@@ -344,8 +344,9 @@ class mod_assign_submissions extends gradingarea_abstract {
                     // Check for submissions for this assignment that have timemarked < timemodified for all the users passed.
                     list($inorequals, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
 
-                    //check for submissions that do not have a grade yet
-                    $sql = "SELECT s.userid
+                    // Check for submissions that do not have a grade yet.
+                    // Distinct used to prevent bad data from causing debugging.
+                    $sql = "SELECT DISTINCT s.userid
                           FROM {assign_submission} s
                      LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid AND s.attemptnumber = g.attemptnumber
                          WHERE s.assignment = :assignid
