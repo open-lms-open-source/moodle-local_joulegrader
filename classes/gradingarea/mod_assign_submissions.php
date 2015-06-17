@@ -345,14 +345,15 @@ class mod_assign_submissions extends gradingarea_abstract {
                     list($inorequals, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
 
                     // Check for submissions that do not have a grade yet.
-                    // Distinct used to prevent bad data from causing debugging.
-                    $sql = "SELECT DISTINCT s.userid
+                    // Add latest field check to ensure latest attempt is graded.
+                    $sql = "SELECT s.userid
                           FROM {assign_submission} s
                      LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid AND s.attemptnumber = g.attemptnumber
                          WHERE s.assignment = :assignid
                            AND s.status = :status
                            AND s.userid $inorequals
                            AND s.timemodified IS NOT NULL
+                           AND s.latest = 1
                            AND (s.timemodified > g.timemodified OR g.timemodified IS NULL OR g.grade = -1)";
 
                     $params['assignid'] = $assignment->id;
