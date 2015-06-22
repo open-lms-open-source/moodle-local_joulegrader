@@ -15,10 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the comment added event
+ * Define the Comment Added event
  *
- * @package    local_joulegrader
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * This event is fired when a comment is added in the
+ * Joule Grader.
+ *
+ * @package   local_joulegrader
+ * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_joulegrader\event;
@@ -26,7 +30,7 @@ namespace local_joulegrader\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The Joule Grader comment added event
+ * The class for the Comment Added event
  *
  * @property-read array $other {
  *     - $userid   the user id being viewed by the user
@@ -35,10 +39,10 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package local_joulegrader
  * @subpackage event
- * @copyright 2015 Blackboard Inc.
+ * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class comment_deleted extends \core\event\base {
+class comment_added extends \core\event\base {
 
     /**
      * Init method.
@@ -56,7 +60,7 @@ class comment_deleted extends \core\event\base {
      * @return string the description of the event
      */
     public function get_description() {
-        return "The user with id '{$this->userid}' created a comment using Joule Grader in the course with id '{$this->courseid}' " .
+        return "The user with id '{$this->userid}' added a comment using Joule Grader in the course with id '{$this->courseid}' " .
             "with grading area id '{$this->other['areaid']}' and user id '{$this->other['userid']}'.";
     }
 

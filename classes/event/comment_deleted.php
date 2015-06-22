@@ -15,10 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the comment deleted event
+ * Define the Comment Deleted event
  *
- * @package    local_joulegrader
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * This event is fired when a comment is deleted using the
+ * Joule Grader.
+ *
+ * @package   local_joulegrader
+ * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_joulegrader\event;
@@ -26,7 +30,7 @@ namespace local_joulegrader\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The Joule Grader comment deleted event
+ * The class for the Comment Deleted event
  *
  * @property-read array $other {
  *     - $userid   the user id being viewed by the user
@@ -35,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package local_joulegrader
  * @subpackage event
- * @copyright 2015 Blackboard Inc.
+ * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class comment_deleted extends \core\event\base {

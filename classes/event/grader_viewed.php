@@ -15,10 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the grader viewed event
+ * Define the Grander Viewed event
  *
- * @package    local_joulegrader
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * This event is fired when the index page for the Joule Grader is viewed.
+ *
+ * @package   local_joulegrader
+ * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_joulegrader\event;
@@ -26,7 +29,7 @@ namespace local_joulegrader\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The Joule Grader viewed event
+ * The class for the Grader Viewed event
  *
  * @property-read array $other {
  *     - $userid   the user id being viewed by the user
@@ -35,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package local_joulegrader
  * @subpackage event
- * @copyright 2015 Blackboard Inc.
+ * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class grader_viewed extends \core\event\base {
