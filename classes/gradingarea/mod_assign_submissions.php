@@ -197,7 +197,9 @@ class mod_assign_submissions extends gradingarea_abstract {
                              WHERE s.assignment = :assignid
                                AND s.timemodified IS NOT NULL
                                AND s.userid = :groupuserid
-                               AND s.status = :submissionstatus';
+                               AND s.status = :submissionstatus
+                               -- limit to latest submissions
+                               AND latest = 1';
 
                     $params = array('assignid' => $assignment->id, 'groupuserid' => 0, 'submissionstatus' => ASSIGN_SUBMISSION_STATUS_SUBMITTED);
                     $submissions = $DB->get_records_sql($sql, $params);
@@ -245,7 +247,9 @@ class mod_assign_submissions extends gradingarea_abstract {
                            AND s.timemodified IS NOT NULL
                            AND s.status = :status
                            AND s.userid <> 0
-                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL OR g.grade = -1)";
+                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL OR g.grade = -1)
+                           -- limit to latest submissions
+                           AND s.latest = 1";
 
                     $params = array('assign' => $assignment->id, 'status' => ASSIGN_SUBMISSION_STATUS_SUBMITTED);
                     $params = array_merge($params, $enrolparams);
