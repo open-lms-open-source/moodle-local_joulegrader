@@ -119,3 +119,9 @@ $string['commentrequired'] = 'Comment required';
 $string['commentloop'] = 'Comment Loop';
 
 $string['notreleased'] = 'Assignment grade not released yet';
+
+// Event strings.
+$string['eventgraderviewed']   = 'Joule Grader viewed';
+$string['eventactivitygraded'] = 'Activity graded in Joule Grader';
+$string['eventcommentdeleted'] = 'Comment deleted in Joule Grader';
+$string['eventcommentadded']   = 'Comment added in Joule Grader';
