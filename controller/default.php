@@ -201,6 +201,9 @@ class local_joulegrader_controller_default extends mr_controller {
         $output = $OUTPUT->container($output, 'yui3-g', 'local-joulegrader');
 
         // Log an event.
+        if (empty($context)) {
+            $context = context_course::instance($COURSE->id);
+        }
         $event = \local_joulegrader\event\grader_viewed::create(array(
             'other' => array(
                 'userid' => $currentuserid,
