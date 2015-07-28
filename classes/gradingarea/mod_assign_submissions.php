@@ -183,6 +183,17 @@ class mod_assign_submissions extends gradingarea_abstract {
                 $include = false;
             }
 
+            // Check to see if this area is related to a hidden grade item.
+            $gradeitem = \grade_item::fetch(array(
+                'itemtype'     => 'mod',
+                'itemmodule'   => 'assign',
+                'iteminstance' => $assignment->id
+            ));
+
+            if (!empty($gradeitem->hidden)) {
+                $include = false;
+            }
+
             // Check to see if it should be included based on whether the needs grading button was selected.
             if (!empty($include) && !empty($needsgrading) && has_capability(self::$teachercapability, \context_module::instance($cm->id))) {
                 // Needs to be limited by "needs grading".
