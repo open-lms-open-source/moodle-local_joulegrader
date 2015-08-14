@@ -90,7 +90,7 @@ class local_joulegrader_controller_default extends mr_controller {
      * @return string - the html for the view action
      */
     public function view_action() {
-        global $OUTPUT, $PAGE, $COURSE;
+        global $OUTPUT, $PAGE, $COURSE, $USER;
 
         //check for mobile browsers (currently not supported)
         if (core_useragent::get_device_type() == 'mobile') {
@@ -120,7 +120,12 @@ class local_joulegrader_controller_default extends mr_controller {
         //if the current user id and the current area id are not empty, load the class and get the pane contents
         /** @var local_joulegrader_renderer $renderer */
         $renderer = $PAGE->get_renderer('local_joulegrader');
+
+        $dorender = false;
+
         if (!empty($currentareaid) && !empty($currentuserid)) {
+
+            $dorender = true;
 
             //load the current area instance
             if (!isset($this->gradeareainstance)) {
@@ -129,6 +134,30 @@ class local_joulegrader_controller_default extends mr_controller {
             } else {
                 $gradeareainstance = $this->gradeareainstance;
             }
+
+            // If this is a student, do not show hidden grades.
+            $class = get_class($gradeareainstance);
+            $class = explode('\\', $class);
+            $class = end($class);
+
+            switch($class) {
+            case 'mod_assign_submissions':
+                $cangrade = $gradeareainstance->loggedinuser_can_grade($gradeareainstance->get_gradingmanager(), $USER->id);
+                if (!$cangrade) {
+                    $gradeitem  = $gradeareainstance->get_assign()->get_grade_item();
+                    $gradegrade = \grade_grade::fetch(array('userid' => $currentuserid, 'itemid' => $gradeitem->id));
+                    if ($gradegrade->is_hidden()) {
+                        // hidden grade, so don't display anything.
+                        $dorender = false;
+                    }
+                }
+                break;
+            default:
+                debugging("Class: {$class} does not support hidden grade check", DEBUG_DEVELOPER);
+            }
+        }
+
+        if ($dorender) {
 
             $context = $gradeareainstance->get_gradingmanager()->get_context();
             $context = context::instance_by_id($context->id);
