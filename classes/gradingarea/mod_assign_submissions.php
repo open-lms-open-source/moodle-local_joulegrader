@@ -184,6 +184,9 @@ class mod_assign_submissions extends gradingarea_abstract {
             }
 
             // Check to see if this area is related to a hidden grade item.
+            require_once($CFG->libdir . '/grade/constants.php');
+            require_once($CFG->libdir . '/grade/grade_item.php');
+
             $gradeitem = \grade_item::fetch(array(
                 'itemtype'     => 'mod',
                 'itemmodule'   => 'assign',
