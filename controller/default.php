@@ -146,7 +146,7 @@ class local_joulegrader_controller_default extends mr_controller {
                 if (!$cangrade) {
                     $gradeitem  = $gradeareainstance->get_assign()->get_grade_item();
                     $gradegrade = \grade_grade::fetch(array('userid' => $currentuserid, 'itemid' => $gradeitem->id));
-                    if ($gradegrade->is_hidden()) {
+                    if (empty($gradegrade) || $gradegrade->is_hidden()) {
                         // hidden grade, so don't display anything.
                         $dorender = false;
                     }
