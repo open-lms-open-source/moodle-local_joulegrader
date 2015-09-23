@@ -70,6 +70,17 @@ class mod_hsuforum_posts extends gradingarea_abstract {
                 $include = true;
             }
 
+            // Check to see if this area is related to a hidden grade item.
+            $gradeitem = \grade_item::fetch(array(
+                'itemtype'     => 'mod',
+                'itemmodule'   => 'hsuforum',
+                'iteminstance' => $forum->id
+            ));
+
+            if (!empty($gradeitem->hidden)) {
+                $include = false;
+            }
+
             //check to see if it should be included based on whether the needs grading button was selected
             if ($include and $needsgrading and has_capability(self::$teachercapability, $context)) {
                 // Determine if the student is missing a grade and has posts for grading...
