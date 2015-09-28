@@ -54,7 +54,7 @@ class mod_hsuforum_posts extends gradingarea_abstract {
      */
     public static function include_area(\course_modinfo $courseinfo, \grading_manager $gradingmanager, $needsgrading = false,
                 $currentgroup = 0) {
-        global $CFG, $DB;
+        global $USER, $CFG, $DB;
         $include = false;
 
         require_once($CFG->dirroot.'/mod/hsuforum/lib.php');
@@ -106,6 +106,15 @@ class mod_hsuforum_posts extends gradingarea_abstract {
                                 return true;
                             }
                         }
+                    }
+                }
+            } else if ($include && !has_capability(self::$teachercapability, $context)) {
+                // Test for a student viewing their own grade.
+                $grades = grade_get_grades($courseinfo->get_course_id(), 'mod', 'hsuforum', $forum->id, $USER->id);
+
+                if (isset($grades->items[0]->grades[$USER->id])) {
+                    if ($grades->items[0]->grades[$USER->id]->hidden) {
+                        $include = false;
                     }
                 }
             }
