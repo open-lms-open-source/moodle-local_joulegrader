@@ -169,7 +169,7 @@ class mod_assign_submissions extends gradingarea_abstract {
      */
     public static function include_area(\course_modinfo $courseinfo, \grading_manager $gradingmanager, $needsgrading = false,
             $currentgroup = 0) {
-        global $DB, $CFG;
+        global $USER, $DB, $CFG;
         $include = false;
 
         try {
@@ -197,8 +197,10 @@ class mod_assign_submissions extends gradingarea_abstract {
                 $include = false;
             }
 
+            $context = \context_module::instance($cm->id);
+
             // Check to see if it should be included based on whether the needs grading button was selected.
-            if (!empty($include) && !empty($needsgrading) && has_capability(self::$teachercapability, \context_module::instance($cm->id))) {
+            if (!empty($include) && !empty($needsgrading) && has_capability(self::$teachercapability, $context)) {
                 // Needs to be limited by "needs grading".
                 // Check for submissions that do not have a grade yet.
 
@@ -273,6 +275,14 @@ class mod_assign_submissions extends gradingarea_abstract {
 
                     if (empty($submissions)) {
                         // If there isn't at least one submission then don't include this.
+                        $include = false;
+                    }
+                }
+            } else if ($include && !has_capability(self::$teachercapability, $context)) {
+                // Check if the individual grade is hidden.
+                $grades = grade_get_grades($courseinfo->get_course_id(), 'mod', 'assign', $assignment->id, $USER->id);
+                if (isset($grades->items[0]->grades[$USER->id])) {
+                    if ($grades->items[0]->grades[$USER->id]->hidden) {
                         $include = false;
                     }
                 }
