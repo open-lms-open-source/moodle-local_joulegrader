@@ -281,10 +281,8 @@ class mod_assign_submissions extends gradingarea_abstract {
             } else if ($include && !has_capability(self::$teachercapability, $context)) {
                 // Check if the individual grade is hidden.
                 $grades = grade_get_grades($courseinfo->get_course_id(), 'mod', 'assign', $assignment->id, $USER->id);
-                if (isset($grades->items[0]->grades[$USER->id])) {
-                    if ($grades->items[0]->grades[$USER->id]->hidden) {
-                        $include = false;
-                    }
+                if (!empty($grades->items[0]->grades[$USER->id]->hidden)) {
+                    $include = false;
                 }
             }
         } catch (\Exception $e) {
