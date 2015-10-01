@@ -90,7 +90,7 @@ class local_joulegrader_controller_default extends mr_controller {
      * @return string - the html for the view action
      */
     public function view_action() {
-        global $OUTPUT, $PAGE, $COURSE, $USER;
+        global $OUTPUT, $PAGE, $COURSE, $USER, $DB;
 
         //check for mobile browsers (currently not supported)
         if (core_useragent::get_device_type() == 'mobile') {
@@ -145,6 +145,29 @@ class local_joulegrader_controller_default extends mr_controller {
                 $cangrade = $gradeareainstance->loggedinuser_can_grade($gradeareainstance->get_gradingmanager(), $USER->id);
                 if (!$cangrade) {
                     $gradeitem  = $gradeareainstance->get_assign()->get_grade_item();
+                    $gradegrade = \grade_grade::fetch(array('userid' => $currentuserid, 'itemid' => $gradeitem->id));
+                    if (empty($gradegrade) || $gradegrade->is_hidden()) {
+                        // hidden grade, so don't display anything.
+                        $dorender = false;
+                    }
+                }
+                break;
+            case 'mod_hsuforum_posts':
+                $context = $gradeareainstance->get_gradingmanager()->get_context();
+                $coursecontext = $context->get_course_context();
+                $cangrade = has_capability($gradeareainstance->get_teachercapability(), $coursecontext);
+
+                if (!$cangrade) {
+                    $cm = get_coursemodule_from_id('hsuforum', $context->instanceid, 0, false, MUST_EXIST);
+                    $forum = $DB->get_record('hsuforum', array('id' => $cm->instance), '*', MUST_EXIST);
+
+                    $gradeitem = \grade_item::fetch(array(
+                        'itemtype'     => 'mod',
+                        'itemmodule'   => 'hsuforum',
+                        'iteminstance' => $forum->id,
+                        'itemnumber'   => 0
+                    ));
+
                     $gradegrade = \grade_grade::fetch(array('userid' => $currentuserid, 'itemid' => $gradeitem->id));
                     if (empty($gradegrade) || $gradegrade->is_hidden()) {
                         // hidden grade, so don't display anything.
