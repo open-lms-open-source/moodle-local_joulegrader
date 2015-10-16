@@ -190,7 +190,9 @@ class mod_assign_submissions extends gradingarea_abstract {
             $gradeitem = \grade_item::fetch(array(
                 'itemtype'     => 'mod',
                 'itemmodule'   => 'assign',
-                'iteminstance' => $assignment->id
+                'iteminstance' => $assignment->id,
+                'courseid'     => $courseinfo->courseid,
+                'itemnumber'   => 0,
             ));
 
             if (!empty($gradeitem->hidden)) {
