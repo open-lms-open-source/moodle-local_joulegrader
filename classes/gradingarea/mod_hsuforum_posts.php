@@ -74,7 +74,9 @@ class mod_hsuforum_posts extends gradingarea_abstract {
             $gradeitem = \grade_item::fetch(array(
                 'itemtype'     => 'mod',
                 'itemmodule'   => 'hsuforum',
-                'iteminstance' => $forum->id
+                'iteminstance' => $forum->id,
+                'courseid'     => $courseinfo->courseid,
+                'itemnumber'   => 0,
             ));
 
             if (!empty($gradeitem->hidden)) {
