@@ -183,22 +183,6 @@ class mod_assign_submissions extends gradingarea_abstract {
                 $include = false;
             }
 
-            // Check to see if this area is related to a hidden grade item.
-            require_once($CFG->libdir . '/grade/constants.php');
-            require_once($CFG->libdir . '/grade/grade_item.php');
-
-            $gradeitem = \grade_item::fetch(array(
-                'itemtype'     => 'mod',
-                'itemmodule'   => 'assign',
-                'iteminstance' => $assignment->id,
-                'courseid'     => $courseinfo->courseid,
-                'itemnumber'   => 0,
-            ));
-
-            if (!empty($gradeitem->hidden)) {
-                $include = false;
-            }
-
             $context = \context_module::instance($cm->id);
 
             // Check to see if it should be included based on whether the needs grading button was selected.
@@ -281,10 +265,26 @@ class mod_assign_submissions extends gradingarea_abstract {
                     }
                 }
             } else if ($include && !has_capability(self::$teachercapability, $context)) {
-                // Check if the individual grade is hidden.
-                $grades = grade_get_grades($courseinfo->get_course_id(), 'mod', 'assign', $assignment->id, $USER->id);
-                if (!empty($grades->items[0]->grades[$USER->id]->hidden)) {
+                // Check to see if this area is related to a hidden grade item.
+                require_once($CFG->libdir . '/grade/constants.php');
+                require_once($CFG->libdir . '/grade/grade_item.php');
+
+                $gradeitem = \grade_item::fetch(array(
+                    'itemtype'     => 'mod',
+                    'itemmodule'   => 'assign',
+                    'iteminstance' => $assignment->id,
+                    'courseid'     => $courseinfo->courseid,
+                    'itemnumber'   => 0,
+                ));
+
+                if (!empty($gradeitem) && !empty($gradeitem->hidden)) {
                     $include = false;
+                } else {
+                    // Check if the individual grade is hidden.
+                    $grades = grade_get_grades($courseinfo->get_course_id(), 'mod', 'assign', $assignment->id, $USER->id);
+                    if (!empty($grades->items[0]->grades[$USER->id]->hidden)) {
+                        $include = false;
+                    }
                 }
             }
         } catch (\Exception $e) {

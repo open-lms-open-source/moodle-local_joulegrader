@@ -38,7 +38,7 @@ class local_joulegrader_gradingarea_mod_assign_submissions_testcase extends adva
         $this->resetAfterTest();
     }
 
-    public function test_hidden_gradeitem() {
+    public function test_hidden_gradeitem_grader() {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
@@ -51,6 +51,39 @@ class local_joulegrader_gradingarea_mod_assign_submissions_testcase extends adva
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
 
         $this->setUser($teacher);
+
+        $courseinfo = get_fast_modinfo($course->id);
+        $gradingmanager = get_grading_manager($context);
+
+        $this->assertTrue(mod_assign_submissions::include_area($courseinfo, $gradingmanager));
+
+        $gradeitemparams = [
+            'itemtype' => 'mod',
+            'itemmodule' => 'assign',
+            'iteminstance' => $assign->id,
+            'courseid' => $course->id,
+            'itemnumber' => 0,
+        ];
+
+        $gradeitem = \grade_item::fetch($gradeitemparams);
+        $gradeitem->set_hidden(true);
+
+        $this->assertTrue(mod_assign_submissions::include_area($courseinfo, $gradingmanager));
+    }
+
+    public function test_hidden_gradeitem_nongrader() {
+        global $DB;
+
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
+        $context = context_module::instance($assign->cmid);
+
+        $student = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+
+        $this->setUser($student);
 
         $courseinfo = get_fast_modinfo($course->id);
         $gradingmanager = get_grading_manager($context);

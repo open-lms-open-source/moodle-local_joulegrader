@@ -70,20 +70,7 @@ class mod_hsuforum_posts extends gradingarea_abstract {
                 $include = true;
             }
 
-            // Check to see if this area is related to a hidden grade item.
-            $gradeitem = \grade_item::fetch(array(
-                'itemtype'     => 'mod',
-                'itemmodule'   => 'hsuforum',
-                'iteminstance' => $forum->id,
-                'courseid'     => $courseinfo->courseid,
-                'itemnumber'   => 0,
-            ));
-
-            if (!empty($gradeitem->hidden)) {
-                $include = false;
-            }
-
-            //check to see if it should be included based on whether the needs grading button was selected
+            // Check to see if it should be included based on whether the needs grading button was selected.
             if ($include and $needsgrading and has_capability(self::$teachercapability, $context)) {
                 // Determine if the student is missing a grade and has posts for grading...
                 $userids = get_enrolled_users($context, '', 0, 'u.id');
@@ -111,12 +98,25 @@ class mod_hsuforum_posts extends gradingarea_abstract {
                     }
                 }
             } else if ($include && !has_capability(self::$teachercapability, $context)) {
-                // Test for a student viewing their own grade.
-                $grades = grade_get_grades($courseinfo->get_course_id(), 'mod', 'hsuforum', $forum->id, $USER->id);
+                // Check to see if this area is related to a hidden grade item.
+                $gradeitem = \grade_item::fetch(array(
+                    'itemtype'     => 'mod',
+                    'itemmodule'   => 'hsuforum',
+                    'iteminstance' => $forum->id,
+                    'courseid'     => $courseinfo->courseid,
+                    'itemnumber'   => 0,
+                ));
 
-                if (isset($grades->items[0]->grades[$USER->id])) {
-                    if ($grades->items[0]->grades[$USER->id]->hidden) {
-                        $include = false;
+                if (!empty($gradeitem) && !empty($gradeitem->hidden)) {
+                    $include = false;
+                } else {
+                    // Test for a student viewing their own grade.
+                    $grades = grade_get_grades($courseinfo->get_course_id(), 'mod', 'hsuforum', $forum->id, $USER->id);
+
+                    if (isset($grades->items[0]->grades[$USER->id])) {
+                        if ($grades->items[0]->grades[$USER->id]->hidden) {
+                            $include = false;
+                        }
                     }
                 }
             }

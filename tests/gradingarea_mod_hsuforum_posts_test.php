@@ -38,7 +38,7 @@ class local_joulegrader_gradingarea_mod_hsuforum_posts_test extends advanced_tes
         $this->resetAfterTest();
     }
 
-    public function test_hidden_gradeitem() {
+    public function test_hidden_gradeitem_grader() {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/grade/grading/lib.php');
 
@@ -54,6 +54,42 @@ class local_joulegrader_gradingarea_mod_hsuforum_posts_test extends advanced_tes
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
 
         $this->setUser($teacher);
+
+        $courseinfo = get_fast_modinfo($course->id);
+        $gradingmanager = get_grading_manager($context);
+
+        $this->assertTrue(mod_hsuforum_posts::include_area($courseinfo, $gradingmanager));
+
+        $gradeitemparams = [
+            'itemtype' => 'mod',
+            'itemmodule' => 'hsuforum',
+            'iteminstance' => $forum->id,
+            'courseid' => $course->id,
+            'itemnumber' => 0,
+        ];
+
+        $gradeitem = \grade_item::fetch($gradeitemparams);
+        $gradeitem->set_hidden(true);
+
+        $this->assertTrue(mod_hsuforum_posts::include_area($courseinfo, $gradingmanager));
+    }
+
+    public function test_hidden_gradeitem_nongrader() {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/grade/grading/lib.php');
+
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('hsuforum',
+            ['course' => $course->id, 'gradetype' => 1, 'scale' => 100]);
+
+        $context = context_module::instance($forum->cmid);
+
+        $student = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+
+        $this->setUser($student);
 
         $courseinfo = get_fast_modinfo($course->id);
         $gradingmanager = get_grading_manager($context);
