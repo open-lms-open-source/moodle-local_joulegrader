@@ -98,27 +98,9 @@ class mod_hsuforum_posts extends gradingarea_abstract {
                     }
                 }
             } else if ($include && !has_capability(self::$teachercapability, $context)) {
-                // Check to see if this area is related to a hidden grade item.
-                $gradeitem = \grade_item::fetch(array(
-                    'itemtype'     => 'mod',
-                    'itemmodule'   => 'hsuforum',
-                    'iteminstance' => $forum->id,
-                    'courseid'     => $courseinfo->courseid,
-                    'itemnumber'   => 0,
-                ));
-
-                if (!empty($gradeitem) && !empty($gradeitem->hidden)) {
+                if (self::should_hide_from_nongrader('hsuforum', $forum->id, $courseinfo->courseid, $USER->id)) {
                     $include = false;
-                } else {
-                    // Test for a student viewing their own grade.
-                    $grades = grade_get_grades($courseinfo->get_course_id(), 'mod', 'hsuforum', $forum->id, $USER->id);
-
-                    if (isset($grades->items[0]->grades[$USER->id])) {
-                        if ($grades->items[0]->grades[$USER->id]->hidden) {
-                            $include = false;
-                        }
-                    }
-                }
+                };
             }
         } catch (\Exception $e) {
             //don't need to do anything

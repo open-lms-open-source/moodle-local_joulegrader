@@ -265,27 +265,9 @@ class mod_assign_submissions extends gradingarea_abstract {
                     }
                 }
             } else if ($include && !has_capability(self::$teachercapability, $context)) {
-                // Check to see if this area is related to a hidden grade item.
-                require_once($CFG->libdir . '/grade/constants.php');
-                require_once($CFG->libdir . '/grade/grade_item.php');
-
-                $gradeitem = \grade_item::fetch(array(
-                    'itemtype'     => 'mod',
-                    'itemmodule'   => 'assign',
-                    'iteminstance' => $assignment->id,
-                    'courseid'     => $courseinfo->courseid,
-                    'itemnumber'   => 0,
-                ));
-
-                if (!empty($gradeitem) && !empty($gradeitem->hidden)) {
+                if (self::should_hide_from_nongrader('assign', $assignment->id, $courseinfo->courseid, $USER->id)) {
                     $include = false;
-                } else {
-                    // Check if the individual grade is hidden.
-                    $grades = grade_get_grades($courseinfo->get_course_id(), 'mod', 'assign', $assignment->id, $USER->id);
-                    if (!empty($grades->items[0]->grades[$USER->id]->hidden)) {
-                        $include = false;
-                    }
-                }
+                };
             }
         } catch (\Exception $e) {
             //don't need to do anything
