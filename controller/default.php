@@ -115,72 +115,17 @@ class local_joulegrader_controller_default extends mr_controller {
         //initialize the navigation
         $navutil = new navigation($usersutility, $gareasutility);
 
-        // Set defaults for log values.
-        $cm = 0;
-        //if the current user id and the current area id are not empty, load the class and get the pane contents
+        // If the current user id and the current area id are not empty, load the class and get the pane contents.
         /** @var local_joulegrader_renderer $renderer */
         $renderer = $PAGE->get_renderer('local_joulegrader');
-
-        $dorender = false;
-
         if (!empty($currentareaid) && !empty($currentuserid)) {
-
-            $dorender = true;
-
-            //load the current area instance
+            // Load the current area instance.
             if (!isset($this->gradeareainstance)) {
                 $gradeareainstance = $gareasutility::get_gradingarea_instance($currentareaid, $currentuserid);
                 $gradeareainstance->current_user($usersutility);
             } else {
                 $gradeareainstance = $this->gradeareainstance;
             }
-
-            // If this is a student, do not show hidden grades.
-            $class = get_class($gradeareainstance);
-            $class = explode('\\', $class);
-            $class = end($class);
-
-            switch($class) {
-            case 'mod_assign_submissions':
-                $cangrade = $gradeareainstance->loggedinuser_can_grade($gradeareainstance->get_gradingmanager(), $USER->id);
-                if (!$cangrade) {
-                    $gradeitem  = $gradeareainstance->get_assign()->get_grade_item();
-                    $gradegrade = \grade_grade::fetch(array('userid' => $currentuserid, 'itemid' => $gradeitem->id));
-                    if (empty($gradegrade) || $gradegrade->is_hidden()) {
-                        // hidden grade, so don't display anything.
-                        $dorender = false;
-                    }
-                }
-                break;
-            case 'mod_hsuforum_posts':
-                $context = $gradeareainstance->get_gradingmanager()->get_context();
-                $coursecontext = $context->get_course_context();
-                $cangrade = has_capability($gradeareainstance->get_teachercapability(), $coursecontext);
-
-                if (!$cangrade) {
-                    $cm = get_coursemodule_from_id('hsuforum', $context->instanceid, 0, false, MUST_EXIST);
-                    $forum = $DB->get_record('hsuforum', array('id' => $cm->instance), '*', MUST_EXIST);
-
-                    $gradeitem = \grade_item::fetch(array(
-                        'itemtype'     => 'mod',
-                        'itemmodule'   => 'hsuforum',
-                        'iteminstance' => $forum->id,
-                        'itemnumber'   => 0
-                    ));
-
-                    $gradegrade = \grade_grade::fetch(array('userid' => $currentuserid, 'itemid' => $gradeitem->id));
-                    if (empty($gradegrade) || $gradegrade->is_hidden()) {
-                        // hidden grade, so don't display anything.
-                        $dorender = false;
-                    }
-                }
-                break;
-            default:
-                debugging("Class: {$class} does not support hidden grade check", DEBUG_DEVELOPER);
-            }
-        }
-
-        if ($dorender) {
 
             $context = $gradeareainstance->get_gradingmanager()->get_context();
             $context = context::instance_by_id($context->id);
