@@ -173,6 +173,7 @@ class mod_assign_submissions extends gradingarea_abstract {
         $include = false;
 
         try {
+            require_once($CFG->libdir.'/gradelib.php');
             list($cm, $assignment) = self::get_assign_info($gradingmanager);
             $cminfo = $courseinfo->get_cm($cm->id);
             if (has_capability('moodle/course:viewhiddenactivities', $gradingmanager->get_context()) || ($cminfo->available && $cm->visible)) {
