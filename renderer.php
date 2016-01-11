@@ -83,10 +83,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         //get the comment form
         $mform = $commentloop->get_mform();
-
-        //render the form
-        $mrhelper = new mr_helper();
-        $mformhtml = $mrhelper->buffer(array($mform, 'display'));
+        $mformhtml = $mform->render();
 
         $commentlegend = html_writer::tag('legend', get_string('activitycomments', 'local_joulegrader'));
 

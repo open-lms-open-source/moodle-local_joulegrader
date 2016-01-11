@@ -137,12 +137,13 @@ class comment_loop implements \renderable {
      * @return comment
      */
     public function add_comment($commentdata) {
+        $commentelement = 'comment_'.$this->gradingarea->get_areaid().'_'.$this->gradingarea->get_guserid();
 
         // Store for comment_post_insert callback.
-        $this->commentitemid = $commentdata->comment['itemid'];
+        $this->commentitemid = $commentdata->{$commentelement}['itemid'];
 
         // Add the comment via the comment object.
-        $commentrecord = $this->commentapi->add($commentdata->comment['text'], FORMAT_MOODLE, array($this, 'comment_post_insert'));
+        $commentrecord = $this->commentapi->add($commentdata->{$commentelement}['text'], FORMAT_MOODLE, array($this, 'comment_post_insert'));
 
         // Instantiate a joule grader comment object.
         $comment = new comment($commentrecord);

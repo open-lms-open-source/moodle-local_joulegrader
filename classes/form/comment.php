@@ -66,9 +66,10 @@ class comment extends \moodleform {
         $editoroptions['tinymceparams'] = $tineymceparams;
 
         //comment editor
-        $mform->addElement('editor', 'comment', null, null, $editoroptions);
-        $mform->setType('comment', PARAM_RAW);
-        $mform->addRule('comment', get_string('commentrequired', 'local_joulegrader'), 'required', null, 'client');
+        $editorname = 'comment_' . $this->_customdata->get_areaid() . '_' . $this->_customdata->get_guserid();
+        $mform->addElement('editor', $editorname, null, null, $editoroptions);
+        $mform->setType($editorname, PARAM_RAW);
+        $mform->addRule($editorname, get_string('commentrequired', 'local_joulegrader'), 'required', null, 'client');
 
         $this->_customdata->comment_form_hook($mform);
 

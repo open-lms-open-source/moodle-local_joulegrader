@@ -507,9 +507,12 @@ M.local_joulegrader.init_commentloop = function(Y, id) {
             return;
         }
 
-        //try to get the iframe for the tinymce editor
-        var editor = tinyMCE.getInstanceById(textarea.get('id'));
-
+        if (typeof tinyMCE !== "undefined") {
+            //try to get the iframe for the tinymce editor
+            var editor = tinyMCE.getInstanceById(textarea.get('id'));
+        } else {
+            var editor = commentform.one('.editor_atto_content');
+        }
         //try to get the comment text
         var comment = textarea.get('value');
         if (comment == '') {
@@ -521,6 +524,7 @@ M.local_joulegrader.init_commentloop = function(Y, id) {
         //looks like this is a good comment, let's submit it all ajax-like
         var cfg = {
             method: 'POST',
+            sync: false,
             form: {
                 id: commentform
             },
