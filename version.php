@@ -24,10 +24,10 @@
  */
 
 /** @var object $plugin */
-$plugin->version      = 2013053000;
-$plugin->requires     = 2014111000;
+$plugin->version      = 2016012600;
+$plugin->requires     = 2015051103;
 $plugin->component    = 'local_joulegrader';
-$plugin->release      = '2.8.0 (Build: 20150605)';
+$plugin->release      = '2.9.3 (Build: 20160204)';
 $plugin->maturity     = MATURITY_STABLE;
 $plugin->dependencies = array(
     'mod_hsuforum' => ANY_VERSION,
