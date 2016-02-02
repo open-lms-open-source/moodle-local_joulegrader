@@ -169,10 +169,11 @@ class mod_assign_submissions extends gradingarea_abstract {
      */
     public static function include_area(\course_modinfo $courseinfo, \grading_manager $gradingmanager, $needsgrading = false,
             $currentgroup = 0) {
-        global $DB, $CFG;
+        global $USER, $DB, $CFG;
         $include = false;
 
         try {
+            require_once($CFG->libdir.'/gradelib.php');
             list($cm, $assignment) = self::get_assign_info($gradingmanager);
             $cminfo = $courseinfo->get_cm($cm->id);
             if (has_capability('moodle/course:viewhiddenactivities', $gradingmanager->get_context()) || ($cminfo->available && $cm->visible)) {
@@ -183,8 +184,10 @@ class mod_assign_submissions extends gradingarea_abstract {
                 $include = false;
             }
 
+            $context = \context_module::instance($cm->id);
+
             // Check to see if it should be included based on whether the needs grading button was selected.
-            if (!empty($include) && !empty($needsgrading) && has_capability(self::$teachercapability, \context_module::instance($cm->id))) {
+            if (!empty($include) && !empty($needsgrading) && has_capability(self::$teachercapability, $context)) {
                 // Needs to be limited by "needs grading".
                 // Check for submissions that do not have a grade yet.
 
@@ -197,7 +200,9 @@ class mod_assign_submissions extends gradingarea_abstract {
                              WHERE s.assignment = :assignid
                                AND s.timemodified IS NOT NULL
                                AND s.userid = :groupuserid
-                               AND s.status = :submissionstatus';
+                               AND s.status = :submissionstatus
+                               -- limit to latest submissions
+                               AND latest = 1';
 
                     $params = array('assignid' => $assignment->id, 'groupuserid' => 0, 'submissionstatus' => ASSIGN_SUBMISSION_STATUS_SUBMITTED);
                     $submissions = $DB->get_records_sql($sql, $params);
@@ -245,7 +250,9 @@ class mod_assign_submissions extends gradingarea_abstract {
                            AND s.timemodified IS NOT NULL
                            AND s.status = :status
                            AND s.userid <> 0
-                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL OR g.grade = -1)";
+                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL OR g.grade = -1)
+                           -- limit to latest submissions
+                           AND s.latest = 1";
 
                     $params = array('assign' => $assignment->id, 'status' => ASSIGN_SUBMISSION_STATUS_SUBMITTED);
                     $params = array_merge($params, $enrolparams);
@@ -258,6 +265,10 @@ class mod_assign_submissions extends gradingarea_abstract {
                         $include = false;
                     }
                 }
+            } else if ($include && !has_capability(self::$teachercapability, $context)) {
+                if (self::should_hide_from_nongrader('assign', $assignment->id, $courseinfo->courseid, $USER->id)) {
+                    $include = false;
+                };
             }
         } catch (\Exception $e) {
             //don't need to do anything
@@ -344,7 +355,8 @@ class mod_assign_submissions extends gradingarea_abstract {
                     // Check for submissions for this assignment that have timemarked < timemodified for all the users passed.
                     list($inorequals, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
 
-                    //check for submissions that do not have a grade yet
+                    // Check for submissions that do not have a grade yet.
+                    // Add latest field check to ensure latest attempt is graded.
                     $sql = "SELECT s.userid
                           FROM {assign_submission} s
                      LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid AND s.attemptnumber = g.attemptnumber
@@ -352,6 +364,7 @@ class mod_assign_submissions extends gradingarea_abstract {
                            AND s.status = :status
                            AND s.userid $inorequals
                            AND s.timemodified IS NOT NULL
+                           AND s.latest = 1
                            AND (s.timemodified > g.timemodified OR g.timemodified IS NULL OR g.grade = -1)";
 
                     $params['assignid'] = $assignment->id;

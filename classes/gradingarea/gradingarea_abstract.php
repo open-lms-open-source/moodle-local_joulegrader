@@ -216,6 +216,45 @@ abstract class gradingarea_abstract {
     }
 
     /**
+     * @param $itemmodule
+     * @param $iteminstance
+     * @param $courseid
+     * @param $userid
+     * @return bool
+     */
+    protected static function should_hide_from_nongrader($itemmodule, $iteminstance, $courseid, $userid) {
+        global $CFG;
+
+        $shouldhide = false;
+
+        // Check to see if this area is related to a hidden grade item.
+        require_once($CFG->libdir . '/grade/constants.php');
+        require_once($CFG->libdir . '/grade/grade_item.php');
+
+        $gradeitem = \grade_item::fetch(array(
+            'itemtype'     => 'mod',
+            'itemmodule'   => $itemmodule,
+            'iteminstance' => $iteminstance,
+            'courseid'     => $courseid,
+            'itemnumber'   => 0,
+        ));
+
+        if (!empty($gradeitem) and !empty($gradeitem->hidden)) {
+            $shouldhide = true;
+        } else {
+            // Check if the individual grade is hidden.
+            $grades = grade_get_grades($courseid, 'mod', $itemmodule, $iteminstance, $userid);
+            if (!empty($grades) and !empty($grades->items[0]->grades[$userid])
+                    and !empty($grades->items[0]->grades[$userid]->hidden)) {
+
+                $shouldhide = true;
+            }
+        }
+
+        return $shouldhide;
+    }
+
+    /**
      * @param \local_joulegrader\utility\users $userutility
      */
     public function current_user($userutility) {

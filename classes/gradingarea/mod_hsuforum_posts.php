@@ -54,7 +54,7 @@ class mod_hsuforum_posts extends gradingarea_abstract {
      */
     public static function include_area(\course_modinfo $courseinfo, \grading_manager $gradingmanager, $needsgrading = false,
                 $currentgroup = 0) {
-        global $CFG, $DB;
+        global $USER, $CFG, $DB;
         $include = false;
 
         require_once($CFG->dirroot.'/mod/hsuforum/lib.php');
@@ -70,7 +70,7 @@ class mod_hsuforum_posts extends gradingarea_abstract {
                 $include = true;
             }
 
-            //check to see if it should be included based on whether the needs grading button was selected
+            // Check to see if it should be included based on whether the needs grading button was selected.
             if ($include and $needsgrading and has_capability(self::$teachercapability, $context)) {
                 // Determine if the student is missing a grade and has posts for grading...
                 $userids = get_enrolled_users($context, '', 0, 'u.id');
@@ -97,6 +97,10 @@ class mod_hsuforum_posts extends gradingarea_abstract {
                         }
                     }
                 }
+            } else if ($include && !has_capability(self::$teachercapability, $context)) {
+                if (self::should_hide_from_nongrader('hsuforum', $forum->id, $courseinfo->courseid, $USER->id)) {
+                    $include = false;
+                };
             }
         } catch (\Exception $e) {
             //don't need to do anything

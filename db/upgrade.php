@@ -74,4 +74,6 @@ function xmldb_local_joulegrader_upgrade($oldversion) {
         // Joule grader savepoint reached.
         upgrade_plugin_savepoint(true, 2013053000, 'local', 'joulegrader');
     }
+
+    return true;
 }

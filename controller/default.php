@@ -90,7 +90,7 @@ class local_joulegrader_controller_default extends mr_controller {
      * @return string - the html for the view action
      */
     public function view_action() {
-        global $OUTPUT, $PAGE, $COURSE;
+        global $OUTPUT, $PAGE, $COURSE, $USER, $DB;
 
         //check for mobile browsers (currently not supported)
         if (core_useragent::get_device_type() == 'mobile') {
@@ -115,16 +115,11 @@ class local_joulegrader_controller_default extends mr_controller {
         //initialize the navigation
         $navutil = new navigation($usersutility, $gareasutility);
 
-        // Set defaults for log values.
-        $cm = 0;
-        $urlparams = array();
-        $urlparams[] = 'courseid='.$COURSE->id;
-        //if the current user id and the current area id are not empty, load the class and get the pane contents
+        // If the current user id and the current area id are not empty, load the class and get the pane contents.
         /** @var local_joulegrader_renderer $renderer */
         $renderer = $PAGE->get_renderer('local_joulegrader');
         if (!empty($currentareaid) && !empty($currentuserid)) {
-
-            //load the current area instance
+            // Load the current area instance.
             if (!isset($this->gradeareainstance)) {
                 $gradeareainstance = $gareasutility::get_gradingarea_instance($currentareaid, $currentuserid);
                 $gradeareainstance->current_user($usersutility);
@@ -135,8 +130,6 @@ class local_joulegrader_controller_default extends mr_controller {
             $context = $gradeareainstance->get_gradingmanager()->get_context();
             $context = context::instance_by_id($context->id);
             $cm = $context->instanceid;
-            $urlparams[] = 'guser='.$currentuserid;
-            $urlparams[] = 'garea='.$currentareaid;
 
             $preferences = new mr_preferences($COURSE->id, 'local_joulegrader');
             $preferences->set('previousarea', $currentareaid);
@@ -204,8 +197,18 @@ class local_joulegrader_controller_default extends mr_controller {
         //wrap it all up
         $output = $OUTPUT->container($output, 'yui3-g', 'local-joulegrader');
 
-        $logurl = 'view.php?'.implode('&', $urlparams);
-        add_to_log($COURSE->id, 'local_joulegrader', 'view', $logurl, "Viewed joule Grader", $cm);
+        // Log an event.
+        if (empty($context)) {
+            $context = context_course::instance($COURSE->id);
+        }
+        $event = \local_joulegrader\event\grader_viewed::create(array(
+            'other' => array(
+                'userid' => $currentuserid,
+                'areaid' => $currentareaid
+            ),
+            'context' => $context
+        ));
+        $event->trigger();
 
         //return all of that
         return $output;
@@ -272,9 +275,16 @@ class local_joulegrader_controller_default extends mr_controller {
         $context = $gradeareainstance->get_gradingmanager()->get_context();
         $context = context::instance_by_id($context->id);
         $cm = $context->instanceid;
-        $logurl = "view.php?courseid=$COURSE->id&guser=$currentuserid&garea=$currentareaid";
 
-        add_to_log($COURSE->id, 'local_joulegrader', 'grade', $logurl, 'Graded via joule Grader', $cm);
+        // Log an event.
+        $event = \local_joulegrader\event\activity_graded::create(array(
+            'other' => array(
+                'userid' => $currentuserid,
+                'areaid' => $currentareaid
+            ),
+            'context' => $context
+        ));
+        $event->trigger();
 
         if (!empty($modalform) && $modalform->is_submitted()) {
             $formdata = $modalform->get_data();
@@ -310,27 +320,8 @@ class local_joulegrader_controller_default extends mr_controller {
             // Require sesskey.
             require_sesskey();
 
-            $groupsutility = new groups($this->get_context());
-            /** @var gradingareas $gareasutility */
-            $gareasutility = new gradingareas($this->get_context(), $currentareaid, 0, $groupsutility);
-
-            // Make sure that the area passed from the form matches what is determined by the areas utility.
-            if ($currentareaid != $gareasutility->get_current()) {
-                //should not get here unless ppl are messing with form data
-                throw new moodle_exception('areaidpassednotvalid', 'local_joulegrader');
-            }
-
-            // Just need prime the utility for the currentuser() and nextuser() calls.
-            $usersutility = new users($gareasutility, $this->get_context(), $currentuserid, $groupsutility);
-
-            // Make sure the passed user and passed area match what is available.
-            if ($currentuserid != $usersutility->get_current()) {
-                // There is some funny business going on here.
-                throw new moodle_exception('useridpassednotvalid', 'local_joulegrader');
-            }
-
             // Load the current area instance.
-            $gradeareainstance = $gareasutility::get_gradingarea_instance($currentareaid, $currentuserid);
+            $gradeareainstance = gradingareas::get_gradingarea_instance($currentareaid, $currentuserid);
 
             /**
              * @var local_joulegrader\comment_loop $commentloop
@@ -347,9 +338,16 @@ class local_joulegrader_controller_default extends mr_controller {
                 $context = $gradeareainstance->get_gradingmanager()->get_context();
                 $context = context::instance_by_id($context->id);
                 $cm = $context->instanceid;
-                $logurl = "view.php?courseid=$COURSE->id&guser=$currentuserid&garea=$currentareaid";
 
-                add_to_log($COURSE->id, 'local_joulegrader', 'comment deleted', $logurl, 'Comment deleted in Joule Grader', $cm);
+                // Log an event.
+                $event = \local_joulegrader\event\comment_deleted::create(array(
+                    'other' => array(
+                        'userid' => $currentuserid,
+                        'areaid' => $currentareaid
+                    ),
+                    'context' => $context
+                ));
+                $event->trigger();
             }
 
             if (!$isajaxrequest) {
@@ -401,26 +399,8 @@ class local_joulegrader_controller_default extends mr_controller {
             $currentareaid = required_param('garea', PARAM_INT);
             $currentuserid = required_param('guser', PARAM_INT);
 
-            $groupsutility = new groups($this->get_context());
-            /** @var gradingareas $gareasutility */
-            $gareasutility = new gradingareas($this->get_context(), $currentareaid, 0, $groupsutility);
-
-            // Make sure that the area passed from the form matches what is determined by the areas utility.
-            if ($currentareaid != $gareasutility->get_current()) {
-                //should not get here unless ppl are messing with form data
-                throw new moodle_exception('areaidpassednotvalid', 'local_joulegrader');
-            }
-
-            $usersutility = new users($gareasutility, $this->get_context(), $currentuserid, $groupsutility);
-
-            //make sure the passed user and passed area match what is available
-            if ($currentuserid != $usersutility->get_current()) {
-                //there is some funny business going on here
-                throw new moodle_exception('useridpassednotvalid', 'local_joulegrader');
-            }
-
             //load the current area instance
-            $gradeareainstance = $gareasutility::get_gradingarea_instance($currentareaid, $currentuserid);
+            $gradeareainstance = gradingareas::get_gradingarea_instance($currentareaid, $currentuserid);
 
             /**
              * @var \local_joulegrader\comment_loop $commentloop
@@ -443,9 +423,16 @@ class local_joulegrader_controller_default extends mr_controller {
                 $context = $gradeareainstance->get_gradingmanager()->get_context();
                 $context = context::instance_by_id($context->id);
                 $cm = $context->instanceid;
-                $logurl = "view.php?courseid=$COURSE->id&guser=$currentuserid&garea=$currentareaid";
 
-                add_to_log($COURSE->id, 'local_joulegrader', 'comment added', $logurl, 'Comment made in Joule Grader', $cm);
+                // Log an event.
+                $event = \local_joulegrader\event\comment_added::create(array(
+                    'other' => array(
+                        'userid' => $currentuserid,
+                        'areaid' => $currentareaid
+                    ),
+                    'context' => $context
+                ));
+                $event->trigger();
             }
 
             if (!$isajaxrequest) {
