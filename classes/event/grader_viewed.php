@@ -60,7 +60,7 @@ class grader_viewed extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '{$this->userid}' viewed the Joule Grader for the course with id '{$this->courseid}' " .
-            "with grading area id '{$this->other['areaid']}' and user id '{$this->other['userid']}'.";
+            "with grading area id '{$this->other['areaid']}' and user id '{$this->relateduserid}'.";
     }
 
     /**
@@ -73,13 +73,20 @@ class grader_viewed extends \core\event\base {
     }
 
     /**
+     * @return array
+     */
+    public static function get_other_mapping() {
+        return ['areaid' => ['db' => 'grading_areas', 'restore' => 'grading_area']];
+    }
+
+    /**
      * Get the URL related to this action
      *
      * @return \moodle_url
      */
     public function get_url() {
         return new \moodle_url('/local/joulegrader/view.php?', array(
-            'guser'    => $this->other['userid'],
+            'guser'    => $this->relateduserid,
             'garea'    => $this->other['areaid'],
             'courseid' => $this->courseid,
         ));

@@ -203,9 +203,9 @@ class local_joulegrader_controller_default extends mr_controller {
         }
         $event = \local_joulegrader\event\grader_viewed::create(array(
             'other' => array(
-                'userid' => $currentuserid,
                 'areaid' => $currentareaid
             ),
+            'relateduserid' => $currentuserid,
             'context' => $context
         ));
         $event->trigger();
@@ -279,9 +279,9 @@ class local_joulegrader_controller_default extends mr_controller {
         // Log an event.
         $event = \local_joulegrader\event\activity_graded::create(array(
             'other' => array(
-                'userid' => $currentuserid,
                 'areaid' => $currentareaid
             ),
+            'relateduserid' => $currentuserid,
             'context' => $context
         ));
         $event->trigger();
@@ -342,9 +342,9 @@ class local_joulegrader_controller_default extends mr_controller {
                 // Log an event.
                 $event = \local_joulegrader\event\comment_deleted::create(array(
                     'other' => array(
-                        'userid' => $currentuserid,
                         'areaid' => $currentareaid
                     ),
+                    'relateduserid' => $currentuserid,
                     'context' => $context
                 ));
                 $event->trigger();
@@ -427,9 +427,9 @@ class local_joulegrader_controller_default extends mr_controller {
                 // Log an event.
                 $event = \local_joulegrader\event\comment_added::create(array(
                     'other' => array(
-                        'userid' => $currentuserid,
                         'areaid' => $currentareaid
                     ),
+                    'relateduserid' => $currentuserid,
                     'context' => $context
                 ));
                 $event->trigger();
