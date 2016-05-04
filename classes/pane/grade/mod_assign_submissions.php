@@ -640,7 +640,7 @@ class mod_assign_submissions extends grade_abstract {
             $allowgradedecimals = $assignment->get_instance()->grade > 0;
             $this->controller->set_grade_range($gradesmenu, $allowgradedecimals);
             $usergrade->grade = $gradinginstance->submit_and_get_grade($data->grade, $usergrade->id);
-            $this->update_outcome_attempts($usergrade->userid);
+            $gradinginstance->update_outcome_attempts($usergrade->userid);
         } else {
             // The grade has already been processed in the process method.
             $usergrade->grade = $data->grade;
@@ -1075,83 +1075,5 @@ class mod_assign_submissions extends grade_abstract {
         $result = $DB->update_record('assign_submission', $submission) && $result;
 
         return $result;
-    }
-
-    public function generate_outcome_attempts() {
-        $attempts = array();
-        $gradevar = $this->get_rubric_filling();
-
-        foreach ($gradevar['criteria'] as $criterionid => $record) {
-            $criterion = $this->get_controller()->get_definition()->rubric_criteria[$criterionid];
-            if (empty($criterion['outcomeid'])) {
-                continue;
-            }
-            $scores = array();
-            foreach ($criterion['levels'] as $level) {
-                $scores[] = $level['score'];
-            }
-            $maxgrade = max($scores);
-            $mingrade = min($scores);
-            $rawgrade = $criterion['levels'][$record['levelid']]['score'];
-
-            $id = \core_outcome\service::area()->get_used_area_id(
-                'gradingform_rubric',
-                'criterion',
-                $criterionid,
-                $this->get_controller()->get_context()->instanceid
-            );
-            $attempt = new \core_outcome\model\attempt_model();
-            $attempt->outcomeusedareaid = $id;
-            $attempt->mingrade = $mingrade;
-            $attempt->maxgrade = $maxgrade;
-            $attempt->rawgrade = $rawgrade;
-            $attempt->percentgrade = (($rawgrade - $mingrade) / ($maxgrade - $mingrade)) * 100;
-
-            $attempts[] = $attempt;
-        }
-        return $attempts;
-    }
-
-    public function get_rubric_filling() {
-        global $DB;
-            $records = $DB->get_records('gradingform_rubric_fillings', array('instanceid' => $this->get_data('id')));
-            $rubric = array('criteria' => array());
-            foreach ($records as $record) {
-                $rubric['criteria'][$record->criterionid] = (array)$record;
-            }
-        return $rubric;
-    }
-
-    public function get_data($key) {
-        $refclass = new \ReflectionClass("gradingform_instance");
-        $property = $refclass->getProperty("data");
-        $property->setAccessible(true);
-        $instanceinfo = $property->getValue($this->gradinginstance);
-        $finaldata = $instanceinfo->$key;
-        return $finaldata;
-    }
-
-    public function update_outcome_attempts($userids) {
-        global $CFG;
-
-        if (empty($CFG->core_outcome_enable)) {
-            return; // Turned off.
-        }
-
-        if (!is_array($userids)) {
-            $userids = array($userids);
-        }
-
-        $time = $this->get_data('timemodified');
-        $attempts = $this->generate_outcome_attempts();
-        foreach ($attempts as $attempt) {
-            if (empty($attempt->timecreated)) {
-                $attempt->timecreated = $time;
-            }
-            foreach ($userids as $userid) {
-                $attempt->userid = $userid;
-                \core_outcome\service::attempt()->save_attempt($attempt);
-            }
-        }
     }
 }
