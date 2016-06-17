@@ -55,6 +55,11 @@ class mod_assign_submissions extends gradingarea_abstract {
     protected $submission;
 
     /**
+     * @var int - submission extension time.
+     */
+    protected $submissionextension = null;
+
+    /**
      * @var array
      */
     protected static $supportedsubmissionplugins = array(
@@ -543,6 +548,14 @@ class mod_assign_submissions extends gradingarea_abstract {
         return $this->submission;
     }
 
+    public function get_submission_extension() {
+        if (is_null($this->submissionextension)) {
+            $this->submissionextension = $this->load_submission_extension();
+        }
+
+        return $this->submissionextension;
+    }
+
     /**
      * @return \stdClass
      */
@@ -598,6 +611,23 @@ class mod_assign_submissions extends gradingarea_abstract {
         }
 
         return $submission;
+    }
+
+    /**
+     * Loads and returns the extension time. 0 for no extension.
+     *
+     * @return int
+     */
+    protected function load_submission_extension() {
+        $assign = $this->get_assign();
+
+        $userflags = $assign->get_user_flags($this->guserid, false);
+
+        if ($userflags && !empty($userflags->extensionduedate)) {
+            return $userflags->extensionduedate;
+        } else {
+            return 0;
+        }
     }
 
     /**

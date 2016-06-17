@@ -609,18 +609,27 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
             $html .= $attemptmenu;
 
-            // Determine if we need to display a late submission message.
-            $lateby = '';
-            if (!empty($submission) && (!empty($submission->timemodified)) && !empty($assignment->get_instance()->duedate)
-                    && ($assignment->get_instance()->duedate < $submission->timemodified)) {
-                // Format the lateness time and get the message.
-                $lateby = format_time($submission->timemodified - $assignment->get_instance()->duedate);
-                $lateby = html_writer::tag('div', get_string('assign23-latesubmission', 'local_joulegrader', $lateby));
+            $due = $assignment->get_instance()->duedate;
+            $extension = $gradingarea->get_submission_extension();
+
+            if (!empty($extension)) {
+                $userdate = userdate($extension);
+                $userdate = get_string('assign23-userextensiondate', 'local_joulegrader', $userdate);
+                $attemptstatus .= html_writer::tag('div', $userdate);
+                $due = $extension;
             }
 
-            if (!empty($attemptstatus) or !empty($lateby)) {
+            // Determine if we need to display a late submission message.
+            if ((!empty($submission)) && $submission->status != ASSIGN_SUBMISSION_STATUS_NEW
+                    && (!empty($submission->timemodified)) && !empty($due) && ($due < $submission->timemodified)) {
+                // Format the lateness time and get the message.
+                $lateby = format_time($submission->timemodified - $due);
+                $attemptstatus .= html_writer::tag('div', get_string('assign23-latesubmission', 'local_joulegrader', $lateby));
+            }
+
+            if (!empty($attemptstatus)) {
                 $assignmentstatus = html_writer::tag('legend', get_string('assignmentstatus', 'local_joulegrader'));
-                $html .= html_writer::tag('fieldset', $assignmentstatus . $attemptstatus . $lateby, array('class' => 'fieldset'));
+                $html .= html_writer::tag('fieldset', $assignmentstatus . $attemptstatus, array('class' => 'fieldset'));
             }
 
             if (!empty($submission)) {
