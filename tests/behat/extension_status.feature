@@ -44,7 +44,7 @@ Feature: Teachers see the correct extension and late status.
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment1"
-    When I follow "View/grade all submissions"
+    When I follow "View all submissions"
     And I click on "Edit" "link" in the "Student 1" "table_row"
     And I follow "Grant extension"
     And I set the field "Enable" to "1"
