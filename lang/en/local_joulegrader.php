@@ -66,6 +66,7 @@ $string['on'] = 'on {$a}';
 $string['until'] = 'until {$a}';
 $string['lastedited'] = 'Last edited on {$a}';
 $string['assign23-latesubmission'] = 'This submission was late by {$a}.';
+$string['assign23-userextensiondate'] = 'Extension granted until: {$a}';
 $string['downloadall'] = 'Download all files';
 $string['download'] = 'download';
 $string['viewinline'] = 'view inline';
