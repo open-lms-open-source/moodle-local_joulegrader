@@ -71,7 +71,7 @@ class users extends loopable_abstract {
 
         $gradebookroles = explode(',', $CFG->gradebookroles);
         // Specify the ra.id field to stop debugging message.
-        $gradebookusers = get_role_users($gradebookroles, $context, true, 'ra.id, u.id as userid');
+        $gradebookusers = get_role_users($gradebookroles, $context, true, 'ra.id, u.id as userid', 'ra.id');
 
         $tmp = array();
         foreach ($gradebookusers as $u) {
