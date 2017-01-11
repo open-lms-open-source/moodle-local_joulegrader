@@ -552,7 +552,8 @@ class local_joulegrader_controller_default extends mr_controller {
             if ($USER->id === $submission->userid) {
                 $user = $USER;
             } else {
-                $user = $DB->get_record('user', array('id' => $submission->userid), 'id, firstname, lastname', MUST_EXIST);
+                $user = $DB->get_record('user', array('id' => $submission->userid), 'id, firstname, lastname, alternatename,
+                    middlename, lastnamephonetic, firstnamephonetic', MUST_EXIST);
             }
 
             if (!empty($assign->blindmarking) && empty($assign->revealidentities)) {
