@@ -74,6 +74,7 @@ class local_joulegrader_comment_testcase extends advanced_testcase {
         $comment = new stdClass();
         $comment->content = 'Hi, that was a good forum post.';
         $comment->userid = $teacher->id;
+        $comment->contextid = $context->id;
 
         $sink = $this->redirectMessages();
         mod_hsuforum_comment_message($comment, $options);
@@ -98,6 +99,7 @@ class local_joulegrader_comment_testcase extends advanced_testcase {
         $comment = new stdClass();
         $comment->content = 'Thank you.';
         $comment->userid = $student->id;
+        $comment->contextid = $context->id;
 
         $sink = $this->redirectMessages();
         mod_hsuforum_comment_message($comment, $options);
