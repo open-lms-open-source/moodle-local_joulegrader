@@ -44,14 +44,15 @@ Feature: Teachers see the correct extension and late status.
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment1"
-    When I follow "View all submissions"
+    And I navigate to "View all submissions" in current page administration
     And I click on "Edit" "link" in the "Student 1" "table_row"
     And I follow "Grant extension"
     And I set the field "Enable" to "1"
     And I set the field "extensionduedate[year]" to "2050"
     And I press "Save changes"
     Then I should see "Extension granted until:" in the "Student 1" "table_row"
-    And I navigate to "Joule Grader" node in "Course administration"
+    And I follow "Course 1"
+    And I navigate to "Joule Grader" in current page administration
     And I wait until the page is ready
     And I select "Student 1" from the "guser" singleselect
     Then I should see "Extension granted until:"
@@ -78,7 +79,7 @@ Feature: Teachers see the correct extension and late status.
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Joule Grader" node in "Course administration"
+    And I navigate to "Joule Grader" in current page administration
     And I wait until the page is ready
     And I select "Student 1" from the "guser" singleselect
     Then I should see "Extension granted until:"

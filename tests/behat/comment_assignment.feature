@@ -44,7 +44,7 @@ Feature: Teachers and students can comment on a student's assignment.
   Scenario: A student can comment on their own assignment:
     Given I log in as "student1"
     And I follow "Course 1"
-    And I follow "Joule Grader"
+    And I navigate to "Joule Grader" in current page administration
     And I wait until the page is ready
     And I set editable div ".local_joulegrader_commentloop .editor_atto_content" "css_element" to "Here is a comment on my paper"
     And I press "Save comment"
@@ -55,7 +55,7 @@ Feature: Teachers and students can comment on a student's assignment.
   Scenario: A teacher can comment on a student's assignment
     Given I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Joule Grader"
+    And I navigate to "Joule Grader" in current page administration
     And I wait until the page is ready
     And I select "Student 1" from the "guser" singleselect
     And I set editable div ".local_joulegrader_commentloop .editor_atto_content" "css_element" to "Good job on your paper"
