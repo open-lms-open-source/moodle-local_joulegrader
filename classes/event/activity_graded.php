@@ -60,7 +60,7 @@ class activity_graded extends \core\event\base {
      * @return string the description of the event
      */
     public function get_description() {
-        return "The user with id '{$this->userid}' graded an activity using Joule Grader in the course with id '{$this->courseid}' " .
+        return "The user with id '{$this->userid}' graded an activity using Moodlerooms Grader in the course with id '{$this->courseid}' " .
             "with grading area id '{$this->other['areaid']}' and user id '{$this->relateduserid}'.";
     }
 
@@ -105,7 +105,7 @@ class activity_graded extends \core\event\base {
             'local_joulegrader',
             'grade',
             $this->get_url()->out(false),
-            'Graded via Joule Grader',
+            'Graded via Moodlerooms Grader',
             $this->contextid,
         );
     }

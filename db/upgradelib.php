@@ -84,7 +84,7 @@ class local_joulegrader_comments_upgrader {
                     $commentupgrader->upgrade($crecord);
                 } catch (Exception $e) {
                     $expmsg = $e->getMessage();
-                    debugging("Couldn't upgrade joule grader comment with id = $crecord->id. Exception message: $expmsg", DEBUG_ALL);
+                    debugging("Couldn't upgrade Moodlerooms grader comment with id = $crecord->id. Exception message: $expmsg", DEBUG_ALL);
                     continue;
                 }
             }

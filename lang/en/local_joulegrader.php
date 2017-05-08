@@ -23,18 +23,18 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Joule Grader';
+$string['pluginname'] = 'Moodlerooms Grader';
 
 //access.php strings
-$string['joulegrader:grade'] = 'Grade work via Joule Grader';
-$string['joulegrader:view'] = 'View graded work via Joule Grader';
+$string['joulegrader:grade'] = 'Grade work via Moodlerooms Grader';
+$string['joulegrader:view'] = 'View graded work via Moodlerooms Grader';
 
 //default.php strings
 $string['gradebook'] = 'Gradebook';
 $string['nothingtodisplay'] = 'Nothing to Display';
 $string['needsgrading'] = 'Show Activities Requiring Grading';
 $string['allactivities'] = 'Show All Activities';
-$string['mobilenotsupported'] = 'Joule Grader does not currently support mobile browsers';
+$string['mobilenotsupported'] = 'Moodlerooms Grader does not currently support mobile browsers';
 $string['exitfullscreen'] = 'Exit full screen mode';
 $string['fullscreen'] = 'Full screen mode';
 $string['returncourse'] = 'Return to course';
@@ -122,7 +122,7 @@ $string['commentloop'] = 'Comment Loop';
 $string['notreleased'] = 'Assignment grade not released yet';
 
 // Event strings.
-$string['eventgraderviewed']   = 'Joule Grader viewed';
-$string['eventactivitygraded'] = 'Activity graded in Joule Grader';
-$string['eventcommentdeleted'] = 'Comment deleted in Joule Grader';
-$string['eventcommentadded']   = 'Comment added in Joule Grader';
+$string['eventgraderviewed']   = 'Moodlerooms Grader viewed';
+$string['eventactivitygraded'] = 'Activity graded in Moodlerooms Grader';
+$string['eventcommentdeleted'] = 'Comment deleted in Moodlerooms Grader';
+$string['eventcommentadded']   = 'Comment added in Moodlerooms Grader';

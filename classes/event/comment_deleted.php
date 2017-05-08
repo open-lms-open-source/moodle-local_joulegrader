@@ -60,7 +60,7 @@ class comment_deleted extends \core\event\base {
      * @return string the description of the event
      */
     public function get_description() {
-        return "The user with id '{$this->userid}' deleted a comment using Joule Grader in the course with id '{$this->courseid}' " .
+        return "The user with id '{$this->userid}' deleted a comment using Moodlerooms Grader in the course with id '{$this->courseid}' " .
             "with grading area id '{$this->other['areaid']}' and user id '{$this->relateduserid}'.";
     }
 
@@ -105,7 +105,7 @@ class comment_deleted extends \core\event\base {
             'local_joulegrader',
             'comment deleted',
             $this->get_url()->out(false),
-            'Comment deleted in Joule Grader',
+            'Comment deleted in Moodlerooms Grader',
             $this->contextid,
         );
     }

@@ -60,7 +60,7 @@ class comment_added extends \core\event\base {
      * @return string the description of the event
      */
     public function get_description() {
-        return "The user with id '{$this->userid}' added a comment using Joule Grader in the course with id '{$this->courseid}' " .
+        return "The user with id '{$this->userid}' added a comment using Moodlerooms Grader in the course with id '{$this->courseid}' " .
             "with grading area id '{$this->other['areaid']}' and user id '{$this->relateduserid}'.";
     }
 
@@ -105,7 +105,7 @@ class comment_added extends \core\event\base {
             'local_joulegrader',
             'comment added',
             $this->get_url()->out(false),
-            'Comment made in Joule Grader',
+            'Comment made in Moodlerooms Grader',
             $this->contextid,
         );
     }
