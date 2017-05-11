@@ -377,7 +377,7 @@ class gradingareas extends loopable_abstract {
     }
 
     /**
-     * Checks for assignments and advanced forums that don't have grading area records
+     * Checks for assignments and Moodlerooms forums that don't have grading area records
      *
      * @ Todo: caching; make dynamic for other components (activities) and areanames
      */
