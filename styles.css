@@ -202,3 +202,14 @@
 #local-joulegrader-viewpane .local_joulegrader-hsuforum-showposts {
     margin-bottom: .5em;
 }
+
+#local-joulegrader-gradepane .local_joulegrader_simplegrading .fitem .col-md-3 {
+    width: 100%;
+}
+
+#local-joulegrader-gradepane .fieldset .fitem label,
+#local-joulegrader-gradepane .fieldset .fitem div.form-control-static,
+#local-joulegrader-gradepane .fieldset .fitem span.d-inline-block {
+    white-space: nowrap;
+    font-weight: bold;
+}
