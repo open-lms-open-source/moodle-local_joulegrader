@@ -852,8 +852,8 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         $mediarenderer = $PAGE->get_renderer('core', 'media');
         $embedoptions = array(
-            core_media::OPTION_TRUSTED => true,
-            core_media::OPTION_BLOCK => true,
+            core_media_manager::OPTION_TRUSTED => true,
+            core_media_manager::OPTION_BLOCK => true,
         );
 
         if (file_mimetype_in_typegroup($mimetype, 'web_image') || $mimetype == 'image/bmp') {  // It's an image
