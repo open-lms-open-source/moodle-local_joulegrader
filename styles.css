@@ -213,3 +213,10 @@
     white-space: nowrap;
     font-weight: bold;
 }
+
+#page-local-joulegrader-view .assignfeedback_editpdf_widget .drawingregion {
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+}
