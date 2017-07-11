@@ -220,3 +220,7 @@
     top: auto;
     bottom: auto;
 }
+
+#page-local-joulegrader-view .fdescription.required, .initialism.text-danger {
+    display: none;
+}
