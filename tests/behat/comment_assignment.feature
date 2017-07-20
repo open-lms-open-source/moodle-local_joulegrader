@@ -43,7 +43,7 @@ Feature: Teachers and students can comment on a student's assignment.
   @javascript
   Scenario: A student can comment on their own assignment:
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Moodlerooms Grader" in current page administration
     And I wait until the page is ready
     And I set editable div ".local_joulegrader_commentloop .editor_atto_content" "css_element" to "Here is a comment on my paper"
@@ -54,7 +54,7 @@ Feature: Teachers and students can comment on a student's assignment.
   @javascript
   Scenario: A teacher can comment on a student's assignment
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Moodlerooms Grader" in current page administration
     And I wait until the page is ready
     And I select "Student 1" from the "guser" singleselect

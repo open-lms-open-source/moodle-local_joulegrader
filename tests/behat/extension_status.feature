@@ -42,7 +42,7 @@ Feature: Teachers see the correct extension and late status.
   @javascript @testing
   Scenario: The teacher sees the correct extension status when grading
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment1"
     And I navigate to "View all submissions" in current page administration
     And I click on "Edit" "link" in the "Student 1" "table_row"
@@ -51,7 +51,7 @@ Feature: Teachers see the correct extension and late status.
     And I set the field "extensionduedate[year]" to "2050"
     And I press "Save changes"
     Then I should see "Extension granted until:" in the "Student 1" "table_row"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Moodlerooms Grader" in current page administration
     And I wait until the page is ready
     And I select "Student 1" from the "guser" singleselect
@@ -62,7 +62,7 @@ Feature: Teachers see the correct extension and late status.
     And I press "Exit full screen mode"
     When I log out 
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment1"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -70,7 +70,7 @@ Feature: Teachers see the correct extension and late status.
     And I press "Save changes"
     And I log out 
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment1"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -78,7 +78,7 @@ Feature: Teachers see the correct extension and late status.
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Moodlerooms Grader" in current page administration
     And I wait until the page is ready
     And I select "Student 1" from the "guser" singleselect
