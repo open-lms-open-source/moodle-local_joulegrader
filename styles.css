@@ -221,6 +221,7 @@
     bottom: auto;
 }
 
-#page-local-joulegrader-view .fdescription.required, .initialism.text-danger {
+#page-local-joulegrader-view .fdescription.required,
+#page-local-joulegrader-view .initialism.text-danger {
     display: none;
 }
