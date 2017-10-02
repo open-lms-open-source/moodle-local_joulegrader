@@ -932,7 +932,9 @@ EOT;
             $filename = $file->get_filename();
             $viewinlinelink = empty($file->viewinlinelink) ? '' : '('.$file->viewinlinelink.')';
             $image = $this->output->pix_icon(file_file_icon($file), $filename, 'moodle', array('class'=>'icon'));
-            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.$filename. ' ' . $viewinlinelink . ' (' . $file->downloadlink.')</div></li>';
+            $plagiarismlinks = $this->help_render_plagiarism($submission, $file, $context->__get('instanceid'));
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.$filename. ' ' . $viewinlinelink . ' (' . $file->downloadlink.
+                ')' . $plagiarismlinks . '</div></li>';
         }
 
         $result .= '</ul>';
@@ -948,5 +950,33 @@ EOT;
      */
     public function help_render_assign_submission_onlinetext($plugin, $assignment, $submission) {
         return $plugin->view($submission);
+    }
+
+    /**
+     * Function to render the plagiarism info for a submission´s file
+     * @param stdClass $submission
+     * @param stdClass $file
+     * @params int $cmid
+     * @return string
+     */
+    private function help_render_plagiarism($submission, $file, $cmid) {
+        global $CFG;
+        $plagiarismlinks = '';
+        if (!empty($CFG->enableplagiarism)) {
+            $plagiarismlinks .= '(';
+            require_once($CFG->libdir . '/plagiarismlib.php');
+            if(defined('BEHAT_SITE_RUNNING')) {
+                $plagiarismlinks .= ' Plagiarism plugin info placeholder)';
+            } else {
+                $plagiarismlinks .= plagiarism_get_links(array(
+                    'userid' => $submission->userid,
+                    'file' => $file,
+                    'cmid' => $cmid,
+                    'assignment' => $submission->assignment));
+                $plagiarismlinks .= ')';
+            }
+        }
+
+        return $plagiarismlinks;
     }
 }
