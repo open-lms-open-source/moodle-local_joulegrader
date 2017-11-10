@@ -89,7 +89,7 @@ Feature: Teachers see the plagiarism plugin info in Joule Grader.
     And I am on the course with shortname "C1"
     And I follow "Topic 1"
     And I click on ".snap-asset-link a" "css_element"
-    Then I should see "Assignment is due"
+    Then I should see "Needs grading"
     And I click on "#admin-menu-trigger" "css_element"
     And I expand "Course administration" node
     And I follow "Moodlerooms Grader"
