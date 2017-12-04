@@ -965,15 +965,14 @@ EOT;
         if (!empty($CFG->enableplagiarism)) {
             $plagiarismlinks .= '(';
             require_once($CFG->libdir . '/plagiarismlib.php');
+            $plagiarismlinks .= plagiarism_get_links(array(
+                'userid' => $submission->userid,
+                'file' => $file,
+                'cmid' => $cmid,
+                'assignment' => $submission->assignment));
+            $plagiarismlinks .= ')';
             if(defined('BEHAT_SITE_RUNNING')) {
-                $plagiarismlinks .= ' Plagiarism plugin info placeholder)';
-            } else {
-                $plagiarismlinks .= plagiarism_get_links(array(
-                    'userid' => $submission->userid,
-                    'file' => $file,
-                    'cmid' => $cmid,
-                    'assignment' => $submission->assignment));
-                $plagiarismlinks .= ')';
+                $plagiarismlinks = '(Plagiarism plugin info placeholder)';
             }
         }
 
