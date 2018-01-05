@@ -640,7 +640,9 @@ class mod_assign_submissions extends grade_abstract {
             $allowgradedecimals = $assignment->get_instance()->grade > 0;
             $this->controller->set_grade_range($gradesmenu, $allowgradedecimals);
             $usergrade->grade = $gradinginstance->submit_and_get_grade($data->grade, $usergrade->id);
-            $gradinginstance->update_outcome_attempts($usergrade->userid);
+            if (method_exists($gradinginstance, 'update_outcome_attempts')) {
+                $gradinginstance->update_outcome_attempts($usergrade->userid);
+            }
         } else {
             // The grade has already been processed in the process method.
             $usergrade->grade = $data->grade;
