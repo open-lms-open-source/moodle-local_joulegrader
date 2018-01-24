@@ -850,7 +850,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         //clicktopen
         $clicktoopen = get_string('clicktoopen2', 'resource', "<a href=\"$downloadurl\">$filename</a>");
 
-        $mediarenderer = $PAGE->get_renderer('core', 'media');
+        $mediarenderer = core_media_manager::instance();
         $embedoptions = array(
             core_media_manager::OPTION_TRUSTED => true,
             core_media_manager::OPTION_BLOCK => true,
