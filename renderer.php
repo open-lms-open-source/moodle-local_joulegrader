@@ -395,7 +395,11 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $gradingmethod = $gradepane->get_gradingarea()->get_active_gradingmethod();
         $teachercap = $gradepane->has_teachercap();
 
-        $buttonatts = array('type' => 'button', 'id' => 'local-joulegrader-preview-button');
+        $buttonatts = array(
+            'type' => 'button',
+            'id' => 'local-joulegrader-preview-button',
+            'class' => 'btn btn-secondary',
+        );
         $role = !empty($teachercap) ? 'teacher' : 'student';
         $viewbutton = html_writer::tag('button', get_string('view' . $gradingmethod . $role, 'local_joulegrader'), $buttonatts);
 
