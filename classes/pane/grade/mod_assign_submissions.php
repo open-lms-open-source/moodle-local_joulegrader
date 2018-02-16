@@ -737,7 +737,7 @@ class mod_assign_submissions extends grade_abstract {
             $gradebookgrade = $this->convert_grade_for_gradebook($usergrade);
 
             $assign = clone $assignment->get_instance();
-            $assign->cmidnumber = $assignment->get_course_module()->id;
+            $assign->cmidnumber = $assignment->get_course_module()->idnumber;
 
             $success = $success && (GRADE_UPDATE_OK == assign_grade_item_update($assign, $gradebookgrade));
         } else if ($success && $override) {
@@ -751,7 +751,7 @@ class mod_assign_submissions extends grade_abstract {
             if (empty($gradeitem)) {
 
                 $params['itemname'] = $assignment->get_instance()->name;
-                $params['idnumber'] = $assignment->get_course_module()->id;
+                $params['idnumber'] = $assignment->get_course_module()->idnumber;
 
                 // Set up additional params for the grade item.
                 if ($assignment->get_instance()->grade > 0) {
