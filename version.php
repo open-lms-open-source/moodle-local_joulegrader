@@ -25,9 +25,9 @@
 
 /** @var object $plugin */
 $plugin->version      = 2017120800;
-$plugin->requires     = 2017051500;
+$plugin->requires     = 2017111300;
 $plugin->component    = 'local_joulegrader';
-$plugin->release      = '3.3.3';
+$plugin->release      = '3.4.1';
 $plugin->maturity     = MATURITY_STABLE;
 $plugin->dependencies = array(
     'mod_hsuforum' => ANY_VERSION,
