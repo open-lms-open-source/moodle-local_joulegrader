@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'مصنف التقدير لـ Joule';
-$string['joulegrader:grade'] = 'يعمل التقدير من خلال مصنف التقدير لـ Joule';
-$string['joulegrader:view'] = 'عرض العمل المُقدر من خلال مصنف التقدير لـ Joule';
+$string['pluginname'] = 'مصنف تقدير Moodlerooms';
+$string['joulegrader:grade'] = 'تقدير العمل من خلال مصنف تقدير Moodlerooms';
+$string['joulegrader:view'] = 'عرض العمل المُقدر من خلال مصنف تقدير Moodlerooms';
 $string['gradebook'] = 'دفتر التقديرات';
 $string['nothingtodisplay'] = 'لا يوجد شيء ليتم عرضه';
 $string['needsgrading'] = 'إظهار الأنشطة التي تتطلب التقدير';
 $string['allactivities'] = 'إظهار جميع الأنشطة';
-$string['mobilenotsupported'] = 'لا يدعم "مصنف التقدير لـ Joule" مستعرضات الأجهزة المحمولة حاليًا';
+$string['mobilenotsupported'] = 'لا يدعم "مصنف تقدير Moodlerooms" مستعرضات الأجهزة المحمولة حاليًّا';
 $string['exitfullscreen'] = 'إنهاء وضع ملء الشاشة';
 $string['fullscreen'] = 'وضع ملء الشاشة';
 $string['returncourse'] = 'الرجوع إلى المقرر الدراسي';
@@ -104,7 +104,7 @@ $string['attachments'] = 'المرفقات';
 $string['commentrequired'] = 'مطلوب تعليق';
 $string['commentloop'] = 'حلقة التعليقات';
 $string['notreleased'] = 'لم يتم إصدار تقدير الواجب بعد';
-$string['eventgraderviewed'] = 'تم عرض مصنف التقدير لـ Joule';
-$string['eventactivitygraded'] = 'تم تقدير النشاط في مصنف التقدير لـ Joule';
-$string['eventcommentdeleted'] = 'تم حذف تعليق في مصنف التقدير لـ Joule';
-$string['eventcommentadded'] = 'تم إضافة تعليق في مصنف التقدير لـ Joule';
+$string['eventgraderviewed'] = 'تم عرض مصنف تقدير Moodlerooms';
+$string['eventactivitygraded'] = 'تم تقدير النشاط في مصنف تقدير Moodlerooms';
+$string['eventcommentdeleted'] = 'تم حذف تعليق في مصنف تقدير Moodlerooms';
+$string['eventcommentadded'] = 'تم إضافة تعليق في مصنف تقدير Moodlerooms';
