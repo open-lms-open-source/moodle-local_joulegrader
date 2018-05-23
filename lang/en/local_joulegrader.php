@@ -126,3 +126,11 @@ $string['eventgraderviewed']   = 'Moodlerooms Grader viewed';
 $string['eventactivitygraded'] = 'Activity graded in Moodlerooms Grader';
 $string['eventcommentdeleted'] = 'Comment deleted in Moodlerooms Grader';
 $string['eventcommentadded']   = 'Comment added in Moodlerooms Grader';
+
+// Privacy strings.
+$string['privacy:metadata:preference:fullscreen'] = 'Whether or not a user have the grader in fullscreen';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'Whether or not a user groups the Moodlerooms forums when grading them';
+$string['privacy:request:preference:fullscreenyes'] = 'The user prefers the Moodlerooms grader in fullscreen';
+$string['privacy:request:preference:fullscreenno'] = 'The user prefers the Moodlerooms grader in normal view';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'The user prefers the Moodlerooms forums to be grouped when grading them';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'The user prefers the Moodlerooms forums not to be grouped when grading them';

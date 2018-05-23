@@ -24,7 +24,7 @@
  */
 
 /** @var object $plugin */
-$plugin->version      = 2017120800;
+$plugin->version      = 2018052300;
 $plugin->requires     = 2017111300;
 $plugin->component    = 'local_joulegrader';
 $plugin->release      = '3.4.1';

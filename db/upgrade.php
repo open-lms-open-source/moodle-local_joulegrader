@@ -75,5 +75,17 @@ function xmldb_local_joulegrader_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013053000, 'local', 'joulegrader');
     }
 
+    if ($oldversion < 2018052300) {
+
+        // Comments were migrated to core system. local_joulegrader_comments is not needed anymore.
+        $table = new xmldb_table('local_joulegrader_comments');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Joule grader savepoint reached.
+        upgrade_plugin_savepoint(true, 2018052300, 'local', 'joulegrader');
+    }
+
     return true;
 }
