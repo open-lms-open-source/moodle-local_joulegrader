@@ -83,7 +83,7 @@ class comment_added extends \core\event\base {
     /**
      * Get the URL related to this action
      *
-     * @return string
+     * @return \moodle_url
      */
     public function get_url() {
         $url = new \moodle_url('/local/joulegrader/view.php?', array(
@@ -94,9 +94,10 @@ class comment_added extends \core\event\base {
         $stringurl = $url->out(false);
         // We need to cut the url if it is bigger than 100 characters.
         if (\core_text::strlen($stringurl) > 100) {
-            $stringurl = \core_text::substr($stringurl, 0, 100);
+            $url = new \moodle_url('/local/joulegrader/view.php?', array('guser' => $this->relateduserid,
+                'garea' => $this->other['areaid'],));
         }
-        return $stringurl;
+        return $url;
     }
 
     /**
@@ -110,7 +111,7 @@ class comment_added extends \core\event\base {
             $this->courseid,
             'local_joulegrader',
             'comment added',
-            $this->get_url(),
+            $this->get_url()->out(false),
             'Comment made in Moodlerooms Grader',
             $this->contextid,
         );
