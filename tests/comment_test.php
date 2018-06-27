@@ -113,4 +113,77 @@ class local_joulegrader_comment_testcase extends advanced_testcase {
             $this->assertNotEquals($student3->id, $message->useridto);
         }
     }
+
+    public function test_event_url() {
+        global $DB, $CFG;
+
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('hsuforum',
+            ['course' => $course->id, 'gradetype' => 1, 'scale' => 100]);
+
+        $context = context_module::instance($forum->cmid);
+
+        $teacher = $this->getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        $student = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+
+        $this->setUser($teacher);
+
+        $garea = new stdClass();
+        $garea->contextid = $context->id;
+        $garea->component = 'mod_hsuforum';
+        $garea->areaname = 'posts';
+        $gareaid = $DB->insert_record('grading_areas', $garea);
+
+        $event = \local_joulegrader\event\comment_deleted::create(array(
+            'other' => array(
+                'areaid' => $gareaid
+            ),
+            'relateduserid' => $student->id,
+            'context' => $context
+        ));
+
+        // If we have a string length that is less than 100 characters, the course id parameter should be present.
+        $this->assertContains('courseid', $event->get_url()->out(false));
+        $this->assertLessThan(100, \core_text::strlen($event->get_url()->out(false)));
+
+        $garea->areaname = 'discussion';
+        $gareaid2 = $DB->insert_record('grading_areas', $garea);
+        // Increase the URL length.
+        $CFG->wwwroot .= '_test';
+        $url = new \moodle_url('/local/joulegrader/view.php?', array(
+            'guser'    => $student->id,
+            'garea'    => $gareaid2,
+            'courseid' => $course->id,
+        ));
+        // A normal URL construction should be larger than 100 characters and blocks a log record insertion.
+        $this->assertGreaterThan(100, \core_text::strlen($url->out(false)));
+
+        $event2 = \local_joulegrader\event\comment_deleted::create(array(
+            'other' => array(
+                'areaid' => $gareaid2
+            ),
+            'relateduserid' => $student->id,
+            'context' => $context
+        ));
+        // Validations kicks in and removes the courseid parameter, it is ok since we have the areaid.
+        $this->assertNotContains('courseid', $event2->get_url()->out(false));
+        $this->assertLessThan(100, \core_text::strlen($event2->get_url()->out(false)));
+
+        $event3 = \local_joulegrader\event\comment_added::create(array(
+            'other' => array(
+                'areaid' => $gareaid2
+            ),
+            'relateduserid' => $student->id,
+            'context' => $context
+        ));
+        $this->assertNotContains('courseid', $event3->get_url()->out(false));
+        $this->assertLessThan(100, \core_text::strlen($event3->get_url()->out(false)));
+    }
 }
