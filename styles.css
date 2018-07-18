@@ -207,7 +207,7 @@
     width: 100%;
 }
 
-#local-joulegrader-gradepane .fieldset .fitem label,
+#local-joulegrader-gradepane .fieldset .fitem div:not(.checkbox) label:not([for="id_override"]),
 #local-joulegrader-gradepane .fieldset .fitem div.form-control-static,
 #local-joulegrader-gradepane .fieldset .fitem span.d-inline-block {
     white-space: nowrap;
@@ -224,4 +224,8 @@
 #page-local-joulegrader-view .fdescription.required,
 #page-local-joulegrader-view .initialism.text-danger {
     display: none;
+}
+
+#local-joulegrader-gradepane .fieldset .fitem .checkbox {
+    width: 100%;
 }
