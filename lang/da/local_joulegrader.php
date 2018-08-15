@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moodlerooms Grader';
-$string['joulegrader:grade'] = 'Giv karakter for arbejde via Moodlerooms Grader';
-$string['joulegrader:view'] = 'Vis arbejde, der er givet karakter for via Moodlerooms Grader';
+$string['pluginname'] = 'Open Grader';
+$string['joulegrader:grade'] = 'Giv karakter for arbejde via Open Grader';
+$string['joulegrader:view'] = 'Vis arbejde, der er givet karakter for via Open Grader';
 $string['gradebook'] = 'Karakterbog';
 $string['nothingtodisplay'] = 'Intet at vise';
 $string['needsgrading'] = 'Vis aktiviteter, der kræver karaktergivning';
 $string['allactivities'] = 'Vis alle aktiviteter';
-$string['mobilenotsupported'] = 'Moodlerooms Grader understøtter ikke mobilbrowsere på nuværende tidspunkt';
+$string['mobilenotsupported'] = 'Open Grader understøtter ikke mobilbrowsere på nuværende tidspunkt';
 $string['exitfullscreen'] = 'Afslut fuldskærmstilstand';
 $string['fullscreen'] = 'Fuldskærmstilstand';
 $string['returncourse'] = 'Retur til kursus';
@@ -104,7 +104,7 @@ $string['attachments'] = 'Vedhæftede filer';
 $string['commentrequired'] = 'Kommentar påkrævet';
 $string['commentloop'] = 'Kommentarløkke';
 $string['notreleased'] = 'Karakter for opgave endnu ikke frigivet';
-$string['eventgraderviewed'] = 'Moodlerooms Grader vist';
-$string['eventactivitygraded'] = 'Karakter er afgivet for aktiviteten i Moodlerooms Grader';
-$string['eventcommentdeleted'] = 'Kommentar blev slettet i Moodlerooms Grader';
-$string['eventcommentadded'] = 'Kommentar blev tilføjet i Moodlerooms Grader';
+$string['eventgraderviewed'] = 'Open Grader vist';
+$string['eventactivitygraded'] = 'Karakter er afgivet for aktiviteten i Open Grader';
+$string['eventcommentdeleted'] = 'Kommentar blev slettet i Open Grader';
+$string['eventcommentadded'] = 'Kommentar blev tilføjet i Open Grader';

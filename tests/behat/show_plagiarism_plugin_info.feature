@@ -16,7 +16,7 @@
 # Tests commenting in Joule Grader
 #
 # @package    local_joulegrader
-# @copyright  Copyright (c) 2017 Blackboard Inc.
+# @copyright  Copyright (c) 2017 Moodlerooms Inc.
 # @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 @local @local_joulegrader
@@ -65,7 +65,7 @@ Feature: Teachers see the plagiarism plugin info in Joule Grader.
     And I log out
     Given I log in as "teacher1"
     And I am on the course with shortname "C1"
-    And I navigate to "Moodlerooms Grader" in current page administration
+    And I navigate to "Open Grader" in current page administration
     And I wait until the page is ready
     Then I should see "Plagiarism plugin info placeholder"
     And I press "Show Activities Requiring Grading"
@@ -77,7 +77,7 @@ Feature: Teachers see the plagiarism plugin info in Joule Grader.
     And I log in as "teacher1"
     And I am on the course with shortname "C1"
     And I click on "#admin-menu-trigger" "css_element"
-    And I click on "//p/a[contains(text(),'Moodlerooms Grader')]" "xpath_element"
+    And I click on "//p/a[contains(text(),'Open Grader')]" "xpath_element"
     And I wait until the page is ready
     Then I should see "Plagiarism plugin info placeholder"
     And I press "Show Activities Requiring Grading"
@@ -92,7 +92,7 @@ Feature: Teachers see the plagiarism plugin info in Joule Grader.
     Then I should see "Needs grading"
     And I click on "#admin-menu-trigger" "css_element"
     And I expand "Course administration" node
-    And I click on "//p/a[contains(text(),'Moodlerooms Grader')]" "xpath_element"
+    And I click on "//p/a[contains(text(),'Open Grader')]" "xpath_element"
     And I wait until the page is ready
     Then I should see "Plagiarism plugin info placeholder"
     And I press "Show Activities Requiring Grading"
@@ -114,7 +114,7 @@ Feature: Teachers see the plagiarism plugin info in Joule Grader.
     Then I log out
     Then I log in as "teacher1"
     And I am on the course with shortname "C1"
-    And I navigate to "Moodlerooms Grader" in current page administration
+    And I navigate to "Open Grader" in current page administration
     And I wait until the page is ready
     Then I should not see "Plagiarism plugin info placeholder"
     And I press "Show Activities Requiring Grading"

@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Avaliador Moodlerooms';
-$string['joulegrader:grade'] = 'Avaliar trabalho com o Avaliador Moodlerooms';
-$string['joulegrader:view'] = 'Visualizar trabalho avaliado com o Avaliador Moodlerooms';
+$string['pluginname'] = 'Avaliador Open';
+$string['joulegrader:grade'] = 'Avaliar trabalho com o Avaliador Open';
+$string['joulegrader:view'] = 'Visualizar trabalho avaliado com o Avaliador Open';
 $string['gradebook'] = 'Boletim de notas';
 $string['nothingtodisplay'] = 'Nada a ser exibido';
 $string['needsgrading'] = 'Exibir atividades que necessitam de avaliação';
 $string['allactivities'] = 'Exibir todas as atividades';
-$string['mobilenotsupported'] = 'Atualmente, o Avaliador Moodlerooms não é compatível com navegadores móveis';
+$string['mobilenotsupported'] = 'Atualmente, o Avaliador Open não é compatível com navegadores móveis';
 $string['exitfullscreen'] = 'Sair do modo de tela cheia';
 $string['fullscreen'] = 'Modo de tela cheia';
 $string['returncourse'] = 'Voltar ao curso';
@@ -104,7 +104,7 @@ $string['attachments'] = 'Anexos';
 $string['commentrequired'] = 'Comentário obrigatório';
 $string['commentloop'] = 'Loop de comentário';
 $string['notreleased'] = 'Nota da tarefa ainda não liberada';
-$string['eventgraderviewed'] = 'Avaliador Moodlerooms visualizado';
-$string['eventactivitygraded'] = 'Atividade avaliada no Avaliador Moodlerooms';
-$string['eventcommentdeleted'] = 'Comentário excluído no Avaliador Moodlerooms';
-$string['eventcommentadded'] = 'Comentário adicionado no Avaliador Moodlerooms';
+$string['eventgraderviewed'] = 'Avaliador Open visualizado';
+$string['eventactivitygraded'] = 'Atividade avaliada no Avaliador Open';
+$string['eventcommentdeleted'] = 'Comentário excluído no Avaliador Open';
+$string['eventcommentadded'] = 'Comentário adicionado no Avaliador Open';

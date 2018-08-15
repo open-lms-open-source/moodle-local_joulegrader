@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Qualificador de Moodlerooms';
-$string['joulegrader:grade'] = 'Qualifica la feina amb el Qualificador de Moodlerooms';
-$string['joulegrader:view'] = 'Mostre les feines qualificades amb el Qualificador de Moodlerooms';
+$string['pluginname'] = 'Qualificador de Open';
+$string['joulegrader:grade'] = 'Qualifica la feina amb el Qualificador de Open';
+$string['joulegrader:view'] = 'Mostre les feines qualificades amb el Qualificador de Open';
 $string['gradebook'] = 'Butlletí de qualificacions';
 $string['nothingtodisplay'] = 'No hi ha res per mostrar';
 $string['needsgrading'] = 'Mostra les activitats que requereixen qualificació';
 $string['allactivities'] = 'Mostra totes les activitats';
-$string['mobilenotsupported'] = 'Actualment el Qualificador de Moodlerooms no admet els navegadors de dispositius mòbils';
+$string['mobilenotsupported'] = 'Actualment el Qualificador de Open no admet els navegadors de dispositius mòbils';
 $string['exitfullscreen'] = 'Surt del mode de pantalla completa';
 $string['fullscreen'] = 'Mode de pantalla completa';
 $string['returncourse'] = 'Torna al curs';
@@ -104,7 +104,7 @@ $string['attachments'] = 'Fitxers adjunts';
 $string['commentrequired'] = 'Comentari obligatori';
 $string['commentloop'] = 'Cicle de comentaris';
 $string['notreleased'] = 'Encara no s’han publicat les qualificacions en el butlletí de qualificacions';
-$string['eventgraderviewed'] = 'S\'ha visualitzat el Qualificador de Moodlerooms';
-$string['eventactivitygraded'] = 'Activitat qualificada al Qualificador de Moodlerooms';
-$string['eventcommentdeleted'] = 'Comentari suprimit al Qualificador de Moodlerooms';
-$string['eventcommentadded'] = 'Comentari afegit al Qualificador de Moodlerooms';
+$string['eventgraderviewed'] = 'S\'ha visualitzat el Qualificador de Open';
+$string['eventactivitygraded'] = 'Activitat qualificada al Qualificador de Open';
+$string['eventcommentdeleted'] = 'Comentari suprimit al Qualificador de Open';
+$string['eventcommentadded'] = 'Comentari afegit al Qualificador de Open';

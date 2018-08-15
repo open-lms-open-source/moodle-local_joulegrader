@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moodlerooms-Bewertungsfunktion';
-$string['joulegrader:grade'] = 'Arbeit mit der Moodlerooms-Bewertungsfunktion bewerten';
-$string['joulegrader:view'] = 'Bewertete Arbeit mit der Moodlerooms-Bewertungsfunktion anzeigen';
+$string['pluginname'] = 'Open-Bewertungsfunktion';
+$string['joulegrader:grade'] = 'Arbeit mit der Open-Bewertungsfunktion bewerten';
+$string['joulegrader:view'] = 'Bewertete Arbeit mit der Open-Bewertungsfunktion anzeigen';
 $string['gradebook'] = 'Bewertungsbericht';
 $string['nothingtodisplay'] = 'Nichts anzuzeigen';
 $string['needsgrading'] = 'Aktivitäten anzeigen, die bewertet werden müssen';
 $string['allactivities'] = 'Alle Aktivitäten anzeigen';
-$string['mobilenotsupported'] = 'Die Moodlerooms-Bewertungsfunktion unterstützt derzeit keine mobilen Browser';
+$string['mobilenotsupported'] = 'Die Open-Bewertungsfunktion unterstützt derzeit keine mobilen Browser';
 $string['exitfullscreen'] = 'Vollbildmodus verlassen';
 $string['fullscreen'] = 'Vollbildmodus';
 $string['returncourse'] = 'Zurück zum Kurs';
@@ -104,7 +104,7 @@ $string['attachments'] = 'Anhänge';
 $string['commentrequired'] = 'Kommentar erforderlich';
 $string['commentloop'] = 'Kommentarschleife';
 $string['notreleased'] = 'Aufgabenbewertung noch nicht freigegeben';
-$string['eventgraderviewed'] = 'Moodlerooms-Bewertungsfunktion angezeigt';
-$string['eventactivitygraded'] = 'Aktivität in Moodlerooms-Bewertungsfunktion bewertet';
-$string['eventcommentdeleted'] = 'Kommentar in Moodlerooms-Bewertungsfunktion gelöscht';
-$string['eventcommentadded'] = 'Kommentar in Moodlerooms-Bewertungsfunktion hinzugefügt';
+$string['eventgraderviewed'] = 'Open-Bewertungsfunktion angezeigt';
+$string['eventactivitygraded'] = 'Aktivität in Open-Bewertungsfunktion bewertet';
+$string['eventcommentdeleted'] = 'Kommentar in Open-Bewertungsfunktion gelöscht';
+$string['eventcommentadded'] = 'Kommentar in Open-Bewertungsfunktion hinzugefügt';

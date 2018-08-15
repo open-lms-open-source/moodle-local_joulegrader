@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Calificador de Moodlerooms';
-$string['joulegrader:grade'] = 'Trabajo de calificación a través del calificador de Moodlerooms';
-$string['joulegrader:view'] = 'Ver el trabajo calificado a través del calificador de Moodlerooms';
+$string['pluginname'] = 'Calificador de Open';
+$string['joulegrader:grade'] = 'Trabajo de calificación a través del calificador de Open';
+$string['joulegrader:view'] = 'Ver el trabajo calificado a través del calificador de Open';
 $string['gradebook'] = 'Libro de calificaciones';
 $string['nothingtodisplay'] = 'Nada que mostrar';
 $string['needsgrading'] = 'Mostrar las actividades que requieren calificación';
 $string['allactivities'] = 'Mostrar todas Las actividades';
-$string['mobilenotsupported'] = 'Actualmente, el calificador de Moodlerooms no es compatible con navegadores para celulares.';
+$string['mobilenotsupported'] = 'Actualmente, el calificador de Open no es compatible con navegadores para celulares.';
 $string['exitfullscreen'] = 'Salir del modo de pantalla completa';
 $string['fullscreen'] = 'Modo de pantalla completa';
 $string['returncourse'] = 'Volver al curso';
@@ -104,7 +104,7 @@ $string['attachments'] = 'Archivos adjuntos';
 $string['commentrequired'] = 'Es obligatorio ingresar un comentario.';
 $string['commentloop'] = 'Repetición del comentario';
 $string['notreleased'] = 'Calificación de la tarea aún no publicada';
-$string['eventgraderviewed'] = 'Calificador de Moodlerooms visto';
-$string['eventactivitygraded'] = 'Actividad calificada en el calificador de Moodlerooms';
-$string['eventcommentdeleted'] = 'Comentario eliminado en el calificador de Moodlerooms';
-$string['eventcommentadded'] = 'Comentario agregado en el calificador de Moodlerooms';
+$string['eventgraderviewed'] = 'Calificador de Open visto';
+$string['eventactivitygraded'] = 'Actividad calificada en el calificador de Open';
+$string['eventcommentdeleted'] = 'Comentario eliminado en el calificador de Open';
+$string['eventcommentadded'] = 'Comentario agregado en el calificador de Open';

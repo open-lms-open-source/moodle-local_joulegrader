@@ -13,18 +13,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 #
-# Moodlerooms Grader grade student assignment feature
+# Open Grader grade student assignment feature
 #
 # @package   local_joulegrader
-# @copyright Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+# @copyright Copyright (c) 2018 Moodlerooms Inc. (http://www.blackboard.com)
 # @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 
 @local @local_joulegrader
-Feature: Grade assignments in Moodlerooms Grader
+Feature: Grade assignments in Open Grader
   In order to save time
   As a teacher
-  I need to be able to grade assignments in Moodlerooms Grader
+  I need to be able to grade assignments in Open Grader
 
   Background:
     Given the following "users" exist:
@@ -56,11 +56,11 @@ Feature: Grade assignments in Moodlerooms Grader
   @javascript
   Scenario: Teacher grades a student's assignment
     Given I am on "Course 1" course homepage
-    And I navigate to "Moodlerooms Grader" in current page administration
+    And I navigate to "Open Grader" in current page administration
     And I wait until the page is ready
     And I select "Student 1" from the "guser" singleselect
     And I click on "Grade with rubric" "button"
-    And I grade by filling the Moodlerooms Grader rubric with:
+    And I grade by filling the Open Grader rubric with:
       | Criterion 1 | 12 | Very good |
       | Criterion 2 | 22 | Mmmm, you can do it better |
     And I click on "Save grade" "button"

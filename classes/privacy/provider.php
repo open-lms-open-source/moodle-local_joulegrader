@@ -32,7 +32,7 @@ use \core_privacy\local\request\transform;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Implementation of the privacy subsystem plugin provider for the Moodlerooms grader.
+ * Implementation of the privacy subsystem plugin provider for the Open Grader.
  *
  * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

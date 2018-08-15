@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Moodlerooms Grader Behat step definitions.
+ * Open Grader Behat step definitions.
  *
  * Copied and modified from behat_gradingform_rubric class.
  *
@@ -31,7 +31,7 @@ use Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Mink\Exception\ExpectationException as ExpectationException;
 
 /**
- * Moodlerooms Grader Behat step definitions.
+ * Open Grader Behat step definitions.
  *
  * Copied and modified from behat_gradingform_rubric class.
  *
@@ -44,7 +44,7 @@ class behat_local_joulegrader extends behat_base {
     /**
      * Grades filling the current page rubric. Set one line per criterion and for each criterion set "| Criterion name | Points | Remark |".
      *
-     * @When /^I grade by filling the Moodlerooms Grader rubric with:$/
+     * @When /^I grade by filling the Open Grader rubric with:$/
      *
      * @param TableNode $rubric
      * @throws Exception

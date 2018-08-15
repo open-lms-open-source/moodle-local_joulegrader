@@ -21,7 +21,7 @@
  * Joule Grader.
  *
  * @package   local_joulegrader
- * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
+ * @copyright Copyright (c) 2015 Blackboard Inc. (http://www.moodlerooms.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package local_joulegrader
  * @subpackage event
- * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
+ * @copyright Copyright (c) 2015 Blackboard Inc. (http://www.moodlerooms.com)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class activity_graded extends \core\event\base {
@@ -60,7 +60,7 @@ class activity_graded extends \core\event\base {
      * @return string the description of the event
      */
     public function get_description() {
-        return "The user with id '{$this->userid}' graded an activity using Moodlerooms Grader in the course with id '{$this->courseid}' " .
+        return "The user with id '{$this->userid}' graded an activity using Open Grader in the course with id '{$this->courseid}' " .
             "with grading area id '{$this->other['areaid']}' and user id '{$this->relateduserid}'.";
     }
 
@@ -105,7 +105,7 @@ class activity_graded extends \core\event\base {
             'local_joulegrader',
             'grade',
             $this->get_url()->out(false),
-            'Graded via Moodlerooms Grader',
+            'Graded via Open Grader',
             $this->contextid,
         );
     }

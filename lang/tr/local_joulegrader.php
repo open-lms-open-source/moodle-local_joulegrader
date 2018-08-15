@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moodlerooms Not Veren';
-$string['joulegrader:grade'] = 'Moodlerooms Not Veren aracılığıyla çalışmaya not ver';
-$string['joulegrader:view'] = 'Moodlerooms Not Veren aracılığıyla not verilen çalışmaya bak';
+$string['pluginname'] = 'Open Not Veren';
+$string['joulegrader:grade'] = 'Open Not Veren aracılığıyla çalışmaya not ver';
+$string['joulegrader:view'] = 'Open Not Veren aracılığıyla not verilen çalışmaya bak';
 $string['gradebook'] = 'Not Defteri';
 $string['nothingtodisplay'] = 'Görüntülenecek Bir Şey Yok';
 $string['needsgrading'] = 'Not Verilmesi Gereken Etkinlikleri Göster';
 $string['allactivities'] = 'Tüm Etkinlikleri Göster';
-$string['mobilenotsupported'] = 'Moodlerooms Not Veren, şu anda mobil tarayıcıları desteklemiyor';
+$string['mobilenotsupported'] = 'Open Not Veren, şu anda mobil tarayıcıları desteklemiyor';
 $string['exitfullscreen'] = 'Tam ekran modundan çık';
 $string['fullscreen'] = 'Tam ekran modu';
 $string['returncourse'] = 'Kursa geri dön';
@@ -104,7 +104,7 @@ $string['attachments'] = 'Ekler';
 $string['commentrequired'] = 'Yorum gerekli:';
 $string['commentloop'] = 'Yorum Döngüsü';
 $string['notreleased'] = 'Ödev notu henüz yayınlanmadı';
-$string['eventgraderviewed'] = 'Moodlerooms Not Veren’e bakıldı';
-$string['eventactivitygraded'] = 'Moodlerooms Not Veren’de etkinliğe not verildi';
-$string['eventcommentdeleted'] = 'Moodlerooms Not Veren’de yorum silindi';
-$string['eventcommentadded'] = 'Moodlerooms Not Veren’de yorum eklendi';
+$string['eventgraderviewed'] = 'Open Not Veren’e bakıldı';
+$string['eventactivitygraded'] = 'Open Not Veren’de etkinliğe not verildi';
+$string['eventcommentdeleted'] = 'Open Not Veren’de yorum silindi';
+$string['eventcommentadded'] = 'Open Not Veren’de yorum eklendi';

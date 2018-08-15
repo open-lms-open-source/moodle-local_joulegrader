@@ -52,7 +52,7 @@ Feature: Teachers see the correct extension and late status.
     And I press "Save changes"
     Then I should see "Extension granted until:" in the "Student 1" "table_row"
     And I am on "Course 1" course homepage
-    And I navigate to "Moodlerooms Grader" in current page administration
+    And I navigate to "Open Grader" in current page administration
     And I wait until the page is ready
     And I select "Student 1" from the "guser" singleselect
     Then I should see "Extension granted until:"
@@ -79,7 +79,7 @@ Feature: Teachers see the correct extension and late status.
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Moodlerooms Grader" in current page administration
+    And I navigate to "Open Grader" in current page administration
     And I wait until the page is ready
     And I select "Student 1" from the "guser" singleselect
     Then I should see "Extension granted until:"
@@ -87,4 +87,3 @@ Feature: Teachers see the correct extension and late status.
     And I select "Student 2" from the "guser" singleselect
     Then I should not see "Extension granted until:"
     And I should see "This submission was late by"
-    

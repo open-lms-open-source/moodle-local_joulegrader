@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moduł Moodlerooms Grader';
-$string['joulegrader:grade'] = 'Oceniaj prace za pomocą modułu Moodlerooms Grader';
-$string['joulegrader:view'] = 'Przeglądaj ocenione prace za pomocą modułu Moodlerooms Grader';
+$string['pluginname'] = 'Moduł Open Grader';
+$string['joulegrader:grade'] = 'Oceniaj prace za pomocą modułu Open Grader';
+$string['joulegrader:view'] = 'Przeglądaj ocenione prace za pomocą modułu Open Grader';
 $string['gradebook'] = 'Dziennik ocen';
 $string['nothingtodisplay'] = 'Nic do wyświetlenia';
 $string['needsgrading'] = 'Pokaż aktywności wymagające oceny';
 $string['allactivities'] = 'Pokaż wszystkie aktywności';
-$string['mobilenotsupported'] = 'Moduł Moodlerooms Grader nie obsługuje obecnie mobilnych przeglądarek';
+$string['mobilenotsupported'] = 'Moduł Open Grader nie obsługuje obecnie mobilnych przeglądarek';
 $string['exitfullscreen'] = 'Zamknij tryb pełnoekranowy';
 $string['fullscreen'] = 'Tryb pełnoekranowy';
 $string['returncourse'] = 'Powrót do kursu';
@@ -104,7 +104,7 @@ $string['attachments'] = 'Załączniki';
 $string['commentrequired'] = 'Wymagany komentarz';
 $string['commentloop'] = 'Pętla komentarzy';
 $string['notreleased'] = 'Ocena z zadania nie została jeszcze udostępniona';
-$string['eventgraderviewed'] = 'Wyświetlony moduł Moodlerooms Grader';
-$string['eventactivitygraded'] = 'Oceniono aktywność w module Moodlerooms Grader';
-$string['eventcommentdeleted'] = 'Usunięto komentarz w module Moodlerooms Grader';
-$string['eventcommentadded'] = 'Dodano komentarz w module Moodlerooms Grader';
+$string['eventgraderviewed'] = 'Wyświetlony moduł Open Grader';
+$string['eventactivitygraded'] = 'Oceniono aktywność w module Open Grader';
+$string['eventcommentdeleted'] = 'Usunięto komentarz w module Open Grader';
+$string['eventcommentadded'] = 'Dodano komentarz w module Open Grader';

@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moodlerooms Grader';
-$string['joulegrader:grade'] = 'Moodlerooms Graderで作業を評定する';
-$string['joulegrader:view'] = 'Moodlerooms Graderで評定済みの作業を表示する';
+$string['pluginname'] = 'Open Grader';
+$string['joulegrader:grade'] = 'Open Graderで作業を評定する';
+$string['joulegrader:view'] = 'Open Graderで評定済みの作業を表示する';
 $string['gradebook'] = '評定表';
 $string['nothingtodisplay'] = '表示するものはありません';
 $string['needsgrading'] = '評定に必要な活動を表示する';
 $string['allactivities'] = 'すべての活動を表示する';
-$string['mobilenotsupported'] = '現在、Moodlerooms Graderではモバイルブラウザをサポートしていません';
+$string['mobilenotsupported'] = '現在、Open Graderではモバイルブラウザをサポートしていません';
 $string['exitfullscreen'] = 'フルスクリーンモードを終了する';
 $string['fullscreen'] = 'フルスクリーンモード';
 $string['returncourse'] = 'コースに戻る';
@@ -104,7 +104,7 @@ $string['attachments'] = '添付ファイル';
 $string['commentrequired'] = 'コメントが必要です';
 $string['commentloop'] = 'コメントループ';
 $string['notreleased'] = '課題の評定がリリースされていません';
-$string['eventgraderviewed'] = 'Moodlerooms Graderが表示されました';
-$string['eventactivitygraded'] = 'Moodlerooms Graderで活動が評定されました';
-$string['eventcommentdeleted'] = 'Moodlerooms Graderでコメントが削除されました';
-$string['eventcommentadded'] = 'Moodlerooms Graderでコメントが追加されました';
+$string['eventgraderviewed'] = 'Open Graderが表示されました';
+$string['eventactivitygraded'] = 'Open Graderで活動が評定されました';
+$string['eventcommentdeleted'] = 'Open Graderでコメントが削除されました';
+$string['eventcommentadded'] = 'Open Graderでコメントが追加されました';

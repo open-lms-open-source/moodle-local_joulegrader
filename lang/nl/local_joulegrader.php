@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moodlerooms Grader';
-$string['joulegrader:grade'] = 'Werk beoordelen via Moodlerooms Grader';
-$string['joulegrader:view'] = 'Beoordeeld werk werkgeven via Moodlerooms Grader';
+$string['pluginname'] = 'Open Grader';
+$string['joulegrader:grade'] = 'Werk beoordelen via Open Grader';
+$string['joulegrader:view'] = 'Beoordeeld werk werkgeven via Open Grader';
 $string['gradebook'] = 'Cijferlijst';
 $string['nothingtodisplay'] = 'Niets om te tonen';
 $string['needsgrading'] = 'Toon activiteiten die beoordeeld moeten worden';
 $string['allactivities'] = 'Toon alle activiteiten';
-$string['mobilenotsupported'] = 'Moodlerooms Grader ondersteunt momenteel geen mobiele browsers';
+$string['mobilenotsupported'] = 'Open Grader ondersteunt momenteel geen mobiele browsers';
 $string['exitfullscreen'] = 'Verlaat volledig scherm';
 $string['fullscreen'] = 'Volledig scherm';
 $string['returncourse'] = 'Keer terug naar cursus';
@@ -104,7 +104,7 @@ $string['attachments'] = 'Bijlagen';
 $string['commentrequired'] = 'Opmerking vereist';
 $string['commentloop'] = 'Commentaar herhalen';
 $string['notreleased'] = 'Opdrachtcijfer nog niet vrijgegeven';
-$string['eventgraderviewed'] = 'Moodlerooms Grader weergegeven';
-$string['eventactivitygraded'] = 'Activiteit beoordeeld in Moodlerooms Grader';
-$string['eventcommentdeleted'] = 'Opmerking verwijderd uit Moodlerooms Grader';
-$string['eventcommentadded'] = 'Opmerking toegevoegd aan Moodlerooms Grader';
+$string['eventgraderviewed'] = 'Open Grader weergegeven';
+$string['eventactivitygraded'] = 'Activiteit beoordeeld in Open Grader';
+$string['eventcommentdeleted'] = 'Opmerking verwijderd uit Open Grader';
+$string['eventcommentadded'] = 'Opmerking toegevoegd aan Open Grader';

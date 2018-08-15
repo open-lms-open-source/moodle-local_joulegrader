@@ -20,7 +20,7 @@
  * This event is fired when the index page for the Joule Grader is viewed.
  *
  * @package   local_joulegrader
- * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
+ * @copyright Copyright (c) 2015 Blackboard Inc. (http://www.moodlerooms.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package local_joulegrader
  * @subpackage event
- * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
+ * @copyright Copyright (c) 2015 Blackboard Inc. (http://www.moodlerooms.com)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class grader_viewed extends \core\event\base {
@@ -59,7 +59,7 @@ class grader_viewed extends \core\event\base {
      * @return string the description of the event
      */
     public function get_description() {
-        return "The user with id '{$this->userid}' viewed the Moodlerooms Grader for the course with id '{$this->courseid}' " .
+        return "The user with id '{$this->userid}' viewed the Open Grader for the course with id '{$this->courseid}' " .
             "with grading area id '{$this->other['areaid']}' and user id '{$this->relateduserid}'.";
     }
 
@@ -104,7 +104,7 @@ class grader_viewed extends \core\event\base {
             'local_joulegrader',
             'view',
             $this->get_url()->out(false),
-            'Viewed Moodlerooms Grader',
+            'Viewed Open Grader',
             $this->contextid,
         );
     }

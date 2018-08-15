@@ -19,7 +19,7 @@
  *
  * @author    Sam Chaffee
  * @package   local_joulegrader
- * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
+ * @copyright Copyright (c) 2015 Blackboard Inc. (http://www.moodlerooms.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -377,7 +377,7 @@ class gradingareas extends loopable_abstract {
     }
 
     /**
-     * Checks for assignments and Moodlerooms forums that don't have grading area records
+     * Checks for assignments and Open Forums that don't have grading area records
      *
      * @ Todo: caching; make dynamic for other components (activities) and areanames
      */

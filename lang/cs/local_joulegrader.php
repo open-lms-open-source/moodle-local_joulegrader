@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moodlerooms Grader';
-$string['joulegrader:grade'] = 'Klasifikovat práci prostřednictvím modulu plug-in Moodlerooms Grader';
-$string['joulegrader:view'] = 'Zobrazit práci klasifikovanou prostřednictvím modulu plug-in Moodlerooms Grader';
+$string['pluginname'] = 'Open Grader';
+$string['joulegrader:grade'] = 'Klasifikovat práci prostřednictvím modulu plug-in Open Grader';
+$string['joulegrader:view'] = 'Zobrazit práci klasifikovanou prostřednictvím modulu plug-in Open Grader';
 $string['gradebook'] = 'Centrum klasifikace';
 $string['nothingtodisplay'] = 'Žádné položky k zobrazení';
 $string['needsgrading'] = 'Zobrazit aktivity vyžadující klasifikaci';
 $string['allactivities'] = 'Zobrazit všechny aktivity';
-$string['mobilenotsupported'] = 'Modul plug-in Moodlerooms Grader aktuálně nepodporuje mobilní prohlížeče.';
+$string['mobilenotsupported'] = 'Modul plug-in Open Grader aktuálně nepodporuje mobilní prohlížeče.';
 $string['exitfullscreen'] = 'Ukončit režim celé obrazovky';
 $string['fullscreen'] = 'Režim celé obrazovky';
 $string['returncourse'] = 'Návrat do kurzu';
@@ -104,7 +104,7 @@ $string['attachments'] = 'Přílohy';
 $string['commentrequired'] = 'Komentář je povinný.';
 $string['commentloop'] = 'Opakování komentáře';
 $string['notreleased'] = 'Klasifikace úkolu nebyla ještě uvolněna.';
-$string['eventgraderviewed'] = 'Zobrazen modul plug-in Moodlerooms Grader';
-$string['eventactivitygraded'] = 'Klasifikována aktivita v modulu plug-in Moodlerooms Grader';
-$string['eventcommentdeleted'] = 'Odstraněn komentář v modulu plug-in Moodlerooms Grader';
-$string['eventcommentadded'] = 'Přidán komentář v modulu plug-in Moodlerooms Grader';
+$string['eventgraderviewed'] = 'Zobrazen modul plug-in Open Grader';
+$string['eventactivitygraded'] = 'Klasifikována aktivita v modulu plug-in Open Grader';
+$string['eventcommentdeleted'] = 'Odstraněn komentář v modulu plug-in Open Grader';
+$string['eventcommentadded'] = 'Přidán komentář v modulu plug-in Open Grader';

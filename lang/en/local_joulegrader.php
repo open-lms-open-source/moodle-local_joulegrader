@@ -19,22 +19,22 @@
  *
  * @author    Sam Chaffee
  * @package   local_joulegrader
- * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
+ * @copyright Copyright (c) 2015 Blackboard Inc. (http://www.moodlerooms.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Moodlerooms Grader';
+$string['pluginname'] = 'Open Grader';
 
 //access.php strings
-$string['joulegrader:grade'] = 'Grade work via Moodlerooms Grader';
-$string['joulegrader:view'] = 'View graded work via Moodlerooms Grader';
+$string['joulegrader:grade'] = 'Grade work via Open Grader';
+$string['joulegrader:view'] = 'View graded work via Open Grader';
 
 //default.php strings
 $string['gradebook'] = 'Gradebook';
 $string['nothingtodisplay'] = 'Nothing to Display';
 $string['needsgrading'] = 'Show Activities Requiring Grading';
 $string['allactivities'] = 'Show All Activities';
-$string['mobilenotsupported'] = 'Moodlerooms Grader does not currently support mobile browsers';
+$string['mobilenotsupported'] = 'Open Grader does not currently support mobile browsers';
 $string['exitfullscreen'] = 'Exit full screen mode';
 $string['fullscreen'] = 'Full screen mode';
 $string['returncourse'] = 'Return to course';
@@ -122,15 +122,15 @@ $string['commentloop'] = 'Comment Loop';
 $string['notreleased'] = 'Assignment grade not released yet';
 
 // Event strings.
-$string['eventgraderviewed']   = 'Moodlerooms Grader viewed';
-$string['eventactivitygraded'] = 'Activity graded in Moodlerooms Grader';
-$string['eventcommentdeleted'] = 'Comment deleted in Moodlerooms Grader';
-$string['eventcommentadded']   = 'Comment added in Moodlerooms Grader';
+$string['eventgraderviewed']   = 'Open Grader viewed';
+$string['eventactivitygraded'] = 'Activity graded in Open Grader';
+$string['eventcommentdeleted'] = 'Comment deleted in Open Grader';
+$string['eventcommentadded']   = 'Comment added in Open Grader';
 
 // Privacy strings.
 $string['privacy:metadata:preference:fullscreen'] = 'Whether or not a user have the grader in fullscreen';
-$string['privacy:metadata:preference:showpostsgrouped'] = 'Whether or not a user groups the Moodlerooms forums when grading them';
-$string['privacy:request:preference:fullscreenyes'] = 'The user prefers the Moodlerooms grader in fullscreen';
-$string['privacy:request:preference:fullscreenno'] = 'The user prefers the Moodlerooms grader in normal view';
-$string['privacy:request:preference:hsupostsgroupedyes'] = 'The user prefers the Moodlerooms forums to be grouped when grading them';
-$string['privacy:request:preference:hsupostsgroupedno'] = 'The user prefers the Moodlerooms forums not to be grouped when grading them';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'Whether or not a user groups the Open Forums when grading them';
+$string['privacy:request:preference:fullscreenyes'] = 'The user prefers the Open Grader in fullscreen';
+$string['privacy:request:preference:fullscreenno'] = 'The user prefers the Open Grader in normal view';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'The user prefers the Open Forums to be grouped when grading them';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'The user prefers the Open Forums not to be grouped when grading them';

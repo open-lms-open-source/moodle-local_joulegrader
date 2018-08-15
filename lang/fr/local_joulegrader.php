@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moodlerooms Grader';
-$string['joulegrader:grade'] = 'Noter un travail avec Moodlerooms Grader';
-$string['joulegrader:view'] = 'Voir le travail noté avec Moodlerooms Grader';
+$string['pluginname'] = 'Open Grader';
+$string['joulegrader:grade'] = 'Noter un travail avec Open Grader';
+$string['joulegrader:view'] = 'Voir le travail noté avec Open Grader';
 $string['gradebook'] = 'Carnet de notes';
 $string['nothingtodisplay'] = 'Rien à afficher';
 $string['needsgrading'] = 'Afficher les activités à noter';
 $string['allactivities'] = 'Afficher toutes les activités';
-$string['mobilenotsupported'] = 'Moodlerooms Grader ne prend pas en charge les navigateurs mobiles actuellement';
+$string['mobilenotsupported'] = 'Open Grader ne prend pas en charge les navigateurs mobiles actuellement';
 $string['exitfullscreen'] = 'Quitter le mode plein écran';
 $string['fullscreen'] = 'Mode plein écran';
 $string['returncourse'] = 'Revenir au cours';
@@ -104,7 +104,7 @@ $string['attachments'] = 'Pièces jointes';
 $string['commentrequired'] = 'Commentaire obligatoire';
 $string['commentloop'] = 'Boucle de commentaire';
 $string['notreleased'] = 'Note du devoir pas encore publiée';
-$string['eventgraderviewed'] = 'Consulté dans Moodlerooms Grader';
-$string['eventactivitygraded'] = 'Activité notée dans Moodlerooms Grader';
-$string['eventcommentdeleted'] = 'Commentaire supprimé dans Moodlerooms Grader';
-$string['eventcommentadded'] = 'Commentaire ajouté dans Moodlerooms Grader';
+$string['eventgraderviewed'] = 'Consulté dans Open Grader';
+$string['eventactivitygraded'] = 'Activité notée dans Open Grader';
+$string['eventcommentdeleted'] = 'Commentaire supprimé dans Open Grader';
+$string['eventcommentadded'] = 'Commentaire ajouté dans Open Grader';

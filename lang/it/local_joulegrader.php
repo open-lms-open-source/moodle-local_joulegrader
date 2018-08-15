@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Valutatore di Moodlerooms';
-$string['joulegrader:grade'] = 'Valuta lavoro tramite il Valutatore di Moodlerooms';
-$string['joulegrader:view'] = 'Visualizza lavoro valutato tramite il Valutatore di Moodlerooms';
+$string['pluginname'] = 'Valutatore di Open';
+$string['joulegrader:grade'] = 'Valuta lavoro tramite il Valutatore di Open';
+$string['joulegrader:view'] = 'Visualizza lavoro valutato tramite il Valutatore di Open';
 $string['gradebook'] = 'Registro voti';
 $string['nothingtodisplay'] = 'Nessun elemento da visualizzare';
 $string['needsgrading'] = 'Mostra attività da valutare';
 $string['allactivities'] = 'Mostra tutte le attività';
-$string['mobilenotsupported'] = 'Il Valutatore di Moodlerooms attualmente non supporta i browser per dispositivi mobili';
+$string['mobilenotsupported'] = 'Il Valutatore di Open attualmente non supporta i browser per dispositivi mobili';
 $string['exitfullscreen'] = 'Esci da modalità schermo intero';
 $string['fullscreen'] = 'Modalità schermo intero';
 $string['returncourse'] = 'Torna al corso';
@@ -104,7 +104,7 @@ $string['attachments'] = 'Allegati';
 $string['commentrequired'] = 'Commento obbligatorio';
 $string['commentloop'] = 'Ciclo di commenti';
 $string['notreleased'] = 'Il voto del compito non è stato ancora comunicato';
-$string['eventgraderviewed'] = 'Valutatore di Moodlerooms visualizzato';
-$string['eventactivitygraded'] = 'Attività valutata nel valutatore di Moodlerooms';
-$string['eventcommentdeleted'] = 'Commento eliminato nel valutatore di Moodlerooms';
-$string['eventcommentadded'] = 'Commento aggiunto nel valutatore di Moodlerooms';
+$string['eventgraderviewed'] = 'Valutatore di Open visualizzato';
+$string['eventactivitygraded'] = 'Attività valutata nel valutatore di Open';
+$string['eventcommentdeleted'] = 'Commento eliminato nel valutatore di Open';
+$string['eventcommentadded'] = 'Commento aggiunto nel valutatore di Open';

@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moodleroomsin arviointitoiminto';
-$string['joulegrader:grade'] = 'Arvioi töitä Moodleroomsin arviointitoiminnolla';
-$string['joulegrader:view'] = 'Näytä arvioidut työt Moodleroomsin arviointitoiminnossa';
+$string['pluginname'] = 'Openin arviointitoiminto';
+$string['joulegrader:grade'] = 'Arvioi töitä Openin arviointitoiminnolla';
+$string['joulegrader:view'] = 'Näytä arvioidut työt Openin arviointitoiminnossa';
 $string['gradebook'] = 'Arviointikirja';
 $string['nothingtodisplay'] = 'Ei näytettävää';
 $string['needsgrading'] = 'Näytä arviointia edellyttävät aktiviteetit';
 $string['allactivities'] = 'Näytä kaikki aktiviteetit';
-$string['mobilenotsupported'] = 'Moodleroomsin arviointitoiminto ei tällä hetkellä tue mobiiliselaimia';
+$string['mobilenotsupported'] = 'Openin arviointitoiminto ei tällä hetkellä tue mobiiliselaimia';
 $string['exitfullscreen'] = 'Poistu koko näytön tilasta';
 $string['fullscreen'] = 'Koko näytön tila';
 $string['returncourse'] = 'Palaa kurssille';
@@ -104,7 +104,7 @@ $string['attachments'] = 'Liitteet';
 $string['commentrequired'] = 'Kommentti on pakollinen';
 $string['commentloop'] = 'Kommenttisilmukka';
 $string['notreleased'] = 'Tehtävän arvosanaa ei ole vielä julkaistu';
-$string['eventgraderviewed'] = 'Moodleroomsin arviointitoimintoa katseltu';
-$string['eventactivitygraded'] = 'Aktiviteetti arvioitu Moodleroomsin arviointitoiminnossa';
-$string['eventcommentdeleted'] = 'Kommentti poistettu Moodleroomsin arviointitoiminnossa';
-$string['eventcommentadded'] = 'Kommentti lisätty Moodleroomsin arviointitoiminnossa';
+$string['eventgraderviewed'] = 'Openin arviointitoimintoa katseltu';
+$string['eventactivitygraded'] = 'Aktiviteetti arvioitu Openin arviointitoiminnossa';
+$string['eventcommentdeleted'] = 'Kommentti poistettu Openin arviointitoiminnossa';
+$string['eventcommentadded'] = 'Kommentti lisätty Openin arviointitoiminnossa';

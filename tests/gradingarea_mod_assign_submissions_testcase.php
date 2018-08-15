@@ -19,7 +19,7 @@
  *
  * @package    local_joulegrader
  * @author     Sam Chaffee
- * @copyright  Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
+ * @copyright  Copyright (c) 2015 Blackboard Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
  * Joule Grader mod_assign_submission gradingarea testcase.
  *
  * @package    local_joulegrader
- * @copyright  Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
+ * @copyright  Copyright (c) 2015 Blackboard Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_joulegrader_gradingarea_mod_assign_submissions_testcase extends advanced_testcase {

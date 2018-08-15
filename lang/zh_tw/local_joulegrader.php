@@ -21,14 +21,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moodlerooms 評分者';
-$string['joulegrader:grade'] = '透過 Moodlerooms 評分者進行評分工作';
-$string['joulegrader:view'] = '透過 Moodlerooms 評分者檢視已評分的工作';
+$string['pluginname'] = 'Open 評分者';
+$string['joulegrader:grade'] = '透過 Open 評分者進行評分工作';
+$string['joulegrader:view'] = '透過 Open 評分者檢視已評分的工作';
 $string['gradebook'] = '成績單';
 $string['nothingtodisplay'] = '無可顯示';
 $string['needsgrading'] = '顯示需要評分的活動';
 $string['allactivities'] = '顯示所有活動';
-$string['mobilenotsupported'] = 'Moodlerooms 評分者目前不支援行動裝置瀏覽器';
+$string['mobilenotsupported'] = 'Open 評分者目前不支援行動裝置瀏覽器';
 $string['exitfullscreen'] = '離開全螢幕模式';
 $string['fullscreen'] = '全螢幕模式';
 $string['returncourse'] = '返回課程';
@@ -104,7 +104,7 @@ $string['attachments'] = '附件';
 $string['commentrequired'] = '必要評語';
 $string['commentloop'] = '評語迴圈';
 $string['notreleased'] = '尚未發佈的作業成績';
-$string['eventgraderviewed'] = '已檢視的 Moodlerooms 評分者';
-$string['eventactivitygraded'] = 'Moodlerooms 評分者中已評分的活動';
-$string['eventcommentdeleted'] = 'Moodlerooms 評分者中已刪除的評語';
-$string['eventcommentadded'] = 'Moodlerooms 評分者中已新增的評語';
+$string['eventgraderviewed'] = '已檢視的 Open 評分者';
+$string['eventactivitygraded'] = 'Open 評分者中已評分的活動';
+$string['eventcommentdeleted'] = 'Open 評分者中已刪除的評語';
+$string['eventcommentadded'] = 'Open 評分者中已新增的評語';
