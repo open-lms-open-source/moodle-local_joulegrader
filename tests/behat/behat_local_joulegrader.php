@@ -51,7 +51,7 @@ class behat_local_joulegrader extends behat_base {
      * @throws ExpectationException
      * @throws \Behat\Mink\Exception\ElementNotFoundException
      */
-    public function i_grade_by_filling_the_moodlerooms_grader_rubric_with(TableNode $rubric) {
+    public function i_grade_by_filling_the_open_grader_rubric_with(TableNode $rubric) {
         $criteria = $rubric->getRowsHash();
 
         $stepusage = '"I grade by filling the rubric with:" step needs you to provide a table where each row is a criterion' .
