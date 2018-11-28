@@ -45,7 +45,7 @@ Feature: Teachers see the correct extension and late status.
     And I am on "Course 1" course homepage
     And I follow "Test assignment1"
     And I navigate to "View all submissions" in current page administration
-    And I click on "Edit" "link" in the "Student 1" "table_row"
+    And I click on "//a[contains(text(),'Edit')]" "xpath_element" in the "Student 1" "table_row"
     And I follow "Grant extension"
     And I set the field "Enable" to "1"
     And I set the field "extensionduedate[year]" to "2050"
