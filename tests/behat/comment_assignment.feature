@@ -62,4 +62,6 @@ Feature: Teachers and students can comment on a student's assignment.
     And I press "Save comment"
     Then I should see "Good job on your paper" in the ".local_joulegrader_commentloop_comments" "css_element"
     And I should not see "Good job on your paper" in the ".local_joulegrader_commentloop .editor_atto_content" "css_element"
-
+    And I should see "Good job on your paper" in the ".local_joulegrader_comment_content .text_to_html" "css_element"
+    And I click on ".local_joulegrader_comment_delete .action-icon" "css_element"
+    And I should not see "Good job on your paper"

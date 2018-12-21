@@ -358,11 +358,11 @@ class local_joulegrader_controller_default extends mr_controller {
 
                 // get the comment loop comments and render comments
                 $comments = $commentloop->get_comments();
-                $commenthtml = '';
+                $commenthtml = '<div>';
                 foreach ($comments as $comment) {
                     $commenthtml .= $renderer->render($comment);
                 }
-
+                $commenthtml .= '</div>';
                 $commentinfo = new stdClass();
                 $commentinfo->html = $commenthtml;
 
