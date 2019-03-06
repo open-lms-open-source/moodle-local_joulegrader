@@ -229,3 +229,15 @@
 #local-joulegrader-gradepane .fieldset .fitem .checkbox {
     width: 100%;
 }
+
+#local-joulegrader-gradepane .row {
+    flex-direction: column;
+    margin-left: -15px;
+}
+
+@media (min-width: 768px) {
+    .row .col-md-9 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
