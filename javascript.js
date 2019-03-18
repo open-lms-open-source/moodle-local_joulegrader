@@ -454,46 +454,50 @@ M.local_joulegrader.init_commentloop = function(Y, id) {
     var deleteaction = function(e) {
         e.preventDefault();
 
-        var lnkhref = e.currentTarget.get('href');
-        //get the the params
-        var params = lnkhref.split('?')[1];
-        if (!params) {
-            return;
-        }
+        var link = Y.one(e.currentTarget);
+        if (!link.hasClass('ajax-in-progress')) {
+            link.addClass('ajax-in-progress');
+            var lnkhref = e.currentTarget.get('href');
+            //get the the params
+            var params = lnkhref.split('?')[1];
+            if (!params) {
+                return;
+            }
 
-        //get the comment div
-        var comment = e.currentTarget.ancestor('.local_joulegrader_comment');
-        if (!comment) {
-            return;
-        }
+            //get the comment div
+            var comment = e.currentTarget.ancestor('.local_joulegrader_comment');
+            if (!comment) {
+                return;
+            }
 
-        //Y.io cfg
-        var cfg = {
-            method: 'POST',
-            data: params + '&ajax=1',
-            on: {
-                success: function(id, o, args) {
-                    try {
-                        //get the response
-                        var response = Y.JSON.parse(o.responseText);
+            //Y.io cfg
+            var cfg = {
+                method: 'POST',
+                data: params + '&ajax=1',
+                on: {
+                    success: function (id, o, args) {
+                        try {
+                            //get the response
+                            var response = Y.JSON.parse(o.responseText);
 
-                        //if html is there replace comments
-                        if (response.html) {
-                            //insert the new comment after the old one
-                            comments.insert(response.html, 'replace');
+                            //if html is there replace comments
+                            if (response.html) {
+                                //insert the new comment after the old one
+                                comments.insert(response.html, 'replace');
 
-                        } else if (response.error) {
-                            alert(response.error);
+                            } else if (response.error) {
+                                alert(response.error);
+                            }
+                        } catch (err) {
+                            alert(err);
                         }
-                    } catch (err) {
-                        alert(err);
                     }
                 }
-            }
-        };
+            };
 
-        //send the ajax request
-        Y.io(M.cfg.wwwroot + '/local/joulegrader/view.php', cfg);
+            //send the ajax request
+            Y.io(M.cfg.wwwroot + '/local/joulegrader/view.php', cfg);
+        }
     }
 
     //attach onclick event listener for delete comment
