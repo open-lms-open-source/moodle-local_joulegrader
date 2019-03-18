@@ -236,7 +236,7 @@
 }
 
 @media (min-width: 768px) {
-    .row .col-md-9 {
+    #page-local-joulegrader-view .row .col-md-9 {
         flex: 0 0 100%;
         max-width: 100%;
     }
