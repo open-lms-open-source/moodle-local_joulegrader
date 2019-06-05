@@ -86,7 +86,7 @@ abstract class loopable_abstract implements loopable_interface {
         $nextid      = null;
 
         //try to get the id before the current id
-        while (list($unused, $id) = each($ids)) {
+        foreach($ids as $id) {
             if ($id == $currentid) {
                 break;
             }
