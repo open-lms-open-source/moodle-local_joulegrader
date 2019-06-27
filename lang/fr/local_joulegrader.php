@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -23,12 +23,12 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Open Grader';
 $string['joulegrader:grade'] = 'Noter un travail avec Open Grader';
-$string['joulegrader:view'] = 'Voir le travail noté avec Open Grader';
+$string['joulegrader:view'] = 'Consulter le travail noté avec Open Grader';
 $string['gradebook'] = 'Carnet de notes';
 $string['nothingtodisplay'] = 'Rien à afficher';
 $string['needsgrading'] = 'Afficher les activités à noter';
 $string['allactivities'] = 'Afficher toutes les activités';
-$string['mobilenotsupported'] = 'Open Grader ne prend pas en charge les navigateurs mobiles actuellement';
+$string['mobilenotsupported'] = 'À l\'heure actuelle, Open Grader ne prend pas en charge les navigateurs mobiles';
 $string['exitfullscreen'] = 'Quitter le mode plein écran';
 $string['fullscreen'] = 'Mode plein écran';
 $string['returncourse'] = 'Revenir au cours';
@@ -86,13 +86,13 @@ $string['couldnotsave'] = 'La note n\'a pas pu être mise à jour';
 $string['couldnotsavex'] = 'La note de {$a} n\'a pas pu être mise à jour';
 $string['notgraded'] = 'Devoir non noté';
 $string['viewchecklistteacher'] = 'Note avec check-list';
-$string['viewrubricteacher'] = 'Note avec rubrique';
+$string['viewrubricteacher'] = 'Note avec grille d\'évaluation';
 $string['viewcheckliststudent'] = 'Afficher la check-list de notation';
 $string['viewrubricstudent'] = 'Afficher la rubrique de notation';
 $string['viewguidestudent'] = 'Afficher le guide d\'évaluation';
 $string['viewguideteacher'] = 'Noter avec le guide d\'évaluation';
 $string['guide'] = 'Guide d\'évaluation';
-$string['rubric'] = 'Rubrique';
+$string['rubric'] = 'Grille d\'évaluation';
 $string['rubricerror'] = 'Sélectionnez un niveau pour chaque critère';
 $string['guideerror'] = 'Indiquez une note valide pour chaque critère';
 $string['score'] = 'Résultat';
@@ -108,3 +108,9 @@ $string['eventgraderviewed'] = 'Consulté dans Open Grader';
 $string['eventactivitygraded'] = 'Activité notée dans Open Grader';
 $string['eventcommentdeleted'] = 'Commentaire supprimé dans Open Grader';
 $string['eventcommentadded'] = 'Commentaire ajouté dans Open Grader';
+$string['privacy:metadata:preference:fullscreen'] = 'Indique si un utilisateur emploie Open Grader en plein écran';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'Indique si un utilisateur groupe les forums Open lorsqu\'il les évalue';
+$string['privacy:request:preference:fullscreenyes'] = 'L\'utilisateur préfère Open Grader en plein écran';
+$string['privacy:request:preference:fullscreenno'] = 'L\'utilisateur préfère l\'affichage normal d\'Open Grader';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'L\'utilisateur préfère que les forums Open soient groupés lorsqu\'il les évalue';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'L\'utilisateur préfère que les forums Open ne soient pas groupés lorsqu\'il les évalue';
