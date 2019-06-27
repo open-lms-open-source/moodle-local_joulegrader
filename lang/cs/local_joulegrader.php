@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Open Grader';
-$string['joulegrader:grade'] = 'Klasifikovat práci prostřednictvím modulu plug-in Open Grader';
-$string['joulegrader:view'] = 'Zobrazit práci klasifikovanou prostřednictvím modulu plug-in Open Grader';
+$string['joulegrader:grade'] = 'Klasifikovat práci prostřednictvím pluginu Open Grader';
+$string['joulegrader:view'] = 'Zobrazit práci klasifikovanou prostřednictvím pluginu Open Grader';
 $string['gradebook'] = 'Centrum klasifikace';
 $string['nothingtodisplay'] = 'Žádné položky k zobrazení';
 $string['needsgrading'] = 'Zobrazit aktivity vyžadující klasifikaci';
 $string['allactivities'] = 'Zobrazit všechny aktivity';
-$string['mobilenotsupported'] = 'Modul plug-in Open Grader aktuálně nepodporuje mobilní prohlížeče.';
+$string['mobilenotsupported'] = 'Plugin Open Grader aktuálně nepodporuje mobilní prohlížeče.';
 $string['exitfullscreen'] = 'Ukončit režim celé obrazovky';
 $string['fullscreen'] = 'Režim celé obrazovky';
 $string['returncourse'] = 'Návrat do kurzu';
@@ -104,7 +104,13 @@ $string['attachments'] = 'Přílohy';
 $string['commentrequired'] = 'Komentář je povinný.';
 $string['commentloop'] = 'Opakování komentáře';
 $string['notreleased'] = 'Klasifikace úkolu nebyla ještě uvolněna.';
-$string['eventgraderviewed'] = 'Zobrazen modul plug-in Open Grader';
-$string['eventactivitygraded'] = 'Klasifikována aktivita v modulu plug-in Open Grader';
-$string['eventcommentdeleted'] = 'Odstraněn komentář v modulu plug-in Open Grader';
-$string['eventcommentadded'] = 'Přidán komentář v modulu plug-in Open Grader';
+$string['eventgraderviewed'] = 'Zobrazen plugin Open Grader';
+$string['eventactivitygraded'] = 'Klasifikována aktivita v pluginu Open Grader';
+$string['eventcommentdeleted'] = 'Odstraněn komentář v pluginu Open Grader';
+$string['eventcommentadded'] = 'Přidán komentář v pluginu Open Grader';
+$string['privacy:metadata:preference:fullscreen'] = 'Informace, zda má uživatel nástroj Grader na celé obrazovce';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'Informace, zda má uživatel při klasifikaci seskupená fóra Open';
+$string['privacy:request:preference:fullscreenyes'] = 'Uživatel preferuje zobrazení pluginu Open Grader na celé obrazovce.';
+$string['privacy:request:preference:fullscreenno'] = 'Uživatel preferuje normální zobrazení pluginu Open Grader.';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'Uživatel preferuje seskupení fór Open při jejich klasifikaci.';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'Uživatel preferuje neseskupování fór Open při jejich klasifikaci.';
