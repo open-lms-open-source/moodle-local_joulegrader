@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Open-Bewertungsfunktion';
-$string['joulegrader:grade'] = 'Arbeit mit der Open-Bewertungsfunktion bewerten';
-$string['joulegrader:view'] = 'Bewertete Arbeit mit der Open-Bewertungsfunktion anzeigen';
+$string['pluginname'] = 'Offener Bewerter';
+$string['joulegrader:grade'] = 'Arbeit in Offener Bewerter bewerten';
+$string['joulegrader:view'] = 'Bewertete Arbeit in Offener Bewerter anzeigen';
 $string['gradebook'] = 'Bewertungsbericht';
 $string['nothingtodisplay'] = 'Nichts anzuzeigen';
 $string['needsgrading'] = 'Aktivitäten anzeigen, die bewertet werden müssen';
 $string['allactivities'] = 'Alle Aktivitäten anzeigen';
-$string['mobilenotsupported'] = 'Die Open-Bewertungsfunktion unterstützt derzeit keine mobilen Browser';
+$string['mobilenotsupported'] = 'Offener Bewerter unterstützt derzeit keine mobilen Browser';
 $string['exitfullscreen'] = 'Vollbildmodus verlassen';
 $string['fullscreen'] = 'Vollbildmodus';
 $string['returncourse'] = 'Zurück zum Kurs';
@@ -104,7 +104,13 @@ $string['attachments'] = 'Anhänge';
 $string['commentrequired'] = 'Kommentar erforderlich';
 $string['commentloop'] = 'Kommentarschleife';
 $string['notreleased'] = 'Aufgabenbewertung noch nicht freigegeben';
-$string['eventgraderviewed'] = 'Open-Bewertungsfunktion angezeigt';
-$string['eventactivitygraded'] = 'Aktivität in Open-Bewertungsfunktion bewertet';
-$string['eventcommentdeleted'] = 'Kommentar in Open-Bewertungsfunktion gelöscht';
-$string['eventcommentadded'] = 'Kommentar in Open-Bewertungsfunktion hinzugefügt';
+$string['eventgraderviewed'] = 'Offener Bewerter angezeigt';
+$string['eventactivitygraded'] = 'Aktivität in Offener Bewerter bewertet';
+$string['eventcommentdeleted'] = 'Kommentar in Offener Bewerter gelöscht';
+$string['eventcommentadded'] = 'Kommentar in Offener Bewerter hinzugefügt';
+$string['privacy:metadata:preference:fullscreen'] = 'Gibt an, ob ein/e Nutzer/in den Bewerter im Vollbildmodus anzeigt oder nicht';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'Gibt an, ob ein/e Nutzer/in die offenen Foren beim Bewerten gruppiert oder nicht';
+$string['privacy:request:preference:fullscreenyes'] = 'Der/Die Nutzer/in bevorzugt Offener Bewerter im Vollbildmodus.';
+$string['privacy:request:preference:fullscreenno'] = 'Der/Die Nutzer/in bevorzugt Offener Bewerter in der normalen Darstellung.';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'Der/Die Nutzer/in bevorzugt gruppierte offene Foren beim Bewerten.';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'Der/Die Nutzer/in bevorzugt nicht gruppierte offene Foren beim Bewerten.';
