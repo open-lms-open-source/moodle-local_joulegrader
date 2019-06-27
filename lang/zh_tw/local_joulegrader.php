@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Open 評分者';
-$string['joulegrader:grade'] = '透過 Open 評分者進行評分工作';
-$string['joulegrader:view'] = '透過 Open 評分者檢視已評分的工作';
+$string['pluginname'] = 'Open Grader';
+$string['joulegrader:grade'] = '透過 Open Grader 進行評分工作';
+$string['joulegrader:view'] = '透過 Open Grader 檢視已評分的工作';
 $string['gradebook'] = '成績單';
 $string['nothingtodisplay'] = '無可顯示';
 $string['needsgrading'] = '顯示需要評分的活動';
 $string['allactivities'] = '顯示所有活動';
-$string['mobilenotsupported'] = 'Open 評分者目前不支援行動裝置瀏覽器';
+$string['mobilenotsupported'] = 'Open Grader 目前不支援行動裝置瀏覽器';
 $string['exitfullscreen'] = '離開全螢幕模式';
 $string['fullscreen'] = '全螢幕模式';
 $string['returncourse'] = '返回課程';
@@ -104,7 +104,13 @@ $string['attachments'] = '附件';
 $string['commentrequired'] = '必要評語';
 $string['commentloop'] = '評語迴圈';
 $string['notreleased'] = '尚未發佈的作業成績';
-$string['eventgraderviewed'] = '已檢視的 Open 評分者';
-$string['eventactivitygraded'] = 'Open 評分者中已評分的活動';
-$string['eventcommentdeleted'] = 'Open 評分者中已刪除的評語';
-$string['eventcommentadded'] = 'Open 評分者中已新增的評語';
+$string['eventgraderviewed'] = '已檢視的 Open Grader';
+$string['eventactivitygraded'] = 'Open Grader 中已評分的活動';
+$string['eventcommentdeleted'] = 'Open Grader 中已刪除的評語';
+$string['eventcommentadded'] = 'Open Grader 中已新增的評語';
+$string['privacy:metadata:preference:fullscreen'] = '使用者是否以全螢幕顯示 Grader';
+$string['privacy:metadata:preference:showpostsgrouped'] = '使用者對 Open 論壇評分時是否將其分組';
+$string['privacy:request:preference:fullscreenyes'] = '使用者偏好以全螢幕顯示 Open Grader';
+$string['privacy:request:preference:fullscreenno'] = '使用者偏好以標準檢視顯示 Open Grader';
+$string['privacy:request:preference:hsupostsgroupedyes'] = '使用者偏好在對 Open 論壇評分時將其分組';
+$string['privacy:request:preference:hsupostsgroupedno'] = '使用者偏好在對 Open 論壇評分時不將其分組';
