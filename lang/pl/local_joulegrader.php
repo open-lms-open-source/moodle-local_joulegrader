@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moduł Open Grader';
+$string['pluginname'] = 'Open Grader';
 $string['joulegrader:grade'] = 'Oceniaj prace za pomocą modułu Open Grader';
-$string['joulegrader:view'] = 'Przeglądaj ocenione prace za pomocą modułu Open Grader';
+$string['joulegrader:view'] = 'Wyświetl prace ocenione za pomocą modułu Open Grader';
 $string['gradebook'] = 'Dziennik ocen';
 $string['nothingtodisplay'] = 'Nic do wyświetlenia';
 $string['needsgrading'] = 'Pokaż aktywności wymagające oceny';
@@ -104,7 +104,13 @@ $string['attachments'] = 'Załączniki';
 $string['commentrequired'] = 'Wymagany komentarz';
 $string['commentloop'] = 'Pętla komentarzy';
 $string['notreleased'] = 'Ocena z zadania nie została jeszcze udostępniona';
-$string['eventgraderviewed'] = 'Wyświetlony moduł Open Grader';
+$string['eventgraderviewed'] = 'Wyświetlone w module Open Grader';
 $string['eventactivitygraded'] = 'Oceniono aktywność w module Open Grader';
 $string['eventcommentdeleted'] = 'Usunięto komentarz w module Open Grader';
 $string['eventcommentadded'] = 'Dodano komentarz w module Open Grader';
+$string['privacy:metadata:preference:fullscreen'] = 'Określa czy użytkownik widzi moduł Grader w trybie pełnoekranowym';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'Określa, czy użytkownik grupuje fora otwarte podczas ich oceniania';
+$string['privacy:request:preference:fullscreenyes'] = 'Użytkownik preferuje wyświetlanie modułu Open Grader w trybie pełnoekranowym';
+$string['privacy:request:preference:fullscreenno'] = 'Użytkownik preferuje wyświetlanie modułu Open Grader w widoku normalnym';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'Użytkownik preferuje, aby fora otwarte były grupowane podczas ich oceniania';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'Użytkownik preferuje, aby fora otwarte nie były grupowane podczas ich oceniania';
