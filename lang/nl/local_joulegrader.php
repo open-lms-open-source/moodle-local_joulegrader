@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -23,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Open Grader';
 $string['joulegrader:grade'] = 'Werk beoordelen via Open Grader';
-$string['joulegrader:view'] = 'Beoordeeld werk werkgeven via Open Grader';
+$string['joulegrader:view'] = 'Beoordeeld werk weergeven via Open Grader';
 $string['gradebook'] = 'Cijferlijst';
 $string['nothingtodisplay'] = 'Niets om te tonen';
 $string['needsgrading'] = 'Toon activiteiten die beoordeeld moeten worden';
@@ -106,5 +106,11 @@ $string['commentloop'] = 'Commentaar herhalen';
 $string['notreleased'] = 'Opdrachtcijfer nog niet vrijgegeven';
 $string['eventgraderviewed'] = 'Open Grader weergegeven';
 $string['eventactivitygraded'] = 'Activiteit beoordeeld in Open Grader';
-$string['eventcommentdeleted'] = 'Opmerking verwijderd uit Open Grader';
-$string['eventcommentadded'] = 'Opmerking toegevoegd aan Open Grader';
+$string['eventcommentdeleted'] = 'Opmerking verwijderd in Open Grader';
+$string['eventcommentadded'] = 'Opmerking toegevoegd in Open Grader';
+$string['privacy:metadata:preference:fullscreen'] = 'Of de grader al dan niet op het volledige scherm wordt weergegeven voor een gebruiker';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'Of de Open-forums al dan niet worden gegroepeerd wanneer een gebruiker deze beoordeelt';
+$string['privacy:request:preference:fullscreenyes'] = 'De gebruiker heeft de Open Grader liever op het volledige scherm';
+$string['privacy:request:preference:fullscreenno'] = 'De gebruiker heeft de Open Grader liever in de normale weergave';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'De gebruiker geeft er de voorkeur aan om de Open-forums te groeperen bij het beoordelen';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'De gebruiker geeft er de voorkeur aan om de Open-forums niet te groeperen bij het beoordelen';
