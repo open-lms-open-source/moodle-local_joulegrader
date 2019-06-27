@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -108,3 +108,9 @@ $string['eventgraderviewed'] = 'Open Grader vist';
 $string['eventactivitygraded'] = 'Karakter er afgivet for aktiviteten i Open Grader';
 $string['eventcommentdeleted'] = 'Kommentar blev slettet i Open Grader';
 $string['eventcommentadded'] = 'Kommentar blev tilføjet i Open Grader';
+$string['privacy:metadata:preference:fullscreen'] = 'Hvorvidt en bruger har karaktergiveren på fuld skærm';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'Hvorvidt en bruger grupperer Open Forums, når der gives karakter for dem';
+$string['privacy:request:preference:fullscreenyes'] = 'Brugeren foretrækker Open Grader i fuld skærm';
+$string['privacy:request:preference:fullscreenno'] = 'Brugeren foretrækker Open Grader i normal visning';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'Brugeren foretrækker, at Open Forums er grupperet, når der gives karakterer for dem';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'Brugeren foretrækker, at Open Forums ikke grupperes, når der gives karakterer for dem';
