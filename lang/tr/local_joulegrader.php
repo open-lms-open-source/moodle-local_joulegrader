@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Open Not Veren';
-$string['joulegrader:grade'] = 'Open Not Veren aracılığıyla çalışmaya not ver';
-$string['joulegrader:view'] = 'Open Not Veren aracılığıyla not verilen çalışmaya bak';
+$string['pluginname'] = 'Open Grader';
+$string['joulegrader:grade'] = 'Open Grader aracılığıyla çalışmaya not ver';
+$string['joulegrader:view'] = 'Not verilen çalışmaya Open Grader aracılığıyla bak';
 $string['gradebook'] = 'Not Defteri';
 $string['nothingtodisplay'] = 'Görüntülenecek Bir Şey Yok';
 $string['needsgrading'] = 'Not Verilmesi Gereken Etkinlikleri Göster';
 $string['allactivities'] = 'Tüm Etkinlikleri Göster';
-$string['mobilenotsupported'] = 'Open Not Veren, şu anda mobil tarayıcıları desteklemiyor';
+$string['mobilenotsupported'] = 'Open Grader, şu anda mobil tarayıcıları desteklememektedir';
 $string['exitfullscreen'] = 'Tam ekran modundan çık';
 $string['fullscreen'] = 'Tam ekran modu';
 $string['returncourse'] = 'Kursa geri dön';
@@ -104,7 +104,13 @@ $string['attachments'] = 'Ekler';
 $string['commentrequired'] = 'Yorum gerekli:';
 $string['commentloop'] = 'Yorum Döngüsü';
 $string['notreleased'] = 'Ödev notu henüz yayınlanmadı';
-$string['eventgraderviewed'] = 'Open Not Veren’e bakıldı';
-$string['eventactivitygraded'] = 'Open Not Veren’de etkinliğe not verildi';
-$string['eventcommentdeleted'] = 'Open Not Veren’de yorum silindi';
-$string['eventcommentadded'] = 'Open Not Veren’de yorum eklendi';
+$string['eventgraderviewed'] = 'Open Grader\'a bakıldı';
+$string['eventactivitygraded'] = 'Open Grader’da etkinliğe not verildi';
+$string['eventcommentdeleted'] = 'Open Grader’da yorum silindi';
+$string['eventcommentadded'] = 'Open Grader’da yorum eklendi';
+$string['privacy:metadata:preference:fullscreen'] = 'Kullanıcının, not veren uygulamasını tam ekran olarak görüntüleyip görüntülemediğini belirtir';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'Kullanıcının, not verirken Open Forumlarını gruplandırıp gruplandırmadığını belirtir';
+$string['privacy:request:preference:fullscreenyes'] = 'Kullanıcı, Open Grader\'ı tam ekran olarak kullanmayı tercih ediyor';
+$string['privacy:request:preference:fullscreenno'] = 'Kullanıcı, Open Grader\'ı normal görünümde kullanmayı tercih ediyor';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'Kullanıcı, not verirken Open Forumlarının gruplandırılmasını tercih ediyor';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'Kullanıcı not verirken Open Forumlarının gruplandırılmamasını tercih ediyor';
