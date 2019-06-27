@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Valutatore di Open';
-$string['joulegrader:grade'] = 'Valuta lavoro tramite il Valutatore di Open';
-$string['joulegrader:view'] = 'Visualizza lavoro valutato tramite il Valutatore di Open';
+$string['pluginname'] = 'Valutatore Open';
+$string['joulegrader:grade'] = 'Valuta lavoro tramite il valutatore di Open';
+$string['joulegrader:view'] = 'Visualizza lavoro valutato tramite il valutatore Open';
 $string['gradebook'] = 'Registro voti';
 $string['nothingtodisplay'] = 'Nessun elemento da visualizzare';
 $string['needsgrading'] = 'Mostra attività da valutare';
 $string['allactivities'] = 'Mostra tutte le attività';
-$string['mobilenotsupported'] = 'Il Valutatore di Open attualmente non supporta i browser per dispositivi mobili';
+$string['mobilenotsupported'] = 'Il valutatore Open attualmente non supporta i browser per dispositivi mobili';
 $string['exitfullscreen'] = 'Esci da modalità schermo intero';
 $string['fullscreen'] = 'Modalità schermo intero';
 $string['returncourse'] = 'Torna al corso';
@@ -104,7 +104,13 @@ $string['attachments'] = 'Allegati';
 $string['commentrequired'] = 'Commento obbligatorio';
 $string['commentloop'] = 'Ciclo di commenti';
 $string['notreleased'] = 'Il voto del compito non è stato ancora comunicato';
-$string['eventgraderviewed'] = 'Valutatore di Open visualizzato';
+$string['eventgraderviewed'] = 'Valutatore Open visualizzato';
 $string['eventactivitygraded'] = 'Attività valutata nel valutatore di Open';
 $string['eventcommentdeleted'] = 'Commento eliminato nel valutatore di Open';
 $string['eventcommentadded'] = 'Commento aggiunto nel valutatore di Open';
+$string['privacy:metadata:preference:fullscreen'] = 'Se un utente dispone o meno del valutatore a schermo intero';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'Se un utente raggruppa o meno i forum Open durante la valutazione degli stessi';
+$string['privacy:request:preference:fullscreenyes'] = 'L\'utente preferisce il valutatore Open a schermo intero';
+$string['privacy:request:preference:fullscreenno'] = 'L\'utente preferisce il valutatore Open in visualizzazione normale';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'L\'utente preferisce che i forum Open siano raggruppati durante la valutazione';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'L\'utente preferisce che i forum Open non siano raggruppati durante la valutazione';
