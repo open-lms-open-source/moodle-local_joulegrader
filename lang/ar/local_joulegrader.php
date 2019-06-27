@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'مصنف تقدير Open';
-$string['joulegrader:grade'] = 'تقدير العمل من خلال مصنف تقدير Open';
-$string['joulegrader:view'] = 'عرض العمل المُقدر من خلال مصنف تقدير Open';
+$string['pluginname'] = 'مصنف التقديرات المفتوح';
+$string['joulegrader:grade'] = 'تقدير العمل عبر "مصنف التقديرات المفتوح"';
+$string['joulegrader:view'] = 'عرض العمل الذي تم تقديره عبر "مصنف التقديرات المفتوح"';
 $string['gradebook'] = 'دفتر التقديرات';
 $string['nothingtodisplay'] = 'لا يوجد شيء ليتم عرضه';
 $string['needsgrading'] = 'إظهار الأنشطة التي تتطلب التقدير';
 $string['allactivities'] = 'إظهار جميع الأنشطة';
-$string['mobilenotsupported'] = 'لا يدعم "مصنف تقدير Open" مستعرضات الأجهزة المحمولة حاليًّا';
+$string['mobilenotsupported'] = 'لا يدعم "مصنف التقديرات المفتوح" حاليًا مستعرضات الأجهزة المحمولة';
 $string['exitfullscreen'] = 'إنهاء وضع ملء الشاشة';
 $string['fullscreen'] = 'وضع ملء الشاشة';
 $string['returncourse'] = 'الرجوع إلى المقرر الدراسي';
@@ -104,7 +104,13 @@ $string['attachments'] = 'المرفقات';
 $string['commentrequired'] = 'مطلوب تعليق';
 $string['commentloop'] = 'حلقة التعليقات';
 $string['notreleased'] = 'لم يتم إصدار تقدير الواجب بعد';
-$string['eventgraderviewed'] = 'تم عرض مصنف تقدير Open';
-$string['eventactivitygraded'] = 'تم تقدير النشاط في مصنف تقدير Open';
-$string['eventcommentdeleted'] = 'تم حذف تعليق في مصنف تقدير Open';
-$string['eventcommentadded'] = 'تم إضافة تعليق في مصنف تقدير Open';
+$string['eventgraderviewed'] = 'تم عرض "مصنف التقديرات المفتوح"';
+$string['eventactivitygraded'] = 'تم تقدير النشاط في "مصنف التقديرات المفتوح"';
+$string['eventcommentdeleted'] = 'تم حذف تعليق في "مصنف التقديرات المفتوح"';
+$string['eventcommentadded'] = 'تم إضافة تعليق في "مصنف التقديرات المفتوح"';
+$string['privacy:metadata:preference:fullscreen'] = 'ما إذا كان المستخدم يريد مصنف التقديرات في وضع ملء الشاشة أم لا';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'ما إذا كان المستخدم يريد تجميع "المنتديات المفتوحة" عند تقديرها';
+$string['privacy:request:preference:fullscreenyes'] = 'يفضل المستخدم "مصنف التقديرات المفتوح" في وضع ملء الشاشة';
+$string['privacy:request:preference:fullscreenno'] = 'يفضل المستخدم "مصنف التقديرات المفتوح" بطريقة العرض العادية';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'يفضل المستخدم أن يتم تجميع "المنتديات المفتوحة" عند تقديرها';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'يفضل المستخدم عدم تجميع "المنتديات المفتوحة" عند تقديرها';
