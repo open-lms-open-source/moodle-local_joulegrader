@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Openin arviointitoiminto';
-$string['joulegrader:grade'] = 'Arvioi töitä Openin arviointitoiminnolla';
-$string['joulegrader:view'] = 'Näytä arvioidut työt Openin arviointitoiminnossa';
+$string['pluginname'] = 'Open-arviointitoiminto';
+$string['joulegrader:grade'] = 'Arvioi töitä Open-arviointitoiminnolla';
+$string['joulegrader:view'] = 'Näytä arvioidut työt Open-arviointitoiminnossa';
 $string['gradebook'] = 'Arviointikirja';
 $string['nothingtodisplay'] = 'Ei näytettävää';
 $string['needsgrading'] = 'Näytä arviointia edellyttävät aktiviteetit';
 $string['allactivities'] = 'Näytä kaikki aktiviteetit';
-$string['mobilenotsupported'] = 'Openin arviointitoiminto ei tällä hetkellä tue mobiiliselaimia';
+$string['mobilenotsupported'] = 'Open-arviointitoiminto ei tällä hetkellä tue mobiiliselaimia';
 $string['exitfullscreen'] = 'Poistu koko näytön tilasta';
 $string['fullscreen'] = 'Koko näytön tila';
 $string['returncourse'] = 'Palaa kurssille';
@@ -104,7 +104,13 @@ $string['attachments'] = 'Liitteet';
 $string['commentrequired'] = 'Kommentti on pakollinen';
 $string['commentloop'] = 'Kommenttisilmukka';
 $string['notreleased'] = 'Tehtävän arvosanaa ei ole vielä julkaistu';
-$string['eventgraderviewed'] = 'Openin arviointitoimintoa katseltu';
-$string['eventactivitygraded'] = 'Aktiviteetti arvioitu Openin arviointitoiminnossa';
-$string['eventcommentdeleted'] = 'Kommentti poistettu Openin arviointitoiminnossa';
-$string['eventcommentadded'] = 'Kommentti lisätty Openin arviointitoiminnossa';
+$string['eventgraderviewed'] = 'Open-arviointitoimintoa katseltu';
+$string['eventactivitygraded'] = 'Aktiviteetti arvioitu Open-arviointitoiminnossa';
+$string['eventcommentdeleted'] = 'Kommentti poistettu Open-arviointitoiminnossa';
+$string['eventcommentadded'] = 'Kommentti lisätty Open-arviointitoiminnossa';
+$string['privacy:metadata:preference:fullscreen'] = 'Ilmaisee, käyttääkö käyttäjä arviointitoimintoa koko näytön tilassa';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'Ilmaisee, ryhmitteleekö käyttäjä Open-keskustelualueet niitä arvostellessaan';
+$string['privacy:request:preference:fullscreenyes'] = 'Käyttäjä käyttää mieluummin Open-arviointitoimintoa koko näytön tilassa';
+$string['privacy:request:preference:fullscreenno'] = 'Käyttäjä käyttää mieluummin Open-arviointitoimintoa normaalinäkymässä';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'Käyttäjä haluaa mieluummin ryhmitellä Open-keskustelualueet niitä arvostellessaan';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'Käyttäjä ei halua ryhmitellä Open-keskustelualueita niitä arvostellessaan';
