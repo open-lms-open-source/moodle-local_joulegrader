@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -108,3 +108,9 @@ $string['eventgraderviewed'] = 'Open Graderが表示されました';
 $string['eventactivitygraded'] = 'Open Graderで活動が評定されました';
 $string['eventcommentdeleted'] = 'Open Graderでコメントが削除されました';
 $string['eventcommentadded'] = 'Open Graderでコメントが追加されました';
+$string['privacy:metadata:preference:fullscreen'] = 'ユーザがGraderを全画面で表示するかどうかを指定します';
+$string['privacy:metadata:preference:showpostsgrouped'] = '評定時にユーザがOpenフォーラムをグループ化するかどうかを指定します';
+$string['privacy:request:preference:fullscreenyes'] = 'ユーザはOpen Graderを全画面で表示することを優先します';
+$string['privacy:request:preference:fullscreenno'] = 'ユーザは標準表示のOpen Graderを優先します';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'ユーザは評定時にOpenフォーラムをグループ化することを優先します';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'ユーザは評定時にOpenフォーラムをグループ化しないことを優先します';
