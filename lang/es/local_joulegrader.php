@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Calificador de Open';
-$string['joulegrader:grade'] = 'Trabajo de calificación a través del calificador de Open';
-$string['joulegrader:view'] = 'Ver el trabajo calificado a través del calificador de Open';
+$string['pluginname'] = 'Grader de Open';
+$string['joulegrader:grade'] = 'Calificar trabajo a través del Grader de Open';
+$string['joulegrader:view'] = 'Ver el trabajo calificado a través del Grader de Open';
 $string['gradebook'] = 'Libro de calificaciones';
 $string['nothingtodisplay'] = 'Nada que mostrar';
 $string['needsgrading'] = 'Mostrar las actividades que requieren calificación';
 $string['allactivities'] = 'Mostrar todas Las actividades';
-$string['mobilenotsupported'] = 'Actualmente, el calificador de Open no es compatible con navegadores para celulares.';
+$string['mobilenotsupported'] = 'Actualmente, el Grader de Open no es compatible con navegadores móviles';
 $string['exitfullscreen'] = 'Salir del modo de pantalla completa';
 $string['fullscreen'] = 'Modo de pantalla completa';
 $string['returncourse'] = 'Volver al curso';
@@ -104,7 +104,13 @@ $string['attachments'] = 'Archivos adjuntos';
 $string['commentrequired'] = 'Es obligatorio ingresar un comentario.';
 $string['commentloop'] = 'Repetición del comentario';
 $string['notreleased'] = 'Calificación de la tarea aún no publicada';
-$string['eventgraderviewed'] = 'Calificador de Open visto';
-$string['eventactivitygraded'] = 'Actividad calificada en el calificador de Open';
-$string['eventcommentdeleted'] = 'Comentario eliminado en el calificador de Open';
-$string['eventcommentadded'] = 'Comentario agregado en el calificador de Open';
+$string['eventgraderviewed'] = 'Grader de Open visto';
+$string['eventactivitygraded'] = 'Actividad calificada en el Grader de Open';
+$string['eventcommentdeleted'] = 'Comentario eliminado en el Grader de Open';
+$string['eventcommentadded'] = 'Comentario añadido en el Grader de Open';
+$string['privacy:metadata:preference:fullscreen'] = 'Si un usuario tiene o no el calificador en pantalla completa';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'Si un usuario agrupa o no los foros de Open al calificarlos';
+$string['privacy:request:preference:fullscreenyes'] = 'El usuario prefiere tener el Grader de Open en pantalla completa';
+$string['privacy:request:preference:fullscreenno'] = 'El usuario prefiere tener el Grader de Open en la vista normal';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'El usuario prefiere que los foros de Open estén agrupados al calificarlos';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'El usuario prefiere que los foros de Open no estén agrupados al calificarlos';
