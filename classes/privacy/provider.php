@@ -24,10 +24,8 @@
 
 namespace local_joulegrader\privacy;
 
-use core_privacy\local\legacy_polyfill;
 use \core_privacy\local\request\writer;
 use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\transform;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -43,20 +41,19 @@ class provider implements
     \core_privacy\local\request\user_preference_provider
 {
 
-    use legacy_polyfill;
     /**
      * Returns meta data about this plugin.
      *
-     * @param  collection $datacollected.
-     * @return collection $datacollected after adding a list of user data stored through this plugin.
+     * @param  collection $collection.
+     * @return collection $collection after adding a list of user data stored through this plugin.
      */
-    public static function _get_metadata(collection $datacollected) {
+    public static function get_metadata(collection $collection) : collection {
         // There are several user preferences.
-        $datacollected->add_user_preference('local_joulegrader_fullscreen', 'privacy:metadata:preference:fullscreen');
-        $datacollected->add_user_preference('local_joulegrader_mod_hsuforum_posts_showposts_grouped',
+        $collection->add_user_preference('local_joulegrader_fullscreen', 'privacy:metadata:preference:fullscreen');
+        $collection->add_user_preference('local_joulegrader_mod_hsuforum_posts_showposts_grouped',
             'privacy:metadata:preference:showpostsgrouped');
 
-        return $datacollected;
+        return $collection;
     }
 
     /**
@@ -64,7 +61,7 @@ class provider implements
      *
      * @param int $userid The userid of the user whose data is to be exported.
      */
-    public static function _export_user_preferences(int $userid) {
+    public static function export_user_preferences(int $userid) {
         $fullscreenpref = get_user_preferences('local_joulegrader_fullscreen', null, $userid);
         $postpref = get_user_preferences('local_joulegrader_mod_hsuforum_posts_showposts_grouped', null, $userid);
         $description = null;
