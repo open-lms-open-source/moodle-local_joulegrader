@@ -84,25 +84,19 @@ abstract class loopable_abstract implements loopable_interface {
         $ids         = array_keys($list);
         $previd      = null;
         $nextid      = null;
+        $idslength = count($ids);
 
-        //try to get the id before the current id
-        foreach($ids as $id) {
-            if ($id == $currentid) {
-                break;
-            }
-            $previd = $id;
+        $currentkey = array_search($currentid, $ids);
+        if ($currentkey > 0){
+            $previd = $ids[$currentkey - 1];
+        } else {
+            $previd = $ids[$idslength - 1];
         }
 
-        //if we haven't reached the end of the array, current should give "nextid"
-        $nextid = current($ids);
-
-        reset($ids);
-        if ($nextid === false) {
-            //the current category is the last so start at the beginning
+        if ($currentkey < $idslength - 1){
+            $nextid = $ids[$currentkey + 1];
+        } else {
             $nextid = $ids[0];
-        } else if ($previd === null) {
-            //the current category is the first so get the last
-            $previd = end($ids);
         }
 
         return array($previd, $nextid);
