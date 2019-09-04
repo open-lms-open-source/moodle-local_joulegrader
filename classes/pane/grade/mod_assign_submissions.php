@@ -254,20 +254,59 @@ class mod_assign_submissions extends grade_abstract {
      * @param \MoodleQuickForm $mform
      */
     public function add_feedback_form($mform) {
+        global $COURSE;
+
         if ($this->has_overall_feedback()) {
-            $editor = $mform->addElement('editor', 'assignfeedbackcomments_editor',
-                get_string('overallfeedback', 'local_joulegrader') . ': ', null, null);
-            $mform->setType('assignfeedbackcomments_editor', PARAM_RAW);
+            $assignment = $this->gradingarea->get_assign();
+            $options = [
+                'subdirs' => 1,
+                'maxbytes' => $COURSE->maxbytes,
+                'accepted_types' => '*',
+                'context' => $assignment->get_context(),
+                'maxfiles' => EDITOR_UNLIMITED_FILES
+            ];
+
+            $data = new \stdClass();
+            $data->assignfeedbackcomments = '';
+            $data->assignfeedbackcommentsformat = FORMAT_HTML;
 
             if ($grade = $this->get_usergrade($this->gradingarea->get_guserid(), false, $this->gradingarea->get_attemptnumber())) {
                 $feedbackcomments = $this->get_feedbackcomment_plugin()->get_feedback_comments($grade->id);
                 if ($feedbackcomments) {
-                    $data = array();
-                    $data['text'] = $feedbackcomments->commenttext;
-                    $data['format'] = $feedbackcomments->commentformat;
-
-                    $editor->setValue($data);
+                    $data->assignfeedbackcomments = $feedbackcomments->commenttext;
+                    $data->assignfeedbackcommentsformat = $feedbackcomments->commentformat;
                 }
+            }
+
+            file_prepare_standard_editor(
+                $data,
+                'assignfeedbackcomments',
+                $options,
+                $assignment->get_context(),
+                ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+                ASSIGNFEEDBACK_COMMENTS_FILEAREA,
+                $grade->id
+            );
+
+            $editor = $mform->addElement('editor', 'assignfeedbackcomments_editor',
+                get_string('overallfeedback', 'local_joulegrader') . ': ', null, $options);
+
+            $mform->setType('assignfeedbackcomments_editor', PARAM_RAW);
+
+            if ($grade && $feedbackcomments) {
+                $data = array();
+                $text = file_rewrite_pluginfile_urls(
+                    $feedbackcomments->commenttext,
+                    'pluginfile.php',
+                    $assignment->get_context()->id,
+                    ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+                    ASSIGNFEEDBACK_COMMENTS_FILEAREA,
+                    $grade->id
+                );
+
+                $data['text'] = $text;
+                $data['format'] = $feedbackcomments->commentformat;
+                $editor->setValue($data);
             }
         }
     }
