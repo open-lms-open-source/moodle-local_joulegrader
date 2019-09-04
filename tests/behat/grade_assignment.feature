@@ -35,8 +35,8 @@ Feature: Grade assignments in Open Grader
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
     And the following "activities" exist:
-      | activity | course | idnumber | name                   | intro | advancedgradingmethod_submissions |
-      | assign   | C1     | A1       | Test assignment 1 name | TA1   | rubric                            |
+      | activity | course | idnumber | name                   | intro | advancedgradingmethod_submissions |assignfeedback_comments_enabled |
+      | assign   | C1     | A1       | Test assignment 1 name | TA1   | rubric                            |1							   |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -63,5 +63,9 @@ Feature: Grade assignments in Open Grader
     And I grade by filling the Open Grader rubric with:
       | Criterion 1 | 12 | Very good |
       | Criterion 2 | 22 | Mmmm, you can do it better |
+   	And "#id_assignfeedbackcomments_editoreditable" "css_element" should exist in the "#fitem_id_assignfeedbackcomments_editor" "css_element"
+   	And ".atto_recordrtc_button_audio" "css_element" should exist in the ".atto_group.files_group" "css_element"
+   	And ".atto_recordrtc_button_video" "css_element" should exist in the ".atto_group.files_group" "css_element"
     And I click on "Save grade" "button"
     Then I should see "Grade successfully updated"
+    

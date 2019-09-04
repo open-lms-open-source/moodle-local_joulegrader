@@ -270,14 +270,16 @@ class mod_assign_submissions extends grade_abstract {
             $data->assignfeedbackcomments = '';
             $data->assignfeedbackcommentsformat = FORMAT_HTML;
 
+            $gradeid = null;
             if ($grade = $this->get_usergrade($this->gradingarea->get_guserid(), false, $this->gradingarea->get_attemptnumber())) {
                 $feedbackcomments = $this->get_feedbackcomment_plugin()->get_feedback_comments($grade->id);
+                $gradeid = $grade->id;
                 if ($feedbackcomments) {
                     $data->assignfeedbackcomments = $feedbackcomments->commenttext;
                     $data->assignfeedbackcommentsformat = $feedbackcomments->commentformat;
                 }
             }
-
+            
             file_prepare_standard_editor(
                 $data,
                 'assignfeedbackcomments',
@@ -285,7 +287,7 @@ class mod_assign_submissions extends grade_abstract {
                 $assignment->get_context(),
                 ASSIGNFEEDBACK_COMMENTS_COMPONENT,
                 ASSIGNFEEDBACK_COMMENTS_FILEAREA,
-                $grade->id
+                $gradeid
             );
 
             $editor = $mform->addElement('editor', 'assignfeedbackcomments_editor',
@@ -301,7 +303,7 @@ class mod_assign_submissions extends grade_abstract {
                     $assignment->get_context()->id,
                     ASSIGNFEEDBACK_COMMENTS_COMPONENT,
                     ASSIGNFEEDBACK_COMMENTS_FILEAREA,
-                    $grade->id
+                    $gradeid
                 );
 
                 $data['text'] = $text;
