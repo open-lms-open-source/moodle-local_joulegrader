@@ -19,7 +19,7 @@
 # @copyright  Copyright (c) 2017 Blackboard Inc.
 # @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
-@local @local_joulegrader
+@local @local_joulegrader @_file_upload
 Feature: Teachers see the plagiarism plugin info in Joule Grader.
   Background:
     Given the following config values are set as admin:
