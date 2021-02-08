@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2020 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -78,7 +78,7 @@ $string['saveandnext'] = 'Guardar calificación y siguiente';
 $string['gradingdisabled'] = 'La calificación de esta actividad está bloqueada. Para habilitar la calificación, desbloquee la calificación a través del Libro de calificaciones.';
 $string['applytoall'] = 'Aplicar calificaciones y retroalimentación a todo el grupo.';
 $string['applytoall_help'] = 'Si se selecciona "Sí", todos los miembros del grupo recibirán la calificación y la retroalimentación, independientemente de cualquier calificación o retroalimentación existente en el libro de calificaciones.';
-$string['criteria'] = 'Criterios';
+$string['criteria'] = 'Criterio';
 $string['checklist'] = 'Lista de verificación';
 $string['gradesaved'] = 'Calificación actualizada exitosamente';
 $string['gradesavedx'] = 'Las calificaciones de {$a} se actualizaron exitosamente.';
