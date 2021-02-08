@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2020 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -24,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'Valutatore Open';
 $string['joulegrader:grade'] = 'Valuta lavoro tramite il valutatore di Open';
 $string['joulegrader:view'] = 'Visualizza lavoro valutato tramite il valutatore Open';
-$string['gradebook'] = 'Registro voti';
+$string['gradebook'] = 'Registro valutazioni';
 $string['nothingtodisplay'] = 'Nessun elemento da visualizzare';
 $string['needsgrading'] = 'Mostra attività da valutare';
 $string['allactivities'] = 'Mostra tutte le attività';
@@ -51,9 +51,9 @@ $string['commentdeleted'] = 'Messaggio eliminato da {$a->deletedby} il {$a->dele
 $string['deletecomment'] = 'Elimina commento pubblicato il {$a}';
 $string['previous'] = 'Precedente {$a}';
 $string['next'] = 'Successivo {$a}';
-$string['assignmentavailable'] = 'Disponibile';
+$string['assignmentavailable'] = 'Possibili';
 $string['on'] = 'il {$a}';
-$string['until'] = 'fino a {$a}';
+$string['until'] = 'fino al {$a}';
 $string['lastedited'] = 'Ultima modifica il {$a}';
 $string['assign23-latesubmission'] = 'Consegna in ritardo di {$a}.';
 $string['assign23-userextensiondate'] = 'Proroga concessa fino a: {$a}';
@@ -62,14 +62,14 @@ $string['download'] = 'download';
 $string['viewinline'] = 'visualizza online';
 $string['activitycomments'] = 'Commenti attività';
 $string['overallfeedback'] = 'Feedback complessivo';
-$string['filefeedback'] = 'Feedback del file';
+$string['filefeedback'] = 'File di commento';
 $string['attemptnumber'] = 'Tentativo {$a->attemptnumber}: {$a->attempttime}';
 $string['viewingattempt'] = 'Visualizzazione tentativo';
 $string['attemptstatus'] = 'Lo studente ha eseguito {$a->number} tentativi su {$a->outof}.';
 $string['assignmentstatus'] = 'Stato compito';
 $string['unlimited'] = 'illimitato';
 $string['gradebookgrade'] = 'Voto corrente nel registro voti';
-$string['attemptgrade'] = 'Tentativo di voto';
+$string['attemptgrade'] = 'Voto tentativo';
 $string['gradeoutof'] = 'Voto (su {$a})';
 $string['gradeoutofrange'] = 'Il voto non rientra nell\'intervallo';
 $string['overridetext'] = 'Un docente ha precedentemente creato un voto per questa attività direttamente nel Registro voti.  Se desideri sostituire anche quel voto, seleziona questa casella.';
@@ -91,10 +91,10 @@ $string['viewcheckliststudent'] = 'Visualizza elenco di controllo valutazione';
 $string['viewrubricstudent'] = 'Visualizza rubrica valutazione';
 $string['viewguidestudent'] = 'Visualizza guida alla valutazione';
 $string['viewguideteacher'] = 'Voto con guida alla valutazione';
-$string['guide'] = 'Guida alla valutazione';
+$string['guide'] = 'Valutazione guidata';
 $string['rubric'] = 'Rubrica';
 $string['rubricerror'] = 'Seleziona un livello per ciascun criterio';
-$string['guideerror'] = 'Fornisci un voto valido per ciascun criterio';
+$string['guideerror'] = 'Per favore inserisci un punteggio valido per ciascun criterio';
 $string['score'] = 'Punteggio';
 $string['gradeoverriddenstudent'] = '(Modifica in Registro voti: {$a})';
 $string['close'] = 'Chiudi';
