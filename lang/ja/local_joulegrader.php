@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2020 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +32,7 @@ $string['mobilenotsupported'] = '現在、Open Graderではモバイルブラウ
 $string['exitfullscreen'] = 'フルスクリーンモードを終了する';
 $string['fullscreen'] = 'フルスクリーンモード';
 $string['returncourse'] = 'コースに戻る';
-$string['grading'] = '採点';
+$string['grading'] = '評定';
 $string['nogradeableareas'] = '評定可能な活動がありません';
 $string['nogradeableusers'] = '評定可能なユーザがいません';
 $string['showonlyuserposts'] = 'ユーザの投稿のみを表示する';
@@ -43,7 +43,7 @@ $string['activitynav_help'] = 'このウィジェットでは、評定対象の�
 $string['group'] = 'グループ';
 $string['groupnav'] = 'グループ';
 $string['groupnav_help'] = 'このウィジェットでは、グループを選択できます。';
-$string['user'] = 'ユーザー';
+$string['user'] = 'ユーザ';
 $string['usernav'] = 'ユーザ';
 $string['usernav_help'] = 'このウィジェットでは、評定対象のユーザを選択できます。';
 $string['navviewlabel'] = '{$a} を表示する';
@@ -69,7 +69,7 @@ $string['attemptstatus'] = '学生は、{$a->outof} の受験のうち {$a->numb
 $string['assignmentstatus'] = '課題のステータス';
 $string['unlimited'] = '無制限';
 $string['gradebookgrade'] = '評定表内の現在の評定';
-$string['attemptgrade'] = '答案成績';
+$string['attemptgrade'] = '受験評点';
 $string['gradeoutof'] = '評点 ({$a} 点中)';
 $string['gradeoutofrange'] = '評点が範囲外です';
 $string['overridetext'] = '従来、講師は、この活動の評定を評定表で直接作成していました。この評定を置換する場合は、このチェックボックスもオンにしてください。';
@@ -95,9 +95,9 @@ $string['guide'] = '評定ガイド';
 $string['rubric'] = 'ルーブリック';
 $string['rubricerror'] = 'クライテリアごとにレベルを1つ選択してください';
 $string['guideerror'] = 'クライテリアごとに有効な評点を入力してください';
-$string['score'] = 'スコア';
+$string['score'] = '評点';
 $string['gradeoverriddenstudent'] = '(評点表のオーバーライド : {$a})';
-$string['close'] = 'クローズ';
+$string['close'] = '閉じる';
 $string['allfiles'] = 'すべてのファイル';
 $string['add'] = 'コメントを保存する';
 $string['attachments'] = '添付ファイル';

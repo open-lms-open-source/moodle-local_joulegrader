@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2020 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -56,12 +56,12 @@ $string['on'] = '{$a}';
 $string['until'] = '{$a} saakka';
 $string['lastedited'] = 'Viimeksi muokattu {$a}';
 $string['assign23-latesubmission'] = 'Tämä palautus oli myöhässä {$a}.';
-$string['assign23-userextensiondate'] = 'Olet saanut lisäaikaa {$a} asti';
+$string['assign23-userextensiondate'] = 'Lisäaikaa annettu {$a} asti';
 $string['downloadall'] = 'Lataa kaikki tiedostot';
 $string['download'] = 'lataa';
 $string['viewinline'] = 'näytä esikatselu';
 $string['activitycomments'] = 'Aktiviteetin kommentit';
-$string['overallfeedback'] = 'Suorituksen yleispalaute';
+$string['overallfeedback'] = 'Yleispalaute';
 $string['filefeedback'] = 'Tiedostopalaute';
 $string['attemptnumber'] = 'Suorituskerta {$a->attemptnumber}: {$a->attempttime}';
 $string['viewingattempt'] = 'Tarkastellaan suoritusta';
@@ -78,7 +78,7 @@ $string['saveandnext'] = 'Tallenna ja arvioi seuraava';
 $string['gradingdisabled'] = 'Tämän aktiviteetin arviointi on lukittu. Jos haluat tehdä uuden arvioinnin, avaa lukitus arviointikirjassa.';
 $string['applytoall'] = 'Anna sama arvosana ja palaute koko ryhmälle';
 $string['applytoall_help'] = 'Jos valitset Kyllä, kaikki ryhmän jäsenet saavat saman arvosanan ja palautteen riippumatta arviointikirjan nykyisestä arvosanasta tai palautteesta.';
-$string['criteria'] = 'Kriteeri';
+$string['criteria'] = 'Arviointikriteeri';
 $string['checklist'] = 'Tarkistuslista';
 $string['gradesaved'] = 'Arvosana päivitetty';
 $string['gradesavedx'] = '{$a} arvosanaa päivitetty';
@@ -95,7 +95,7 @@ $string['guide'] = 'Arviointiopas';
 $string['rubric'] = 'Arviointimatriisi';
 $string['rubricerror'] = 'Valitse yksi taso kullekin arviointikriteerille';
 $string['guideerror'] = 'Huolehdi, että kunkin arviointikriteerin arvosana on kelvollinen';
-$string['score'] = 'Sijoitus';
+$string['score'] = 'Tulos';
 $string['gradeoverriddenstudent'] = '(Korvaa arviointikirjan arvosana: {$a})';
 $string['close'] = 'Sulje';
 $string['allfiles'] = 'Kaikki tiedostot';

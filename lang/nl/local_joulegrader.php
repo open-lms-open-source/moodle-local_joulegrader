@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2020 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -31,8 +31,8 @@ $string['allactivities'] = 'Toon alle activiteiten';
 $string['mobilenotsupported'] = 'Open Grader ondersteunt momenteel geen mobiele browsers';
 $string['exitfullscreen'] = 'Verlaat volledig scherm';
 $string['fullscreen'] = 'Volledig scherm';
-$string['returncourse'] = 'Keer terug naar de cursus';
-$string['grading'] = 'Beoordeling';
+$string['returncourse'] = 'Keer terug naar cursus';
+$string['grading'] = 'Beoordelen';
 $string['nogradeableareas'] = 'Geen beoordeelbare activiteiten';
 $string['nogradeableusers'] = 'Geen beoordeelbare gebruikers';
 $string['showonlyuserposts'] = 'Toon alleen berichten van gebruikers';
@@ -57,11 +57,11 @@ $string['until'] = 'tot {$a}';
 $string['lastedited'] = 'Laatst bewerkt op {$a}';
 $string['assign23-latesubmission'] = 'Deze inzending was te laat met {$a}.';
 $string['assign23-userextensiondate'] = 'Extra tijd gegeven tot: {$a}';
-$string['downloadall'] = 'Alle bestanden downloaden';
+$string['downloadall'] = 'Download alle bestanden';
 $string['download'] = 'download';
 $string['viewinline'] = 'bekijk inline';
 $string['activitycomments'] = 'Opmerkingen activiteit';
-$string['overallfeedback'] = 'Algemene feedback test';
+$string['overallfeedback'] = 'Algemene feedback';
 $string['filefeedback'] = 'Bestandsfeedback';
 $string['attemptnumber'] = 'Poging {$a->attemptnumber}: {$a->attempttime}';
 $string['viewingattempt'] = 'Poging weergeven';
@@ -92,10 +92,10 @@ $string['viewrubricstudent'] = 'Bekijk beoordelingsrubriek';
 $string['viewguidestudent'] = 'Bekijk beoordelingshulp';
 $string['viewguideteacher'] = 'Beoordeling met beoordelingshulp';
 $string['guide'] = 'Beoordelingshulp';
-$string['rubric'] = 'Rubric';
+$string['rubric'] = 'Rubriek';
 $string['rubricerror'] = 'Selecteer één niveau voor elk criterium';
 $string['guideerror'] = 'Geef een geldig cijfer voor elk criterium';
-$string['score'] = 'Cijfer';
+$string['score'] = 'Score';
 $string['gradeoverriddenstudent'] = '(Overschrijven in cijferlijst: {$a})';
 $string['close'] = 'Sluit';
 $string['allfiles'] = 'Alle bestanden';

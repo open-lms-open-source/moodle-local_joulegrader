@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2020 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -43,8 +43,8 @@ $string['activitynav_help'] = 'Verwenden Sie dieses Widget, um auszuwählen, wel
 $string['group'] = 'Gruppe';
 $string['groupnav'] = 'Gruppen';
 $string['groupnav_help'] = 'Verwenden Sie dieses Widget, um eine Gruppe auszuwählen.';
-$string['user'] = 'Für Nutzer/in';
-$string['usernav'] = 'Nutzer';
+$string['user'] = 'Nutzer/in';
+$string['usernav'] = 'Nutzer/innen';
 $string['usernav_help'] = 'Verwenden Sie dieses Widget, um auszuwählen, welcher Nutzer bewertet werden soll.';
 $string['navviewlabel'] = '{$a} anzeigen';
 $string['commentdeleted'] = 'Der Nutzer {$a->deletedby} hat den Eintrag am {$a->deletedon} gelöscht.';

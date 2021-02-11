@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2020 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -40,11 +40,11 @@ $string['groupbydiscussion'] = '依討論分組';
 $string['activity'] = '可評分的活動';
 $string['activitynav'] = '可評分的活動';
 $string['activitynav_help'] = '使用此小工具來選取所要評分的可評分活動';
-$string['group'] = '群組';
+$string['group'] = '小組';
 $string['groupnav'] = '小組';
 $string['groupnav_help'] = '使用此小工具來選取小組。';
 $string['user'] = '使用者';
-$string['usernav'] = '個使用者';
+$string['usernav'] = '使用者';
 $string['usernav_help'] = '使用此小工具來選取所要評分的使用者。';
 $string['navviewlabel'] = '檢視 {$a}';
 $string['commentdeleted'] = '使用者 {$a->deletedby} 在 {$a->deletedon} 上已刪除的文章';

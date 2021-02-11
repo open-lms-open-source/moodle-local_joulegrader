@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2020 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -51,7 +51,7 @@ $string['commentdeleted'] = 'Użytkownik {$a->deletedby} usunął wpis {$a->dele
 $string['deletecomment'] = 'Usuń komentarz z dnia {$a}';
 $string['previous'] = 'Poprzedni {$a}';
 $string['next'] = 'Następny {$a}';
-$string['assignmentavailable'] = 'Dostępni';
+$string['assignmentavailable'] = 'Dostępne';
 $string['on'] = 'dnia {$a}';
 $string['until'] = 'do {$a}';
 $string['lastedited'] = 'Ostatnia edycja dnia {$a}';
@@ -61,7 +61,7 @@ $string['downloadall'] = 'Pobierz wszystkie pliki';
 $string['download'] = 'pobierz';
 $string['viewinline'] = 'wyświetl w trybie inline';
 $string['activitycomments'] = 'Komentarze na temat aktywności';
-$string['overallfeedback'] = 'Ogólna informacja zwrotna';
+$string['overallfeedback'] = 'Informacja zwrotna do całego pytania';
 $string['filefeedback'] = 'Plik z komentarzem zwrotnym';
 $string['attemptnumber'] = 'Próba {$a->attemptnumber}: {$a->attempttime}';
 $string['viewingattempt'] = 'Wyświetlenie próby';
@@ -69,7 +69,7 @@ $string['attemptstatus'] = 'Student podjął {$a->number} z {$a->outof} prób.';
 $string['assignmentstatus'] = 'Status zadania';
 $string['unlimited'] = 'nieograniczone';
 $string['gradebookgrade'] = 'Bieżąca ocena w dzienniku ocen';
-$string['attemptgrade'] = 'Ocena z podejścia';
+$string['attemptgrade'] = 'Ocena próby';
 $string['gradeoutof'] = 'Ocena (z maks. {$a})';
 $string['gradeoutofrange'] = 'Ocena poza zakresem';
 $string['overridetext'] = 'Poprzednio instruktor utworzył ocenę dla tej aktywności bezpośrednio w dzienniku ocen. Zaznacz to pole, ab zastąpić również tamtą ocenę.';

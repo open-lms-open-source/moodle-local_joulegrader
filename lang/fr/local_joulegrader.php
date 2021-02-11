@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2020 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +32,7 @@ $string['mobilenotsupported'] = 'À l\'heure actuelle, Open Grader ne prend pas 
 $string['exitfullscreen'] = 'Quitter le mode plein écran';
 $string['fullscreen'] = 'Mode plein écran';
 $string['returncourse'] = 'Revenir au cours';
-$string['grading'] = 'Évaluation';
+$string['grading'] = 'Notation';
 $string['nogradeableareas'] = 'Aucune activité évaluable';
 $string['nogradeableusers'] = 'Aucun utilisateur évaluable';
 $string['showonlyuserposts'] = 'N\'afficher que les messages de l\'utilisateur';
@@ -51,7 +51,7 @@ $string['commentdeleted'] = 'L\'utilisateur {$a->deletedby} a supprimé le messa
 $string['deletecomment'] = 'Supprimer le commentaire sur {$a}';
 $string['previous'] = '{$a} précédent';
 $string['next'] = '{$a} suivant';
-$string['assignmentavailable'] = 'Disponible(s)';
+$string['assignmentavailable'] = 'Disponible';
 $string['on'] = 'sur {$a}';
 $string['until'] = 'jusqu\'au {$a}';
 $string['lastedited'] = 'Dernière modification : {$a}';
@@ -61,15 +61,15 @@ $string['downloadall'] = 'Télécharger tous les fichiers';
 $string['download'] = 'télécharger';
 $string['viewinline'] = 'voir en ligne';
 $string['activitycomments'] = 'Commentaires d\'activité';
-$string['overallfeedback'] = 'Feed-back général';
-$string['filefeedback'] = 'Fichiers comme feed-back';
+$string['overallfeedback'] = 'Feed-back global';
+$string['filefeedback'] = 'Feed-back de fichier';
 $string['attemptnumber'] = 'Tentative {$a->attemptnumber} : {$a->attempttime}';
 $string['viewingattempt'] = 'Affichage de la tentative';
 $string['attemptstatus'] = 'L\'étudiant a fait {$a->number} tentative(s) sur {$a->outof}.';
 $string['assignmentstatus'] = 'État du devoir';
 $string['unlimited'] = 'illimité';
 $string['gradebookgrade'] = 'Note actuelle dans le carnet de notes';
-$string['attemptgrade'] = 'Note de tentative';
+$string['attemptgrade'] = 'Note de la tentative';
 $string['gradeoutof'] = 'Note (sur {$a})';
 $string['gradeoutofrange'] = 'La note est en dehors de la fourchette';
 $string['overridetext'] = 'Un professeur a déjà créé une note pour cette activité directement dans le carnet de notes. Cochez cette case si vous voulez aussi remplacer cette note.';
@@ -78,7 +78,7 @@ $string['saveandnext'] = 'Enregistrer la note et passer à la suivante';
 $string['gradingdisabled'] = 'La notation de cette activité est verrouillée. Pour l\'activer, déverrouillez cette note dans le carnet de notes.';
 $string['applytoall'] = 'Appliquer les notes et le feed-back à tout le groupe';
 $string['applytoall_help'] = 'Si vous choisissez Oui, tous les membres du groupe recevront la note et le feed-back indépendamment des notes et feed-backs existant dans le carnet de notes.';
-$string['criteria'] = 'Critères';
+$string['criteria'] = 'Critère';
 $string['checklist'] = 'Check-list';
 $string['gradesaved'] = 'La note a bien été mise à jour';
 $string['gradesavedx'] = '{$a} notes ont bien été mises à jour';
@@ -92,15 +92,15 @@ $string['viewrubricstudent'] = 'Afficher la rubrique de notation';
 $string['viewguidestudent'] = 'Afficher le guide d\'évaluation';
 $string['viewguideteacher'] = 'Noter avec le guide d\'évaluation';
 $string['guide'] = 'Guide d\'évaluation';
-$string['rubric'] = 'Critères';
+$string['rubric'] = 'Grille d\'évaluation';
 $string['rubricerror'] = 'Sélectionnez un niveau pour chaque critère';
-$string['guideerror'] = 'Merci de fournir une note valide pour chaque critère';
-$string['score'] = 'Score';
+$string['guideerror'] = 'Indiquez une note valide pour chaque critère';
+$string['score'] = 'Résultat';
 $string['gradeoverriddenstudent'] = '(Remplacer dans le carnet de notes : {$a})';
 $string['close'] = 'Fermer';
 $string['allfiles'] = 'Tous les fichiers';
 $string['add'] = 'Enregistrer le commentaire';
-$string['attachments'] = 'Annexes';
+$string['attachments'] = 'Pièces jointes';
 $string['commentrequired'] = 'Commentaire obligatoire';
 $string['commentloop'] = 'Boucle de commentaire';
 $string['notreleased'] = 'Note du devoir pas encore publiée';
