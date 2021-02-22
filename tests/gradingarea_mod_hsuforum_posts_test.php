@@ -34,7 +34,7 @@ use local_joulegrader\gradingarea\mod_hsuforum_posts;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_joulegrader_gradingarea_mod_hsuforum_posts_test extends advanced_testcase {
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 

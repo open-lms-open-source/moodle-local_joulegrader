@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_joulegrader_untility_testcase extends advanced_testcase {
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 
