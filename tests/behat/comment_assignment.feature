@@ -16,7 +16,7 @@
 # Tests commenting in Joule Grader
 #
 # @package    local_joulegrader
-# @copyright  Copyright (c) 2015 Blackboard Inc. (http://www.blackboard.com)
+# @copyright  Copyright (c) 2015 Open LMS (https://www.openlms.net)
 # @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 @local @local_joulegrader

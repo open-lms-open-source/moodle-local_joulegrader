@@ -19,7 +19,7 @@
  *
  * @package    local_joulegrader
  * @author     Sam Chaffee
- * @copyright  2014 Blackboard Inc.
+ * @copyright  2014 Open LMS
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
