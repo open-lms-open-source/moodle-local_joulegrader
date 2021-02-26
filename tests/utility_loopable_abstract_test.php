@@ -18,8 +18,8 @@
  * Joule Grader utility testcase.
  *
  * @package    local_joulegrader
- * @author     Oscar Nadjar <oscar.nadjar@blackboard.com>
- * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
+ * @author     Oscar Nadjar <oscar.nadjar@openlms.net>
+ * @copyright  Copyright (c) 2019 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
  * Joule Grader find previous and next ID's.
  *
  * @package    local_joulegrader
- * @copyright  Copyright (c) 2019 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2019 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_joulegrader_untility_testcase extends advanced_testcase {

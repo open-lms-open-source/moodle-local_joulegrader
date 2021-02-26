@@ -21,7 +21,7 @@
  *
  * @package    local_joulegrader
  * @author     Sam Chaffee
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2018 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -36,7 +36,7 @@ use Behat\Gherkin\Node\TableNode as TableNode,
  * Copied and modified from behat_gradingform_rubric class.
  *
  * @package    local_joulegrader
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2018 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_local_joulegrader extends behat_base {

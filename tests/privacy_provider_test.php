@@ -18,7 +18,7 @@
  * Unit tests for the local_joulegrader implementation of the privacy API.
  *
  * @package    local_joulegrader
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2018 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -31,7 +31,7 @@ use \local_joulegrader\privacy\provider;
 /**
  * Unit tests for the local_joulegrader implementation of the privacy API.
  *
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2018 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_joulegrader_privacy_testcase extends \core_privacy\tests\provider_testcase {
