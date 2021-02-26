@@ -19,7 +19,7 @@
  *
  * @package    local_joulegrader
  * @author     Sam Chaffee
- * @copyright  Copyright (c) 2016 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2016 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
  * Joule Grader commenting tests.
  *
  * @package    local_joulegrader
- * @copyright  Copyright (c) 2016 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2016 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_joulegrader_comment_testcase extends advanced_testcase {

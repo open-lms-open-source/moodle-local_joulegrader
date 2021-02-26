@@ -18,7 +18,7 @@
  * Privacy Subsystem implementation for local_joulegrader.
  *
  * @package    local_joulegrader
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2018 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Implementation of the privacy subsystem plugin provider for the Open Grader.
  *
- * @copyright  Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2018 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
