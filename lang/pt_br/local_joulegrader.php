@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2020 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -91,7 +91,7 @@ $string['viewcheckliststudent'] = 'Visualizar lista de progresso de avaliação'
 $string['viewrubricstudent'] = 'Visualizar critério de avaliação';
 $string['viewguidestudent'] = 'Visualizar guia de pontuação da avaliação';
 $string['viewguideteacher'] = 'Avaliar com guia de pontuação';
-$string['guide'] = 'Guia de pontuação';
+$string['guide'] = 'Guia de avaliação';
 $string['rubric'] = 'Critério de avaliação';
 $string['rubricerror'] = 'Selecione um nível para cada critério';
 $string['guideerror'] = 'Insira uma nota válida para cada critério';
