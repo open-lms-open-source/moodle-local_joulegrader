@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2020 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +32,7 @@ $string['mobilenotsupported'] = 'Actualment Open Grader no és compatible amb el
 $string['exitfullscreen'] = 'Surt del mode de pantalla completa';
 $string['fullscreen'] = 'Mode de pantalla completa';
 $string['returncourse'] = 'Torna al curs';
-$string['grading'] = 'S\'està qualificant';
+$string['grading'] = 'Qualificació';
 $string['nogradeableareas'] = 'Activitats no qualificables';
 $string['nogradeableusers'] = 'Usuaris no qualificables';
 $string['showonlyuserposts'] = 'Mostra únicament els apunts dels usuaris';
