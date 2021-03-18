@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2020 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +32,7 @@ $string['mobilenotsupported'] = 'Plugin Open Grader aktuálně nepodporuje mobil
 $string['exitfullscreen'] = 'Ukončit režim celé obrazovky';
 $string['fullscreen'] = 'Režim celé obrazovky';
 $string['returncourse'] = 'Návrat do kurzu';
-$string['grading'] = 'Klasifikace';
+$string['grading'] = 'Známkování';
 $string['nogradeableareas'] = 'Žádné klasifikovatelné aktivity';
 $string['nogradeableusers'] = 'Žádní klasifikovatelní uživatelé';
 $string['showonlyuserposts'] = 'Zobrazit pouze příspěvky uživatele';
@@ -40,8 +40,8 @@ $string['groupbydiscussion'] = 'Seskupit podle diskuze';
 $string['activity'] = 'Klasifikovatelná aktivita';
 $string['activitynav'] = 'Klasifikovatelné aktivity';
 $string['activitynav_help'] = 'Pomocí této pomůcky lze vybrat, kterou klasifikovatelnou aktivitu chcete klasifikovat.';
-$string['group'] = 'Skupina';
-$string['groupnav'] = 'Skupiny';
+$string['group'] = 'Tým';
+$string['groupnav'] = 'Týmy';
 $string['groupnav_help'] = 'Pomocí této pomůcky lze vybrat skupinu.';
 $string['user'] = 'Uživatel';
 $string['usernav'] = 'Uživatelé';
@@ -61,7 +61,7 @@ $string['downloadall'] = 'Stáhnout všechny soubory';
 $string['download'] = 'stáhnout';
 $string['viewinline'] = 'zobrazit vložené';
 $string['activitycomments'] = 'Komentáře k aktivitě';
-$string['overallfeedback'] = 'Celková zpětná vazba';
+$string['overallfeedback'] = 'Doplňující komentář';
 $string['filefeedback'] = 'Zpětná vazba souboru';
 $string['attemptnumber'] = 'Pokus {$a->attemptnumber}: {$a->attempttime}';
 $string['viewingattempt'] = 'Pokus o zobrazení';
@@ -94,8 +94,8 @@ $string['viewguideteacher'] = 'Klasifikovat s průvodcem hodnocením';
 $string['guide'] = 'Průvodce hodnocením';
 $string['rubric'] = 'Předpis kritérií';
 $string['rubricerror'] = 'Vyberte jednu úroveň pro každé kritérium.';
-$string['guideerror'] = 'Zadejte platnou klasifikaci pro každé kritérium.';
-$string['score'] = 'Skóre';
+$string['guideerror'] = 'Zadejte prosím platné hodnocení pro každé kritérium';
+$string['score'] = 'Bodový zisk';
 $string['gradeoverriddenstudent'] = '(Přepsat v centru klasifikace: {$a})';
 $string['close'] = 'Zavřít';
 $string['allfiles'] = 'Všechny soubory';
