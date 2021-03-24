@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2020 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -43,7 +43,7 @@ $string['activitynav_help'] = 'استخدم عنصر واجهة المستخدم
 $string['group'] = 'المجموعة';
 $string['groupnav'] = 'المجموعات';
 $string['groupnav_help'] = 'استخدم عنصر واجهة المستخدم هذا لتحديد مجموعة.';
-$string['user'] = 'المستخدم';
+$string['user'] = 'مستخدم';
 $string['usernav'] = 'المستخدمون';
 $string['usernav_help'] = 'استخدم عنصر واجهة المستخدم هذا لتحديد المستخدم المراد تقديره.';
 $string['navviewlabel'] = 'عرض {$a}';
