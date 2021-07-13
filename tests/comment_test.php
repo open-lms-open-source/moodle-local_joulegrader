@@ -150,7 +150,7 @@ class local_joulegrader_comment_testcase extends advanced_testcase {
         ));
 
         // If we have a string length that is less than 100 characters, the course id parameter should be present.
-        $this->assertContains('courseid', $event->get_url()->out(false));
+        $this->assertStringContainsString('courseid', $event->get_url()->out(false));
         $this->assertLessThan(100, \core_text::strlen($event->get_url()->out(false)));
 
         $garea->areaname = 'discussion';
@@ -173,7 +173,7 @@ class local_joulegrader_comment_testcase extends advanced_testcase {
             'context' => $context
         ));
         // Validations kicks in and removes the courseid parameter, it is ok since we have the areaid.
-        $this->assertNotContains('courseid', $event2->get_url()->out(false));
+        $this->assertStringNotContainsString('courseid', $event2->get_url()->out(false));
         $this->assertLessThan(100, \core_text::strlen($event2->get_url()->out(false)));
 
         $event3 = \local_joulegrader\event\comment_added::create(array(
@@ -183,7 +183,7 @@ class local_joulegrader_comment_testcase extends advanced_testcase {
             'relateduserid' => $student->id,
             'context' => $context
         ));
-        $this->assertNotContains('courseid', $event3->get_url()->out(false));
+        $this->assertStringNotContainsString('courseid', $event3->get_url()->out(false));
         $this->assertLessThan(100, \core_text::strlen($event3->get_url()->out(false)));
     }
 }
