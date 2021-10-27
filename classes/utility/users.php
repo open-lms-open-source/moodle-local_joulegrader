@@ -151,8 +151,9 @@ class users extends loopable_abstract {
      */
     public function get_enrolled_users($capability, $currentgroup = 0) {
         // Get the enrolled users with the required capability.
+        $userfields = \core_user\fields::for_name()->get_sql('u', false, '', '', false)->selects;
         $users = get_enrolled_users($this->coursecontext, $capability, $currentgroup,
-            'u.id, '.get_all_user_name_fields(true, 'u'));
+            'u.id, ' . $userfields);
 
         $users = self::limit_to_gradebook_roles($users, $this->coursecontext);
 
