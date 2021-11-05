@@ -60,7 +60,7 @@ class grade_pane extends \moodleform {
             if ($isscale) {
                 $grademenu[-1] = get_string('nograde');
                 //heading
-                $mform->addElement('static', 'gradeheader', null, get_string('grade'));
+                $mform->addElement('static', 'gradeheader', null, get_string('gradenoun'));
 
                 //scale grade element
                 $gradingelement = $mform->addElement('select', 'grade', null, $grademenu);

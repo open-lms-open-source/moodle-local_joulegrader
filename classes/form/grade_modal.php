@@ -53,7 +53,7 @@ class grade_modal extends \moodleform {
         //set up the grading instance
         $gradinginstance = $this->_customdata->get_gradinginstance();
         $gradinginstance->get_controller()->set_grade_range($grademenu);
-        $gradingelement = $mform->addElement('grading', 'grade', get_string('grade').':', array('gradinginstance' => $gradinginstance));
+        $gradingelement = $mform->addElement('grading', 'grade', get_string('gradenoun').':', array('gradinginstance' => $gradinginstance));
         if ($this->_customdata->get_gradingdisabled()) {
             $gradingelement->freeze();
         } else {

@@ -253,7 +253,7 @@ abstract class grade_abstract implements \renderable {
     }
 
     public function get_activity_grade_label() {
-        return get_string('grade');
+        return get_string('gradenoun');
     }
 
     /**
