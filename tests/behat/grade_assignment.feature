@@ -31,6 +31,8 @@ Feature: Grade assignments in Open Grader
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
+      | student3 | Student | 3 | student3@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
@@ -41,6 +43,8 @@ Feature: Grade assignments in Open Grader
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student        |
+      | student2 | C1 | student        |
+      | student3 | C1 | student        |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I click on "Test assignment 1 name" "link"
@@ -68,4 +72,54 @@ Feature: Grade assignments in Open Grader
    	And ".atto_recordrtc_button_video" "css_element" should exist in the ".atto_group.files_group" "css_element"
     And I click on "Save grade" "button"
     Then I should see "Grade successfully updated"
-    
+
+  @javascript @_file_upload
+  Scenario: Teacher has the same amount of students needing grade, both in the assignment activity and in Open Grader
+    Given I log out
+    # Create an assignment specific for this test
+    And the following "activity" exists:
+      | activity                           | assign                 |
+      | course                             | C1                     |
+      | idnumber                           | A2                     |
+      | name                               | Test assignment 2 name |
+      | intro                              | TA2                    |
+      | grade[modgrade_type]               | point                  |
+      | grade[modgrade_point]              | 100                    |
+      | advancedgradingmethod_submissions  | rubric                 |
+      | assignfeedback_comments_enabled    | 1                      |
+      | assignsubmission_file_enabled      | 1                      |
+      | assignsubmission_file_maxfiles     | 1                      |
+      | assignsubmission_file_maxsizebytes | 1000000                |
+    # Add 2 student submissions, both of which need grading
+    And I am on the "Test assignment 2 name" "assign activity" page logged in as "student1"
+    And I press "Add submission"
+    And I upload "lib/tests/fixtures/empty.txt" file to "File submissions" filemanager
+    And I press "Save changes"
+    And I press "Submit assignment"
+    And I press "Continue"
+    And I log out
+    And I am on the "Test assignment 2 name" "assign activity" page logged in as "student2"
+    And I press "Add submission"
+    And I upload "lib/tests/fixtures/empty.txt" file to "File submissions" filemanager
+    And I press "Save changes"
+    And I press "Submit assignment"
+    And I press "Continue"
+    And I log out
+    And I am on the "Test assignment 2 name" "assign activity" page logged in as "teacher1"
+    And I navigate to "View all submissions" in current page administration
+    And I click on "Grade" "link" in the "Student 1" "table_row"
+    # Add a feedback comment, but don't grade the submission
+    And I set the field "Feedback comments" to "Ungraded submission Student 1"
+    And I press "Save changes"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment 2 name"
+    # The 2 student submissions need grading when seen in the assignment
+    Then I should see "2" in the "Needs grading" "table_row"
+    And I am on "Course 1" course homepage
+    And I navigate to "Open Grader" in current page administration
+    And I press "Show Activities Requiring Grading"
+    And I click on "garea" "select"
+    And I click on "Test assignment 2 name" "option"
+    # The 2 student submissions need grading when seen in Open Grader
+    Then I should see "Student 1"
+    Then I should see "Student 2"
