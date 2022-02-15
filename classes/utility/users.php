@@ -84,7 +84,7 @@ class users extends loopable_abstract {
         $gradebookusers = $tmp;
 
         $users = array_filter($users, function($user) use ($gradebookusers) {
-            if (!empty($gradebookusers[$user->id])) {
+            if (!empty($gradebookusers[$user->id]) && empty($user->suspended)) {
                 return true;
             }
             return false;
@@ -153,7 +153,7 @@ class users extends loopable_abstract {
         // Get the enrolled users with the required capability.
         $userfields = \core_user\fields::for_name()->get_sql('u', false, '', '', false)->selects;
         $users = get_enrolled_users($this->coursecontext, $capability, $currentgroup,
-            'u.id, ' . $userfields);
+            'u.id, ' . $userfields . ', u.suspended');
 
         $users = self::limit_to_gradebook_roles($users, $this->coursecontext);
 
