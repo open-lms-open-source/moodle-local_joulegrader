@@ -58,7 +58,7 @@ class local_joulegrader_controller_default extends mr_controller {
         $this->heading->text = '';
 
         //add 'joule Grader' to bread crumb
-        $PAGE->navbar->add(get_string('pluginname', 'local_joulegrader'));
+        $PAGE->navbar->add('');
 
         $fullscreen = get_user_preferences('local_joulegrader_fullscreen', 1);
         $fullscreenchg = optional_param('fullscreen', -1, PARAM_INT);
