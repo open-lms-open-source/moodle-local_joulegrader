@@ -219,6 +219,10 @@
     font-weight: bold;
 }
 
+#local-joulegrader-gradepane #grade-criteria label {
+    white-space: break-spaces;
+}
+
 #page-local-joulegrader-view .assignfeedback_editpdf_widget .drawingregion {
     left: auto;
     right: auto;
