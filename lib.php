@@ -32,7 +32,7 @@ use local_joulegrader\utility\gradingareas;
  * @param $context
  */
 function local_joulegrader_extend_settings_navigation($settings, $context) {
-    global $COURSE, $PAGE, $DB, $CFG;
+    global $COURSE, $DB, $CFG;
 
     if ($COURSE->id != SITEID && (has_capability('local/joulegrader:view', $context) || has_capability('local/joulegrader:grade', $context))) {
         //try to get the courseadmin node
@@ -44,7 +44,7 @@ function local_joulegrader_extend_settings_navigation($settings, $context) {
             $urlparams = array('courseid' => $COURSE->id);
 
             //try to see if this is within an activity
-            $activityname = $PAGE->activityname;
+            $activityname = $settings->get_page()->activityname;
             if (isset($activityname)) {
                 //try to get an areaid from the context and activity name
                 if ($areaid = gradingareas::get_areaid_from_context_activityname($context, $activityname)) {
