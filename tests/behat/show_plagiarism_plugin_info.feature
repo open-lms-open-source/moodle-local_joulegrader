@@ -65,7 +65,8 @@ Feature: Teachers see the plagiarism plugin info in Joule Grader.
     And I log out
     Given I log in as "teacher1"
     And I am on the course with shortname "C1"
-    And I navigate to "Open Grader" in current page administration
+    Then I click on ".secondary-navigation li[data-region='openlmsmenu']" "css_element"
+    And I follow "Open Grader"
     And I wait until the page is ready
     Then I should see "Plagiarism plugin info placeholder"
     And I press "Show Activities Requiring Grading"
@@ -114,7 +115,8 @@ Feature: Teachers see the plagiarism plugin info in Joule Grader.
     Then I log out
     Then I log in as "teacher1"
     And I am on the course with shortname "C1"
-    And I navigate to "Open Grader" in current page administration
+    Then I click on ".secondary-navigation li[data-region='openlmsmenu']" "css_element"
+    And I follow "Open Grader"
     And I wait until the page is ready
     Then I should not see "Plagiarism plugin info placeholder"
     And I press "Show Activities Requiring Grading"

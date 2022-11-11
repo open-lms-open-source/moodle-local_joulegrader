@@ -52,7 +52,8 @@ Feature: Teachers see the correct extension and late status.
     And I press "Save changes"
     Then I should see "Extension granted until:" in the "Student 1" "table_row"
     And I am on "Course 1" course homepage
-    And I navigate to "Open Grader" in current page administration
+    Then I click on ".secondary-navigation li[data-region='openlmsmenu']" "css_element"
+    And I follow "Open Grader"
     And I wait until the page is ready
     And I select "Student 1" from the "guser" singleselect
     Then I should see "Extension granted until:"
@@ -79,7 +80,8 @@ Feature: Teachers see the correct extension and late status.
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Open Grader" in current page administration
+    Then I click on ".secondary-navigation li[data-region='openlmsmenu']" "css_element"
+    And I follow "Open Grader"
     And I wait until the page is ready
     And I select "Student 1" from the "guser" singleselect
     Then I should see "Extension granted until:"

@@ -60,7 +60,8 @@ Feature: Grade assignments in Open Grader
   @javascript
   Scenario: Teacher grades a student's assignment
     Given I am on "Course 1" course homepage
-    And I navigate to "Open Grader" in current page administration
+    Then I click on ".secondary-navigation li[data-region='openlmsmenu']" "css_element"
+    And I follow "Open Grader"
     And I wait until the page is ready
     And I select "Student 1" from the "guser" singleselect
     And I click on "Grade with rubric" "button"
@@ -116,7 +117,8 @@ Feature: Grade assignments in Open Grader
     # The 2 student submissions need grading when seen in the assignment
     Then I should see "2" in the "Needs grading" "table_row"
     And I am on "Course 1" course homepage
-    And I navigate to "Open Grader" in current page administration
+    Then I click on ".secondary-navigation li[data-region='openlmsmenu']" "css_element"
+    And I follow "Open Grader"
     And I press "Show Activities Requiring Grading"
     And I click on "garea" "select"
     And I click on "Test assignment 2 name" "option"
