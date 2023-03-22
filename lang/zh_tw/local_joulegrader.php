@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2022 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2023 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -72,7 +72,7 @@ $string['gradebookgrade'] = '成績單中的目前成績';
 $string['attemptgrade'] = '嘗試成績';
 $string['gradeoutof'] = '成績 (總分為 {$a})';
 $string['gradeoutofrange'] = '成績超出範圍';
-$string['overridetext'] = '先前曾有講師直接在成績單內為此活動建立成績。若您想要取代該成績，請選取此方塊。';
+$string['overridetext'] = '先前曾有講師直接在成績單內為此活動建立成績。若您也想取代該成績，請勾選此方塊。';
 $string['save'] = '儲存成績';
 $string['saveandnext'] = '儲存成績並繼續下一步';
 $string['gradingdisabled'] = '此活動的評分已鎖定。若要啟用評分，請透過成績單將成績解除鎖定。';
