@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2022 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2023 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -77,7 +77,7 @@ $string['save'] = 'Desa la qualificació';
 $string['saveandnext'] = 'Desa la qualificació i vés al següent';
 $string['gradingdisabled'] = 'La qualificació d’activitats està blocada Per habilitar la qualificació, desbloqueu la qualificació des del butlletí de qualificacions.';
 $string['applytoall'] = 'Aplica les qualificacions i la retroacció al grup sencer';
-$string['applytoall_help'] = 'Si heu seleccionat "Sí" tots els membres del grup rebran la qualificació i la retroacció independentment de si hi ha cap qualificació o retroacció al butlletí de qualificacions.';
+$string['applytoall_help'] = 'Si heu seleccionat &quot;Sí&quot; tots els membres del grup rebran la qualificació i la retroacció independentment de si hi ha cap qualificació o retroacció al butlletí de qualificacions.';
 $string['criteria'] = 'Criteris';
 $string['checklist'] = 'Llista de comprovació';
 $string['gradesaved'] = 'Qualificació actualitzada correctament';
