@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2022 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2023 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -72,7 +72,7 @@ $string['gradebookgrade'] = 'Calificación actual en libro de calificaciones';
 $string['attemptgrade'] = 'Calificación del intento';
 $string['gradeoutof'] = 'Calificación (de {$a})';
 $string['gradeoutofrange'] = 'La calificación está fuera de rango';
-$string['overridetext'] = 'Anteriormente, un instructor creó una calificación para esta actividad directamente en el libro de calificaciones. Marque esta casilla si también desea reemplazar esa calificación.';
+$string['overridetext'] = 'Anteriormente, un profesor creó una calificación para esta actividad directamente en el libro de calificaciones. Marque esta casilla si también desea reemplazar esa calificación.';
 $string['save'] = 'Guardar calificación';
 $string['saveandnext'] = 'Guardar calificación y siguiente';
 $string['gradingdisabled'] = 'La calificación de esta actividad está bloqueada. Para habilitar la calificación, desbloquee la calificación a través del Libro de calificaciones.';
@@ -101,7 +101,7 @@ $string['close'] = 'Cerrar';
 $string['allfiles'] = 'Todos los archivos';
 $string['add'] = 'Guardar comentario';
 $string['attachments'] = 'Archivos adjuntos';
-$string['commentrequired'] = 'Es obligatorio ingresar un comentario.';
+$string['commentrequired'] = 'Es obligatorio introducir un comentario';
 $string['commentloop'] = 'Repetición del comentario';
 $string['notreleased'] = 'Calificación de la tarea aún no publicada';
 $string['eventgraderviewed'] = 'Grader de Open visto';
