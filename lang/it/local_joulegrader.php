@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2022 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2023 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -72,7 +72,7 @@ $string['gradebookgrade'] = 'Voto corrente nel registro voti';
 $string['attemptgrade'] = 'Voto tentativo';
 $string['gradeoutof'] = 'Voto (su {$a})';
 $string['gradeoutofrange'] = 'Il voto non rientra nell\'intervallo';
-$string['overridetext'] = 'Un docente ha precedentemente creato un voto per questa attività direttamente nel Registro voti.  Se desideri sostituire anche quel voto, seleziona questa casella.';
+$string['overridetext'] = 'Un docente ha precedentemente creato un voto per questa attività direttamente nel Registro voti. Se desideri sostituire anche quel voto, seleziona questa casella.';
 $string['save'] = 'Salva voto';
 $string['saveandnext'] = 'Salva voto e prosegui';
 $string['gradingdisabled'] = 'La valutazione di questa attività è bloccata. Per attivarla, sblocca il voto tramite il Registro voti.';
