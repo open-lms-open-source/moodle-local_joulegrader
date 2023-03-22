@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2022 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2023 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -72,7 +72,7 @@ $string['gradebookgrade'] = 'Bieżąca ocena w dzienniku ocen';
 $string['attemptgrade'] = 'Ocena z podejścia';
 $string['gradeoutof'] = 'Ocena (z maks. {$a})';
 $string['gradeoutofrange'] = 'Ocena poza zakresem';
-$string['overridetext'] = 'Poprzednio instruktor utworzył ocenę dla tej aktywności bezpośrednio w dzienniku ocen. Zaznacz to pole, ab zastąpić również tamtą ocenę.';
+$string['overridetext'] = 'Poprzednio instruktor utworzył ocenę dla tej aktywności bezpośrednio w dzienniku ocen. Zaznacz to pole, aby zastąpić również tamtą ocenę.';
 $string['save'] = 'Zapisz ocenę';
 $string['saveandnext'] = 'Zapisz ocenę i przejdź dalej';
 $string['gradingdisabled'] = 'Ocenianie tej aktywności jest zablokowane. Aby włączyć ocenianie, odblokuj ocenę z poziomu dziennika ocen.';
