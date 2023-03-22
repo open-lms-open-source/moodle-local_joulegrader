@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2022 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2023 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -72,12 +72,12 @@ $string['gradebookgrade'] = 'Aktuelle Bewertung im Bewertungsbericht';
 $string['attemptgrade'] = 'Note für Testversuch';
 $string['gradeoutof'] = 'Bewertung (von {$a})';
 $string['gradeoutofrange'] = 'Bewertung liegt außerhalb des Bereichs.';
-$string['overridetext'] = 'Eine Lehrkraft hat bereits eine Bewertung für diese Aktivität direkt in den Bewertungsbericht eingetragen.  Aktivieren Sie dieses Kontrollkästchen, wenn Sie diese Bewertung auch ersetzen möchten.';
+$string['overridetext'] = 'Eine Lehrkraft hat bereits eine Bewertung für diese Aktivität direkt in den Bewertungsbericht eingetragen. Aktivieren Sie dieses Kontrollkästchen, wenn Sie diese Bewertung auch ersetzen möchten.';
 $string['save'] = 'Bewertung speichern';
 $string['saveandnext'] = 'Bewertung speichern und weiter';
 $string['gradingdisabled'] = 'Das Bewerten dieser Aktivität ist gesperrt. Um das Bewerten zu aktivieren, geben Sie bitte die Bewertung über den Bewertungsbericht frei.';
 $string['applytoall'] = 'Bewertungen und Feedback der gesamten Gruppe zuweisen.';
-$string['applytoall_help'] = 'Wenn "Ja" ausgewählt ist, erhalten alle Gruppenmitglieder die Bewertung und das Feedback, unabhängig davon, ob in dem Bewertungsbericht bereits eine Bewertung oder ein Feedback vorhanden ist.';
+$string['applytoall_help'] = 'Wenn &quot;Ja&quot; ausgewählt ist, erhalten alle Gruppenmitglieder die Bewertung und das Feedback, unabhängig davon, ob in dem Bewertungsbericht bereits eine Bewertung oder ein Feedback vorhanden ist.';
 $string['criteria'] = 'Kriterien';
 $string['checklist'] = 'Checkliste';
 $string['gradesaved'] = 'Bewertung erfolgreich aktualisiert.';
