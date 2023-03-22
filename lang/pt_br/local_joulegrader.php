@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2022 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2023 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -77,7 +77,7 @@ $string['save'] = 'Salvar nota';
 $string['saveandnext'] = 'Salvar nota e prosseguir';
 $string['gradingdisabled'] = 'A avaliação desta atividade está bloqueada. Para ativar a avaliação, desbloqueie a nota no Boletim de notas.';
 $string['applytoall'] = 'Aplicar notas e comentários para todo o grupo.';
-$string['applytoall_help'] = 'Se "Sim" for selecionado, todos os membros do grupo receberão a nota e os comentários, independentemente de quaisquer nota ou comentários existentes no Boletim de notas.';
+$string['applytoall_help'] = 'Se &quot;Sim&quot; for selecionado, todos os membros do grupo receberão a nota e os comentários, independentemente de quaisquer nota ou comentários existentes no Boletim de notas.';
 $string['criteria'] = 'Critérios';
 $string['checklist'] = 'Lista de progresso';
 $string['gradesaved'] = 'Notas atualizadas com sucesso';
