@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2022 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2023 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -77,7 +77,7 @@ $string['save'] = 'Bewaar cijfer';
 $string['saveandnext'] = 'Bewaar cijfer en volgende';
 $string['gradingdisabled'] = 'De beoordeling van deze activiteit is vergrendeld. Om de beoordeling in te schakelen, moet je het cijfer ontgrendelen via de cijferlijst.';
 $string['applytoall'] = 'Pas cijfers en feedback toe op de hele groep';
-$string['applytoall_help'] = 'Indien "Ja" is geselecteerd, ontvangen alle groepsleden het cijfer en de feedback ongeacht bestaande cijfers of feedback in de cijferlijst.';
+$string['applytoall_help'] = 'Indien &quot;Ja&quot; is geselecteerd, ontvangen alle groepsleden het cijfer en de feedback ongeacht bestaande cijfers of feedback in de cijferlijst.';
 $string['criteria'] = 'Criteria';
 $string['checklist'] = 'Checklist';
 $string['gradesaved'] = 'Cijfer met succes bijgewerkt';
