@@ -61,7 +61,7 @@ Feature: Teachers see the correct extension and late status.
     Then I should not see "Extension granted until:"
     And I should see "Nothing to Display"
     And I press "Exit full screen mode"
-    When I log out 
+    When I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment1"
@@ -69,7 +69,7 @@ Feature: Teachers see the correct extension and late status.
     And I set the following fields to these values:
       | Online text | I'm the student1 submission |
     And I press "Save changes"
-    And I log out 
+    And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test assignment1"

@@ -19,7 +19,6 @@
 # @copyright Copyright (c) 2018 Open LMS (https://www.openlms.net)
 # @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
-
 @local @local_joulegrader
 Feature: Grade assignments in Open Grader
   In order to save time

@@ -121,4 +121,3 @@ Feature: Teachers see the plagiarism plugin info in Joule Grader.
     Then I should not see "Plagiarism plugin info placeholder"
     And I press "Show Activities Requiring Grading"
     Then I should not see "Plagiarism plugin info placeholder"
-
