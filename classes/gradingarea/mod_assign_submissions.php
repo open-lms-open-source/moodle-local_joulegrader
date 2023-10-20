@@ -181,7 +181,12 @@ class mod_assign_submissions extends gradingarea_abstract {
             require_once($CFG->libdir.'/gradelib.php');
             list($cm, $assignment) = self::get_assign_info($gradingmanager);
             $cminfo = $courseinfo->get_cm($cm->id);
-            if (has_capability('moodle/course:viewhiddenactivities', $gradingmanager->get_context()) || ($cminfo->available && $cm->visible)) {
+            if (
+                has_capability('moodle/course:viewhiddenactivities', $gradingmanager->get_context()) ||
+                // If the user is a teacher, they can see disabled activities, hidden to students unless they are available.
+                (has_capability(self::$teachercapability, $gradingmanager->get_context()) && $cminfo->visible) ||
+                ($cminfo->available && $cm->visible)
+            ) {
                 $include = true;
             }
 
