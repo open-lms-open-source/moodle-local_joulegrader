@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2023 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -39,13 +39,13 @@ $string['showonlyuserposts'] = 'Yalnızca kullanıcıların gönderilerini göst
 $string['groupbydiscussion'] = 'Tartışmaya göre gruplandır';
 $string['activity'] = 'Not verilebilir etkinlik';
 $string['activitynav'] = 'Not verilebilir etkinlikler';
-$string['activitynav_help'] = 'Hangi not verilebilir etkinliğe not verileceğini seçmek için bu widget’ı kullanın.';
+$string['activitynav_help'] = 'Hangi not verilebilir etkinliğe not verileceğini seçmek için bu widget\'ı kullanın.';
 $string['group'] = 'Grup';
 $string['groupnav'] = 'Gruplar';
-$string['groupnav_help'] = 'Bir grup seçmek için bu widget’ı kullanın.';
+$string['groupnav_help'] = 'Bir grup seçmek için bu widget\'ı kullanın.';
 $string['user'] = 'Kullanıcı';
 $string['usernav'] = 'Kullanıcılar';
-$string['usernav_help'] = 'Hangi kullanıcıya not verileceğini seçmek için bu widget’ı kullanın.';
+$string['usernav_help'] = 'Hangi kullanıcıya not verileceğini seçmek için bu widget\'ı kullanın.';
 $string['navviewlabel'] = '{$a} öğesini görüntüle';
 $string['commentdeleted'] = '{$a->deletedby} adlı kullanıcı, {$a->deletedon} tarihinde gönderiyi sildi';
 $string['deletecomment'] = '{$a} tarihinde yapılan yorumu sil';
@@ -105,9 +105,9 @@ $string['commentrequired'] = 'Yorum gerekli:';
 $string['commentloop'] = 'Yorum Döngüsü';
 $string['notreleased'] = 'Ödev notu henüz yayımlanmadı';
 $string['eventgraderviewed'] = 'Open Grader\'a bakıldı';
-$string['eventactivitygraded'] = 'Open Grader’da etkinliğe not verildi';
-$string['eventcommentdeleted'] = 'Open Grader’da yorum silindi';
-$string['eventcommentadded'] = 'Open Grader’da yorum eklendi';
+$string['eventactivitygraded'] = 'Open Grader\'da etkinliğe not verildi';
+$string['eventcommentdeleted'] = 'Open Grader\'da yorum silindi';
+$string['eventcommentadded'] = 'Open Grader\'da yorum eklendi';
 $string['privacy:metadata:preference:fullscreen'] = 'Kullanıcının, not veren uygulamasını tam ekran olarak görüntüleyip görüntülemediğini belirtir';
 $string['privacy:metadata:preference:showpostsgrouped'] = 'Kullanıcının, not verirken Open Forumlarını gruplandırıp gruplandırmadığını belirtir';
 $string['privacy:request:preference:fullscreenyes'] = 'Kullanıcı, Open Grader\'ı tam ekran olarak kullanmayı tercih ediyor';
