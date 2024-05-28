@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2023 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -77,7 +77,7 @@ $string['save'] = 'Gem karakter';
 $string['saveandnext'] = 'Gem karakter og næste';
 $string['gradingdisabled'] = 'Denne aktivitets karaktergivning er låst. Frigiv karakteren via Gradebook for at aktivere karaktergivning.';
 $string['applytoall'] = 'Anvend karakterer og feedback til hele gruppen';
-$string['applytoall_help'] = 'Hvis &quot;Ja&quot; vælges, modtager alle gruppemedlemmer karakteren og feedbacken uanset eksisterende karakterer eller feedback i karakterbogen.';
+$string['applytoall_help'] = 'Hvis "Ja" vælges, modtager alle gruppemedlemmer karakteren og feedbacken uanset eksisterende karakterer eller feedback i karakterbogen.';
 $string['criteria'] = 'Kriterier';
 $string['checklist'] = 'Tjekliste';
 $string['gradesaved'] = 'Karakter blev opdateret';
