@@ -73,7 +73,7 @@ function local_joulegrader_extend_settings_navigation($settings, $context) {
  * @param $cm
  * @param $context
  * @param $filearea - not the actual file area, should be set to 'gradingarea'
- * @param array $args - first arg should be 'itemid', next needs to be the gradingarea compenent_area (e.g. mod_assignment_submission)
+ * @param array $args - first arg should be 'itemid', next needs to be the gradingarea compenent_area (e.g. mod_assign_submissions)
  * @param $forcedownload
  * @param $options
  * @return bool
@@ -91,7 +91,7 @@ function local_joulegrader_pluginfile($course, $cm, $context, $filearea, $args, 
         //shift the itemid off the front
         $itemid = (int) array_shift($args);
 
-        //next arg should be the gradingarea component_area (e.g. mod_assignment_submission)
+        //next arg should be the gradingarea component_area (e.g. mod_assign_submissions)
         $gradingarea = array_shift($args);
 
         $classname = '\\local_joulegrader\\gradingarea\\' . $gradingarea;

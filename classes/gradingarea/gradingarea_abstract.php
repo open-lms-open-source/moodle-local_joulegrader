@@ -87,7 +87,7 @@ abstract class gradingarea_abstract {
     /**
      * Additional checks called by gradingareas utility to see if the area should be included in the navigation.
      * This is in addition to the capability check done by the utility. For instance, this will be used to make
-     * sure that a mod_assignment_submission grading area is of a type that joule Grader will support at this time
+     * sure that a mod_assign_submissions grading area is of a type that joule Grader will support at this time
      *
      * @param \course_modinfo $courseinfo
      * @param \grading_manager $gradingmanager
