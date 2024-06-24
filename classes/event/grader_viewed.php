@@ -91,21 +91,4 @@ class grader_viewed extends \core\event\base {
             'courseid' => $this->courseid,
         ));
     }
-
-    /**
-     * Provide data for adding entry to legacy log table
-     *
-     * @return null|array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        // array(courseid, module, action, url, info, cmid, userid);
-        return array(
-            $this->courseid,
-            'local_joulegrader',
-            'view',
-            $this->get_url()->out(false),
-            'Viewed Open Grader',
-            $this->contextid,
-        );
-    }
 }

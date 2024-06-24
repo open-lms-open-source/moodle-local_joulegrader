@@ -99,21 +99,4 @@ class comment_added extends \core\event\base {
         }
         return $url;
     }
-
-    /**
-     * Provide data for adding entry to legacy log table
-     *
-     * @return null|array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        // array(courseid, module, action, url, info, cmid, userid);
-        return array(
-            $this->courseid,
-            'local_joulegrader',
-            'comment added',
-            $this->get_url()->out(false),
-            'Comment made in Open Grader',
-            $this->contextid,
-        );
-    }
 }

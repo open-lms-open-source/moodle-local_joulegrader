@@ -92,21 +92,4 @@ class activity_graded extends \core\event\base {
     public static function get_other_mapping() {
         return ['areaid' => ['db' => 'grading_areas', 'restore' => 'grading_area']];
     }
-
-    /**
-     * Provide data for adding entry to legacy log table
-     *
-     * @return null|array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        // array(courseid, module, action, url, info, cmid, userid);
-        return array(
-            $this->courseid,
-            'local_joulegrader',
-            'grade',
-            $this->get_url()->out(false),
-            'Graded via Open Grader',
-            $this->contextid,
-        );
-    }
 }
