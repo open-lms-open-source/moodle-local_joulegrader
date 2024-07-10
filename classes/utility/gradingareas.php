@@ -60,6 +60,10 @@ class gradingareas extends loopable_abstract {
      */
     protected $needsgrading;
 
+    /**
+     * @var array
+     */
+    protected $groupsutility;
 
     /**
      * @param \context_course $context

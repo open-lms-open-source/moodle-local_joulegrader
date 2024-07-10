@@ -61,6 +61,11 @@ class users extends loopable_abstract {
     protected $coursecontext;
 
     /**
+     * @var mixed
+     */
+    protected $gradebookroles;
+
+    /**
      * @param array $users
      * @param \context $context
      *
