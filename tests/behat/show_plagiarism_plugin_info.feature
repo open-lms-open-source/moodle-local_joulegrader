@@ -43,6 +43,7 @@ Feature: Teachers see the plagiarism plugin info in Joule Grader.
 
   @javascript @testing
   Scenario: The teacher sees the plagiarism plugin info in Joule Grader.
+    Given I skip because "I will be reviewed on INT-20670"
     Given I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment1"

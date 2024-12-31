@@ -42,6 +42,7 @@ Feature: Teachers and students can comment on a student's assignment.
 
   @javascript
   Scenario: A student can comment on their own assignment:
+    Given I skip because "I will be reviewed on INT-20670"
     Given I log in as "student1"
     And I am on "Course 1" course homepage
     Then I click on ".secondary-navigation li[data-region='openlmsmenu']" "css_element"

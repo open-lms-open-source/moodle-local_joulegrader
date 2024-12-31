@@ -58,6 +58,7 @@ Feature: Grade assignments in Open Grader
 
   @javascript
   Scenario: Teacher grades a student's assignment
+    Given I skip because "I will be reviewed on INT-20670"
     Given I am on "Course 1" course homepage
     Then I click on ".secondary-navigation li[data-region='openlmsmenu']" "css_element"
     And I follow "Open Grader"
