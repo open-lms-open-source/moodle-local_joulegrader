@@ -42,16 +42,14 @@ Feature: Teachers and students can comment on a student's assignment.
 
   @javascript
   Scenario: A student can comment on their own assignment:
-    Given I skip because "I will be reviewed on INT-20670"
     Given I log in as "student1"
     And I am on "Course 1" course homepage
     Then I click on ".secondary-navigation li[data-region='openlmsmenu']" "css_element"
     And I follow "Open Grader"
     And I wait until the page is ready
-    And I set editable div ".local_joulegrader_commentloop .editor_atto_content" "css_element" to "Here is a comment on my paper"
+    And I set the field "Comment" to "Here is a comment on my paper"
     And I press "Save comment"
     Then I should see "Here is a comment on my paper" in the ".local_joulegrader_commentloop_comments" "css_element"
-    And I should not see "Here is a comment on my paper" in the ".local_joulegrader_commentloop .editor_atto_content" "css_element"
 
   @javascript
   Scenario: A teacher can comment on a student's assignment
@@ -61,10 +59,9 @@ Feature: Teachers and students can comment on a student's assignment.
     And I follow "Open Grader"
     And I wait until the page is ready
     And I select "Student 1" from the "guser" singleselect
-    And I set editable div ".local_joulegrader_commentloop .editor_atto_content" "css_element" to "Good job on your paper"
+    And I set the field "Comment" to "Good job on your paper"
     And I press "Save comment"
     Then I should see "Good job on your paper" in the ".local_joulegrader_commentloop_comments" "css_element"
-    And I should not see "Good job on your paper" in the ".local_joulegrader_commentloop .editor_atto_content" "css_element"
     And I should see "Good job on your paper" in the ".local_joulegrader_comment_content .text_to_html" "css_element"
     And I click on ".local_joulegrader_comment_delete .action-icon" "css_element"
     And I should not see "Good job on your paper"

@@ -40,10 +40,14 @@ Feature: Teachers see the plagiarism plugin info in Joule Grader.
     And the following "activities" exist:
       | activity | course | idnumber | name             | intro                         | section | advancedgradingmethod_submissions | assignsubmission_file_enabled | assignsubmission_file_maxfiles | assignsubmission_file_maxsizebytes | duedate     |
       | assign   | C1     | assign1  | Test assignment1 | Test assignment description 1 | 1       | rubric                            | 1                             | 1                              | 1000000                            |  1388534400 |
+    And I am on "Course 1" course homepage with editing mode on
+    And I log in as "admin"
+    And I edit the section "1" and I fill the form with:
+      | Section name | Topic 1 |
+    And I log out
 
   @javascript @testing
   Scenario: The teacher sees the plagiarism plugin info in Joule Grader.
-    Given I skip because "I will be reviewed on INT-20670"
     Given I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment1"
@@ -85,8 +89,7 @@ Feature: Teachers see the plagiarism plugin info in Joule Grader.
     And I press "Show Activities Requiring Grading"
     Then I should see "Plagiarism plugin info placeholder"
     Then I press "Return to course"
-    And I click on "#snap-pm-trigger" "css_element"
-    And I click on "#snap-pm-logout" "css_element"
+    And I log out
     And I log in as "teacher1"
     And I am on the course with shortname "C1"
     And I follow "Topic 1"

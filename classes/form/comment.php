@@ -67,7 +67,7 @@ class comment extends \moodleform {
 
         //comment editor
         $editorname = 'comment_' . $this->_customdata->get_areaid() . '_' . $this->_customdata->get_guserid();
-        $mform->addElement('editor', $editorname, null, null, $editoroptions);
+        $mform->addElement('editor', $editorname, get_string('activitycomment', 'local_joulegrader'), null, $editoroptions);
         $mform->setType($editorname, PARAM_RAW);
         $mform->addRule($editorname, get_string('commentrequired', 'local_joulegrader'), 'required', null, 'client');
 

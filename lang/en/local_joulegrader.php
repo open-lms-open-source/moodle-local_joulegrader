@@ -71,6 +71,7 @@ $string['downloadall'] = 'Download all files';
 $string['download'] = 'download';
 $string['viewinline'] = 'view inline';
 $string['activitycomments'] = 'Activity comments';
+$string['activitycomment'] = 'Comment';
 $string['overallfeedback'] = 'Overall feedback';
 $string['filefeedback'] = 'File feedback';
 $string['attemptnumber'] = 'Attempt {$a->attemptnumber}: {$a->attempttime}';
