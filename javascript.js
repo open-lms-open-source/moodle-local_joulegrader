@@ -513,7 +513,7 @@ M.local_joulegrader.init_commentloop = function(Y, id) {
 
         if (typeof tinyMCE !== "undefined") {
             //try to get the iframe for the tinymce editor
-            var editor = tinyMCE.getInstanceById(textarea.get('id'));
+            var editor = tinyMCE.get(textarea.get('id'));
         } else {
             var editor = commentform.one('.editor_atto_content');
         }
