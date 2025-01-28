@@ -155,8 +155,18 @@ class local_joulegrader_comment_testcase extends advanced_testcase {
 
         $garea->areaname = 'discussion';
         $gareaid2 = $DB->insert_record('grading_areas', $garea);
-        // Increase the URL length.
-        $CFG->wwwroot .= '_test';
+
+        /*
+         * Ensure the URL length is at least 101 characters:
+         * - Default URL length (excluding parameter values): 81.
+         *   I.e. https://www.example.com/moodle/local/joulegrader/view.php?guser=&garea=&courseid=
+         * - Additional characters needed: 20.
+         */
+        $numofcharsfromparams = strlen($student->id . $gareaid2 . $course->id);
+        if ($numofcharsfromparams < 20) {
+            $CFG->wwwroot .= str_repeat('_', 20 - $numofcharsfromparams);
+        }
+
         $url = new \moodle_url('/local/joulegrader/view.php?', array(
             'guser'    => $student->id,
             'garea'    => $gareaid2,
