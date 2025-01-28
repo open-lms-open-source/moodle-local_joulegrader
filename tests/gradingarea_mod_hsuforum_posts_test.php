@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Joule Grader mod_hsuforum_posts gradingarea testcase.
@@ -20,10 +20,11 @@
  * @package    local_joulegrader
  * @author     Sam Chaffee
  * @copyright  Copyright (c) 2015 Open LMS (https://www.openlms.net)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 
+namespace local_joulegrader;
+use context_module;
 use local_joulegrader\gradingarea\mod_hsuforum_posts;
 
 /**
@@ -31,9 +32,9 @@ use local_joulegrader\gradingarea\mod_hsuforum_posts;
  *
  * @package    local_joulegrader
  * @copyright  Copyright (c) 2015 Open LMS (https://www.openlms.net)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_joulegrader_gradingarea_mod_hsuforum_posts_test extends advanced_testcase {
+class gradingarea_mod_hsuforum_posts_test extends \advanced_testcase {
     public function setUp(): void {
         $this->resetAfterTest();
     }
@@ -45,7 +46,6 @@ class local_joulegrader_gradingarea_mod_hsuforum_posts_test extends advanced_tes
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('hsuforum',
                 ['course' => $course->id, 'gradetype' => 1, 'scale' => 100]);
-        
         $context = context_module::instance($forum->cmid);
 
         $teacher = $this->getDataGenerator()->create_user();

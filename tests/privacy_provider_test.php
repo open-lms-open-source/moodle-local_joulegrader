@@ -22,11 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\writer;
-use \local_joulegrader\privacy\provider;
+namespace local_joulegrader;
+use context_system;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\writer;
+use local_joulegrader\privacy\provider;
 
 /**
  * Unit tests for the local_joulegrader implementation of the privacy API.
@@ -34,7 +34,7 @@ use \local_joulegrader\privacy\provider;
  * @copyright  Copyright (c) 2018 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_joulegrader_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Ensure that get_metadata exports valid content.
@@ -53,7 +53,7 @@ class local_joulegrader_privacy_testcase extends \core_privacy\tests\provider_te
         $user = \core_user::get_user_by_username('admin');
         provider::export_user_preferences($user->id);
 
-        $writer = writer::with_context(\context_system::instance());
+        $writer = writer::with_context(context_system::instance());
 
         $this->assertFalse($writer->has_any_data());
     }
@@ -70,7 +70,7 @@ class local_joulegrader_privacy_testcase extends \core_privacy\tests\provider_te
         set_user_preference('local_joulegrader_mod_hsuforum_posts_showposts_grouped', 1);
 
         provider::export_user_preferences($user->id);
-        $writer = writer::with_context(\context_system::instance());
+        $writer = writer::with_context(context_system::instance());
 
         $this->assertTrue($writer->has_any_data());
         $preferences = $writer->get_user_preferences('local_joulegrader');

@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Joule Grader commenting tests.
@@ -20,18 +20,21 @@
  * @package    local_joulegrader
  * @author     Sam Chaffee
  * @copyright  Copyright (c) 2016 Open LMS (https://www.openlms.net)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
+
+namespace local_joulegrader;
+use context_module;
+use stdClass;
 
 /**
  * Joule Grader commenting tests.
  *
  * @package    local_joulegrader
  * @copyright  Copyright (c) 2016 Open LMS (https://www.openlms.net)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_joulegrader_comment_testcase extends advanced_testcase {
+class comment_test extends \advanced_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
@@ -141,13 +144,13 @@ class local_joulegrader_comment_testcase extends advanced_testcase {
         $garea->areaname = 'posts';
         $gareaid = $DB->insert_record('grading_areas', $garea);
 
-        $event = \local_joulegrader\event\comment_deleted::create(array(
-            'other' => array(
-                'areaid' => $gareaid
-            ),
+        $event = \local_joulegrader\event\comment_deleted::create([
+            'other' => [
+                'areaid' => $gareaid,
+            ],
             'relateduserid' => $student->id,
-            'context' => $context
-        ));
+            'context' => $context,
+        ]);
 
         // If we have a string length that is less than 100 characters, the course id parameter should be present.
         $this->assertStringContainsString('courseid', $event->get_url()->out(false));
@@ -167,32 +170,32 @@ class local_joulegrader_comment_testcase extends advanced_testcase {
             $CFG->wwwroot .= str_repeat('_', 20 - $numofcharsfromparams);
         }
 
-        $url = new \moodle_url('/local/joulegrader/view.php?', array(
+        $url = new \moodle_url('/local/joulegrader/view.php?', [
             'guser'    => $student->id,
             'garea'    => $gareaid2,
             'courseid' => $course->id,
-        ));
+        ]);
         // A normal URL construction should be larger than 100 characters and blocks a log record insertion.
         $this->assertGreaterThan(100, \core_text::strlen($url->out(false)));
 
-        $event2 = \local_joulegrader\event\comment_deleted::create(array(
-            'other' => array(
-                'areaid' => $gareaid2
-            ),
+        $event2 = \local_joulegrader\event\comment_deleted::create([
+            'other' => [
+                'areaid' => $gareaid2,
+            ],
             'relateduserid' => $student->id,
-            'context' => $context
-        ));
+            'context' => $context,
+        ]);
         // Validations kicks in and removes the courseid parameter, it is ok since we have the areaid.
         $this->assertStringNotContainsString('courseid', $event2->get_url()->out(false));
         $this->assertLessThan(100, \core_text::strlen($event2->get_url()->out(false)));
 
-        $event3 = \local_joulegrader\event\comment_added::create(array(
-            'other' => array(
-                'areaid' => $gareaid2
-            ),
+        $event3 = \local_joulegrader\event\comment_added::create([
+            'other' => [
+                'areaid' => $gareaid2,
+            ],
             'relateduserid' => $student->id,
-            'context' => $context
-        ));
+            'context' => $context,
+        ]);
         $this->assertStringNotContainsString('courseid', $event3->get_url()->out(false));
         $this->assertLessThan(100, \core_text::strlen($event3->get_url()->out(false)));
     }
