@@ -50,6 +50,19 @@ class mod_assign_submissions extends grade_abstract {
     protected $usergrades;
 
     /**
+     * @var bool
+     */
+    public $gradingdisabled;
+    /**
+     * @var bool
+     */
+    public $gradeoverridden;
+    /**
+     * @var bool
+     */
+    public $teachercap;
+
+    /**
      * Do some initialization
      */
     public function init() {
