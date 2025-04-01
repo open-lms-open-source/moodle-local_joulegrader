@@ -63,6 +63,11 @@ class mod_assign_submissions extends grade_abstract {
     public $teachercap;
 
     /**
+     * @var int
+     */
+    public $courseid;
+
+    /**
      * Do some initialization
      */
     public function init() {
