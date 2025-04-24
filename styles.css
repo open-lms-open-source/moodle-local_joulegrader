@@ -223,6 +223,11 @@
     white-space: break-spaces;
 }
 
+/*Avoid Tiny Editor to overlap Rubric grading.*/
+#page-local-joulegrader-view .tox-tinymce .tox-editor-header {
+    z-index: 1;
+}
+
 #page-local-joulegrader-view .assignfeedback_editpdf_widget .drawingregion {
     left: auto;
     right: auto;
