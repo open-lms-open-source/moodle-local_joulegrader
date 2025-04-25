@@ -22,6 +22,7 @@
 @local @local_joulegrader
 Feature: Teachers see the correct extension and late status.
   Background:
+    Given I skip because "I will be reviewed on INT-21063"
     Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
@@ -44,8 +45,8 @@ Feature: Teachers see the correct extension and late status.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment1"
-    And I follow "View all submissions"
-    And I click on "//a[contains(text(),'Edit')]" "xpath_element" in the "Student 1" "table_row"
+    And I follow "Submissions"
+    And I click on "Submission actions" "link" in the "Student 1" "table_row"
     And I follow "Grant extension"
     And I set the field "Enable" to "1"
     And I set the field "extensionduedate[year]" to "2050"

@@ -24,6 +24,7 @@
  */
 
 namespace local_joulegrader\pane\grade;
+use gradingform_controller;
 use local_joulegrader\gradingarea\mod_assign_submissions as mod_assign_submissions_gradingarea;
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 /**
@@ -66,6 +67,21 @@ class mod_assign_submissions extends grade_abstract {
      * @var int
      */
     public $courseid;
+
+    /**
+     * @var gradingform_controller
+     */
+    public $controller;
+
+    /**
+ * @var mixed
+ */
+    public $gradinginstance;
+
+    /**
+     * @var bool
+     */
+    public $needsupdate;
 
     /**
      * Do some initialization

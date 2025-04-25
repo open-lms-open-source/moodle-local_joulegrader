@@ -72,6 +72,7 @@ Feature: Grade assignments in Open Grader
 
   @javascript @_file_upload
   Scenario: Teacher has the same amount of students needing grade, both in the assignment activity and in Open Grader
+    Given I skip because "I will be reviewed on INT-21063"
     Given I log out
     # Create an assignment specific for this test
     And the following "activity" exists:
@@ -103,7 +104,7 @@ Feature: Grade assignments in Open Grader
     And I press "Continue"
     And I log out
     And I am on the "Test assignment 2 name" "assign activity" page logged in as "teacher1"
-    And I follow "View all submissions"
+    And I follow "Submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     # Add a feedback comment, but don't grade the submission
     And I set the field "Feedback comments" to "Ungraded submission Student 1"

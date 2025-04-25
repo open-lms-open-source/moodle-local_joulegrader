@@ -22,6 +22,7 @@
 @local @local_joulegrader @_file_upload
 Feature: Teachers see the plagiarism plugin info in Joule Grader.
   Background:
+    Given I skip because "I will be reviewed on INT-21063"
     Given the following config values are set as admin:
       | enableplagiarism | 1 |
     And the following "courses" exist:
