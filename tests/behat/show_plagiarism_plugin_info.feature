@@ -83,6 +83,7 @@ Feature: Teachers see the plagiarism plugin info in Joule Grader.
       | theme | snap |
     And I log in as "teacher1"
     And I am on the course with shortname "C1"
+    And I change window size to "large"
     And I click on "#admin-menu-trigger" "css_element"
     And I click on "//p/a[contains(text(),'Open Grader')]" "xpath_element"
     And I wait until the page is ready
