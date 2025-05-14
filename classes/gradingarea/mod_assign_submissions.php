@@ -666,7 +666,7 @@ class mod_assign_submissions extends gradingarea_abstract {
     }
 
     public function allows_multiple_attempts() {
-        return ($this->get_assign()->get_instance()->attemptreopenmethod !== ASSIGN_ATTEMPT_REOPEN_METHOD_NONE);
+        return ($this->get_assign()->get_instance()->maxattempts > 1 || $this->get_assign()->get_instance()->maxattempts == ASSIGN_UNLIMITED_ATTEMPTS);
     }
 
     /**
