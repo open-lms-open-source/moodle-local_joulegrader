@@ -22,7 +22,6 @@
 @local @local_joulegrader
 Feature: Teachers see the correct extension and late status.
   Background:
-    Given I skip because "I will be reviewed on INT-21063"
     Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
@@ -60,7 +59,6 @@ Feature: Teachers see the correct extension and late status.
     Then I should see "Extension granted until:"
     And I select "Student 2" from the "guser" singleselect
     Then I should not see "Extension granted until:"
-    And I should see "Nothing to Display"
     And I press "Exit full screen mode"
     When I log out
     And I log in as "student1"

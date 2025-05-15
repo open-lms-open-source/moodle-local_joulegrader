@@ -719,12 +719,14 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $context = $assignment->get_context();
         $fs = get_file_storage();
         $filetree = $fs->get_area_tree($context->id, 'assignsubmission_file', 'submission_files', $submission->id);
-        $this->preprocess_filetree($assignment, $submission, $filetree);
+        $viewinlinelinks = array();
+        $downloadlinks = array();
+        $this->preprocess_filetree($assignment, $submission, $filetree, $viewinlinelinks, $downloadlinks);
 
         $htmlid = 'local_joulegrader_assign23_files_tree_'.uniqid();
         $this->page->requires->js_init_call('M.mod_assign.init_tree', array(true, $htmlid));
         $treehtml = html_writer::start_tag('div', array('id' => $htmlid));
-        $treehtml .= $this->help_htmllize_assign_submission_file_tree($context, $submission, $filetree);
+        $treehtml .= $this->help_htmllize_assign_submission_file_tree($context, $submission, $filetree, $viewinlinelinks, $downloadlinks);
         $treehtml .= html_writer::end_tag('div');
 
         $moodleurl = new moodle_url('/local/joulegrader/view.php', array('action' => 'downloadall', 's' => $submission->id
@@ -765,8 +767,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
      * @param $assignment
      * @param $submission
      * @param $filetree
+     * @param $viewinlinelinks Array
+     * @param $downloadlinks Array
      */
-    protected function preprocess_filetree($assignment, $submission, $filetree) {
+    protected function preprocess_filetree($assignment, $submission, $filetree, &$viewinlinelinks = array(), &$downloadlinks = array()) {
         static $downloadstr = null;
         if (is_null($downloadstr)) {
             $downloadstr = get_string('download', 'local_joulegrader');
@@ -777,16 +781,17 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         }
 
         foreach ($filetree['subdirs'] as $subdir) {
-            $this->preprocess_filetree($assignment, $submission, $subdir);
+            $this->preprocess_filetree($assignment, $submission, $subdir, $viewinlinelinks, $downloadlinks);
         }
 
         foreach ($filetree['files'] as $file) {
             $filename = $file->get_filename();
             $filepath = $file->get_filepath();
-
             $fileurl = moodle_url::make_pluginfile_url($assignment->get_context()->id, 'assignsubmission_file', 'submission_files', $submission->id, $filepath, $filename, true);
-            $file->viewinlinelink = $this->get_viewinline_link($file, $assignment, $submission, $viewinlinestr);
-            $file->downloadlink = html_writer::link($fileurl, $downloadstr);
+
+            $filehash = $file->get_pathnamehash();
+            $viewinlinelinks[$filehash] = $this->get_viewinline_link($file, $assignment, $submission, $viewinlinestr);
+            $downloadlinks[$filehash] = html_writer::link($fileurl, $downloadstr);
         }
     }
 
@@ -915,9 +920,11 @@ EOT;
      * @param $context
      * @param $submission
      * @param $dir
+     * @param $viewinlinelinks Array
+     * @param $downloadlinks Array
      * @return string
      */
-    protected function help_htmllize_assign_submission_file_tree($context, $submission, $dir) {
+    protected function help_htmllize_assign_submission_file_tree($context, $submission, $dir, $viewinlinelinks, $downloadlinks) {
         $yuiconfig = array();
         $yuiconfig['type'] = 'html';
 
@@ -929,15 +936,20 @@ EOT;
         foreach ($dir['subdirs'] as $subdir) {
             $image = $this->output->pix_icon(file_folder_icon(), $subdir['dirname'], 'moodle', array('class'=>'icon'));
             $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.s($subdir['dirname']).'</div> '
-                    .$this->help_htmllize_assign_submission_file_tree($context, $submission, $subdir).'</li>';
+                .$this->help_htmllize_assign_submission_file_tree($context, $submission, $subdir, $viewinlinelinks, $downloadlinks).'</li>';
         }
 
         foreach ($dir['files'] as $file) {
             $filename = $file->get_filename();
-            $viewinlinelink = empty($file->viewinlinelink) ? '' : '('.$file->viewinlinelink.')';
+            $filehash = $file->get_pathnamehash();
+
+            // Use asociative arrays.
+            $viewinlinelink = empty($viewinlinelinks[$filehash]) ? '' : '('.$viewinlinelinks[$filehash].')';
+            $downloadlink = $downloadlinks[$filehash];
+
             $image = $this->output->pix_icon(file_file_icon($file), $filename, 'moodle', array('class'=>'icon'));
             $plagiarismlinks = $this->help_render_plagiarism($submission, $file, $context->__get('instanceid'));
-            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.$filename. ' ' . $viewinlinelink . ' (' . $file->downloadlink.
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.$filename. ' ' . $viewinlinelink . ' (' . $downloadlink.
                 ')' . $plagiarismlinks . '</div></li>';
         }
 
