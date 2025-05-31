@@ -45,7 +45,7 @@ class grade_pane extends \moodleform {
         if (!$this->_customdata->has_modal()) {
             if ($this->_customdata->get_gradingdisabled()) {
                 // Add a message notifying user that grading is disabled.
-                $mform->addElement('html', \html_writer::tag('div', get_string('gradingdisabled', 'local_joulegrader'),
+                $mform->addElement('html', \core\output\html_writer::tag('div', get_string('gradingdisabled', 'local_joulegrader'),
                     array('class' => 'warning')));
             }
 

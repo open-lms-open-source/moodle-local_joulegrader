@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-class comment implements \renderable {
+class comment implements \core\output\renderable {
 
     /**
      * @var \stdClass Comment record from comment api

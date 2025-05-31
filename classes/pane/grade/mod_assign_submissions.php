@@ -159,7 +159,7 @@ class mod_assign_submissions extends grade_abstract {
         }
 
         if (!$this->has_teachercap() and !$this->marking_workflow_grade_released($grade)) {
-            return \html_writer::tag('div', get_string('notreleased', 'local_joulegrader'),
+            return \core\output\html_writer::tag('div', get_string('notreleased', 'local_joulegrader'),
                     array('class' => 'local_joulegrader_notgraded'));
         }
 
@@ -359,7 +359,7 @@ class mod_assign_submissions extends grade_abstract {
             $this->get_feedbackfile_plugin()->get_form_elements_for_user($this->get_usergrade($userid, false, $this->gradingarea->get_attemptnumber()), $mform, $data, $userid);
             $elementname = 'files_' . $userid . '_filemanager';
             $mform->setDefault($elementname, $data->$elementname);
-            $mform->getElement($elementname)->setLabel(\html_writer::tag('div', get_string('filefeedback', 'local_joulegrader') . ': '));
+            $mform->getElement($elementname)->setLabel(\core\output\html_writer::tag('div', get_string('filefeedback', 'local_joulegrader') . ': '));
         }
     }
 

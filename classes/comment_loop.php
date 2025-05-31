@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-class comment_loop implements \renderable {
+class comment_loop implements \core\output\renderable {
 
     /**
      * @var gradingarea\gradingarea_abstract - instance

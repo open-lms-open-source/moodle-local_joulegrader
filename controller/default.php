@@ -95,7 +95,7 @@ class local_joulegrader_controller_default extends mr_controller {
         //check for mobile browsers (currently not supported)
         if (core_useragent::get_device_type() == 'mobile') {
             //just return a message that mobile devices are not currently supported
-            return $OUTPUT->container(html_writer::tag('h2', get_string('mobilenotsupported', 'local_joulegrader')), null, 'local-joulegrader-mobilenotsupportedmsg');
+            return $OUTPUT->container(\core\output\html_writer::tag('h2', get_string('mobilenotsupported', 'local_joulegrader')), null, 'local-joulegrader-mobilenotsupportedmsg');
         }
 
         $gareaparam = optional_param('garea', 0, PARAM_INT);
@@ -140,8 +140,8 @@ class local_joulegrader_controller_default extends mr_controller {
             $viewhtml = $renderer->render($gradeareainstance->get_viewpane());
             $gradehtml = $renderer->render($gradeareainstance->get_gradepane());
 
-            $gradinglegend = html_writer::tag('legend', get_string('grading', 'local_joulegrader'));
-            $gradehtml = html_writer::tag('fieldset', $gradinglegend . $gradehtml, array('class' => 'fieldset'));
+            $gradinglegend = \core\output\html_writer::tag('legend', get_string('grading', 'local_joulegrader'));
+            $gradehtml = \core\output\html_writer::tag('fieldset', $gradinglegend . $gradehtml, array('class' => 'fieldset'));
 
             // Get the comment loop for the gradingarea
             $commentloophtml = '';
@@ -156,7 +156,7 @@ class local_joulegrader_controller_default extends mr_controller {
             $viewpane = '<div class="content">' . $viewhtml . '</div>';
 
             // Resize bar used by drag and drop.
-            $rs = html_writer::tag('div', "\t", array('id' => 'local-joulegrader-resize'));
+            $rs = \core\output\html_writer::tag('div', "\t", array('id' => 'local-joulegrader-resize'));
 
             //get the grade pane contents
             $gradepane = '<div class="content">' . $rs . $gradehtml . $commentloophtml . '</div>';
@@ -166,7 +166,7 @@ class local_joulegrader_controller_default extends mr_controller {
 
             $PAGE->requires->js_init_call('M.local_joulegrader.init_resize', null, true, $renderer->get_js_module());
         } else {
-            $panescontainer = $OUTPUT->container(html_writer::tag('h1', get_string('nothingtodisplay', 'local_joulegrader')), 'content');
+            $panescontainer = $OUTPUT->container(\core\output\html_writer::tag('h1', get_string('nothingtodisplay', 'local_joulegrader')), 'content');
         }
 
         //activity navigation

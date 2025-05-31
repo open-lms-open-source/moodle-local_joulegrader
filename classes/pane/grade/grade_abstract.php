@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/lib/gradelib.php');
  * @author Sam Chaffee
  * @package local/joulegrader
  */
-abstract class grade_abstract implements \renderable {
+abstract class grade_abstract implements \core\output\renderable {
 
     /**
      * @var gradingarea_abstract - instance of a gradingarea class

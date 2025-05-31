@@ -34,9 +34,9 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
  * @author Sam Chaffee
  * @package local/mrooms
  */
-class local_joulegrader_renderer extends plugin_renderer_base {
+class local_joulegrader_renderer extends \core\output\plugin_renderer_base {
 
-    public function render(\renderable $renderable) {
+    public function render(\core\output\renderable $renderable) {
         try {
             $output = parent::render($renderable);
         } catch (\coding_exception $e) {
@@ -79,17 +79,17 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             $commentshtml .= $this->render($comment);
         }
 
-        $commentshtml = html_writer::tag('div', $commentshtml, array('class' => 'local_joulegrader_commentloop_comments'));
+        $commentshtml = \core\output\html_writer::tag('div', $commentshtml, array('class' => 'local_joulegrader_commentloop_comments'));
 
         //get the comment form
         $mform = $commentloop->get_mform();
         $mformhtml = $mform->render();
 
-        $commentlegend = html_writer::tag('legend', get_string('activitycomments', 'local_joulegrader'));
+        $commentlegend = \core\output\html_writer::tag('legend', get_string('activitycomments', 'local_joulegrader'));
 
         $id = uniqid('local-joulegrader-commentloop-con-');
-        $html = html_writer::tag('div', $commentshtml . $mformhtml, array('id' => $id, 'class' => 'local_joulegrader_commentloop'));
-        $html = html_writer::tag('fieldset', $commentlegend . $html, array('class' => 'fieldset'));
+        $html = \core\output\html_writer::tag('div', $commentshtml . $mformhtml, array('id' => $id, 'class' => 'local_joulegrader_commentloop'));
+        $html = \core\output\html_writer::tag('fieldset', $commentlegend . $html, array('class' => 'fieldset'));
 
         $module = $this->get_js_module();
         $PAGE->requires->js_init_call('M.local_joulegrader.init_commentloop', array('id' => $id), true, $module);
@@ -105,21 +105,21 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         global $OUTPUT, $COURSE;
 
         //commenter picture
-        $userpic = html_writer::tag('div', $comment->get_avatar(), array('class' => 'local_joulegrader_comment_commenter_pic'));
-        $username = html_writer::tag('div', $comment->get_user_fullname(), array('class' => 'local_joulegrader_comment_commenter_fullname'));
+        $userpic = \core\output\html_writer::tag('div', $comment->get_avatar(), array('class' => 'local_joulegrader_comment_commenter_pic'));
+        $username = \core\output\html_writer::tag('div', $comment->get_user_fullname(), array('class' => 'local_joulegrader_comment_commenter_fullname'));
 
         //comment timestamp
-        $commenttime = html_writer::tag('div', userdate($comment->get_timecreated(), $comment->get_dateformat()), array('class' => 'local_joulegrader_comment_time'));
-        $fullnametime =  html_writer::tag('div', $username . $commenttime, array('class' => 'local_joulegrader_comment_fullnametime'));
+        $commenttime = \core\output\html_writer::tag('div', userdate($comment->get_timecreated(), $comment->get_dateformat()), array('class' => 'local_joulegrader_comment_time'));
+        $fullnametime =  \core\output\html_writer::tag('div', $username . $commenttime, array('class' => 'local_joulegrader_comment_fullnametime'));
 
         //comment content
 //        $content = file_rewrite_pluginfile_urls($comment->get_content(), 'pluginfile.php', $comment->get_context()->id
 //                , 'local_joulegrader', 'comment', $comment->get_id());
         $content = $this->filter_kaltura_video($comment->get_content());
-        $commentbody = html_writer::tag('div', $content, array('class' => 'local_joulegrader_comment_content'));
+        $commentbody = \core\output\html_writer::tag('div', $content, array('class' => 'local_joulegrader_comment_content'));
 
         //comment body
-        $commentbody = html_writer::tag('div', $commentbody, array('class' => 'local_joulegrader_comment_body'));
+        $commentbody = \core\output\html_writer::tag('div', $commentbody, array('class' => 'local_joulegrader_comment_body'));
 
         //delete button
         $deletebutton = '';
@@ -133,18 +133,18 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 'guser' => $comment->get_guserid()
             );
             $deleteurl = new moodle_url('/local/joulegrader/view.php', $deleteparams);
-            $deletebutton = $OUTPUT->action_icon($deleteurl, new pix_icon('t/delete'
+            $deletebutton = $OUTPUT->action_icon($deleteurl, new \core\output\pix_icon('t/delete'
                 , get_string('deletecomment', 'local_joulegrader', userdate($comment->get_timecreated(), '%d %B %H:%M:%S'))));
         }
-        $deletebutton = html_writer::tag('div', $deletebutton, array('class' => 'local_joulegrader_comment_delete'));
+        $deletebutton = \core\output\html_writer::tag('div', $deletebutton, array('class' => 'local_joulegrader_comment_delete'));
 
         //determine classes for comment
         $commentclasses = array('local_joulegrader_comment');
 
-        $commenttopbar = html_writer::tag('div', $userpic . $fullnametime . $deletebutton, array('class' => 'local-joulegrader-comment-topbar'));
+        $commenttopbar = \core\output\html_writer::tag('div', $userpic . $fullnametime . $deletebutton, array('class' => 'local-joulegrader-comment-topbar'));
 
         //put it all together
-        $html = html_writer::tag('div', $commenttopbar . $commentbody, array('class' => implode(' ', $commentclasses)));
+        $html = \core\output\html_writer::tag('div', $commenttopbar . $commentbody, array('class' => implode(' ', $commentclasses)));
 
         return $html;
     }
@@ -218,7 +218,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             $html .= $gradepanehtmloverride;
         } else if (!$gradepane->has_grading()) {
             //no grade for this assignment
-            $html .= html_writer::tag('div', get_string('notgraded', 'local_joulegrader'), array('class' => 'local_joulegrader_notgraded'));
+            $html .= \core\output\html_writer::tag('div', get_string('notgraded', 'local_joulegrader'), array('class' => 'local_joulegrader_notgraded'));
         } else if ($gradepane->can_user_grade() and !$gradepane->read_only()) {
             $mrhelper = new mr_helper();
 
@@ -241,7 +241,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 $paneform = $gradepane->get_paneform();
 
                 $panehtml = $mrhelper->buffer(array($paneform, 'display'));
-                $html .= html_writer::tag('div', $panehtml, array('class' => 'local_joulegrader_simplegrading'));
+                $html .= \core\output\html_writer::tag('div', $panehtml, array('class' => 'local_joulegrader_simplegrading'));
             }
 
             //advanced grading error warning
@@ -252,11 +252,11 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         } else {
             // Student view of the grading pane
             if ($feedback = $gradepane->get_overall_feedback()) {
-                $feedback = html_writer::tag('div', get_string('overallfeedback', 'local_joulegrader') . ': ' . $feedback);
+                $feedback = \core\output\html_writer::tag('div', get_string('overallfeedback', 'local_joulegrader') . ': ' . $feedback);
             }
 
             if ($filefeedback = $gradepane->get_file_feedback()) {
-                $filefeedback = html_writer::tag('div', get_string('filefeedback', 'local_joulegrader') . ': ' . $filefeedback);
+                $filefeedback = \core\output\html_writer::tag('div', get_string('filefeedback', 'local_joulegrader') . ': ' . $filefeedback);
             }
 
             $gradepaneextra = $gradepane->student_view_hook();
@@ -310,19 +310,19 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 }
             } else {
                 //start the html
-                $html = html_writer::start_tag('div', array('id' => 'local-joulegrader-gradepane-grade'));
+                $html = \core\output\html_writer::start_tag('div', array('id' => 'local-joulegrader-gradepane-grade'));
                 $html .= $this->help_render_currentgrade($gradepane);
                 $html .= $feedback;
                 $html .= $filefeedback;
                 $html .= $gradepaneextra;
-                $html .= html_writer::end_tag('div');
+                $html .= \core\output\html_writer::end_tag('div');
             }
         }
 
         if (!empty($modalhtml)) {
             //wrap it in the proper modal html
-            $modalhtml = html_writer::tag('div', $modalhtml, array('class' => 'yui3-widget-bd'));
-            $modalhtml = html_writer::tag('div', $modalhtml, array('id' => 'local-joulegrader-gradepane-panel', 'class' => 'dontshow'));
+            $modalhtml = \core\output\html_writer::tag('div', $modalhtml, array('class' => 'yui3-widget-bd'));
+            $modalhtml = \core\output\html_writer::tag('div', $modalhtml, array('id' => 'local-joulegrader-gradepane-panel', 'class' => 'dontshow'));
 
             $html .= $modalhtml;
         }
@@ -382,10 +382,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             }
         }
 
-        $currentgradestr = html_writer::tag('div', get_string('gradebookgrade', 'local_joulegrader').': '.$gbval, array('class' => 'grade'));
+        $currentgradestr = \core\output\html_writer::tag('div', get_string('gradebookgrade', 'local_joulegrader').': '.$gbval, array('class' => 'grade'));
 
         if ($activitygrade !== null) {
-            $currentgradestr .= html_writer::tag('div', $gradepane->get_activity_grade_label().': '.$activitygrade, array('class' => 'grade'));
+            $currentgradestr .= \core\output\html_writer::tag('div', $gradepane->get_activity_grade_label().': '.$activitygrade, array('class' => 'grade'));
         }
 
         return $currentgradestr;
@@ -401,13 +401,13 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             'class' => 'btn btn-secondary',
         );
         $role = !empty($teachercap) ? 'teacher' : 'student';
-        $viewbutton = html_writer::tag('button', get_string('view' . $gradingmethod . $role, 'local_joulegrader'), $buttonatts);
+        $viewbutton = \core\output\html_writer::tag('button', get_string('view' . $gradingmethod . $role, 'local_joulegrader'), $buttonatts);
 
-        $html = html_writer::tag('div', $viewbutton, array('id' => 'local-joulegrader-viewpreview-button-con'));
+        $html = \core\output\html_writer::tag('div', $viewbutton, array('id' => 'local-joulegrader-viewpreview-button-con'));
 
         // needsupdate?
         if ($gradepane->get_needsupdate()) {
-            $html .= html_writer::tag('div', get_string('needregrademessage', 'gradingform_' . $gradingmethod), array('class' => "gradingform_$gradingmethod-regrade"));
+            $html .= \core\output\html_writer::tag('div', get_string('needregrademessage', 'gradingform_' . $gradingmethod), array('class' => "gradingform_$gradingmethod-regrade"));
         }
 
         return $html;
@@ -469,12 +469,12 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $previd = $navwidget->get_previd();
         if (!is_null($previd)) {
             $linkurl->param($navwidget->get_param(), $previd);
-            $prevlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/left', get_string('previous', 'local_joulegrader', strtolower($navwidget->get_label()))));
+            $prevlink = $OUTPUT->action_icon($linkurl, new \core\output\pix_icon('t/left', get_string('previous', 'local_joulegrader', strtolower($navwidget->get_label()))));
         }
 
         //select menu
         $formid = "local-joulegrader-{$widgetname}nav-menu";
-        $select = new single_select($widgeturl, $navwidget->get_param(), $navwidget->get_options()
+        $select = new \core\output\single_select($widgeturl, $navwidget->get_param(), $navwidget->get_options()
             , $navwidget->get_currentid(), '', $formid);
 
         //set some select attributes
@@ -490,10 +490,10 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         $nextid = $navwidget->get_nextid();
         if (!is_null($nextid)) {
             $linkurl->param($navwidget->get_param(), $nextid);
-            $nextlink = $OUTPUT->action_icon($linkurl, new pix_icon('t/right', get_string('next', 'local_joulegrader', strtolower($navwidget->get_label()))));
+            $nextlink = $OUTPUT->action_icon($linkurl, new \core\output\pix_icon('t/right', get_string('next', 'local_joulegrader', strtolower($navwidget->get_label()))));
         }
 
-        return html_writer::tag('div', $prevlink . $selectform . $nextlink, array('class' => 'local_joulegrader_navwidget'));
+        return \core\output\html_writer::tag('div', $prevlink . $selectform . $nextlink, array('class' => 'local_joulegrader_navwidget'));
     }
 
     /**
@@ -529,12 +529,12 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             $singlebutton = $OUTPUT->single_button($preferenceurl, $buttonlabel, 'get');
 
             $showonlypreference->preference = $preference;
-            $showonlypreference->button = html_writer::tag('div', $singlebutton,
+            $showonlypreference->button = \core\output\html_writer::tag('div', $singlebutton,
                     array('class' => 'local_joulegrader-hsuforum-showposts'));
         }
         $html = $renderer->user_posts_overview($gradingarea->get_guserid(), $cm, $showonlypreference);
         if (empty($html)) {
-            return html_writer::tag('h3', $viewpane->get_emptymessage());
+            return \core\output\html_writer::tag('h3', $viewpane->get_emptymessage());
         }
 
         $html .= $renderer->svg_sprite();
@@ -586,7 +586,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     $url = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->get_course()->id,
                             'garea' => $gradingarea->get_areaid(), 'guser' => $gradingarea->get_guserid()));
 
-                    $select = new single_select($url, 'attempt', $options, $selected, false);
+                    $select = new \core\output\single_select($url, 'attempt', $options, $selected, false);
                     $select->set_label(get_string('viewingattempt', 'local_joulegrader') . ':');
                     $attemptmenu = $OUTPUT->render($select);
                 }
@@ -607,7 +607,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                 $a->number = $submittedcount;
                 $a->outof  = $maxattempts;
 
-                $attemptstatus = html_writer::tag('div', get_string('attemptstatus', 'local_joulegrader', $a));
+                $attemptstatus = \core\output\html_writer::tag('div', get_string('attemptstatus', 'local_joulegrader', $a));
 
             }
 
@@ -619,7 +619,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
             if (!empty($extension)) {
                 $userdate = userdate($extension);
                 $userdate = get_string('assign23-userextensiondate', 'local_joulegrader', $userdate);
-                $attemptstatus .= html_writer::tag('div', $userdate);
+                $attemptstatus .= \core\output\html_writer::tag('div', $userdate);
                 $due = $extension;
             }
 
@@ -628,12 +628,12 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     && (!empty($submission->timemodified)) && !empty($due) && ($due < $submission->timemodified)) {
                 // Format the lateness time and get the message.
                 $lateby = format_time($submission->timemodified - $due);
-                $attemptstatus .= html_writer::tag('div', get_string('assign23-latesubmission', 'local_joulegrader', $lateby));
+                $attemptstatus .= \core\output\html_writer::tag('div', get_string('assign23-latesubmission', 'local_joulegrader', $lateby));
             }
 
             if (!empty($attemptstatus)) {
-                $assignmentstatus = html_writer::tag('legend', get_string('assignmentstatus', 'local_joulegrader'));
-                $html .= html_writer::tag('fieldset', $assignmentstatus . $attemptstatus, array('class' => 'fieldset'));
+                $assignmentstatus = \core\output\html_writer::tag('legend', get_string('assignmentstatus', 'local_joulegrader'));
+                $html .= \core\output\html_writer::tag('fieldset', $assignmentstatus . $attemptstatus, array('class' => 'fieldset'));
             }
 
             if (!empty($submission)) {
@@ -649,18 +649,18 @@ class local_joulegrader_renderer extends plugin_renderer_base {
                     if ($plugin->is_enabled() && $plugin->is_visible() && !$plugin->is_empty($submission)) {
                         $rendermethod = 'help_render_' . $pluginclass;
 
-                        $pluginhtml = html_writer::tag('legend', $plugin->get_name(), array('class' => 'local_joulegrader_assign23_submission_name'));
+                        $pluginhtml = \core\output\html_writer::tag('legend', $plugin->get_name(), array('class' => 'local_joulegrader_assign23_submission_name'));
                         $pluginhtml .= $this->$rendermethod($plugin, $assignment, $submission);
 
                         $attributes = array('class' => 'local_joulegrader_assign23_submission, fieldset', 'id' => 'local-joulegrader-assign23-' . $pluginclass);
-                        $html .= html_writer::tag('fieldset', $pluginhtml, $attributes);
+                        $html .= \core\output\html_writer::tag('fieldset', $pluginhtml, $attributes);
                     }
                 }
             }
         }
 
         if (empty($html)) {
-            return html_writer::tag('h3', $viewpane->get_emptymessage());
+            return \core\output\html_writer::tag('h3', $viewpane->get_emptymessage());
         }
 
         return $html;
@@ -725,35 +725,35 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
         $htmlid = 'local_joulegrader_assign23_files_tree_'.uniqid();
         $this->page->requires->js_init_call('M.mod_assign.init_tree', array(true, $htmlid));
-        $treehtml = html_writer::start_tag('div', array('id' => $htmlid));
+        $treehtml = \core\output\html_writer::start_tag('div', array('id' => $htmlid));
         $treehtml .= $this->help_htmllize_assign_submission_file_tree($context, $submission, $filetree, $viewinlinelinks, $downloadlinks);
-        $treehtml .= html_writer::end_tag('div');
+        $treehtml .= \core\output\html_writer::end_tag('div');
 
         $moodleurl = new moodle_url('/local/joulegrader/view.php', array('action' => 'downloadall', 's' => $submission->id
             , 'courseid' => $assignment->get_instance()->course));
-        $html = $treehtml . html_writer::link($moodleurl, get_string('downloadall', 'local_joulegrader'));
-        $html = html_writer::tag('div', $html, array('id' => 'local-joulegrader-assign23-treecon'));
+        $html = $treehtml . \core\output\html_writer::link($moodleurl, get_string('downloadall', 'local_joulegrader'));
+        $html = \core\output\html_writer::tag('div', $html, array('id' => 'local-joulegrader-assign23-treecon'));
 
-        $ctrlfilename = html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-filename', 'class' => 'control'));
-        $ctrldownload = html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-download', 'class' => 'control'));
+        $ctrlfilename = \core\output\html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-filename', 'class' => 'control'));
+        $ctrldownload = \core\output\html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-download', 'class' => 'control'));
 
         $jgurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->get_course()->id));
 
-        $ctrlprevious = html_writer::link($jgurl, $this->output->pix_icon('t/left', get_string('previous')));
-        $ctrlprevious = html_writer::tag('div', $ctrlprevious, array('id' => 'local-joulegrader-assign23-ctrl-previous', 'class' => 'control'));
+        $ctrlprevious = \core\output\html_writer::link($jgurl, $this->output->pix_icon('t/left', get_string('previous')));
+        $ctrlprevious = \core\output\html_writer::tag('div', $ctrlprevious, array('id' => 'local-joulegrader-assign23-ctrl-previous', 'class' => 'control'));
 
-        $labelctrlselect = html_writer::label(get_string('files'), 'menufileselect', true, array('class' => 'local_joulegrader_hidden'));
-        $ctrlselect = html_writer::select(array(0 => get_string('allfiles', 'local_joulegrader')), 'fileselect', 0, false);
-        $ctrlselect = html_writer::tag('div', $labelctrlselect.$ctrlselect, array('id' => 'local-joulegrader-assign23-ctrl-select', 'class' => 'control'));
+        $labelctrlselect = \core\output\html_writer::label(get_string('files'), 'menufileselect', true, array('class' => 'local_joulegrader_hidden'));
+        $ctrlselect = \core\output\html_writer::select(array(0 => get_string('allfiles', 'local_joulegrader')), 'fileselect', 0, false);
+        $ctrlselect = \core\output\html_writer::tag('div', $labelctrlselect.$ctrlselect, array('id' => 'local-joulegrader-assign23-ctrl-select', 'class' => 'control'));
 
-        $ctrlnext = html_writer::link($jgurl, $this->output->pix_icon('t/right', get_string('next')));
-        $ctrlnext = html_writer::tag('div', $ctrlnext, array('id' => 'local-joulegrader-assign23-ctrl-next', 'class' => 'control'));
+        $ctrlnext = \core\output\html_writer::link($jgurl, $this->output->pix_icon('t/right', get_string('next')));
+        $ctrlnext = \core\output\html_writer::tag('div', $ctrlnext, array('id' => 'local-joulegrader-assign23-ctrl-next', 'class' => 'control'));
 
-        $ctrlclose = html_writer::link($jgurl, $this->output->pix_icon('all', get_string('allfiles', 'local_joulegrader'), 'local_joulegrader'));
-        $ctrlclose = html_writer::tag('div', $ctrlclose, array('id' => 'local-joulegrader-assign23-ctrl-close', 'class' => 'control'));
+        $ctrlclose = \core\output\html_writer::link($jgurl, $this->output->pix_icon('all', get_string('allfiles', 'local_joulegrader'), 'local_joulegrader'));
+        $ctrlclose = \core\output\html_writer::tag('div', $ctrlclose, array('id' => 'local-joulegrader-assign23-ctrl-close', 'class' => 'control'));
         $controlshtml = $ctrlfilename.$ctrldownload.$ctrlprevious.$ctrlselect.$ctrlnext.$ctrlclose;
-        $controlshtml = html_writer::tag('div', $controlshtml, array('id' => 'local-joulegrader-assign23-ctrl-con'));
-        $html .= html_writer::tag('div', $controlshtml, array('id' => 'local-joulegrader-assign23-files-inline', 'class' => 'local_joulegrader_hidden'));
+        $controlshtml = \core\output\html_writer::tag('div', $controlshtml, array('id' => 'local-joulegrader-assign23-ctrl-con'));
+        $html .= \core\output\html_writer::tag('div', $controlshtml, array('id' => 'local-joulegrader-assign23-files-inline', 'class' => 'local_joulegrader_hidden'));
 
         $this->page->requires->js_init_call('M.local_joulegrader.init_viewinlinefile',
                 array('courseid' => $assignment->get_instance()->course), true, $this->get_js_module());
@@ -791,7 +791,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
 
             $filehash = $file->get_pathnamehash();
             $viewinlinelinks[$filehash] = $this->get_viewinline_link($file, $assignment, $submission, $viewinlinestr);
-            $downloadlinks[$filehash] = html_writer::link($fileurl, $downloadstr);
+            $downloadlinks[$filehash] = \core\output\html_writer::link($fileurl, $downloadstr);
         }
     }
 
@@ -807,7 +807,7 @@ class local_joulegrader_renderer extends plugin_renderer_base {
         if ($this->can_embed_file($file)) {
             $fileurl = moodle_url::make_pluginfile_url($assignment->get_context()->id, 'assignsubmission_file'
                     , 'submission_files', $submission->id, $file->get_filepath(), $file->get_filename(), true);
-            $viewinlinelink = html_writer::link($fileurl, $viewinlinestr, array('id' => $file->get_pathnamehash(), 'class' => 'local_joulegrader_assign23_inlinefile'));
+            $viewinlinelink = \core\output\html_writer::link($fileurl, $viewinlinestr, array('id' => $file->get_pathnamehash(), 'class' => 'local_joulegrader_assign23_inlinefile'));
         }
         return $viewinlinelink;
     }
@@ -883,7 +883,7 @@ EOT;
             $html = $mediarenderer->embed_url($fullurl, $title, 0, 0, $embedoptions);
 
         } else if (in_array($mimetype, array('application/xml', 'text/html', 'text/plain'))) {
-            $html = html_writer::start_tag('div', array('class' => 'resourcecontent'));
+            $html = \core\output\html_writer::start_tag('div', array('class' => 'resourcecontent'));
             $text = $file->get_content();
 
             if ($mimetype == 'text/html') {
@@ -903,7 +903,7 @@ EOT;
                 $html .= '<pre>' . htmlspecialchars($text) . '</pre>';
             }
 
-            $html .= html_writer::end_tag('div');
+            $html .= \core\output\html_writer::end_tag('div');
 
         } else {
             // anything else - just try object tag enlarged as much as possible

@@ -58,7 +58,7 @@ function local_joulegrader_extend_settings_navigation($settings, $context) {
             //not sure if it should be a popup
             //$actionlink = new action_link($url, '', new popup_action('click', $url, 'popup', array('height' => 768, 'width' => 1024)));
 
-            $coursenode->add('Open Grader', $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('joulegrader', 'Open Grader', 'local_joulegrader'));
+            $coursenode->add('Open Grader', $url, navigation_node::TYPE_SETTING, null, null, new \core\output\pix_icon('joulegrader', 'Open Grader', 'local_joulegrader'));
         }
     }
 }

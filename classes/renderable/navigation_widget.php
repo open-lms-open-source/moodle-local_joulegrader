@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
  * @package local/joulegrader
  */
 
-class navigation_widget implements \renderable {
+class navigation_widget implements \core\output\renderable {
 
     /**
      * @var string - the name of the navigation widget (likely user or activity)
