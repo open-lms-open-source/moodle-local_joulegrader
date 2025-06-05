@@ -170,7 +170,7 @@ class comment_test extends \advanced_testcase {
             $CFG->wwwroot .= str_repeat('_', 20 - $numofcharsfromparams);
         }
 
-        $url = new \moodle_url('/local/joulegrader/view.php?', [
+        $url = new \core\url('/local/joulegrader/view.php?', [
             'guser'    => $student->id,
             'garea'    => $gareaid2,
             'courseid' => $course->id,

@@ -225,7 +225,7 @@ abstract class grade_abstract implements \core\output\renderable {
     }
 
     private function get_posturl() {
-        $posturl = new \moodle_url('/local/joulegrader/view.php', array('courseid' => $this->get_courseid()
+        $posturl = new \core\url('/local/joulegrader/view.php', array('courseid' => $this->get_courseid()
         , 'garea' => $this->get_gradingarea()->get_areaid(), 'guser' => $this->get_gradingarea()->get_guserid(), 'action' => 'process'));
 
         if ($needsgrading = optional_param('needsgrading', 0, PARAM_BOOL)) {

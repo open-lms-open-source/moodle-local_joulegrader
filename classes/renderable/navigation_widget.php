@@ -43,7 +43,7 @@ class navigation_widget implements \core\output\renderable {
     protected $name;
 
     /**
-     * @var \moodle_url - the url for the form action/links
+     * @var \core\url - the url for the form action/links
      */
     protected $url;
 
@@ -79,14 +79,14 @@ class navigation_widget implements \core\output\renderable {
 
     /**
      * @param string $name -the name of the navigation widget (likely user or activity)
-     * @param \moodle_url $url - the url for the form action/links
+     * @param \core\url $url - the url for the form action/links
      * @param array $options - options for the select menu
      * @param string $param - the parameter that changes on select/used in link
      * @param int $currentid - the currently selected id (used to set the selected menu item)
      * @param mixed $nextid - the id for the next link
      * @param mixed $previd - the id for previous link
      */
-    public function __construct($name, \moodle_url $url, array $options, $param, $currentid, $nextid, $previd) {
+    public function __construct($name, \core\url $url, array $options, $param, $currentid, $nextid, $previd) {
         $this->name      = $name;
         $this->url       = $url;
         $this->options   = $options;
@@ -139,7 +139,7 @@ class navigation_widget implements \core\output\renderable {
     }
 
     /**
-     * @return \moodle_url
+     * @return \core\url
      */
     public function get_url() {
         return $this->url;

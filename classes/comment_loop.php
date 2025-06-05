@@ -227,7 +227,7 @@ class comment_loop implements \core\output\renderable {
 
         //build the form action url
         $urlparams = array('courseid' => $COURSE->id, 'action' => 'addcomment', 'garea' => $gareaid, 'guser' => $guserid);
-        $mformurl = new \moodle_url('/local/joulegrader/view.php', $urlparams);
+        $mformurl = new \core\url('/local/joulegrader/view.php', $urlparams);
 
         //instantiate the form
         $this->mform = new form\comment($mformurl, $this->gradingarea);

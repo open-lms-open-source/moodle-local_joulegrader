@@ -241,7 +241,7 @@ class mod_hsuforum_posts extends grade_abstract {
      */
     public function process($data, $notify) {
         //set up a redirect url
-        $redirecturl = new \moodle_url('/local/joulegrader/view.php', array('courseid' => $this->cm->course
+        $redirecturl = new \core\url('/local/joulegrader/view.php', array('courseid' => $this->cm->course
                 , 'garea' => $this->get_gradingarea()->get_areaid(), 'guser' => $this->get_gradingarea()->get_guserid()));
 
         //get the data from the form

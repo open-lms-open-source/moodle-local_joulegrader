@@ -550,7 +550,7 @@ class mod_assign_submissions extends grade_abstract {
         $assignment = $this->gradingarea->get_assign();
 
         //set up a redirect url
-        $redirecturl = new \moodle_url('/local/joulegrader/view.php', array('courseid' => $this->courseid
+        $redirecturl = new \core\url('/local/joulegrader/view.php', array('courseid' => $this->courseid
                 , 'garea' => $this->get_gradingarea()->get_areaid(), 'guser' => $this->get_gradingarea()->get_guserid()));
 
         //get the data from the form

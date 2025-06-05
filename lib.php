@@ -54,7 +54,7 @@ function local_joulegrader_extend_settings_navigation($settings, $context) {
 
             }
 
-            $url = new moodle_url('/local/joulegrader/view.php', $urlparams);
+            $url = new \core\url('/local/joulegrader/view.php', $urlparams);
             //not sure if it should be a popup
             //$actionlink = new action_link($url, '', new popup_action('click', $url, 'popup', array('height' => 768, 'width' => 1024)));
 

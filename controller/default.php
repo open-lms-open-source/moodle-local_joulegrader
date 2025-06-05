@@ -351,7 +351,7 @@ class local_joulegrader_controller_default extends mr_controller {
             }
 
             if (!$isajaxrequest) {
-                redirect(new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid, 'guser' => $currentuserid)));
+                redirect(new \core\url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid, 'guser' => $currentuserid)));
             } else {
                 $renderer = $PAGE->get_renderer('local_joulegrader');
 
@@ -436,7 +436,7 @@ class local_joulegrader_controller_default extends mr_controller {
             }
 
             if (!$isajaxrequest) {
-                redirect(new moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid, 'guser' => $currentuserid)));
+                redirect(new \core\url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid, 'guser' => $currentuserid)));
             } else {
                 $renderer = $PAGE->get_renderer('local_joulegrader');
 

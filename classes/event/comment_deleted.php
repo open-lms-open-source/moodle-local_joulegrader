@@ -83,10 +83,10 @@ class comment_deleted extends \core\event\base {
     /**
      * Get the URL related to this action
      *
-     * @return \moodle_url
+     * @return \core\url
      */
     public function get_url() {
-        $url = new \moodle_url('/local/joulegrader/view.php?', array(
+        $url = new \core\url('/local/joulegrader/view.php?', array(
             'guser'    => $this->relateduserid,
             'garea'    => $this->other['areaid'],
             'courseid' => $this->courseid,
@@ -94,7 +94,7 @@ class comment_deleted extends \core\event\base {
         $stringurl = $url->out(false);
         // We need to cut the url if it is bigger than 100 characters.
         if (\core_text::strlen($stringurl) > 100) {
-            $url = new \moodle_url('/local/joulegrader/view.php?', array('guser' => $this->relateduserid,
+            $url = new \core\url('/local/joulegrader/view.php?', array('guser' => $this->relateduserid,
                 'garea' => $this->other['areaid'],));
         }
         return $url;

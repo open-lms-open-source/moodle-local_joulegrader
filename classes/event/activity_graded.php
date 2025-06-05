@@ -76,10 +76,10 @@ class activity_graded extends \core\event\base {
     /**
      * Get the URL related to this action
      *
-     * @return \moodle_url
+     * @return \core\url
      */
     public function get_url() {
-        return new \moodle_url('/local/joulegrader/view.php?', array(
+        return new \core\url('/local/joulegrader/view.php?', array(
             'guser'    => $this->relateduserid,
             'garea'    => $this->other['areaid'],
             'courseid' => $this->courseid,

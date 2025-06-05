@@ -108,7 +108,7 @@ class navigation {
             $nextarea     = $this->gareautility->get_next();
             $prevarea     = $this->gareautility->get_previous();
 
-            $gareaurl = new \moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'guser' => $this->navcurrentuser));
+            $gareaurl = new \core\url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'guser' => $this->navcurrentuser));
             if (!empty($needsgrading)) {
                 $gareaurl->param('needsgrading', 1);
             }
@@ -145,7 +145,7 @@ class navigation {
             } else {
                 //else need a groups navigation widget
                 //groupnav url
-                $groupurl = new \moodle_url('/local/joulegrader/view.php'
+                $groupurl = new \core\url('/local/joulegrader/view.php'
                     , array('courseid' => $COURSE->id, 'garea' => $currentarea, 'guser' => $currentuser));
 
                 //if needs grading button selected at that param
@@ -168,7 +168,7 @@ class navigation {
 
         //user navigation
         if (!empty($users)) {
-            $guserurl = new \moodle_url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentarea));
+            $guserurl = new \core\url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentarea));
             if (!empty($needsgrading)) {
                 $guserurl->param('needsgrading', 1);
             }
@@ -187,7 +187,7 @@ class navigation {
     }
 
     /**
-     * @param \moodle_url $controllerurl
+     * @param \core\url $controllerurl
      * @param \context $context
      * @return string
      */
@@ -208,7 +208,7 @@ class navigation {
 
         $returncoursebutton = '';
         if (!empty($fullscreenparam)) {
-            $returncourseurl = new \moodle_url('/course/view.php', array('id' => $COURSE->id));
+            $returncourseurl = new \core\url('/course/view.php', array('id' => $COURSE->id));
             $returncoursebutton = $OUTPUT->single_button($returncourseurl, get_string('returncourse', 'local_joulegrader'), 'get');
         }
 

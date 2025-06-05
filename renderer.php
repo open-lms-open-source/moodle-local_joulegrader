@@ -132,7 +132,7 @@ class local_joulegrader_renderer extends \core\output\plugin_renderer_base {
                 'garea' => $comment->get_gareaid(),
                 'guser' => $comment->get_guserid()
             );
-            $deleteurl = new moodle_url('/local/joulegrader/view.php', $deleteparams);
+            $deleteurl = new \core\url('/local/joulegrader/view.php', $deleteparams);
             $deletebutton = $OUTPUT->action_icon($deleteurl, new \core\output\pix_icon('t/delete'
                 , get_string('deletecomment', 'local_joulegrader', userdate($comment->get_timecreated(), '%d %B %H:%M:%S'))));
         }
@@ -525,7 +525,7 @@ class local_joulegrader_renderer extends \core\output\plugin_renderer_base {
                 'showposts' => !$preference,
 
             );
-            $preferenceurl = new moodle_url('/local/joulegrader/view.php', $urlparams);
+            $preferenceurl = new \core\url('/local/joulegrader/view.php', $urlparams);
             $singlebutton = $OUTPUT->single_button($preferenceurl, $buttonlabel, 'get');
 
             $showonlypreference->preference = $preference;
@@ -583,7 +583,7 @@ class local_joulegrader_renderer extends \core\output\plugin_renderer_base {
                     $mostrecent = array_pop($options);
                     $options[-1] = $mostrecent;
 
-                    $url = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->get_course()->id,
+                    $url = new \core\url('/local/joulegrader/view.php', array('courseid' => $assignment->get_course()->id,
                             'garea' => $gradingarea->get_areaid(), 'guser' => $gradingarea->get_guserid()));
 
                     $select = new \core\output\single_select($url, 'attempt', $options, $selected, false);
@@ -729,7 +729,7 @@ class local_joulegrader_renderer extends \core\output\plugin_renderer_base {
         $treehtml .= $this->help_htmllize_assign_submission_file_tree($context, $submission, $filetree, $viewinlinelinks, $downloadlinks);
         $treehtml .= \core\output\html_writer::end_tag('div');
 
-        $moodleurl = new moodle_url('/local/joulegrader/view.php', array('action' => 'downloadall', 's' => $submission->id
+        $moodleurl = new \core\url('/local/joulegrader/view.php', array('action' => 'downloadall', 's' => $submission->id
             , 'courseid' => $assignment->get_instance()->course));
         $html = $treehtml . \core\output\html_writer::link($moodleurl, get_string('downloadall', 'local_joulegrader'));
         $html = \core\output\html_writer::tag('div', $html, array('id' => 'local-joulegrader-assign23-treecon'));
@@ -737,7 +737,7 @@ class local_joulegrader_renderer extends \core\output\plugin_renderer_base {
         $ctrlfilename = \core\output\html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-filename', 'class' => 'control'));
         $ctrldownload = \core\output\html_writer::tag('div', '', array('id' => 'local-joulegrader-assign23-ctrl-download', 'class' => 'control'));
 
-        $jgurl = new moodle_url('/local/joulegrader/view.php', array('courseid' => $assignment->get_course()->id));
+        $jgurl = new \core\url('/local/joulegrader/view.php', array('courseid' => $assignment->get_course()->id));
 
         $ctrlprevious = \core\output\html_writer::link($jgurl, $this->output->pix_icon('t/left', get_string('previous')));
         $ctrlprevious = \core\output\html_writer::tag('div', $ctrlprevious, array('id' => 'local-joulegrader-assign23-ctrl-previous', 'class' => 'control'));
@@ -787,7 +787,7 @@ class local_joulegrader_renderer extends \core\output\plugin_renderer_base {
         foreach ($filetree['files'] as $file) {
             $filename = $file->get_filename();
             $filepath = $file->get_filepath();
-            $fileurl = moodle_url::make_pluginfile_url($assignment->get_context()->id, 'assignsubmission_file', 'submission_files', $submission->id, $filepath, $filename, true);
+            $fileurl = \core\url::make_pluginfile_url($assignment->get_context()->id, 'assignsubmission_file', 'submission_files', $submission->id, $filepath, $filename, true);
 
             $filehash = $file->get_pathnamehash();
             $viewinlinelinks[$filehash] = $this->get_viewinline_link($file, $assignment, $submission, $viewinlinestr);
@@ -805,7 +805,7 @@ class local_joulegrader_renderer extends \core\output\plugin_renderer_base {
     protected function get_viewinline_link($file, $assignment, $submission, $viewinlinestr) {
         $viewinlinelink = '';
         if ($this->can_embed_file($file)) {
-            $fileurl = moodle_url::make_pluginfile_url($assignment->get_context()->id, 'assignsubmission_file'
+            $fileurl = \core\url::make_pluginfile_url($assignment->get_context()->id, 'assignsubmission_file'
                     , 'submission_files', $submission->id, $file->get_filepath(), $file->get_filename(), true);
             $viewinlinelink = \core\output\html_writer::link($fileurl, $viewinlinestr, array('id' => $file->get_pathnamehash(), 'class' => 'local_joulegrader_assign23_inlinefile'));
         }
@@ -847,7 +847,7 @@ class local_joulegrader_renderer extends \core\output\plugin_renderer_base {
 
         //Code from modified from mod/resource/locallib.php
         //make the url to the file
-        $fullurl = moodle_url::make_pluginfile_url($contextid, 'local_joulegrader', 'gradingarea', $file->get_itemid()
+        $fullurl = \core\url::make_pluginfile_url($contextid, 'local_joulegrader', 'gradingarea', $file->get_itemid()
                 , '/mod_assign_submissions' . $file->get_filepath(), $filename);
 
         $downloadurl = clone($fullurl);
