@@ -140,13 +140,13 @@ abstract class gradingarea_abstract {
      * Load the grading_manager instance
      *
      * @return gradingarea_abstract
-     * @throws \coding_exception
+     * @throws \core\exception\coding_exception
      */
     public function load_gradingmanager() {
         //first check to see that an instance is not already loaded
         if (!isset($this->gradingmanager) || !($this->gradingmanager instanceof \grading_manager)) {
             if (!isset($this->areaid)) {
-                throw new \coding_exception('Cannot load grading_manager instance if areaid is not set');
+                throw new \core\exception\coding_exception('Cannot load grading_manager instance if areaid is not set');
             }
 
             //load the grading_manager instance
@@ -169,7 +169,7 @@ abstract class gradingarea_abstract {
      * Load the viewpane instance
      *
      * @return gradingarea_abstract
-     * @throws \coding_exception
+     * @throws \core\exception\coding_exception
      */
     protected function load_viewpane() {
         global $CFG; //don't remove this: needed for the include_once call
@@ -183,7 +183,7 @@ abstract class gradingarea_abstract {
             try {
                 $this->viewpane = new $classname($this);
             } catch (\Exception $e) {
-                throw new \coding_exception("View pane class $classname could not be instantiated");
+                throw new \core\exception\coding_exception("View pane class $classname could not be instantiated");
             }
         }
 
@@ -194,7 +194,7 @@ abstract class gradingarea_abstract {
      * Load the gradepane instance
      *
      * @return gradepane\grade_abstract
-     * @throws \coding_exception
+     * @throws \core\exception\coding_exception
      */
     protected function load_gradepane() {
         global $CFG; //don't remove this: needed for the include_once call
@@ -208,7 +208,7 @@ abstract class gradingarea_abstract {
             try {
                 $this->gradepane = new $classname($this);
             } catch (\Exception $e) {
-                throw new \coding_exception("Grade pane class $classname could not be instantiated");
+                throw new \core\exception\coding_exception("Grade pane class $classname could not be instantiated");
             }
         }
 

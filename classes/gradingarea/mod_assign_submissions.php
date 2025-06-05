@@ -523,7 +523,7 @@ class mod_assign_submissions extends gradingarea_abstract {
     }
 
     /**
-     * @throws \coding_exception
+     * @throws \core\exception\coding_exception
      */
     protected function load_assign() {
         global $CFG;
@@ -541,7 +541,7 @@ class mod_assign_submissions extends gradingarea_abstract {
             $this->assign->set_instance($assign);
 
         } catch (\Exception $e) {
-            throw new \coding_exception('Could not load the assign class: ' . $e->getMessage());
+            throw new \core\exception\coding_exception('Could not load the assign class: ' . $e->getMessage());
         }
     }
 

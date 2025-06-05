@@ -237,7 +237,7 @@ class mod_hsuforum_posts extends grade_abstract {
      * Process the grade data
      * @param $data
      * @param \mr_html_notify $notify
-     * @throws \moodle_exception
+     * @throws \core\exception\moodle_exception
      */
     public function process($data, $notify) {
         //set up a redirect url

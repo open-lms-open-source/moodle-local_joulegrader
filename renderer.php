@@ -39,7 +39,7 @@ class local_joulegrader_renderer extends \core\output\plugin_renderer_base {
     public function render(\core\output\renderable $renderable) {
         try {
             $output = parent::render($renderable);
-        } catch (\coding_exception $e) {
+        } catch (\core\exception\coding_exception $e) {
             $class = get_class($renderable);
             $rendermethod = 'render_'.str_replace('\\', '_', $class);
             if (!method_exists($this, $rendermethod)) {

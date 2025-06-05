@@ -217,7 +217,7 @@ class local_joulegrader_controller_default extends mr_controller {
     /**
      * Process action - processes grade form and redirects
      *
-     * @throws moodle_exception
+     * @throws \core\exception\moodle_exception
      * @return void
      */
     public function process_action() {
@@ -234,7 +234,7 @@ class local_joulegrader_controller_default extends mr_controller {
         //make sure that the area passed from the form matches what is determined by the areas utility
         if ($currentareaid != $gareasutility->get_current()) {
             //should not get here unless ppl are messing with form data
-            throw new moodle_exception('areaidpassednotvalid', 'local_joulegrader');
+            throw new \core\exception\moodle_exception('areaidpassednotvalid', 'local_joulegrader');
         }
 
         //just need prime the utility for the currentuser() and nextuser() calls
@@ -243,7 +243,7 @@ class local_joulegrader_controller_default extends mr_controller {
         //make sure the passed user and passed area match what is available
         if ($currentuserid != $usersutility->get_current()) {
             //there is some funny business going on here
-            throw new moodle_exception('useridpassednotvalid', 'local_joulegrader');
+            throw new \core\exception\moodle_exception('useridpassednotvalid', 'local_joulegrader');
         }
 
         //load the current area instance
@@ -409,7 +409,7 @@ class local_joulegrader_controller_default extends mr_controller {
             $commentloop->init();
 
             if (!$commentloop->user_can_comment()) {
-                throw new moodle_exception('nopermissiontocomment', 'local_joulegrader');
+                throw new \core\exception\moodle_exception('nopermissiontocomment', 'local_joulegrader');
             }
 
             //get the form
@@ -488,7 +488,7 @@ class local_joulegrader_controller_default extends mr_controller {
         // Make sure that the area passed from the form matches what is determined by the areas utility.
         if ($currentareaid != $gareasutility->get_current()) {
             //should not get here unless ppl are messing with form data
-            throw new moodle_exception('areaidpassednotvalid', 'local_joulegrader');
+            throw new \core\exception\moodle_exception('areaidpassednotvalid', 'local_joulegrader');
         }
 
         // Pull out the users utility and gradingareas utility.
@@ -497,7 +497,7 @@ class local_joulegrader_controller_default extends mr_controller {
         //make sure the passed user and passed area match what is available
         if ($currentuserid != $usersutility->get_current()) {
             //there is some funny business going on here
-            throw new moodle_exception('useridpassednotvalid', 'local_joulegrader');
+            throw new \core\exception\moodle_exception('useridpassednotvalid', 'local_joulegrader');
         }
 
         //load the current area instance
@@ -642,7 +642,7 @@ class local_joulegrader_controller_default extends mr_controller {
      * @param $submission
      * @param $context
      * @param $cm
-     * @throws moodle_exception
+     * @throws \core\exception\moodle_exception
      */
     protected function enforce_submission_access($assign, $submission, $context, $cm) {
         global $CFG, $COURSE, $USER;
@@ -674,7 +674,7 @@ class local_joulegrader_controller_default extends mr_controller {
                 require_capability('mod/assign:submit', $context);
             } else {
                 // Should not have access.
-                throw new moodle_exception('nopermissions');
+                throw new \core\exception\moodle_exception('nopermissions');
             }
         } else {
             // No team submissions being used.

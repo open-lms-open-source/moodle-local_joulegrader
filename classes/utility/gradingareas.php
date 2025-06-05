@@ -86,7 +86,7 @@ class gradingareas extends loopable_abstract {
      * @param $currentareaid
      * @param $currentuserid
      *
-     * @throws \coding_exception
+     * @throws \core\exception\coding_exception
      *
      * @return gradingarea_abstract - instance of a gradingarea class
      */
@@ -103,7 +103,7 @@ class gradingareas extends loopable_abstract {
 
         //check to be sure the class was loaded
         if (!class_exists($classname)) {
-            throw new \coding_exception("Class: $classname does not exist or could not be loaded");
+            throw new \core\exception\coding_exception("Class: $classname does not exist or could not be loaded");
         }
 
         return new $classname($gradingmanager, $currentareaid, $currentuserid);
