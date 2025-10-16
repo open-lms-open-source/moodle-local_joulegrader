@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -47,10 +47,10 @@ $string['user'] = 'Usuário';
 $string['usernav'] = 'Usuários';
 $string['usernav_help'] = 'Use este widget para selecionar qual usuário você deseja avaliar.';
 $string['navviewlabel'] = 'Visualizar {$a}';
-$string['commentdeleted'] = 'O usuário {$a->deletedby} excluiu a postagem em {$a->deletedon}';
+$string['commentdeleted'] = 'Usuário {$a->deletedby} excluiu a postagem em {$a->deletedon}';
 $string['deletecomment'] = 'Excluir comentário feito em {$a}';
-$string['previous'] = '{$a} anterior';
-$string['next'] = 'Próximo {$a}';
+$string['previous'] = 'Anterior {$a}';
+$string['next'] = 'Seguinte {$a}';
 $string['assignmentavailable'] = 'Disponível';
 $string['on'] = 'em {$a}';
 $string['until'] = 'até {$a}';
@@ -61,9 +61,10 @@ $string['downloadall'] = 'Fazer o download de todos os arquivos';
 $string['download'] = 'Fazer o download';
 $string['viewinline'] = 'visualizar dentro do sistema';
 $string['activitycomments'] = 'Comentários da atividade';
+$string['activitycomment'] = 'Comentário';
 $string['overallfeedback'] = 'Comentários globais';
 $string['filefeedback'] = 'Comentários do arquivo';
-$string['attemptnumber'] = 'Tentativa {$a->attemptnumber}: {$a->attempttime}';
+$string['attemptnumber'] = 'Tentado {$a->attemptnumber}: {$a->attempttime}';
 $string['viewingattempt'] = 'Visualizando tentativa';
 $string['attemptstatus'] = 'O aluno realizou {$a->number} de {$a->outof} tentativas.';
 $string['assignmentstatus'] = 'Status da tarefa';
