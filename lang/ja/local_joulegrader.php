@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -52,8 +52,8 @@ $string['deletecomment'] = '{$a} に作成されたコメントを削除する';
 $string['previous'] = '前の {$a}';
 $string['next'] = '次の {$a}';
 $string['assignmentavailable'] = '利用可能';
-$string['on'] = '日時：{$a}';
-$string['until'] = '-> {$a}';
+$string['on'] = '{$a} に';
+$string['until'] = '{$a} まで';
 $string['lastedited'] = '前回の編集日時：{$a}';
 $string['assign23-latesubmission'] = '{$a} 遅く提出されました。';
 $string['assign23-userextensiondate'] = '次の日時まで延長が許可されました：{$a}';
@@ -61,18 +61,19 @@ $string['downloadall'] = 'すべてのファイルをダウンロードする';
 $string['download'] = 'ダウンロード';
 $string['viewinline'] = 'インライン表示する';
 $string['activitycomments'] = 'アクティビティのコメント';
+$string['activitycomment'] = 'コメント';
 $string['overallfeedback'] = '全体フィードバック';
 $string['filefeedback'] = 'ファイルフィードバック';
-$string['attemptnumber'] = '受験 {$a->attemptnumber}: {$a->attempttime}';
+$string['attemptnumber'] = '受験 {$a->attemptnumber}：{$a->attempttime}';
 $string['viewingattempt'] = '受験の表示';
 $string['attemptstatus'] = '学生は、{$a->outof} の受験のうち {$a->number} 回受験しました。';
 $string['assignmentstatus'] = '課題のステータス';
 $string['unlimited'] = '無制限';
 $string['gradebookgrade'] = '評定表内の現在の評定';
 $string['attemptgrade'] = '答案成績';
-$string['gradeoutof'] = '評点 ({$a} 点中)';
+$string['gradeoutof'] = '評点（{$a} 点中）';
 $string['gradeoutofrange'] = '評点が範囲外です';
-$string['overridetext'] = '従来、講師は、このアクティビティの評定を評定表で直接作成していました。この評定を置換する場合は、このチェックボックスもオンにしてください。';
+$string['overridetext'] = '従来、講師は、この活動の評定を評定表で直接作成していました。この評定を置換する場合は、このチェックボックスもオンにしてください。';
 $string['save'] = '評点を保存する';
 $string['saveandnext'] = '評点と次を保存する';
 $string['gradingdisabled'] = 'このアクティビティの評定はロックされています。評定を有効にするには、評定表で評定のロックを解除してください。';
@@ -96,7 +97,7 @@ $string['rubric'] = 'ルーブリック';
 $string['rubricerror'] = 'クライテリアごとにレベルを1つ選択してください';
 $string['guideerror'] = 'クライテリアごとに有効な評点を入力してください';
 $string['score'] = 'スコア';
-$string['gradeoverriddenstudent'] = '(評点表のオーバーライド：{$a})';
+$string['gradeoverriddenstudent'] = '（評点表のオーバーライド：{$a}）';
 $string['close'] = 'クローズ';
 $string['allfiles'] = 'すべてのファイル';
 $string['add'] = 'コメントを保存する';
