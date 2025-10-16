@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -48,19 +48,20 @@ $string['usernav'] = 'Kullanıcılar';
 $string['usernav_help'] = 'Hangi kullanıcıya not verileceğini seçmek için bu widget\'ı kullanın.';
 $string['navviewlabel'] = '{$a} öğesini görüntüle';
 $string['commentdeleted'] = '{$a->deletedby} adlı kullanıcı, {$a->deletedon} tarihinde gönderiyi sildi';
-$string['deletecomment'] = '{$a} tarihinde yapılan yorumu sil';
+$string['deletecomment'] = '{$a} öğesinde yapılan yorumu sil';
 $string['previous'] = 'Önceki {$a}';
 $string['next'] = 'Sonraki {$a}';
 $string['assignmentavailable'] = 'Mevcut';
-$string['on'] = '{$a} tarihinde';
-$string['until'] = 'şuna dek: {$a}';
+$string['on'] = 'şurada: {$a}';
+$string['until'] = 'şu tarihe kadar: {$a}';
 $string['lastedited'] = 'Son düzenleme tarihi: {$a}';
 $string['assign23-latesubmission'] = 'Bu gönderim geç yapıldı: {$a}.';
-$string['assign23-userextensiondate'] = 'Uzantının geçerlilik süresi: {$a}';
+$string['assign23-userextensiondate'] = 'Uzatmanın geçerlilik süresi: {$a}';
 $string['downloadall'] = 'Tüm dosyaları indir';
 $string['download'] = 'indir';
 $string['viewinline'] = 'satır içi görüntüle';
 $string['activitycomments'] = 'Etkinlik yorumları';
+$string['activitycomment'] = 'Yorum';
 $string['overallfeedback'] = 'Genel geri bildirim';
 $string['filefeedback'] = 'Dosya geri bildirimi';
 $string['attemptnumber'] = 'Deneme {$a->attemptnumber}: {$a->attempttime}';
@@ -70,7 +71,7 @@ $string['assignmentstatus'] = 'Ödev durumu';
 $string['unlimited'] = 'sınırsız';
 $string['gradebookgrade'] = 'Not defterindeki mevcut not';
 $string['attemptgrade'] = 'Deneme notu';
-$string['gradeoutof'] = 'Not ({$a} içinden)';
+$string['gradeoutof'] = 'Not ({$a} üzerinden)';
 $string['gradeoutofrange'] = 'Not aralık dışında';
 $string['overridetext'] = 'Daha önce bir eğitmen, bu etkinlik için doğrudan not defterinde bir not oluşturdu. Bu notu da değiştirmek istiyorsanız bu kutuyu işaretleyin.';
 $string['save'] = 'Notu kaydet';
@@ -81,9 +82,9 @@ $string['applytoall_help'] = '"Evet" seçilirse not defterinde not veya geri bil
 $string['criteria'] = 'Ölçüt';
 $string['checklist'] = 'Kontrol listesi';
 $string['gradesaved'] = 'Not başarıyla güncelleştirildi';
-$string['gradesavedx'] = '{$a} not başarıyla güncelleştirildi';
+$string['gradesavedx'] = '{$a} not başarıyla güncellendi';
 $string['couldnotsave'] = 'Not güncelleştirilemedi';
-$string['couldnotsavex'] = '{$a} için not güncelleştirilemedi';
+$string['couldnotsavex'] = '{$a} için not güncellenemedi';
 $string['notgraded'] = 'Ödeve Not Verilmedi';
 $string['viewchecklistteacher'] = 'Kontrol listesi ile not ver';
 $string['viewrubricteacher'] = 'Dereceli puanlama anahtarı ile not ver';
