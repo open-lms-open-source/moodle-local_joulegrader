@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -43,36 +43,37 @@ $string['activitynav_help'] = 'استخدم عنصر واجهة المستخدم
 $string['group'] = 'المجموعة';
 $string['groupnav'] = 'المجموعات';
 $string['groupnav_help'] = 'استخدم عنصر واجهة المستخدم هذا لتحديد مجموعة.';
-$string['user'] = 'مستخدم';
+$string['user'] = 'المستخدم';
 $string['usernav'] = 'المستخدمون';
 $string['usernav_help'] = 'استخدم عنصر واجهة المستخدم هذا لتحديد المستخدم المراد تقديره.';
 $string['navviewlabel'] = 'عرض {$a}';
-$string['commentdeleted'] = 'تم حذف المشاركة من قبل المستخدم {$a->deletedby} في {$a->deletedon}';
-$string['deletecomment'] = 'حذف تعليق تم وضعه في {$a}';
-$string['previous'] = 'السابق {$a}';
-$string['next'] = 'التالي {$a}';
+$string['commentdeleted'] = 'حذف المستخدم {$a->deletedby} المشاركة في {$a->deletedon}';
+$string['deletecomment'] = 'حذف التعليق الذي وضعه في {$a}';
+$string['previous'] = '{$a} السابق';
+$string['next'] = '{$a} التالي';
 $string['assignmentavailable'] = 'متاح';
 $string['on'] = 'في {$a}';
 $string['until'] = 'حتى {$a}';
 $string['lastedited'] = 'آخر تحرير في {$a}';
-$string['assign23-latesubmission'] = 'تأخر {$a} عن هذا التقديم.';
+$string['assign23-latesubmission'] = 'تأخر {$a} في إرسال هذا الواجب.';
 $string['assign23-userextensiondate'] = 'تم التمديد حتى: {$a}';
 $string['downloadall'] = 'تنزيل جميع الملفات';
 $string['download'] = 'تنزيل';
 $string['viewinline'] = 'عرض مضمن';
 $string['activitycomments'] = 'تعليقات النشاط';
+$string['activitycomment'] = 'تعليق';
 $string['overallfeedback'] = 'الملاحظات الكلية';
 $string['filefeedback'] = 'ملاحظات الملف';
 $string['attemptnumber'] = 'المحاولة {$a->attemptnumber}: {$a->attempttime}';
 $string['viewingattempt'] = 'عرض المحاولة';
-$string['attemptstatus'] = 'قام الطالب بإجراء {$a->number} من {$a->outof} محاولة.';
+$string['attemptstatus'] = 'أجرى الطالب {$a->number} من أصل {$a->outof} من المحاولات.';
 $string['assignmentstatus'] = 'حالة الواجب';
 $string['unlimited'] = 'غير محدود';
 $string['gradebookgrade'] = 'التقدير الحالي في دفتر التقديرات';
 $string['attemptgrade'] = 'تقدير المحاولة';
-$string['gradeoutof'] = 'التقدير (خارج {$a})';
+$string['gradeoutof'] = 'التقدير (من أصل {$a})';
 $string['gradeoutofrange'] = 'التقدير خارج النطاق';
-$string['overridetext'] = 'قام معلم في وقت سابق بإنشاء تقدير لهذا النشاط مباشرةً في دفتر التقديرات. حدد هذا المربع إذا كنت تريد استبدال هذا التقدير أيضًا.';
+$string['overridetext'] = 'قام مدرس في وقت سابق بإنشاء تقدير لهذا النشاط مباشرة في دفتر التقديرات.  حدد هذا المربع إذا كنت ترغب في استبدال هذا التقدير أيضًا.';
 $string['save'] = 'حفظ التقدير';
 $string['saveandnext'] = 'حفظ التقدير والتالي';
 $string['gradingdisabled'] = 'تم قفل تقدير هذا النشاط. لتمكين التقدير يرجى فك قفل التقدير بواسطة دفتر التقديرات.';
@@ -81,7 +82,7 @@ $string['applytoall_help'] = 'إذا تم تحديد "نعم" سيتلقى جم�
 $string['criteria'] = 'المعايير';
 $string['checklist'] = 'قائمة الاختيارات';
 $string['gradesaved'] = 'تم تحديث التقدير بنجاح';
-$string['gradesavedx'] = '{$a} تم تحديث التقديرات بنجاح';
+$string['gradesavedx'] = 'تم تحديث {$a} من التقديرات بنجاح';
 $string['couldnotsave'] = 'تعذر تحديث التقدير';
 $string['couldnotsavex'] = 'تعذر تحديث تقدير {$a}';
 $string['notgraded'] = 'لم يتم تقدير الواجب';
