@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -46,26 +46,27 @@ $string['groupnav_help'] = 'Utilisez ce widget pour sélectionner un groupe.';
 $string['user'] = 'Utilisateur';
 $string['usernav'] = 'Utilisateurs';
 $string['usernav_help'] = 'Utilisez ce widget pour sélectionner l\'utilisateur à noter.';
-$string['navviewlabel'] = 'Afficher {$a}';
-$string['commentdeleted'] = 'L\'utilisateur {$a->deletedby} a supprimé le message sur {$a->deletedon}';
-$string['deletecomment'] = 'Supprimer le commentaire sur {$a}';
-$string['previous'] = '{$a} précédent';
-$string['next'] = '{$a} suivant';
+$string['navviewlabel'] = 'Voir {$a}';
+$string['commentdeleted'] = 'L\'utilisateur {$a->deletedby} a supprimé la publication le {$a->deletedon}';
+$string['deletecomment'] = 'Supprimer le commentaire le {$a}';
+$string['previous'] = 'Précédent {$a}';
+$string['next'] = 'Suivant {$a}';
 $string['assignmentavailable'] = 'Disponible(s)';
-$string['on'] = 'sur {$a}';
+$string['on'] = 'le {$a}';
 $string['until'] = 'jusqu\'au {$a}';
-$string['lastedited'] = 'Dernière modification&nbsp;: {$a}';
+$string['lastedited'] = 'Dernière modification le {$a}';
 $string['assign23-latesubmission'] = 'La soumission a été effectuée avec {$a} de retard.';
-$string['assign23-userextensiondate'] = 'Prolongation accordée jusqu\'au&nbsp;: {$a}';
+$string['assign23-userextensiondate'] = 'Prolongation accordée jusqu\'au : {$a}';
 $string['downloadall'] = 'Télécharger tous les fichiers';
 $string['download'] = 'télécharger';
 $string['viewinline'] = 'voir en ligne';
 $string['activitycomments'] = 'Commentaires d\'activité';
+$string['activitycomment'] = 'Commentaire';
 $string['overallfeedback'] = 'Feed-back général';
 $string['filefeedback'] = 'Fichiers comme feed-back';
-$string['attemptnumber'] = 'Tentative {$a->attemptnumber}&nbsp;: {$a->attempttime}';
+$string['attemptnumber'] = 'Tentative {$a->attemptnumber} : {$a->attempttime}';
 $string['viewingattempt'] = 'Affichage de la tentative';
-$string['attemptstatus'] = 'L\'étudiant a fait {$a->number}&nbsp;tentative(s) sur {$a->outof}.';
+$string['attemptstatus'] = 'L\'étudiant a fait {$a->number} tentative(s) sur {$a->outof}.';
 $string['assignmentstatus'] = 'État du devoir';
 $string['unlimited'] = 'illimité';
 $string['gradebookgrade'] = 'Note actuelle dans le carnet de notes';
@@ -81,7 +82,7 @@ $string['applytoall_help'] = 'Si vous choisissez Oui, tous les membres du groupe
 $string['criteria'] = 'Critères';
 $string['checklist'] = 'Check-list';
 $string['gradesaved'] = 'La note a bien été mise à jour';
-$string['gradesavedx'] = '{$a}&nbsp;notes ont bien été mises à jour';
+$string['gradesavedx'] = '{$a} notes ont bien été mises à jour';
 $string['couldnotsave'] = 'La note n\'a pas pu être mise à jour';
 $string['couldnotsavex'] = 'La note de {$a} n\'a pas pu être mise à jour';
 $string['notgraded'] = 'Devoir non noté';
@@ -96,7 +97,7 @@ $string['rubric'] = 'Critères';
 $string['rubricerror'] = 'Sélectionnez un niveau pour chaque critère';
 $string['guideerror'] = 'Merci de fournir une note valide pour chaque critère';
 $string['score'] = 'Score';
-$string['gradeoverriddenstudent'] = '(Remplacer dans le carnet de notes&nbsp;: {$a})';
+$string['gradeoverriddenstudent'] = '(Remplacer dans le carnet de notes : {$a})';
 $string['close'] = 'Fermer';
 $string['allfiles'] = 'Tous les fichiers';
 $string['add'] = 'Enregistrer le commentaire';
