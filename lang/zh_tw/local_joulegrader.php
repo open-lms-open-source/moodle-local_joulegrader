@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -47,32 +47,33 @@ $string['user'] = '使用者';
 $string['usernav'] = '個使用者';
 $string['usernav_help'] = '使用此小工具來選取所要評分的使用者。';
 $string['navviewlabel'] = '檢視 {$a}';
-$string['commentdeleted'] = '使用者 {$a->deletedby} 在 {$a->deletedon} 上已刪除的文章';
+$string['commentdeleted'] = '使用者 {$a->deletedby} 已在 {$a->deletedon} 刪除文章';
 $string['deletecomment'] = '刪除在 {$a} 上所作的評語';
-$string['previous'] = '上一 {$a}';
-$string['next'] = '下一 {$a}';
+$string['previous'] = '上一個 {$a}';
+$string['next'] = '下一個 {$a}';
 $string['assignmentavailable'] = '可用';
 $string['on'] = '於 {$a}';
 $string['until'] = '直到 {$a}';
 $string['lastedited'] = '最後編輯於 {$a}';
-$string['assign23-latesubmission'] = '此送出項目延遲 {$a}。';
+$string['assign23-latesubmission'] = '此送出項目遲交 {$a}。';
 $string['assign23-userextensiondate'] = '延期繳交日期至：{$a}';
 $string['downloadall'] = '下載所有檔案';
 $string['download'] = '下載';
 $string['viewinline'] = '檢視內嵌項目';
 $string['activitycomments'] = '活動評語';
+$string['activitycomment'] = '評語';
 $string['overallfeedback'] = '整體意見回應';
 $string['filefeedback'] = '檔案意見回應';
-$string['attemptnumber'] = '嘗試 {$a->attemptnumber}：{$a->attempttime}';
+$string['attemptnumber'] = '嘗試 {$a->attemptnumber} 次：{$a->attempttime}';
 $string['viewingattempt'] = '檢視嘗試';
-$string['attemptstatus'] = '學員已進行 {$a->outof} 次嘗試中的 {$a->number} 次。';
+$string['attemptstatus'] = '學員已嘗試 {$a->number} 次 (共 {$a->outof} 次)。';
 $string['assignmentstatus'] = '作業狀態';
 $string['unlimited'] = '不限';
 $string['gradebookgrade'] = '成績單中的目前成績';
 $string['attemptgrade'] = '嘗試成績';
 $string['gradeoutof'] = '成績 (總分為 {$a})';
 $string['gradeoutofrange'] = '成績超出範圍';
-$string['overridetext'] = '先前曾有講師直接在成績單內為此活動建立成績。若您也想取代該成績，請勾選此方塊。';
+$string['overridetext'] = '先前曾有講師直接在成績單內為此活動建立成績。若您想要取代該成績，請選取此方塊。';
 $string['save'] = '儲存成績';
 $string['saveandnext'] = '儲存成績並繼續下一步';
 $string['gradingdisabled'] = '此活動的評分已鎖定。若要啟用評分，請透過成績單將成績解除鎖定。';
