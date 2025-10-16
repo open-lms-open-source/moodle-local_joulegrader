@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -47,11 +47,11 @@ $string['user'] = 'Utente';
 $string['usernav'] = 'Utenti';
 $string['usernav_help'] = 'Utilizza questo widget per selezionare l\'utente da valutare.';
 $string['navviewlabel'] = 'Visualizza {$a}';
-$string['commentdeleted'] = 'Messaggio eliminato da {$a->deletedby} il {$a->deletedon}';
+$string['commentdeleted'] = 'L\'utente {$a->deletedby} ha cancellato l\'intervento il {$a->deletedon}';
 $string['deletecomment'] = 'Elimina commento pubblicato il {$a}';
-$string['previous'] = 'Precedente {$a}';
-$string['next'] = 'Successivo {$a}';
-$string['assignmentavailable'] = 'Possibili';
+$string['previous'] = 'Indietro {$a}';
+$string['next'] = 'Avanti {$a}';
+$string['assignmentavailable'] = 'Disponibile';
 $string['on'] = 'il {$a}';
 $string['until'] = 'fino al {$a}';
 $string['lastedited'] = 'Ultima modifica il {$a}';
@@ -61,6 +61,7 @@ $string['downloadall'] = 'Scarica tutti i file';
 $string['download'] = 'download';
 $string['viewinline'] = 'visualizza online';
 $string['activitycomments'] = 'Commenti attività';
+$string['activitycomment'] = 'Commento';
 $string['overallfeedback'] = 'Feedback complessivo';
 $string['filefeedback'] = 'File di commento';
 $string['attemptnumber'] = 'Tentativo {$a->attemptnumber}: {$a->attempttime}';
@@ -72,7 +73,7 @@ $string['gradebookgrade'] = 'Voto corrente nel registro voti';
 $string['attemptgrade'] = 'Voto tentativo';
 $string['gradeoutof'] = 'Voto (su {$a})';
 $string['gradeoutofrange'] = 'Il voto non rientra nell\'intervallo';
-$string['overridetext'] = 'Un docente ha precedentemente creato un voto per questa attività direttamente nel Registro voti. Se desideri sostituire anche quel voto, seleziona questa casella.';
+$string['overridetext'] = 'Un docente ha precedentemente creato un voto per questa attività direttamente nel Registro voti.  Se desideri sostituire anche quel voto, seleziona questa casella.';
 $string['save'] = 'Salva voto';
 $string['saveandnext'] = 'Salva voto e prosegui';
 $string['gradingdisabled'] = 'La valutazione di questa attività è bloccata. Per attivarla, sblocca il voto tramite il Registro voti.';
@@ -81,7 +82,7 @@ $string['applytoall_help'] = 'Selezionando "Sì", tutti i membri del gruppo rice
 $string['criteria'] = 'Criteri';
 $string['checklist'] = 'Elenco di controllo';
 $string['gradesaved'] = 'Voto aggiornato correttamente';
-$string['gradesavedx'] = '{$a} voti caricati correttamente';
+$string['gradesavedx'] = '{$a} voti aggiornati correttamente';
 $string['couldnotsave'] = 'Impossibile aggiornare il voto';
 $string['couldnotsavex'] = 'Impossibile aggiornare il voto per {$a}';
 $string['notgraded'] = 'Compito non valutato';
@@ -96,7 +97,7 @@ $string['rubric'] = 'Rubrica';
 $string['rubricerror'] = 'Seleziona un livello per ciascun criterio';
 $string['guideerror'] = 'Per favore inserisci un punteggio valido per ciascun criterio';
 $string['score'] = 'Punteggio';
-$string['gradeoverriddenstudent'] = '(Modifica in Registro voti: {$a})';
+$string['gradeoverriddenstudent'] = '(Sovrascrivi in Registro voti: {$a})';
 $string['close'] = 'Chiudi';
 $string['allfiles'] = 'Tutti i file';
 $string['add'] = 'Salva commento';
