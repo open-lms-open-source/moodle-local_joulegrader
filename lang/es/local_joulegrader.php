@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -47,20 +47,21 @@ $string['user'] = 'Usuario';
 $string['usernav'] = 'Usuarios';
 $string['usernav_help'] = 'Use este widget para seleccionar qué usuario calificar.';
 $string['navviewlabel'] = 'Ver {$a}';
-$string['commentdeleted'] = 'El usuario {$a->deletedby} borró un mensaje sobre {$a->deletedon}';
+$string['commentdeleted'] = 'El usuario {$a->deletedby} eliminó la publicación el {$a->deletedon}';
 $string['deletecomment'] = 'Eliminar comentario hecho el {$a}';
-$string['previous'] = '{$a} anterior';
-$string['next'] = '{$a} siguiente';
+$string['previous'] = 'Anterior {$a}';
+$string['next'] = 'Siguiente {$a}';
 $string['assignmentavailable'] = 'Disponible';
-$string['on'] = 'el {$a}';
-$string['until'] = 'hasta {$a}';
+$string['on'] = 'El {$a}';
+$string['until'] = 'Hasta {$a}';
 $string['lastedited'] = 'Última edición el {$a}';
-$string['assign23-latesubmission'] = 'Este envío se retrasó por {$a}.';
+$string['assign23-latesubmission'] = 'Este envío se retrasó {$a}.';
 $string['assign23-userextensiondate'] = 'Extensión otorgada hasta: {$a}';
 $string['downloadall'] = 'Descargar todos los archivos';
 $string['download'] = 'descargar';
 $string['viewinline'] = 'ver en línea';
 $string['activitycomments'] = 'Comentarios de la actividad';
+$string['activitycomment'] = 'Comentario';
 $string['overallfeedback'] = 'Retroalimentación general';
 $string['filefeedback'] = 'Retroalimentación del archivo';
 $string['attemptnumber'] = 'Intento {$a->attemptnumber}: {$a->attempttime}';
@@ -72,7 +73,7 @@ $string['gradebookgrade'] = 'Calificación actual en libro de calificaciones';
 $string['attemptgrade'] = 'Calificación del intento';
 $string['gradeoutof'] = 'Calificación (de {$a})';
 $string['gradeoutofrange'] = 'La calificación está fuera de rango';
-$string['overridetext'] = 'Anteriormente, un profesor creó una calificación para esta actividad directamente en el libro de calificaciones. Marque esta casilla si también desea reemplazar esa calificación.';
+$string['overridetext'] = 'Anteriormente, un instructor creó una calificación para esta actividad directamente en el libro de calificaciones. Marque esta casilla si también desea reemplazar esa calificación.';
 $string['save'] = 'Guardar calificación';
 $string['saveandnext'] = 'Guardar calificación y siguiente';
 $string['gradingdisabled'] = 'La calificación de esta actividad está bloqueada. Para habilitar la calificación, desbloquee la calificación a través del Libro de calificaciones.';
@@ -81,7 +82,7 @@ $string['applytoall_help'] = 'Si se selecciona "Sí", todos los miembros del gru
 $string['criteria'] = 'Criterio';
 $string['checklist'] = 'Lista de verificación';
 $string['gradesaved'] = 'Calificación actualizada exitosamente';
-$string['gradesavedx'] = 'Las calificaciones de {$a} se actualizaron exitosamente.';
+$string['gradesavedx'] = '{$a} calificaciones actualizadas correctamente';
 $string['couldnotsave'] = 'La calificación no se pudo actualizar.';
 $string['couldnotsavex'] = 'La calificación para {$a} no se pudo actualizar.';
 $string['notgraded'] = 'Tarea no calificada';
