@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -51,8 +51,8 @@ $string['commentdeleted'] = 'Użytkownik {$a->deletedby} usunął wpis {$a->dele
 $string['deletecomment'] = 'Usuń komentarz z dnia {$a}';
 $string['previous'] = 'Poprzedni {$a}';
 $string['next'] = 'Następny {$a}';
-$string['assignmentavailable'] = 'Dostępni';
-$string['on'] = 'dnia {$a}';
+$string['assignmentavailable'] = 'Dostępny';
+$string['on'] = 'w dniu {$a}';
 $string['until'] = 'do {$a}';
 $string['lastedited'] = 'Ostatnia edycja dnia {$a}';
 $string['assign23-latesubmission'] = 'Praca złożona z opóźnieniem o {$a}.';
@@ -61,6 +61,7 @@ $string['downloadall'] = 'Pobierz wszystkie pliki';
 $string['download'] = 'pobierz';
 $string['viewinline'] = 'wyświetl w trybie inline';
 $string['activitycomments'] = 'Komentarze na temat aktywności';
+$string['activitycomment'] = 'Komentarz';
 $string['overallfeedback'] = 'Ogólna informacja zwrotna';
 $string['filefeedback'] = 'Plik z komentarzem zwrotnym';
 $string['attemptnumber'] = 'Próba {$a->attemptnumber}: {$a->attempttime}';
@@ -72,7 +73,7 @@ $string['gradebookgrade'] = 'Bieżąca ocena w dzienniku ocen';
 $string['attemptgrade'] = 'Ocena z podejścia';
 $string['gradeoutof'] = 'Ocena (z maks. {$a})';
 $string['gradeoutofrange'] = 'Ocena poza zakresem';
-$string['overridetext'] = 'Poprzednio instruktor utworzył ocenę dla tej aktywności bezpośrednio w dzienniku ocen. Zaznacz to pole, aby zastąpić również tamtą ocenę.';
+$string['overridetext'] = 'Poprzednio instruktor utworzył ocenę dla tej aktywności bezpośrednio w dzienniku ocen. Zaznacz to pole, ab zastąpić również tamtą ocenę.';
 $string['save'] = 'Zapisz ocenę';
 $string['saveandnext'] = 'Zapisz ocenę i przejdź dalej';
 $string['gradingdisabled'] = 'Ocenianie tej aktywności jest zablokowane. Aby włączyć ocenianie, odblokuj ocenę z poziomu dziennika ocen.';
@@ -81,7 +82,7 @@ $string['applytoall_help'] = 'W przypadku wybrania opcji „Tak” wszyscy czło
 $string['criteria'] = 'Kryteria';
 $string['checklist'] = 'Lista kryteriów';
 $string['gradesaved'] = 'Ocena pomyślnie zaktualizowana';
-$string['gradesavedx'] = 'Liczba pomyślnie zaktualizowanych ocen: {$a}';
+$string['gradesavedx'] = '{$a} ocen pomyślnie zaktualizowanych';
 $string['couldnotsave'] = 'Nie można zaktualizować oceny';
 $string['couldnotsavex'] = 'Nie można zaktualizować oceny dla {$a}';
 $string['notgraded'] = 'Zadanie nieocenione';

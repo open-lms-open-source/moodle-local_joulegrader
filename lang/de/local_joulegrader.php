@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -46,11 +46,11 @@ $string['groupnav_help'] = 'Verwenden Sie dieses Widget, um eine Gruppe auszuwä
 $string['user'] = 'Für Nutzer/in';
 $string['usernav'] = 'Nutzer';
 $string['usernav_help'] = 'Verwenden Sie dieses Widget, um auszuwählen, welcher Nutzer bewertet werden soll.';
-$string['navviewlabel'] = '{$a} anzeigen';
-$string['commentdeleted'] = 'Der Nutzer {$a->deletedby} hat den Eintrag am {$a->deletedon} gelöscht.';
-$string['deletecomment'] = 'Kommentar vom {$a} löschen.';
-$string['previous'] = 'Vorige {$a}';
-$string['next'] = 'Nächste {$a}';
+$string['navviewlabel'] = '{$a} ansehen';
+$string['commentdeleted'] = 'Nutzer/in {$a->deletedby} hat den Eintrag am {$a->deletedon} gelöscht';
+$string['deletecomment'] = 'Kommentar vom {$a} löschen';
+$string['previous'] = 'Vorheriger {$a}';
+$string['next'] = 'Nächster {$a}';
 $string['assignmentavailable'] = 'Verfügbar';
 $string['on'] = 'am {$a}';
 $string['until'] = 'bis {$a}';
@@ -61,6 +61,7 @@ $string['downloadall'] = 'Alle Dateien herunterladen';
 $string['download'] = 'herunterladen';
 $string['viewinline'] = 'Direkt anzeigen';
 $string['activitycomments'] = 'Kommentare zur Aktivität';
+$string['activitycomment'] = 'Kommentar';
 $string['overallfeedback'] = 'Gesamtfeedback';
 $string['filefeedback'] = 'Feedback als Datei';
 $string['attemptnumber'] = 'Versuch {$a->attemptnumber}: {$a->attempttime}';
@@ -72,7 +73,7 @@ $string['gradebookgrade'] = 'Aktuelle Bewertung im Bewertungsbericht';
 $string['attemptgrade'] = 'Note für Testversuch';
 $string['gradeoutof'] = 'Bewertung (von {$a})';
 $string['gradeoutofrange'] = 'Bewertung liegt außerhalb des Bereichs.';
-$string['overridetext'] = 'Eine Lehrkraft hat bereits eine Bewertung für diese Aktivität direkt in den Bewertungsbericht eingetragen. Aktivieren Sie dieses Kontrollkästchen, wenn Sie diese Bewertung auch ersetzen möchten.';
+$string['overridetext'] = 'Eine Lehrkraft hat bereits eine Bewertung für diese Aktivität direkt in den Bewertungsbericht eingetragen.  Aktivieren Sie dieses Kontrollkästchen, wenn Sie diese Bewertung auch ersetzen möchten.';
 $string['save'] = 'Bewertung speichern';
 $string['saveandnext'] = 'Bewertung speichern und weiter';
 $string['gradingdisabled'] = 'Das Bewerten dieser Aktivität ist gesperrt. Um das Bewerten zu aktivieren, geben Sie bitte die Bewertung über den Bewertungsbericht frei.';
@@ -81,9 +82,9 @@ $string['applytoall_help'] = 'Wenn "Ja" ausgewählt ist, erhalten alle Gruppenmi
 $string['criteria'] = 'Kriterien';
 $string['checklist'] = 'Checkliste';
 $string['gradesaved'] = 'Bewertung erfolgreich aktualisiert.';
-$string['gradesavedx'] = '{$a} Bewertungen erfolgreich aktualisiert.';
+$string['gradesavedx'] = '{$a} Bewertungen erfolgreich aktualisiert';
 $string['couldnotsave'] = 'Die Bewertung konnte nicht aktualisiert werden.';
-$string['couldnotsavex'] = 'Die Bewertung für {$a} konnte nicht aktualisiert werden.';
+$string['couldnotsavex'] = 'Die Bewertung für {$a} konnte nicht aktualisiert werden';
 $string['notgraded'] = 'Aufgabe nicht bewertet';
 $string['viewchecklistteacher'] = 'Mit Checkliste bewerten';
 $string['viewrubricteacher'] = 'Mit Rubrik bewerten';

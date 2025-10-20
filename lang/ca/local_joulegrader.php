@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -46,26 +46,27 @@ $string['groupnav_help'] = 'Utilitzeu aquest giny per seleccionar un grup.';
 $string['user'] = 'Usuari';
 $string['usernav'] = 'Usuaris';
 $string['usernav_help'] = 'Utilitzeu aquest giny per seleccionar l’usuari que voleu qualificar.';
-$string['navviewlabel'] = 'Visualització {$a}';
-$string['commentdeleted'] = 'L’usuari {$a->deletedby} va suprimir el missatge el {$a->deletedon}';
-$string['deletecomment'] = 'El comentari es va suprimir el {$a}';
+$string['navviewlabel'] = 'Mostra {$a}';
+$string['commentdeleted'] = 'L\'usuari {$a->deletedby} ha suprimit la publicació el dia {$a->deletedon}';
+$string['deletecomment'] = 'Suprimeix el comentari fet el dia {$a}';
 $string['previous'] = 'Anterior {$a}';
 $string['next'] = 'Següent {$a}';
 $string['assignmentavailable'] = 'Disponible';
-$string['on'] = 'el {$a}';
-$string['until'] = 'fins a {$a}';
-$string['lastedited'] = 'Darrera edició el {$a}';
-$string['assign23-latesubmission'] = 'Aquesta tramesa s’ha retardat {$a}.';
+$string['on'] = 'el dia {$a}';
+$string['until'] = 'fins a: {$a}';
+$string['lastedited'] = 'Darrera edició el dia {$a}';
+$string['assign23-latesubmission'] = '{$a} ha enviat tard aquesta tramesa.';
 $string['assign23-userextensiondate'] = 'Pròrroga concedida fins: {$a}';
 $string['downloadall'] = 'Descarrega tots els fitxers';
 $string['download'] = 'descarrega';
 $string['viewinline'] = 'mostra-ho en línia';
 $string['activitycomments'] = 'Comentaris d’activitat';
-$string['overallfeedback'] = 'Retroalimentació global';
+$string['activitycomment'] = 'Comentari';
+$string['overallfeedback'] = 'Retroacció global';
 $string['filefeedback'] = 'Retroacció amb fitxer';
 $string['attemptnumber'] = 'Intent {$a->attemptnumber}: {$a->attempttime}';
 $string['viewingattempt'] = 'S’està visualitzant l’intent';
-$string['attemptstatus'] = 'L’estudiant ha fet {$a->number} de {$a->outof} intents.';
+$string['attemptstatus'] = 'L\'estudiant ha fet {$a->number}/{$a->outof} intents.';
 $string['assignmentstatus'] = 'Estat de la tasca';
 $string['unlimited'] = 'sense límit';
 $string['gradebookgrade'] = 'Qualificació actual del butlletí de qualificacions';
@@ -83,7 +84,7 @@ $string['checklist'] = 'Llista de comprovació';
 $string['gradesaved'] = 'Qualificació actualitzada correctament';
 $string['gradesavedx'] = '{$a} qualificacions actualitzades correctament';
 $string['couldnotsave'] = 'No s’ha pogut actualitzar la qualificació';
-$string['couldnotsavex'] = 'No s’ha pogut actualitzar la qualificació de {$a}';
+$string['couldnotsavex'] = 'No s\'ha pogut actualitzar la qualificació per a {$a}';
 $string['notgraded'] = 'Tasca no qualificada';
 $string['viewchecklistteacher'] = 'Qualificació amb llista de comprovació';
 $string['viewrubricteacher'] = 'Qualificació amb rúbrica';
@@ -96,7 +97,7 @@ $string['rubric'] = 'Rúbrica';
 $string['rubricerror'] = 'Seleccioneu un nivell per a cada criteri';
 $string['guideerror'] = 'Proporcioneu una qualificació vàlida per a cada criteri';
 $string['score'] = 'Puntuació';
-$string['gradeoverriddenstudent'] = '(Excepció al butlletí de qualificacions: {$a})';
+$string['gradeoverriddenstudent'] = '(Substitueix al butlletí de qualificacions: {$a})';
 $string['close'] = 'Tanca';
 $string['allfiles'] = 'Tots els fitxers';
 $string['add'] = 'Desa el comentari';

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -51,17 +51,18 @@ $string['commentdeleted'] = 'Käyttäjä {$a->deletedby} poisti viestin {$a->del
 $string['deletecomment'] = 'Poista kommentti ajalta {$a}';
 $string['previous'] = 'Edellinen {$a}';
 $string['next'] = 'Seuraava {$a}';
-$string['assignmentavailable'] = 'Valittavissa';
-$string['on'] = '{$a}';
+$string['assignmentavailable'] = 'Käytettävissä';
+$string['on'] = 'kohteessa {$a}';
 $string['until'] = '{$a} saakka';
 $string['lastedited'] = 'Viimeksi muokattu {$a}';
-$string['assign23-latesubmission'] = 'Tämä palautus oli myöhässä {$a}.';
+$string['assign23-latesubmission'] = 'Tämä palautus oli {$a} myöhässä.';
 $string['assign23-userextensiondate'] = 'Olet saanut lisäaikaa {$a} asti';
 $string['downloadall'] = 'Lataa kaikki tiedostot';
 $string['download'] = 'lataa';
 $string['viewinline'] = 'näytä esikatselu';
 $string['activitycomments'] = 'Aktiviteetin kommentit';
-$string['overallfeedback'] = 'Suorituksen yleispalaute';
+$string['activitycomment'] = 'Kommentti';
+$string['overallfeedback'] = 'Yleispalaute';
 $string['filefeedback'] = 'Tiedostopalaute';
 $string['attemptnumber'] = 'Suorituskerta {$a->attemptnumber}: {$a->attempttime}';
 $string['viewingattempt'] = 'Tarkastellaan suoritusta';
@@ -70,7 +71,7 @@ $string['assignmentstatus'] = 'Tehtävän tila';
 $string['unlimited'] = 'rajoittamaton';
 $string['gradebookgrade'] = 'Arviointikirjan arvosana';
 $string['attemptgrade'] = 'Suorituskerran arvosana';
-$string['gradeoutof'] = 'Arvosana (0 - {$a})';
+$string['gradeoutof'] = 'Arvosana (enintään {$a})';
 $string['gradeoutofrange'] = 'Arvosana ei ole alueella';
 $string['overridetext'] = 'Ohjaaja on luonut arvosanan tälle aktiviteetille suoraan arviointikirjaan. Valitse tämä ruutu, jos haluat korvata kyseisen arvosanan.';
 $string['save'] = 'Tallenna arvosana';
@@ -83,7 +84,7 @@ $string['checklist'] = 'Tarkistuslista';
 $string['gradesaved'] = 'Arvosana päivitetty';
 $string['gradesavedx'] = '{$a} arvosanaa päivitetty';
 $string['couldnotsave'] = 'Arvosanan päivitys epäonnistui';
-$string['couldnotsavex'] = 'Arvosanan ({$a}) päivitys epäonnistui';
+$string['couldnotsavex'] = 'Arvosanan {$a} päivitys epäonnistui';
 $string['notgraded'] = 'Tehtävää ei ole arvioitu';
 $string['viewchecklistteacher'] = 'Arvioi tarkistuslistan avulla';
 $string['viewrubricteacher'] = 'Arvioi arviointimatriisin avulla';

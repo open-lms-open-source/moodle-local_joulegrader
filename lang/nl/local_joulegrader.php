@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -46,7 +46,7 @@ $string['groupnav_help'] = 'Gebruik deze widget om een groep te selecteren.';
 $string['user'] = 'Gebruiker';
 $string['usernav'] = 'Gebruikers';
 $string['usernav_help'] = 'Gebruik deze widget om te selecteren welke gebruiker moet worden beoordeeld.';
-$string['navviewlabel'] = 'Bekijk {$a}';
+$string['navviewlabel'] = 'Weergave {$a}';
 $string['commentdeleted'] = 'Gebruiker {$a->deletedby} heeft bericht verwijderd op {$a->deletedon}';
 $string['deletecomment'] = 'Verwijder opmerking gemaakt op {$a}';
 $string['previous'] = 'Vorige {$a}';
@@ -55,12 +55,13 @@ $string['assignmentavailable'] = 'Beschikbaar';
 $string['on'] = 'op {$a}';
 $string['until'] = 'tot {$a}';
 $string['lastedited'] = 'Laatst bewerkt op {$a}';
-$string['assign23-latesubmission'] = 'Deze inzending was te laat met {$a}.';
+$string['assign23-latesubmission'] = 'Deze inzending was te laat door {$a}.';
 $string['assign23-userextensiondate'] = 'Extra tijd gegeven tot: {$a}';
 $string['downloadall'] = 'Alle bestanden downloaden';
 $string['download'] = 'download';
 $string['viewinline'] = 'bekijk inline';
 $string['activitycomments'] = 'Opmerkingen activiteit';
+$string['activitycomment'] = 'Commentaar';
 $string['overallfeedback'] = 'Algemene feedback test';
 $string['filefeedback'] = 'Bestandsfeedback';
 $string['attemptnumber'] = 'Poging {$a->attemptnumber}: {$a->attempttime}';
@@ -72,10 +73,10 @@ $string['gradebookgrade'] = 'Huidig cijfer in cijferlijst';
 $string['attemptgrade'] = 'Cijfer poging';
 $string['gradeoutof'] = 'Cijfer (van de {$a})';
 $string['gradeoutofrange'] = 'Cijfer valt buiten bereik';
-$string['overridetext'] = 'Een cursusleider heeft eerder rechtstreeks in de cijferlijst een cijfer aangemaakt voor deze activiteit. Vink dit vakje aan als je dat cijfer ook wilt vervangen.';
+$string['overridetext'] = 'Een cursusleider heeft eerder rechtstreeks in de cijferlijst een cijfer aangemaakt voor deze activiteit. Vink dit vakje aan als u dat cijfer ook wilt vervangen.';
 $string['save'] = 'Bewaar cijfer';
 $string['saveandnext'] = 'Bewaar cijfer en volgende';
-$string['gradingdisabled'] = 'De beoordeling van deze activiteit is vergrendeld. Om de beoordeling in te schakelen, moet je het cijfer ontgrendelen via de cijferlijst.';
+$string['gradingdisabled'] = 'De beoordeling van deze activiteit is vergrendeld. Om de beoordeling in te schakelen, moet u het cijfer ontgrendelen via de cijferlijst.';
 $string['applytoall'] = 'Pas cijfers en feedback toe op de hele groep';
 $string['applytoall_help'] = 'Indien "Ja" is geselecteerd, ontvangen alle groepsleden het cijfer en de feedback ongeacht bestaande cijfers of feedback in de cijferlijst.';
 $string['criteria'] = 'Criteria';

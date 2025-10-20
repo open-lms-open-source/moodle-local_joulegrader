@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2024 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -48,7 +48,7 @@ $string['usernav'] = 'Brugere';
 $string['usernav_help'] = 'Brug denne widget til at vælge, hvilken bruger der skal gives karakter til.';
 $string['navviewlabel'] = 'Vis {$a}';
 $string['commentdeleted'] = 'Bruger {$a->deletedby} slettede indlæg den {$a->deletedon}';
-$string['deletecomment'] = 'Slet kommentar lavet den {$a}';
+$string['deletecomment'] = 'Slettet kommentar lavet den {$a}';
 $string['previous'] = 'Forrige {$a}';
 $string['next'] = 'Næste {$a}';
 $string['assignmentavailable'] = 'Tilgængelig';
@@ -61,6 +61,7 @@ $string['downloadall'] = 'Download alle filer';
 $string['download'] = 'download';
 $string['viewinline'] = 'vis indføjet';
 $string['activitycomments'] = 'Aktivitetskommentarer';
+$string['activitycomment'] = 'Kommentar';
 $string['overallfeedback'] = 'Samlet feedback';
 $string['filefeedback'] = 'Fil med feedback';
 $string['attemptnumber'] = 'Forsøg {$a->attemptnumber}: {$a->attempttime}';
@@ -72,7 +73,7 @@ $string['gradebookgrade'] = 'Aktuel karakter i karakterbog';
 $string['attemptgrade'] = 'Forsøgskarakter';
 $string['gradeoutof'] = 'Karakter (ud af {$a})';
 $string['gradeoutofrange'] = 'Karakteren er uden for område';
-$string['overridetext'] = 'En underviser har tidligere oprettet en karakter for denne aktivitet direkte i karakterbogen. Markér dette afkrydsningsfelt, hvis du også ønsker at erstatte denne karakter.';
+$string['overridetext'] = 'En underviser har tidligere oprettet en karakter for denne aktivitet direkte i karakterbogen.  Markér dette afkrydsningsfelt, hvis du også ønsker at erstatte denne karakter.';
 $string['save'] = 'Gem karakter';
 $string['saveandnext'] = 'Gem karakter og næste';
 $string['gradingdisabled'] = 'Denne aktivitets karaktergivning er låst. Frigiv karakteren via Gradebook for at aktivere karaktergivning.';
