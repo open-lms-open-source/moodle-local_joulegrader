@@ -26,6 +26,9 @@
 namespace local_joulegrader;
 use context_module;
 use stdClass;
+global $CFG;
+require_once($CFG->dirroot . '/mod/assign/locallib.php');
+require_once($CFG->dirroot . '/comment/lib.php');
 
 /**
  * Joule Grader commenting tests.
@@ -198,5 +201,150 @@ class comment_test extends \advanced_testcase {
         ]);
         $this->assertStringNotContainsString('courseid', $event3->get_url()->out(false));
         $this->assertLessThan(100, \core_text::strlen($event3->get_url()->out(false)));
+    }
+
+    public function test_assignsubmission_comment() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $CFG->messaging = true; // Enable messaging system.
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create and enrol two teachers.
+        $teacher1 = $this->getDataGenerator()->create_user();
+        $teacher2 = $this->getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($teacher1->id, $course->id, $teacherrole->id);
+        $this->getDataGenerator()->enrol_user($teacher2->id, $course->id, $teacherrole->id);
+
+        // Create and enrol a student.
+        $student = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+
+        // Create an Assignment with Online Text Submission type.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $params = [
+            'course' => $course->id,
+            'assignsubmission_onlinetext_enabled' => 1,
+        ];
+        $assignment = $generator->create_instance($params);
+
+        // Create a Submission from the student.
+        $this->setUser($student);
+        $cm = get_coursemodule_from_instance('assign', $assignment->id);
+        $contextmodule = context_module::instance($assignment->cmid);
+        $assign = new \assign($contextmodule, $cm, $course);
+        $submission = $assign->get_user_submission($student->id, true);
+
+        // Add online text to the submission.
+        $data = new stdClass();
+        $data->onlinetext_editor = [
+            'text' => 'This is my submission text',
+            'format' => FORMAT_HTML,
+        ];
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        // Test 1: All teachers are active - they should receive email notifications.
+        $commentoptions = new stdClass();
+        $commentoptions->context = $contextmodule;
+        $commentoptions->course = $course;
+        $commentoptions->area = 'submission_comments';
+        $commentoptions->itemid = $submission->id;
+        $commentoptions->component = 'assignsubmission_comments';
+        $newcomment = new \comment($commentoptions);
+        $newcomment->set_post_permission(true);
+
+        $sink = $this->redirectMessages();
+        $commenttext = 'This is my first comment as a student';
+        $newcomment->add($commenttext);
+        $messages = $sink->get_messages();
+        $sink->close();
+
+        $this->assertCount(2, $messages,
+            'Two email messages should be sent as all teachers are active in the course');
+        $this->assertEquals($teacher1->id, $messages[0]->useridto);
+        $this->assertEquals($teacher2->id, $messages[1]->useridto);
+        $this->assertEquals($commenttext, $messages[0]->fullmessage);
+        $this->assertEquals($commenttext, $messages[1]->fullmessage);
+
+        // Test 2: Teacher1 is suspended - he should NOT receive the email notification.
+        // Now suspend the teacher1 from the course.
+        $enrol = $DB->get_record('enrol', [
+            'courseid' => $course->id,
+            'enrol' => 'manual'
+        ], '*', MUST_EXIST);
+
+        $userenrolment = $DB->get_record('user_enrolments', [
+            'enrolid' => $enrol->id,
+            'userid' => $teacher1->id
+        ], '*', MUST_EXIST);
+
+        $userenrolment->status = ENROL_USER_SUSPENDED;
+        $DB->update_record('user_enrolments', $userenrolment);
+
+        // Verify the teacher1 is actually suspended.
+        $contextcourse = \context_course::instance($course->id);
+        $this->assertFalse(is_enrolled($contextcourse, $teacher1->id, '', true),
+            'Teacher1 should be suspended from the course');
+
+        $commentoptions = new stdClass();
+        $commentoptions->context = $contextmodule;
+        $commentoptions->course = $course;
+        $commentoptions->area = 'submission_comments';
+        $commentoptions->itemid = $submission->id;
+        $commentoptions->component = 'assignsubmission_comments';
+        $newcomment = new \comment($commentoptions);
+        $newcomment->set_post_permission(true);
+
+        $sink = $this->redirectMessages();
+        $commenttext = 'This is my second comment after teacher1 suspension';
+        $newcomment->add($commenttext);
+        $messages = $sink->get_messages();
+        $sink->close();
+        $this->assertCount(1, $messages,
+            'Only one message should be sent to teacher2 as teacher1 is suspended from the course');
+        $this->assertEquals($teacher2->id, $messages[0]->useridto);
+        $this->assertEquals($commenttext, $messages[0]->fullmessage);
+
+        // Test 3: All teachers are suspended - no email notifications should be sent.
+        // Now suspend the teacher2 from the course.
+        $enrol = $DB->get_record('enrol', [
+            'courseid' => $course->id,
+            'enrol' => 'manual'
+        ], '*', MUST_EXIST);
+
+        $userenrolment = $DB->get_record('user_enrolments', [
+            'enrolid' => $enrol->id,
+            'userid' => $teacher2->id
+        ], '*', MUST_EXIST);
+
+        $userenrolment->status = ENROL_USER_SUSPENDED;
+        $DB->update_record('user_enrolments', $userenrolment);
+
+        // Verify the teacher2 is actually suspended.
+        $contextcourse = \context_course::instance($course->id);
+        $this->assertFalse(is_enrolled($contextcourse, $teacher2->id, '', true),
+            'Teacher2 should be suspended from the course');
+
+        $commentoptions = new stdClass();
+        $commentoptions->context = $contextmodule;
+        $commentoptions->course = $course;
+        $commentoptions->area = 'submission_comments';
+        $commentoptions->itemid = $submission->id;
+        $commentoptions->component = 'assignsubmission_comments';
+        $newcomment = new \comment($commentoptions);
+        $newcomment->set_post_permission(true);
+
+        $sink = $this->redirectMessages();
+        $commenttext = 'This is my third comment after all teacher are suspended';
+        $newcomment->add($commenttext);
+        $messages = $sink->get_messages();
+        $sink->close();
+        $this->assertCount(0, $messages,
+            'No messages should be sent when all teachers are suspended from the course');
     }
 }
