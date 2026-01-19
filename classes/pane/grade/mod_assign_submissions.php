@@ -330,19 +330,7 @@ class mod_assign_submissions extends grade_abstract {
             $mform->setType('assignfeedbackcomments_editor', PARAM_RAW);
 
             if ($grade && $feedbackcomments) {
-                $data = array();
-                $text = file_rewrite_pluginfile_urls(
-                    $feedbackcomments->commenttext,
-                    'pluginfile.php',
-                    $assignment->get_context()->id,
-                    ASSIGNFEEDBACK_COMMENTS_COMPONENT,
-                    ASSIGNFEEDBACK_COMMENTS_FILEAREA,
-                    $gradeid
-                );
-
-                $data['text'] = $text;
-                $data['format'] = $feedbackcomments->commentformat;
-                $editor->setValue($data);
+                $editor->setValue($data->assignfeedbackcomments_editor);
             }
         }
     }

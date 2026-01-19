@@ -91,10 +91,8 @@ Feature: Teachers see the plagiarism plugin info in Joule Grader.
     Then I should see "Plagiarism plugin info placeholder"
     Then I press "Return to course"
     And I log out
-    And I log in as "teacher1"
     And I am on the course with shortname "C1"
-    And I follow "Topic 1"
-    And I click on ".snap-asset-link a" "css_element"
+    And I am on the "Test assignment1" "assign activity" page logged in as "teacher1"
     Then I should see "Needs grading"
     And I click on "#admin-menu-trigger" "css_element"
     And I expand "Course administration" node
