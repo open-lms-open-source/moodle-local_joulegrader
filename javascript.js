@@ -28,7 +28,7 @@ M.local_joulegrader.init_resize = function(Y) {
     var updatehandlepos = function() {
         var handleheight = gradepanecontent.getComputedStyle('height');
         var handlex = gradepane.getX();
-        draghandle.setX(handlex - 10);
+        draghandle.setX(handlex - 15);
         draghandle.setStyle('height', handleheight);
     };
 
@@ -95,10 +95,18 @@ M.local_joulegrader.init_resize = function(Y) {
 
     // Recalculate the grid pixel positions, update the handle position, and reset constrained drag "snap" points.
     Y.on('windowresize', function(e) {
-        pixels = calculatepixels();
+        let pixels = calculatepixels();
         drag.con.set('tickXArray', pixels);
         updatehandlepos();
     });
+
+    const joulegraderpane = document.querySelector('#local-joulegrader-panes');
+    const joulegraderobserver = new ResizeObserver(() => {
+        let pixels = calculatepixels();
+        drag.con.set('tickXArray', pixels);
+        updatehandlepos();
+    });
+    joulegraderobserver.observe(joulegraderpane);
 };
 
 M.local_joulegrader.init_gradepane_panel = function(Y, options) {
