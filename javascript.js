@@ -5,108 +5,312 @@
  * @package local/joulegrader
  */
 
+window.M = window.M || {};
 M.local_joulegrader = M.local_joulegrader || {};
 
 /**
- * Initializes grade pane resizing via YUI 3 drag and drop.
- *
- * @param Y
+ * Lightweight mock class to replace Y.Panel functionality
+ * strictly tailored to the needs of joulegrader.
  */
-M.local_joulegrader.init_resize = function(Y) {
+class JoulePanel {
+    constructor(config) {
+        this.config = config;
+        this.srcNode = config.srcNode ? document.querySelector(config.srcNode) : null;
+        this.width = config.width || null;
 
-    var gradepanegridpositions = ['yui3-u-1-2', 'yui3-u-11-24', 'yui3-u-5-12', 'yui3-u-3-8', 'yui3-u-1-3', 'yui3-u-1-4', 'yui3-u-1-5', 'yui3-u-1-6'];
+        // If no srcNode, dynamically generate it (used for generate_errorpanel).
+        if (!this.srcNode && config.bodyContent !== undefined) {
+            this.srcNode = document.createElement('div');
+            this.srcNode.className = 'local-joulegrader-panel yui3-panel';
+            this.srcNode.style.position = 'absolute';
+            this.srcNode.style.zIndex = config.zIndex || 200;
+            this.srcNode.style.display = 'none';
+            this.srcNode.style.backgroundColor = '#fff';
+            this.srcNode.style.border = '1px solid #ccc';
+            this.srcNode.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
+            this.srcNode.style.padding = '10px';
+            this.srcNode.innerHTML = `
+                <div class="yui3-widget-hd" style="cursor: move; padding-bottom: 5px; border-bottom: 1px solid #ddd;">${config.headerContent || ''}</div>
+                <div class="yui3-widget-bd" style="padding: 10px 0;">${config.bodyContent || ''}</div>
+                <div class="yui3-widget-ft" style="text-align: right;"></div>
+            `;
+            let renderTarget = config.render ? document.querySelector(config.render) : document.body;
+            if (renderTarget) {
+                renderTarget.appendChild(this.srcNode);
+            }
+        }
+
+        if (this.srcNode) {
+            if (this.width) this.srcNode.style.width = this.width + 'px';
+            if (config.visible === false) this.srcNode.style.display = 'none';
+        }
+
+        this.onVisibleChange = null;
+
+        if (config.buttons) {
+            config.buttons.forEach(btn => this.addButton(btn));
+        }
+
+        this._initDrag();
+    }
+
+    _initDrag() {
+        if (!this.srcNode) return;
+        let hd = this.srcNode.querySelector('.yui3-widget-hd');
+        if (!hd) return;
+        hd.style.cursor = 'move';
+
+        let isDragging = false;
+        let startX, startY, initialLeft, initialTop;
+        let rafId = null;
+
+        hd.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            let rect = this.srcNode.getBoundingClientRect();
+            initialLeft = rect.left;
+            initialTop = rect.top;
+
+            // Prevent text selection while dragging the panel.
+            document.body.style.userSelect = 'none';
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            if (rafId) cancelAnimationFrame(rafId);
+
+            rafId = requestAnimationFrame(() => {
+                let dx = e.clientX - startX;
+                let dy = e.clientY - startY;
+                this.srcNode.style.left = (initialLeft + dx) + 'px';
+                this.srcNode.style.top = (initialTop + dy) + 'px';
+                this.srcNode.style.transform = 'none'; // Clear any centering transforms.
+            });
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                document.body.style.userSelect = '';
+                if (rafId) cancelAnimationFrame(rafId);
+            }
+        });
+    }
+
+    get(prop) {
+        if (prop === 'srcNode') {
+            return {
+                one: (sel) => this.srcNode.querySelector(sel),
+                all: (sel) => this.srcNode.querySelectorAll(sel),
+                get: (p) => {
+                    if (p === 'scrollWidth') return this.srcNode.scrollWidth;
+                    if (p === 'offsetHeight') return this.srcNode.offsetHeight;
+                    return this.srcNode[p];
+                },
+                scrollIntoView: () => this.srcNode.scrollIntoView()
+            };
+        }
+        if (prop === 'y') return this.srcNode.getBoundingClientRect().top + window.scrollY;
+        if (prop === 'width') return parseFloat(this.srcNode.style.width) || this.srcNode.offsetWidth;
+        return this.config[prop];
+    }
+
+    set(prop, val) {
+        if (prop === 'width') {
+            this.width = val;
+            this.srcNode.style.width = val + 'px';
+        }
+        if (prop === 'bodyContent') {
+            let bd = this.srcNode.querySelector('.yui3-widget-bd') || this.srcNode;
+            bd.innerHTML = val;
+        }
+    }
+
+    show() {
+        if (this.srcNode.style.display === 'none' && this.onVisibleChange) {
+            this.onVisibleChange({newVal: true, prevVal: false});
+        }
+        this.srcNode.style.display = 'block';
+    }
+
+    hide() {
+        if (this.srcNode.style.display !== 'none' && this.onVisibleChange) {
+            this.onVisibleChange({newVal: false, prevVal: true});
+        }
+        this.srcNode.style.display = 'none';
+    }
+
+    align(targetStr) {
+        let target = typeof targetStr === 'string' ? document.querySelector(targetStr) : targetStr;
+        if (!target) return;
+        let tRect = target.getBoundingClientRect();
+        this.srcNode.style.position = 'absolute';
+        this.srcNode.style.top = (tRect.top + window.scrollY) + 'px';
+        this.srcNode.style.left = (tRect.left + (tRect.width / 2) - (this.srcNode.offsetWidth / 2)) + 'px';
+    }
+
+    centered() {
+        this.srcNode.style.position = 'fixed';
+        this.srcNode.style.top = '50%';
+        this.srcNode.style.left = '50%';
+        this.srcNode.style.transform = 'translate(-50%, -50%)';
+    }
+
+    addButton(btn) {
+        let ft = this.srcNode.querySelector('.yui3-widget-ft');
+        if (!ft) {
+            ft = document.createElement('div');
+            ft.className = 'yui3-widget-ft';
+            this.srcNode.appendChild(ft);
+        }
+        let b = document.createElement('button');
+        b.textContent = btn.value;
+        b.addEventListener('click', (e) => btn.action(e));
+        ft.appendChild(b);
+    }
+
+    render() {} // No-op for mock.
+    plug() {} // No-op for mock.
+
+    after(event, callback) {
+        if (event === 'visibleChange') {
+            this.onVisibleChange = callback;
+        }
+    }
+}
+
+/**
+ * Initializes grade pane resizing via vanilla JS drag and drop.
+ */
+M.local_joulegrader.init_resize = function() {
+    var gradepanegridpositions = ['yui3-u-1-2', 'yui3-u-11-24', 'yui3-u-5-12', 'yui3-u-3-8', 'yui3-u-1-3', 'yui3-u-1-4'];
     var viewpanegridpositions = ['yui3-u-1-2', 'yui3-u-13-24', 'yui3-u-7-12', 'yui3-u-5-8', 'yui3-u-2-3', 'yui3-u-3-4', 'yui3-u-4-5', 'yui3-u-5-6'];
 
-    var gradepane = Y.one('#local-joulegrader-gradepane');
-    var viewpane = Y.one('#local-joulegrader-viewpane');
-    var draghandle = Y.one('#local-joulegrader-resize');
-    var gradepanecontent = gradepane.one('.content');
+    var gradepane = document.querySelector('#local-joulegrader-gradepane');
+    var viewpane = document.querySelector('#local-joulegrader-viewpane');
+    var draghandle = document.querySelector('#local-joulegrader-resize');
+    var gradepanecontent = gradepane ? gradepane.querySelector('.content') : null;
 
-    /**
-     * Updates the position and height of the drag handle.
-     */
+    if (!gradepane || !viewpane || !draghandle || !gradepanecontent) return;
+
+    document.querySelector('#local-joulegrader-resize').classList.remove('d-none');
+
     var updatehandlepos = function() {
-        var handleheight = gradepanecontent.getComputedStyle('height');
-        var handlex = gradepane.getX();
-        draghandle.setX(handlex - 15);
-        draghandle.setStyle('height', handleheight);
+        var handleheight = window.getComputedStyle(gradepanecontent).height;
+        var handlex = gradepane.getBoundingClientRect().left + window.scrollX;
+        draghandle.style.left = (handlex - 15) + 'px';
+        draghandle.style.height = handleheight;
     };
 
-    /**
-     * Calculates the pixel positions for each of the grade pane grid classes based on dummy grid elements.
-     * These positions are used to constrain the YUI 3 drag and drop.
-     *
-     * @returns {Array}
-     */
     var calculatepixels = function() {
         var pixels = [];
-
         for (var i = 0; i < gradepanegridpositions.length; i++) {
-            pixels.push(Y.one('.' + gradepanegridpositions[i] + '.local-joulegrader-dummy').getX() - 10);
+            let dummy = document.querySelector('.' + gradepanegridpositions[i] + '.local-joulegrader-dummy');
+            if (dummy) {
+                pixels.push(dummy.getBoundingClientRect().left + window.scrollX - 10);
+            }
         }
         return pixels;
     };
 
-    // Initialize the handle position and the grid pixel positions.
     updatehandlepos();
     var pixels = calculatepixels();
 
-    // Create the drag instance using the draghandle as the drag node.
-    var drag = new Y.DD.Drag({
-        node: draghandle
+    // Vanilla Drag implementation with Smooth Animations and Bound Limits.
+    let isDragging = false;
+    let rafId = null;
+
+    draghandle.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        document.body.style.cursor = 'ew-resize';
+        // Prevent accidental text selection while dragging (prevents major flickering).
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+
+        // Recalculate snap points just in case the window shifted.
+        pixels = calculatepixels();
     });
 
-    Y.DD.DDM.set('dragCursor', 'ew-resize');
+    document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
 
-    // Constrain the drag node to only drag along the X-Axis and to snap to the grid pixel positions.
-    drag.plug(Y.Plugin.DDConstrained, {
-        stickX: true,
-        tickXArray: pixels,
-        constrain2node: '#local-joulegrader-panes'
+        // Use requestAnimationFrame to sync visual updates with the browser's paint cycle.
+        if (rafId) cancelAnimationFrame(rafId);
+
+        rafId = requestAnimationFrame(() => {
+            let actx = e.clientX + window.scrollX;
+
+            // --- CONSTRAIN DRAG AREA ---
+            // Calculate a boundary so the user cannot drag too far.
+            let panesContainer = document.querySelector('#local-joulegrader-panes');
+            let containerLeft = panesContainer ? panesContainer.getBoundingClientRect().left + window.scrollX : 0;
+            let containerWidth = panesContainer ? panesContainer.offsetWidth : window.innerWidth;
+
+            // Define max/min dragging percentages (e.g. between 0% and 100% of container width).
+            // Adjust these values if you want to allow more or less dragging space.
+            let absoluteMinX = containerLeft + (containerWidth * 0);
+            let absoluteMaxX = containerLeft + (containerWidth * 1);
+
+            // Combine the absolute boundary with the available pixel grid array.
+            let minX = Math.max(Math.min(...pixels), absoluteMinX);
+            let maxX = Math.min(Math.max(...pixels), absoluteMaxX);
+
+            // Confine the handle exactly within the limits.
+            let boundedX = Math.max(minX, Math.min(actx, maxX));
+            // ---------------------------
+
+            // Smoothly move the handle exactly with the bounded constraints.
+            draghandle.style.left = boundedX + 'px';
+
+            // Find closest snap point to calculate the correct grid layout class.
+            let closestPix = pixels.reduce((prev, curr) => Math.abs(curr - boundedX) < Math.abs(prev - boundedX) ? curr : prev);
+            let pixidx = pixels.indexOf(closestPix);
+
+            if (pixidx === -1 || !gradepanegridpositions[pixidx]) return;
+
+            var newgpclass = gradepanegridpositions[pixidx];
+            var newvpclass = viewpanegridpositions[pixidx];
+
+            // Only touch the DOM classes if the threshold is crossed.
+            if (!gradepane.classList.contains(newgpclass)) {
+                gradepanegridpositions.forEach(cls => gradepane.classList.remove(cls));
+                viewpanegridpositions.forEach(cls => viewpane.classList.remove(cls));
+
+                gradepane.classList.add(newgpclass);
+                viewpane.classList.add(newvpclass);
+            }
+        });
     });
 
-    // Update the YUI 3 grid classes when the drag is aligned with a grid pixel position.
-    drag.con.on('drag:tickAlignX', function(e) {
-        var actx = drag.actXY[0];
-        var lastx = drag.lastXY[0];
+    document.addEventListener('mouseup', function() {
+        if (isDragging) {
+            isDragging = false;
+            document.body.style.cursor = '';
+            document.body.style.userSelect = ''; // Restore text selection.
 
-        if (parseInt(actx) == parseInt(lastx)) {
-            return;
+            if (rafId) cancelAnimationFrame(rafId);
+
+            // Snap the handle to the perfect grid alignment ONLY when the user lets go of the mouse.
+            updatehandlepos();
         }
-
-        var pixidx = pixels.indexOf(actx);
-
-        if (pixidx === -1 || !gradepanegridpositions[pixidx]) {
-            return;
-        }
-
-        var newgpclass = gradepanegridpositions[pixidx];
-        var newvpclass = viewpanegridpositions[pixidx];
-
-        var currentgpclass = gradepane.getAttribute('class');
-        var currentvpclass = viewpane.getAttribute('class');
-
-        gradepane.removeClass(currentgpclass);
-        viewpane.removeClass(currentvpclass);
-
-        gradepane.addClass(newgpclass);
-        viewpane.addClass(newvpclass);
     });
 
-    // Recalculate the grid pixel positions, update the handle position, and reset constrained drag "snap" points.
-    Y.on('windowresize', function(e) {
-        let pixels = calculatepixels();
-        drag.con.set('tickXArray', pixels);
+    window.addEventListener('resize', function() {
+        pixels = calculatepixels();
         updatehandlepos();
     });
 
     const joulegraderpane = document.querySelector('#local-joulegrader-panes');
-    const joulegraderobserver = new ResizeObserver(() => {
-        let pixels = calculatepixels();
-        drag.con.set('tickXArray', pixels);
-        updatehandlepos();
-    });
-    joulegraderobserver.observe(joulegraderpane);
+    if (joulegraderpane && window.ResizeObserver) {
+        const joulegraderobserver = new ResizeObserver(() => {
+            pixels = calculatepixels();
+            updatehandlepos();
+        });
+        joulegraderobserver.observe(joulegraderpane);
+    }
 };
 
 M.local_joulegrader.init_gradepane_panel = function(Y, options) {
@@ -116,34 +320,30 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
         return;
     }
 
-
-    //joule grader div
+    // Joule grader div.
     var joulegrader = Y.one('#local-joulegrader');
 
-    //create the panel
+    // Create the panel.
     var panel = new Y.Panel({
         srcNode: '#' + options.id,
         headerContent: M.str.local_joulegrader[options.grademethod],
         footerContent: '',
         centered: joulegrader,
-//        width: 500,
         zIndex: 2,
-//        modal: true,
         visible: false,
-//        render: true,
         plugins: [Y.Plugin.Drag]
     });
 
     panel.plug(M.local_mr.accessiblepanel);
 
-    // Restore the "normal" height on the joule grader div after hiding the panel
+    // Restore the "normal" height on the joule grader div after hiding the panel.
     panel.after('visibleChange', function(e) {
         if (!e.newVal && e.prevVal) {
             joulegrader.setStyle('height', null);
         }
     });
 
-    // only allow dragging from the header and footer bars
+    // Only allow dragging from the header and footer bars.
     panel.dd.addHandle('.yui3-widget-hd');
     panel.dd.addHandle('.yui3-widget-ft');
 
@@ -152,10 +352,10 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
             return;
         }
 
-        //get the panel content's height
+        // Get the panel content's height.
         var panelheight = panelnode.get('offsetHeight');
 
-        //joule grader height
+        // Joule grader height.
         var jgheight = joulegrader.get('offsetHeight');
 
         if (jgheight < panelheight) {
@@ -163,681 +363,498 @@ M.local_joulegrader.init_gradepane_panel = function(Y, options) {
         }
     };
 
-    //adjust the height of joule grader div if textareas cause resizing of of the modal (on mouseup)
+    // Adjust the height of joule grader div if textareas cause resizing of of the modal (on mouseup).
     joulegrader.delegate('mouseup', adjustjoulegraderheight, '#local-joulegrader-gradepane-panel textarea');
 
-    //wire up the button
+    // Wire up the button.
     btn.on('click', function(e) {
         e.preventDefault();
 
-        //adjust the height of the joulegrader div if necessary
+        // Adjust the height of the joulegrader div if necessary.
         adjustjoulegraderheight();
 
-        //re-align on the local-joulegrader div (top-center of panel with top-center of local-joulegrader div
+        // Re-align on the local-joulegrader div (top-center of panel with top-center of local-joulegrader div.
         panel.align(joulegrader, [Y.WidgetPositionAlign.TC, Y.WidgetPositionAlign.TC]);
 
-        //remove the hidden class from the rubric
+        // Remove the hidden class from the rubric.
         panelnode.removeClass('dontshow');
 
-        //open the panel
+        // Open the panel.
         panel.show();
     });
 
+    // --- Bridge to Vanilla JS ---
+    // Create a proxy that perfectly mimics the expected JoulePanel interface for the vanilla sub-methods,
+    // while routing actions to the YUI panel. Crucially, it forces the panel to render in-place
+    // so it doesn't break out of the Moodle <form> element (which causes empty grade submissions).
+    var vanillaPanelProxy = {
+        srcNode: panel.get('srcNode').getDOMNode(),
+        render: function() {
+            var parent = panelnode.get('parentNode');
+            if (parent) {
+                // Renders strictly inside the <form> structure so inputs submit successfully.
+                panel.render(parent);
+            } else {
+                panel.render();
+            }
+        },
+        hide: function() { panel.hide(); },
+        show: function() { panel.show(); },
+        set: function(prop, val) { panel.set(prop, val); },
+        get: function(prop) {
+            if (prop === 'width') {
+                // YUI returns strings (e.g., '500px'). Vanilla expects raw numbers to avoid NaN errors.
+                return parseFloat(panel.get('width')) || 0;
+            }
+            return panel.get(prop);
+        },
+        addButton: function(btn) { panel.addButton(btn); }
+    };
+
     if (M.local_joulegrader.hasOwnProperty('init_' + options.grademethod)) {
-        M.local_joulegrader['init_' + options.grademethod](Y, options, panel);
+        M.local_joulegrader['init_' + options.grademethod](options, vanillaPanelProxy);
     }
 }
 
-M.local_joulegrader.generate_errorpanel = function (Y, options, errormsg) {
-    var errorpanel = new Y.Panel({
+M.local_joulegrader.generate_errorpanel = function(options, errormsg) {
+    var errorpanel = new JoulePanel({
         bodyContent: errormsg,
-        centered: '#' + options.id,
-        zindex: 200,
+        render: '#' + options.id,
+        zIndex: 200,
         width: 200,
         visible: false,
-        render: '#' + options.id,
         buttons: [
             {
                 value: M.str.local_joulegrader.close,
                 action: function(e) {
                     errorpanel.hide();
-                },
-                section: 'footer'
+                }
             }
         ]
     });
 
-    errorpanel.plug(M.local_mr.accessiblepanel, {ariaRole: "dialog-alert"});
-
+    errorpanel.plug(M.local_mr && M.local_mr.accessiblepanel ? M.local_mr.accessiblepanel : null);
     return errorpanel;
-}
+};
 
-M.local_joulegrader.init_checklist = function(Y, options, panel) {
-    var panelnode = panel.get('srcNode');
-
-    //get the submit and submit next buttons if they exist
-    var submitbuttons = Y.all('#' + options.id + ' input[type=submit]');
-    if (submitbuttons.isEmpty()) {
-        //this is for the student
-        //add a close button
+M.local_joulegrader.init_checklist = function(options, panel) {
+    var submitbuttons = document.querySelectorAll('#' + options.id + ' input[type=submit]');
+    if (submitbuttons.length === 0) {
         var closebutton = {
             value: M.str.local_joulegrader.close,
-            action: function(e) {
-                panel.hide();
-            },
-            section: 'footer'
+            action: function(e) { panel.hide(); }
         };
-
         panel.addButton(closebutton);
     }
 
-    // render the panel
     panel.render();
-
-    // resize if necessary
     panel.set('width', 5000);
-    var widthnode = panel.get('srcNode').one('.gradingform_checklist .groups');
-    var panelwidth = widthnode.get('scrollWidth');
-    panel.set('width', panelwidth);
+    var widthnode = panel.srcNode.querySelector('.gradingform_checklist .groups');
+    if (widthnode) {
+        var panelwidth = widthnode.scrollWidth;
+        panel.set('width', panelwidth);
+    }
+};
 
-}
+M.local_joulegrader.init_guide = function(options, panel) {
+    var submitbuttons = document.querySelectorAll('#' + options.id + ' input[type=submit]');
 
-M.local_joulegrader.init_guide = function(Y, options, panel) {
-    var panelnode = panel.get('srcNode');
-
-    //get the submit and submit next buttons if they exist
-    var submitbuttons = Y.all('#' + options.id + ' input[type=submit]');
-
-    if (submitbuttons && !submitbuttons.isEmpty()) {
-        //render the panel first so the that the error panel renders correctly
+    if (submitbuttons.length > 0) {
         panel.render();
+        var errorpanel = M.local_joulegrader.generate_errorpanel(options, '');
 
-        //a little panel for display an error message
-        var errorpanel = M.local_joulegrader.generate_errorpanel(Y, options, '');
+        submitbuttons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                var valid = true;
+                errorpanel.set('bodyContent', '');
+                var errorpanelcontent = '<div class="gradingform_guide-error">' + M.str.local_joulegrader.guideerror + '</div>';
 
-        //attach the event handlers
-        submitbuttons.on('click', function(e) {
-            //flag for valid guide
-            var valid = true;
-
-            errorpanel.set('bodyContent', '');
-            var errorpanelcontent = '<div class="gradingform_guide-error">' + M.str.local_joulegrader.guideerror + '</div>';
-
-            //get all the criteria
-            var criteriascore = Y.all('#' + options.id + ' .gradingform_guide .criterion .score input[type="text"]');
-            criteriascore.each(function(score) {
-                var maxscore = score.next('.criteriondescriptionscore');
-                var maxscorevalue;
-                if (maxscore) {
-                    maxscorevalue = parseInt(maxscore.get('textContent'));
-                }
-                var scorevalue = score.get('value');
-                if (scorevalue === '' || isNaN(scorevalue) || (maxscorevalue && (parseInt(scorevalue) > maxscorevalue || parseInt(scorevalue) < 0))) {
-                    valid = false;
-                    var criterionshortnameel = score.ancestor('.criterion').one('.criterionshortname');
-                    var criterionshortname = criterionshortnameel ? criterionshortnameel.get('textContent') : '';
-
-                    if (maxscorevalue && criterionshortname !== '') {
-                        var a = {
-                            criterianame: criterionshortname,
-                            maxscore: maxscorevalue
-                        };
-                        var errstr = M.util.get_string('err_scoreinvalid', 'gradingform_guide', a);
-                        errorpanelcontent += '<div class="gradingform_guide-error">' + errstr + '</div>';
+                var criteriascore = document.querySelectorAll('#' + options.id + ' .gradingform_guide .criterion .score input[type="text"]');
+                criteriascore.forEach(function(score) {
+                    var maxscore = score.nextElementSibling;
+                    while (maxscore && !maxscore.classList.contains('criteriondescriptionscore')) {
+                        maxscore = maxscore.nextElementSibling;
                     }
-                }
-            });
+                    var maxscorevalue = maxscore ? parseInt(maxscore.textContent, 10) : null;
+                    var scorevalue = score.value;
 
+                    if (scorevalue === '' || isNaN(scorevalue) || (maxscorevalue && (parseInt(scorevalue, 10) > maxscorevalue || parseInt(scorevalue, 10) < 0))) {
+                        valid = false;
+                        var criterionRow = score.closest('.criterion');
+                        var criterionshortnameel = criterionRow ? criterionRow.querySelector('.criterionshortname') : null;
+                        var criterionshortname = criterionshortnameel ? criterionshortnameel.textContent : '';
 
-            if (!valid) {
-                e.preventDefault();
-
-                errorpanel.set('width', 500);
-                errorpanel.set('bodyContent', errorpanelcontent);
-
-                // Show the panel.
-                errorpanel.show();
-
-                // Scroll it into view and center it.
-                if (Y.UA.ie > 0 && window.scrollTo) {
-                    var epy = errorpanel.get('y');
-                    window.scrollTo(epy, 0);
-                } else {
-                    errorpanel.get('srcNode').scrollIntoView();
-                }
-                errorpanel.centered();
-            }
-
-        });
-    } else {
-        //this is for the student
-        //add a close button
-        var closebutton = {
-            value: M.str.local_joulegrader.close,
-            action: function(e) {
-                panel.hide();
-            },
-            section: 'footer'
-        };
-
-        panel.addButton(closebutton);
-
-        // render the panel
-        panel.render();
-    }
-
-    // resize if necessary
-    var panelwidth = panelnode.get('scrollWidth');
-    var maxwidth = parseInt(Y.one('#local-joulegrader').get('offsetWidth'));
-    if (panelwidth > maxwidth) {
-        panelwidth = maxwidth;
-    }
-    panel.set('width', panelwidth);
-}
-
-
-M.local_joulegrader.init_rubric = function(Y, options, panel) {
-
-    //get the submit and submit next buttons if they exist
-    var submitbuttons = Y.all('#' + options.id + ' input[type=submit]');
-    if (submitbuttons && !submitbuttons.isEmpty()) {
-        //render the panel first so the that the error panel renders correctly
-        panel.render();
-
-        //a little panel for display an error message
-        var errorpanel = M.local_joulegrader.generate_errorpanel(Y, options, M.str.local_joulegrader.rubricerror);
-
-        //attach the event handlers
-        submitbuttons.on('click', function(e) {
-            //flag for valid rubric
-            var valid = true;
-
-            //get all the criteria
-            var criteria = Y.all('#' + options.id + ' .gradingform_rubric .criterion');
-
-            //make sure we have some criteria
-            if (criteria) {
-                //iterate over each criterion
-                criteria.each(function(criterion) {
-                    //get the levels (radio buttons) for this criterion
-                    var radiobuttons = criterion.all('input[type=radio]');
-                    if (radiobuttons) {
-                        var validcriterion = false;
-                        //iterate over each level (radio button)
-                        radiobuttons.each(function(radio) {
-                            if (radio.get('checked')) {
-                                //if the criterion is not valid already and
-                                validcriterion = true;
-                            }
-                        });
-
-                        //combine overall validity with this criterion's validity
-                        valid = valid && validcriterion;
+                        if (maxscorevalue && criterionshortname !== '') {
+                            var errstr = M.util.get_string('err_scoreinvalid', 'gradingform_guide', {criterianame: criterionshortname, maxscore: maxscorevalue});
+                            errorpanelcontent += '<div class="gradingform_guide-error">' + errstr + '</div>';
+                        }
                     }
                 });
-            }
 
-            if (!valid) {
-                e.preventDefault();
+                if (!valid) {
+                    e.preventDefault();
+                    errorpanel.set('width', 500);
+                    errorpanel.set('bodyContent', errorpanelcontent);
+                    errorpanel.show();
 
-                // Show the panel.
-                errorpanel.show();
-
-                // Scroll it into view and center it.
-                if (Y.UA.ie > 0 && window.scrollTo) {
-                    var epy = errorpanel.get('y');
-                    window.scrollTo(epy, 0);
-                } else {
-                    errorpanel.get('srcNode').scrollIntoView();
+                    var errorEl = errorpanel.srcNode;
+                    if (errorEl && errorEl.scrollIntoView) {
+                        errorEl.scrollIntoView();
+                    }
+                    errorpanel.centered();
                 }
-                errorpanel.centered();
-            }
-
+            });
         });
     } else {
-        //this is for the student
-        //add a close button
         var closebutton = {
             value: M.str.local_joulegrader.close,
-            action: function(e) {
-                panel.hide();
-            },
-            section: 'footer'
+            action: function(e) { panel.hide(); }
         };
-
         panel.addButton(closebutton);
-
-        //now we can render the panel
         panel.render();
     }
 
-    //IE is special; add a invisible div to the 1st comment remark td so that IE will not squish that column
-    if (Y.UA.ie) {
-        var commenttextarea = Y.one('#local-joulegrader-gradepane-panel .criterion .remark');
-        if (commenttextarea) {
-            commenttextarea.append('<div style="visibility: hidden; width: 100px;"></div>');
-        }
-    }
-
-    // resize if necessary
-    panel.set('width', 5000);
-    var tablenode = panel.get('srcNode').one('.gradingform_rubric table');
-    var panelwidth = parseInt(tablenode.get('offsetWidth')) + 30;
-    var maxwidth = parseInt(Y.one('#local-joulegrader').get('offsetWidth'));
+    var panelwidth = panel.srcNode.scrollWidth;
+    var maxwidth = parseInt(document.querySelector('#local-joulegrader').offsetWidth, 10);
     if (panelwidth > maxwidth) {
         panelwidth = maxwidth;
     }
     panel.set('width', panelwidth);
-    Y.one('#local-joulegrader-gradepane-panel .gradingform_rubric').setStyle('width', panel.get('width') - 30);
-}
+};
 
-/**
- *
- * @param Y
- * @param id - id of the comment loop container
- */
-M.local_joulegrader.init_commentloop = function(Y, id) {
-    //get the comment loop container
-    var commentloopcon = Y.one('#' + id);
-    if (!commentloopcon) {
-        return;
-    }
+M.local_joulegrader.init_rubric = function(options, panel) {
+    var submitbuttons = document.querySelectorAll('#' + options.id + ' input[type=submit]');
+    if (submitbuttons.length > 0) {
+        panel.render();
+        var errorpanel = M.local_joulegrader.generate_errorpanel(options, M.str.local_joulegrader.rubricerror);
 
-    //get the
-    var comments = commentloopcon.one('.local_joulegrader_commentloop_comments');
-    if (!comments) {
-        return;
-    }
+        submitbuttons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                var valid = true;
+                var criteria = document.querySelectorAll('#' + options.id + ' .gradingform_rubric .criterion');
 
-    //scroll the comments to the most recent
-    comments.set('scrollTop', comments.get('scrollHeight'));
-
-    //get the comment form element
-    var commentform = commentloopcon.one('form');
-    if (!commentform) {
-        return;
-    }
-
-    //event handler for deleting comments
-    var deleteaction = function(e) {
-        e.preventDefault();
-
-        var link = Y.one(e.currentTarget);
-        if (!link.hasClass('ajax-in-progress')) {
-            link.addClass('ajax-in-progress');
-            var lnkhref = e.currentTarget.get('href');
-            //get the the params
-            var params = lnkhref.split('?')[1];
-            if (!params) {
-                return;
-            }
-
-            //get the comment div
-            var comment = e.currentTarget.ancestor('.local_joulegrader_comment');
-            if (!comment) {
-                return;
-            }
-
-            //Y.io cfg
-            var cfg = {
-                method: 'POST',
-                data: params + '&ajax=1',
-                on: {
-                    success: function (id, o, args) {
-                        try {
-                            //get the response
-                            var response = Y.JSON.parse(o.responseText);
-
-                            //if html is there replace comments
-                            if (response.html) {
-                                //insert the new comment after the old one
-                                comments.insert(response.html, 'replace');
-
-                            } else if (response.error) {
-                                alert(response.error);
-                            }
-                        } catch (err) {
-                            alert(err);
+                if (criteria.length > 0) {
+                    criteria.forEach(function(criterion) {
+                        var radiobuttons = criterion.querySelectorAll('input[type=radio]');
+                        if (radiobuttons.length > 0) {
+                            var validcriterion = false;
+                            radiobuttons.forEach(function(radio) {
+                                if (radio.checked) validcriterion = true;
+                            });
+                            valid = valid && validcriterion;
                         }
-                    }
+                    });
                 }
-            };
 
-            //send the ajax request
-            Y.io(M.cfg.wwwroot + '/local/joulegrader/view.php', cfg);
-        }
-    }
-
-    //attach onclick event listener for delete comment
-    commentloopcon.delegate('click', deleteaction, '.local_joulegrader_comment_delete a');
-
-    //attach onsubmit event listener for adding new comments
-    commentform.on('submit', function(e) {
-        //try to get the comment textarea element
-        var textarea = commentform.one('textarea');
-        if (!textarea) {
-            return;
-        }
-
-        if (typeof tinyMCE !== "undefined") {
-            //try to get the iframe for the tinymce editor
-            var editor = tinyMCE.get(textarea.get('id'));
-        } else {
-            var editor = commentform.one('.editor_atto_content');
-        }
-        //try to get the comment text
-        var comment = textarea.get('value');
-        if (comment == '') {
-            //if there is no comment then just return and let the form client-side validation handle it
-            return;
-        }
-
-        e.preventDefault();
-        //looks like this is a good comment, let's submit it all ajax-like
-        var cfg = {
-            method: 'POST',
-            sync: false,
-            form: {
-                id: commentform
-            },
-            data: 'ajax=1',
-            on: {
-                success: function(id, o, args) {
-                    try {
-                        var response = Y.JSON.parse(o.responseText);
-
-                        if (response.html) {
-                            // replace the comments
-                            comments.insert(response.html, 'replace');
-
-                            //delete the textarea
-                            textarea.set('value', '');
-
-                            //set the tinyMCE content to an empty string also
-                            if (editor) {
-                                editor.setContent('');
-                            }
-
-                            //scroll down
-                            comments.set('scrollTop', comments.get('scrollHeight'));
-
-                        } else if (response.error) {
-                            alert(response.error);
-                        }
-                    } catch (excp) {
-                        alert(excp);
+                if (!valid) {
+                    e.preventDefault();
+                    errorpanel.show();
+                    if (errorpanel.srcNode && errorpanel.srcNode.scrollIntoView) {
+                        errorpanel.srcNode.scrollIntoView();
                     }
+                    errorpanel.centered();
                 }
-            }
+            });
+        });
+    } else {
+        var closebutton = {
+            value: M.str.local_joulegrader.close,
+            action: function(e) { panel.hide(); }
         };
+        panel.addButton(closebutton);
+        panel.render();
+    }
 
-        //fire the ajax request
-        Y.io(M.cfg.wwwroot + '/local/joulegrader/view.php', cfg);
+    if (window.navigator.userAgent.indexOf("MSIE ") > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+        var commenttextarea = document.querySelector('#local-joulegrader-gradepane-panel .criterion .remark');
+        if (commenttextarea) {
+            commenttextarea.insertAdjacentHTML('beforeend', '<div style="visibility: hidden; width: 100px;"></div>');
+        }
+    }
 
+    panel.set('width', 5000);
+    var tablenode = panel.srcNode.querySelector('.gradingform_rubric table');
+    if (tablenode) {
+        var panelwidth = parseInt(tablenode.offsetWidth, 10) + 30;
+        var jgEl = document.querySelector('#local-joulegrader');
+        var maxwidth = jgEl ? parseInt(jgEl.offsetWidth, 10) : 5000;
+        if (panelwidth > maxwidth) {
+            panelwidth = maxwidth;
+        }
+        panel.set('width', panelwidth);
+        var rubricForm = document.querySelector('#local-joulegrader-gradepane-panel .gradingform_rubric');
+        if(rubricForm) {
+            rubricForm.style.width = (panel.get('width') - 30) + 'px';
+        }
+    }
+};
+
+M.local_joulegrader.init_commentloop = function(id) {
+    var commentloopcon = document.getElementById(id);
+    if (!commentloopcon) return;
+
+    var comments = commentloopcon.querySelector('.local_joulegrader_commentloop_comments');
+    if (!comments) return;
+
+    comments.scrollTop = comments.scrollHeight;
+
+    var commentform = commentloopcon.querySelector('form');
+    if (!commentform) return;
+
+    // Delegate delete clicks.
+    commentloopcon.addEventListener('click', function(e) {
+        var link = e.target.closest('.local_joulegrader_comment_delete a');
+        if (!link) return;
+
+        e.preventDefault();
+
+        if (!link.classList.contains('ajax-in-progress')) {
+            link.classList.add('ajax-in-progress');
+            var lnkhref = link.getAttribute('href');
+            var params = lnkhref.split('?')[1];
+            if (!params) return;
+
+            fetch(M.cfg.wwwroot + '/local/joulegrader/view.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params + '&ajax=1'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.html) {
+                        comments.innerHTML = data.html; // Using innerHTML as YUI's replace handles child replacement.
+                    } else if (data.error) {
+                        alert(data.error);
+                    }
+                })
+                .catch(err => alert(err))
+                .finally(() => link.classList.remove('ajax-in-progress'));
+        }
     });
-}
 
-M.local_joulegrader.init_viewinlinefile = function(Y, courseid) {
+    commentform.addEventListener('submit', function(e) {
+        var textarea = commentform.querySelector('textarea');
+        if (!textarea) return;
+
+        var editor;
+        if (typeof tinyMCE !== "undefined") {
+            editor = tinyMCE.get(textarea.id);
+        } else {
+            editor = commentform.querySelector('.editor_atto_content');
+        }
+
+        var comment = textarea.value;
+        if (comment === '') return;
+
+        e.preventDefault();
+
+        var formData = new URLSearchParams(new FormData(commentform));
+        formData.append('ajax', '1');
+
+        fetch(M.cfg.wwwroot + '/local/joulegrader/view.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.html) {
+                    comments.innerHTML = data.html;
+                    textarea.value = '';
+                    if (editor && typeof editor.setContent === 'function') {
+                        editor.setContent('');
+                    }
+                    comments.scrollTop = comments.scrollHeight;
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            })
+            .catch(err => alert(err));
+    });
+};
+
+M.local_joulegrader.init_viewinlinefile = function(courseid) {
     var loadedfiles = {};
     var filenamesbyids = {};
     var fileids = [];
     var filelinksbyids = {};
     var currentfile, currentfilehash;
 
-    var filetreecon = Y.one('#local-joulegrader-assign23-treecon');
-    if (!filetreecon) {
-        return;
-    }
-    var fileinline = Y.one('#local-joulegrader-assign23-files-inline');
-    if (!fileinline) {
-        return;
-    }
+    var filetreecon = document.querySelector('#local-joulegrader-assign23-treecon');
+    var fileinline = document.querySelector('#local-joulegrader-assign23-files-inline');
+    if (!filetreecon || !fileinline) return;
 
-    // Online submission content.
-    var onlinesubmission = Y.one('#local-joulegrader-assign23-assign_submission_onlinetext');
+    var onlinesubmission = document.querySelector('#local-joulegrader-assign23-assign_submission_onlinetext');
+    var inlinefilelinks = document.querySelectorAll('.local_joulegrader_assign23_inlinefile');
+    if (inlinefilelinks.length === 0) return;
 
-    // View inline links
-    var inlinefilelinks = Y.all('.local_joulegrader_assign23_inlinefile');
-    if (!inlinefilelinks || inlinefilelinks.isEmpty()) {
-        return;
-    }
-
-    var nextinlinefilelink = Y.one('#local-joulegrader-assign23-ctrl-next');
-    var previnlinefilelink = Y.one('#local-joulegrader-assign23-ctrl-previous');
-
-    var downloadlinkctrl = Y.one('#local-joulegrader-assign23-ctrl-download');
-    var filenamectrl = Y.one('#local-joulegrader-assign23-ctrl-filename');
-
-    // Close inline file button.
-    var closeinline = fileinline.one('#local-joulegrader-assign23-ctrl-close');
+    var nextinlinefilelink = document.querySelector('#local-joulegrader-assign23-ctrl-next');
+    var previnlinefilelink = document.querySelector('#local-joulegrader-assign23-ctrl-previous');
+    var downloadlinkctrl = document.querySelector('#local-joulegrader-assign23-ctrl-download');
+    var filenamectrl = document.querySelector('#local-joulegrader-assign23-ctrl-filename');
+    var closeinline = fileinline.querySelector('#local-joulegrader-assign23-ctrl-close');
 
     var handleresize = function() {
-        if (currentfile !== undefined && Y.Lang.isFunction(currentfile.hasClass) && !currentfile.hasClass('local_joulegrader_hidden')) {
-            // Element that contains the object or iframe
-            var resourcecon = currentfile.one('.resourcecontent');
-            if (!resourcecon) {
-                return;
-            }
+        if (currentfile && !currentfile.classList.contains('local_joulegrader_hidden')) {
+            var resourcecon = currentfile.querySelector('.resourcecontent');
+            if (!resourcecon) return;
 
-            // First see if there is an object tag.
-            var embedel = resourcecon.one('object');
-            var isiframe = false;
-            if (!embedel) {
-                // If no object element check for an iframe.
-                embedel = resourcecon.one('iframe');
-                isiframe = true;
-            }
+            var embedel = resourcecon.querySelector('object') || resourcecon.querySelector('iframe');
+            var isiframe = !!resourcecon.querySelector('iframe');
+            if (!embedel) return;
 
-            if (!embedel) {
-                return;
-            }
-
-            // Width of the file inline container
-            var fileinlinewidth = fileinline.getComputedStyle('width');
-
-            embedel.set('width', fileinlinewidth);
+            var fileinlinewidth = window.getComputedStyle(fileinline).width;
+            embedel.style.width = fileinlinewidth;
 
             if (isiframe) {
-                var joulegraderpanesheight = Y.one('#local-joulegrader-panes').getComputedStyle('height');
-                embedel.setStyle('height', joulegraderpanesheight);
+                var joulegraderpanes = document.querySelector('#local-joulegrader-panes');
+                if (joulegraderpanes) {
+                    embedel.style.height = window.getComputedStyle(joulegraderpanes).height;
+                }
             }
         }
-    }
+    };
 
-    Y.on('windowresize', handleresize);
+    window.addEventListener('resize', handleresize);
 
     var show_node = function(node) {
-        if (node.hasClass('local_joulegrader_hidden')) {
-            node.removeClass('local_joulegrader_hidden');
-        }
+        node.classList.remove('local_joulegrader_hidden');
     };
 
     var hide_node = function(node) {
-        if (!node.hasClass('local_joulegrader_hidden')) {
-            node.addClass('local_joulegrader_hidden');
-        }
+        node.classList.add('local_joulegrader_hidden');
     };
 
     var show_inlinefile = function(filenode) {
-        if (onlinesubmission) {
-            hide_node(onlinesubmission);
-        }
+        if (onlinesubmission) hide_node(onlinesubmission);
         hide_node(filetreecon);
         show_node(filenode);
         show_node(fileinline);
 
-        // Scroll it into view and center it.
-        if (Y.UA.ie > 0 && window.scrollTo) {
-            var fileinliney = fileinline.get('y');
-            window.scrollTo(fileinliney, 0);
-        } else {
+        if (fileinline.scrollIntoView) {
             fileinline.scrollIntoView();
         }
 
         currentfile = filenode;
-
-        // Resize
         handleresize();
-    }
+    };
 
     var hide_inlinefile = function() {
-        if (currentfile) {
-            hide_node(currentfile);
-        }
+        if (currentfile) hide_node(currentfile);
         hide_node(fileinline);
-        if (onlinesubmission) {
-            show_node(onlinesubmission);
-        }
+        if (onlinesubmission) show_node(onlinesubmission);
         show_node(filetreecon);
-    }
+    };
 
-    // Number of inline file links.
-    var inlinefilecount = inlinefilelinks.size();
+    var inlinefileselect = document.querySelector('#local-joulegrader-assign23-ctrl-select select');
 
-    var inlinefileselect = Y.one('#local-joulegrader-assign23-ctrl-select select');
-
-    // Add view inline file links to the select menu.
-    inlinefilelinks.each(function(filelink) {
-        var selectkey = filelink.get('id');
+    inlinefilelinks.forEach(function(filelink) {
+        var selectkey = filelink.id;
         fileids.push(selectkey);
-        var filename = filelink.previous('img').get('alt');
 
-        // Add the option.
-        inlinefileselect.append('<option value="' + selectkey + '">' + filename + '</option>')
+        var prevImg = filelink.previousElementSibling;
+        var filename = prevImg && prevImg.tagName === 'IMG' ? prevImg.getAttribute('alt') : 'File';
 
-        // Save the id and name for later.
+        var option = document.createElement('option');
+        option.value = selectkey;
+        option.textContent = filename;
+        if(inlinefileselect) inlinefileselect.appendChild(option);
+
         filenamesbyids[selectkey] = filename;
-
-        var href = filelink.get('href');
-
-        filelinksbyids[selectkey] = href;
+        filelinksbyids[selectkey] = filelink.getAttribute('href');
     });
 
-    var iocfg = {
-        method: 'GET',
-        timeout: 4000,
-        on: {
-            success: function(id, o, args) {
-                try {
-                    var response = Y.JSON.parse(o.responseText);
-
-                    if (response.html) {
-                        var inlineid = 'local-joulegrader-inlinefile-' + args.hashid;
-
-                        // Append the html to fileinline div
-                        fileinline.append('<div id="' + inlineid + '">' + response.html + '</div>');
-
-                        // Store the node for later
-                        loadedfiles[args.hashid] = fileinline.one('#' + inlineid);
-
-                        // Show the inline file
-                        show_inlinefile(loadedfiles[args.hashid]);
-
-                    } else if (response.error) {
-                        alert(response.error);
-                    }
-
-                } catch (excp) {
-                    alert(excp);
-                }
-            },
-            failure: function(id, o, args) {
-
-            }
-        }
+    if (closeinline) {
+        closeinline.addEventListener('click', function(e) {
+            e.preventDefault();
+            hide_inlinefile();
+        });
     }
-
-    closeinline.on('click', function(e) {
-        e.preventDefault();
-        hide_inlinefile();
-    });
 
     var loadorshowfile = function(filehash) {
-        // Check to see if it has already been loaded
         if (!loadedfiles.hasOwnProperty(filehash)) {
-            // Fire the request.
-            iocfg.data = 'action=inlinefile&f=' + filehash + '&courseid=' + courseid;
-            iocfg.arguments = {hashid: filehash};
-            Y.io(M.cfg.wwwroot + '/local/joulegrader/view.php', iocfg);
+            fetch(M.cfg.wwwroot + '/local/joulegrader/view.php?action=inlinefile&f=' + filehash + '&courseid=' + courseid)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.html) {
+                        var inlineid = 'local-joulegrader-inlinefile-' + filehash;
+                        var div = document.createElement('div');
+                        div.id = inlineid;
+                        div.innerHTML = data.html;
+                        fileinline.appendChild(div);
+
+                        loadedfiles[filehash] = document.getElementById(inlineid);
+                        show_inlinefile(loadedfiles[filehash]);
+                    } else if (data.error) {
+                        alert(data.error);
+                    }
+                })
+                .catch(err => alert(err));
         } else {
             show_inlinefile(loadedfiles[filehash]);
         }
 
-        filenamectrl.setContent(filenamesbyids[filehash]);
-        downloadlinkctrl.setContent('(<a href="' + filelinksbyids[filehash] + '">' + M.str.local_joulegrader.download + '</a>)');
-        inlinefileselect.set('value', filehash);
-    }
+        if (filenamectrl) filenamectrl.innerHTML = filenamesbyids[filehash];
+        if (downloadlinkctrl) downloadlinkctrl.innerHTML = '(<a href="' + filelinksbyids[filehash] + '">' + M.str.local_joulegrader.download + '</a>)';
+        if (inlinefileselect) inlinefileselect.value = filehash;
+    };
 
-    if (inlinefilecount < 2) {
-        nextinlinefilelink.remove(true);
-        previnlinefilelink.remove(true);
+    if (inlinefilelinks.length < 2) {
+        if (nextinlinefilelink) nextinlinefilelink.remove();
+        if (previnlinefilelink) previnlinefilelink.remove();
     } else {
-        nextinlinefilelink.on('click', function(e) {
-            e.preventDefault();
-
-            if (currentfilehash) {
-                var currentfilepos = fileids.indexOf(currentfilehash);
-                if (currentfilepos !== -1) {
-                    var nextpos;
-                    if (currentfilepos === (fileids.length - 1)) {
-                        // Current file is last in the list, the next is the first.
-                        nextpos = 0;
-                    } else {
-                        nextpos = currentfilepos + 1;
+        if (nextinlinefilelink) {
+            nextinlinefilelink.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentfilehash) {
+                    var currentfilepos = fileids.indexOf(currentfilehash);
+                    if (currentfilepos !== -1) {
+                        var nextpos = (currentfilepos === fileids.length - 1) ? 0 : currentfilepos + 1;
+                        var nextfilehash = fileids[nextpos];
+                        hide_node(currentfile);
+                        loadorshowfile(nextfilehash);
+                        currentfilehash = nextfilehash;
                     }
-                    var nextfilehash = fileids[nextpos];
-
-                    hide_node(currentfile);
-                    loadorshowfile(nextfilehash);
-                    currentfilehash = nextfilehash;
                 }
-            }
-        });
+            });
+        }
 
-        previnlinefilelink.on('click', function(e) {
-            e.preventDefault();
-
-            if (currentfilehash) {
-                var currentfilepos = fileids.indexOf(currentfilehash);
-                if (currentfilepos !== -1) {
-                    var prevpos;
-                    if (currentfilepos === 0) {
-                        // Current file is first in the list, the previous is the last.
-                        prevpos = fileids.length - 1;
-                    } else {
-                        prevpos = currentfilepos - 1;
+        if (previnlinefilelink) {
+            previnlinefilelink.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentfilehash) {
+                    var currentfilepos = fileids.indexOf(currentfilehash);
+                    if (currentfilepos !== -1) {
+                        var prevpos = (currentfilepos === 0) ? fileids.length - 1 : currentfilepos - 1;
+                        var nextfilehash = fileids[prevpos];
+                        hide_node(currentfile);
+                        loadorshowfile(nextfilehash);
+                        currentfilehash = nextfilehash;
                     }
-                    var nextfilehash = fileids[prevpos];
-
-                    hide_node(currentfile);
-                    loadorshowfile(nextfilehash);
-                    currentfilehash = nextfilehash;
                 }
+            });
+        }
+    }
+
+    if (inlinefileselect) {
+        inlinefileselect.addEventListener('change', function(e) {
+            var selectedvalue = this.value;
+            if (selectedvalue == "0") {
+                hide_inlinefile();
+            } else {
+                hide_node(currentfile);
+                loadorshowfile(selectedvalue);
+                currentfilehash = selectedvalue;
             }
         });
     }
 
-    inlinefileselect.on('change', function(e) {
-        var selectedvalue = this.get('options').item(this.get('selectedIndex')).get('value');
-        if (selectedvalue == 0) {
-            hide_inlinefile();
-        } else {
-            hide_node(currentfile);
-            loadorshowfile(selectedvalue);
-            currentfilehash = selectedvalue;
-        }
-    });
+    filetreecon.addEventListener('click', function(e) {
+        var link = e.target.closest('.local_joulegrader_assign23_inlinefile');
+        if (!link) return;
 
-    // Delegate click on all '.local_joulegrader_assign23_inlinefile' links under the filetree container
-    filetreecon.delegate('click', function(e) {
-        // Prevent the default action
         e.preventDefault();
-
-        var link = e.currentTarget;
-        var filehash = link.get('id');
-
+        var filehash = link.id;
         loadorshowfile(filehash);
         currentfilehash = filehash;
-
-    }, '.local_joulegrader_assign23_inlinefile')
+    });
 };
