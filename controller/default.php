@@ -156,7 +156,7 @@ class local_joulegrader_controller_default extends mr_controller {
             $viewpane = '<div class="content">' . $viewhtml . '</div>';
 
             // Resize bar used by drag and drop.
-            $rs = \core\output\html_writer::tag('div', "\t", array('id' => 'local-joulegrader-resize'));
+            $rs = \core\output\html_writer::tag('div', "\t", array('id' => 'local-joulegrader-resize', 'class' => 'd-none'));
 
             //get the grade pane contents
             $gradepane = '<div class="content">' . $rs . $gradehtml . $commentloophtml . '</div>';
