@@ -672,7 +672,14 @@ M.local_joulegrader.init_commentloop = function(id) {
     });
 };
 
-M.local_joulegrader.init_viewinlinefile = function(courseid) {
+/**
+ * Allow teachers to view submissions inline.
+ *
+ * @param unusedYUI {object} Needed but not used. This is because sadly js_init_call
+ *                           always and forever calls function_call_with_y which injects the YUI.
+ * @param courseid {number} The courseid where the inlinefile is being viewed.
+ */
+M.local_joulegrader.init_viewinlinefile = function(unusedYUI, courseid) {
     var loadedfiles = {};
     var filenamesbyids = {};
     var fileids = [];
