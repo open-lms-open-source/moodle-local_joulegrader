@@ -186,8 +186,35 @@
     display: none !important;
 }
 
+/*
+ * The submission plugin title (e.g. "File submissions") is a <legend>, which
+ * Bootstrap's reboot floats left and relies on `legend + *` clearing the float.
+ * In the inline file viewer that following sibling (the file tree) is hidden, so
+ * nothing clears the float and the controls wrap up onto the title's line.
+ * Keep the title on its own line by not floating it.
+ */
+.local_joulegrader_assign23_submission_name {
+    float: none;
+    width: 100%;
+    display: block;
+}
+
+#local-joulegrader-assign23-ctrl-con {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .3em;
+}
+
 #local-joulegrader-assign23-ctrl-con .control {
-    display: inline;
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+
+#local-joulegrader-assign23-ctrl-con .control select {
+    width: auto;
+    display: inline-block;
 }
 
 #local-joulegrader-assign23-ctrl-filename {
