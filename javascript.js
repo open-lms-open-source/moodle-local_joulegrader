@@ -639,8 +639,6 @@ M.local_joulegrader.init_commentloop = function(id) {
         var editor;
         if (typeof tinyMCE !== "undefined") {
             editor = tinyMCE.get(textarea.id);
-        } else {
-            editor = commentform.querySelector('.editor_atto_content');
         }
 
         var comment = textarea.value;
