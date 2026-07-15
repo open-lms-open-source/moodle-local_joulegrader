@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @copyright  Copyright (c) 2026 Open LMS (https://www.openlms.net)
+ * @copyright  Copyright (c) 2025 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'مصنف التقديرات المفتوح';
-$string['joulegrader:grade'] = 'تقدير العمل عبر &quot;مصنف التقديرات المفتوح&quot;';
-$string['joulegrader:view'] = 'عرض العمل الذي تم تقديره عبر &quot;مصنف التقديرات المفتوح&quot;';
+$string['joulegrader:grade'] = 'تقدير العمل عبر "مصنف التقديرات المفتوح"';
+$string['joulegrader:view'] = 'عرض العمل الذي تم تقديره عبر "مصنف التقديرات المفتوح"';
 $string['gradebook'] = 'دفتر التقديرات';
 $string['nothingtodisplay'] = 'لا يوجد شيء ليتم عرضه';
 $string['needsgrading'] = 'إظهار الأنشطة التي تتطلب التقدير';
 $string['allactivities'] = 'إظهار جميع الأنشطة';
-$string['mobilenotsupported'] = 'لا يدعم &quot;مصنف التقديرات المفتوح&quot; حاليًا مستعرضات الأجهزة المحمولة';
+$string['mobilenotsupported'] = 'لا يدعم "مصنف التقديرات المفتوح" حاليًا مستعرضات الأجهزة المحمولة';
 $string['exitfullscreen'] = 'إنهاء وضع ملء الشاشة';
 $string['fullscreen'] = 'وضع ملء الشاشة';
 $string['returncourse'] = 'الرجوع إلى المقرر الدراسي';
@@ -47,7 +47,7 @@ $string['user'] = 'المستخدم';
 $string['usernav'] = 'المستخدمون';
 $string['usernav_help'] = 'استخدم عنصر واجهة المستخدم هذا لتحديد المستخدم المراد تقديره.';
 $string['navviewlabel'] = 'عرض {$a}';
-$string['commentdeleted'] = 'حذف المستخدم {$a-&gt;deletedby} المشاركة في {$a-&gt;deletedon}';
+$string['commentdeleted'] = 'حذف المستخدم {$a->deletedby} المشاركة في {$a->deletedon}';
 $string['deletecomment'] = 'حذف التعليق الذي وضعه في {$a}';
 $string['previous'] = '{$a} السابق';
 $string['next'] = '{$a} التالي';
@@ -64,9 +64,9 @@ $string['activitycomments'] = 'تعليقات النشاط';
 $string['activitycomment'] = 'تعليق';
 $string['overallfeedback'] = 'الملاحظات الكلية';
 $string['filefeedback'] = 'ملاحظات الملف';
-$string['attemptnumber'] = 'المحاولة {$a-&gt;attemptnumber}: {$a-&gt;attempttime}';
+$string['attemptnumber'] = 'المحاولة {$a->attemptnumber}: {$a->attempttime}';
 $string['viewingattempt'] = 'عرض المحاولة';
-$string['attemptstatus'] = 'أجرى الطالب {$a-&gt;number} من أصل {$a-&gt;outof} من المحاولات.';
+$string['attemptstatus'] = 'أجرى الطالب {$a->number} من أصل {$a->outof} من المحاولات.';
 $string['assignmentstatus'] = 'حالة الواجب';
 $string['unlimited'] = 'غير محدود';
 $string['gradebookgrade'] = 'التقدير الحالي في دفتر التقديرات';
@@ -78,7 +78,7 @@ $string['save'] = 'حفظ التقدير';
 $string['saveandnext'] = 'حفظ التقدير والتالي';
 $string['gradingdisabled'] = 'تم قفل تقدير هذا النشاط. لتمكين التقدير يرجى فك قفل التقدير بواسطة دفتر التقديرات.';
 $string['applytoall'] = 'تطبيق التقديرات والملاحظات على المجموعة بالكامل';
-$string['applytoall_help'] = 'إذا تم تحديد &quot;نعم&quot; سيتلقى جميع أعضاء المجموعة التقدير والملاحظات بغض النظر عن أي تقدير أو ملاحظات موجودة في دفتر التقديرات.';
+$string['applytoall_help'] = 'إذا تم تحديد "نعم" سيتلقى جميع أعضاء المجموعة التقدير والملاحظات بغض النظر عن أي تقدير أو ملاحظات موجودة في دفتر التقديرات.';
 $string['criteria'] = 'المعايير';
 $string['checklist'] = 'قائمة الاختيارات';
 $string['gradesaved'] = 'تم تحديث التقدير بنجاح';
@@ -105,13 +105,13 @@ $string['attachments'] = 'المرفقات';
 $string['commentrequired'] = 'مطلوب تعليق';
 $string['commentloop'] = 'حلقة التعليقات';
 $string['notreleased'] = 'لم يتم إصدار تقدير الواجب بعد';
-$string['eventgraderviewed'] = 'تم عرض &quot;مصنف التقديرات المفتوح&quot;';
-$string['eventactivitygraded'] = 'تم تقدير النشاط في &quot;مصنف التقديرات المفتوح&quot;';
-$string['eventcommentdeleted'] = 'تم حذف تعليق في &quot;مصنف التقديرات المفتوح&quot;';
-$string['eventcommentadded'] = 'تم إضافة تعليق في &quot;مصنف التقديرات المفتوح&quot;';
+$string['eventgraderviewed'] = 'تم عرض "مصنف التقديرات المفتوح"';
+$string['eventactivitygraded'] = 'تم تقدير النشاط في "مصنف التقديرات المفتوح"';
+$string['eventcommentdeleted'] = 'تم حذف تعليق في "مصنف التقديرات المفتوح"';
+$string['eventcommentadded'] = 'تم إضافة تعليق في "مصنف التقديرات المفتوح"';
 $string['privacy:metadata:preference:fullscreen'] = 'ما إذا كان المستخدم يريد مصنف التقديرات في وضع ملء الشاشة أم لا';
-$string['privacy:metadata:preference:showpostsgrouped'] = 'ما إذا كان المستخدم يريد تجميع &quot;المنتديات المفتوحة&quot; عند تقديرها';
-$string['privacy:request:preference:fullscreenyes'] = 'يفضل المستخدم &quot;مصنف التقديرات المفتوح&quot; في وضع ملء الشاشة';
-$string['privacy:request:preference:fullscreenno'] = 'يفضل المستخدم &quot;مصنف التقديرات المفتوح&quot; بطريقة العرض العادية';
-$string['privacy:request:preference:hsupostsgroupedyes'] = 'يفضل المستخدم أن يتم تجميع &quot;المنتديات المفتوحة&quot; عند تقديرها';
-$string['privacy:request:preference:hsupostsgroupedno'] = 'يفضل المستخدم عدم تجميع &quot;المنتديات المفتوحة&quot; عند تقديرها';
+$string['privacy:metadata:preference:showpostsgrouped'] = 'ما إذا كان المستخدم يريد تجميع "المنتديات المفتوحة" عند تقديرها';
+$string['privacy:request:preference:fullscreenyes'] = 'يفضل المستخدم "مصنف التقديرات المفتوح" في وضع ملء الشاشة';
+$string['privacy:request:preference:fullscreenno'] = 'يفضل المستخدم "مصنف التقديرات المفتوح" بطريقة العرض العادية';
+$string['privacy:request:preference:hsupostsgroupedyes'] = 'يفضل المستخدم أن يتم تجميع "المنتديات المفتوحة" عند تقديرها';
+$string['privacy:request:preference:hsupostsgroupedno'] = 'يفضل المستخدم عدم تجميع "المنتديات المفتوحة" عند تقديرها';
