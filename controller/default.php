@@ -436,7 +436,14 @@ class local_joulegrader_controller_default extends mr_controller {
             }
 
             if (!$isajaxrequest) {
-                redirect(new \core\url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid, 'guser' => $currentuserid)));
+                $redirecturl = new \core\url('/local/joulegrader/view.php', array('courseid' => $COURSE->id, 'garea' => $currentareaid, 'guser' => $currentuserid));
+                
+                // If needsgrading was present, keep it as present, after comments are saved.
+                if (optional_param('needsgrading', 0, PARAM_BOOL)) {
+                    $redirecturl->param('needsgrading', 1);
+                }
+
+                redirect($redirecturl);
             } else {
                 $renderer = $PAGE->get_renderer('local_joulegrader');
 

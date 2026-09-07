@@ -229,6 +229,11 @@ class comment_loop implements \core\output\renderable {
         $urlparams = array('courseid' => $COURSE->id, 'action' => 'addcomment', 'garea' => $gareaid, 'guser' => $guserid);
         $mformurl = new \core\url('/local/joulegrader/view.php', $urlparams);
 
+        // If needsgrading was present, keep it as present.
+        if (optional_param('needsgrading', 0, PARAM_BOOL)) {
+            $mformurl->param('needsgrading', 1);
+        }
+
         //instantiate the form
         $this->mform = new form\comment($mformurl, $this->gradingarea);
     }

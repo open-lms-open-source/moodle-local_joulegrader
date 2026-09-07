@@ -42,6 +42,29 @@ use Behat\Gherkin\Node\TableNode as TableNode,
 class behat_local_joulegrader extends behat_base {
 
     /**
+     * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
+     *
+     * @param string $type identifies which type of page this is, e.g. 'Open Grader'.
+     * @param string $identifier identifies the particular page, e.g. 'C1'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception When a non recognized local_joulegrader page type is used.
+     */
+    public function resolve_page_instance_url(string $type, string $identifier): moodle_url {
+        switch (strtolower($type)) {
+            case 'open grader':
+                return new moodle_url('/local/joulegrader/view.php',
+                    ['courseid' => $this->get_course_id($identifier)]);
+
+            case 'open grader needs grading':
+                return new moodle_url('/local/joulegrader/view.php',
+                    ['courseid' => $this->get_course_id($identifier), 'needsgrading' => 1]);
+
+            default:
+                throw new Exception("Unrecognised local_joulegrader page type '{$type}'.");
+        }
+    }
+
+    /**
      * Grades filling the current page rubric. Set one line per criterion
      * and for each criterion set "| Criterion name | Points | Remark |".
      *
