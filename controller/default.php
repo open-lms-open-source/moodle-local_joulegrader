@@ -161,8 +161,16 @@ class local_joulegrader_controller_default extends mr_controller {
             //get the grade pane contents
             $gradepane = '<div class="content">' . $rs . $gradehtml . $commentloophtml . '</div>';
 
-            $panescontainer = $OUTPUT->container($viewpane, 'yui3-u-2-3', 'local-joulegrader-viewpane');
-            $panescontainer .= $OUTPUT->container($gradepane, 'yui3-u-1-3', 'local-joulegrader-gradepane');
+            // Use half the width for both panes on Boost.
+            if ($PAGE->theme->name === 'boost') {
+                $viewpaneclass = 'yui3-u-1-2';
+                $gradepaneclass = 'yui3-u-1-2';
+            } else {
+                $viewpaneclass = 'yui3-u-2-3';
+                $gradepaneclass = 'yui3-u-1-3';
+            }
+            $panescontainer = $OUTPUT->container($viewpane, $viewpaneclass, 'local-joulegrader-viewpane');
+            $panescontainer .= $OUTPUT->container($gradepane, $gradepaneclass, 'local-joulegrader-gradepane');
 
             $PAGE->requires->js_init_call('M.local_joulegrader.init_resize', null, true, $renderer->get_js_module());
         } else {
