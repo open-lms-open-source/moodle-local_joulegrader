@@ -161,8 +161,8 @@ class local_joulegrader_controller_default extends mr_controller {
             //get the grade pane contents
             $gradepane = '<div class="content">' . $rs . $gradehtml . $commentloophtml . '</div>';
 
-            // Use half the width for both panes on Boost.
-            if ($PAGE->theme->name === 'boost') {
+            // Use half the width for both panes on non-Snap themes.
+            if ($PAGE->theme->name !== 'snap' && !in_array('snap', $PAGE->theme->parents)) {
                 $viewpaneclass = 'yui3-u-1-2';
                 $gradepaneclass = 'yui3-u-1-2';
             } else {
